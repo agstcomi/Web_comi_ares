@@ -1,5 +1,10 @@
 // js/db.js
 
+// CONFIGURACIÓ DE SUPABASE (PRODUCCIÓ)
+// Introdueix la teva URL i Anon Key per connectar la base de dades a producció per a qualsevol ordinador:
+const SUPABASE_URL = "";
+const SUPABASE_ANON_KEY = "";
+
 // Mock Data representing real events/news of Comissió de Festes d'Ares
 const MOCK_NEWS = [
     {
@@ -246,17 +251,31 @@ class AppDatabase {
     }
 
     init() {
-        // Check if we have Supabase configuration stored in localStorage
+        // 1. Check if we have Supabase configuration stored in localStorage (allows override)
         const storedConfig = localStorage.getItem('supabase_config');
         if (storedConfig) {
             try {
                 this.config = JSON.parse(storedConfig);
                 if (this.config.url && this.config.key && window.supabase) {
                     this.supabase = window.supabase.createClient(this.config.url, this.config.key);
-                    console.log("Supabase client initialized successfully.");
+                    console.log("Supabase client initialized successfully from localStorage.");
+                    return;
                 }
             } catch (e) {
                 console.error("Error parsing stored Supabase config:", e);
+            }
+        }
+
+        // 2. Fallback to hardcoded configuration in the code
+        if (typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY) {
+            try {
+                if (window.supabase) {
+                    this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+                    this.config = { url: SUPABASE_URL, key: SUPABASE_ANON_KEY };
+                    console.log("Supabase client initialized successfully with hardcoded config.");
+                }
+            } catch (e) {
+                console.error("Error initializing hardcoded Supabase config:", e);
             }
         }
     }
