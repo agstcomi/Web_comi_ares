@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestió de Continguts | Comissió de Festes d'Ares del Maestrat</title>
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/styles.css">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+    <!-- Standalone Admin Header -->
+    <header class="main-header" style="position: static; margin-bottom: 2rem;">
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between; height: var(--header-height);">
+            <a href="../index.html" class="logo" style="display: flex; align-items: center; height: 100%;">
+                <img src="../img/logo.svg" alt="Logo Comissió Ares" style="height: 40px; width: auto;">
+            </a>
+            <span style="font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; border-bottom: 2px solid var(--text-primary); padding-bottom: 0.25rem;">
+                Panel de Control
+            </span>
+        </div>
+    </header>
+
+    <div class="page-intro container" style="padding-top: 1rem;">
+        <h1>PANEL DE GESTIÓ</h1>
+        <p>
+            Administra els continguts visibles a la web oficial: notícies, programa d'actes i galeria de fotografies.
+        </p>
+    </div>
+
+    <!-- Login Area -->
+    <div class="container" id="login-container">
+        <div class="admin-login-wrapper">
+            <h2 style="font-size: 1.5rem; text-align: center; text-transform: uppercase; margin-bottom: 2rem;">
+                Iniciar Sessió
+            </h2>
+            
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Correu Electrònic</label>
+                    <input type="email" id="login-email" required placeholder="admin@ares.com" value="admin@ares.com">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Contrasenya</label>
+                    <input type="password" id="login-password" required placeholder="••••••••">
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">
+                    <span>Entrar</span>
+                    <i data-lucide="log-in" style="width: 14px; height: 14px;"></i>
+                </button>
+            </form>
+            
+            <div id="login-error" style="display: none; margin-top: 1.5rem; color: #ef4444; font-size: 0.85rem; text-align: center; border: 1px solid #ef4444; padding: 0.75rem;">
+                Contrasenya incorrecta.
+            </div>
+
+            <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; font-size: 0.8rem; color: var(--text-secondary);">
+                <p style="margin-bottom: 0.5rem; font-weight: 700;">💡 Mode Demo (LocalStorage):</p>
+                <p style="margin-bottom: 0;">Usa qualsevol correu i la contrasenya <code style="font-weight: 700; background-color: var(--bg-tertiary); padding: 0.1rem 0.3rem;">ares2026</code> per provar el gestor sense bases de dades externes.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Content Area (Hidden by default) -->
+    <div class="container" id="dashboard-container" style="display: none; padding-bottom: 6rem;">
+        
+        <!-- Status & Greeting Row -->
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+            <div>
+                <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Administració</span>
+                <h2 style="margin-bottom: 0; font-size: 2rem; text-transform: uppercase;" id="user-greeting">Hola, Admin!</h2>
+            </div>
+            
+            <div>
+                <span style="font-size: 0.75rem; font-family: var(--font-heading); font-weight: 700;">ESTAT BD:</span>
+                <span id="db-status-badge" class="db-status-badge">local</span>
+            </div>
+        </div>
+
+        <div class="admin-layout">
+            <!-- Sidebar Navigation tabs -->
+            <aside class="admin-sidebar">
+                <button class="admin-tab-btn active" data-tab="tab-news">
+                    <i data-lucide="newspaper" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    Notícies
+                </button>
+                <button class="admin-tab-btn" data-tab="tab-events">
+                    <i data-lucide="calendar" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    Programa d'actes
+                </button>
+                <button class="admin-tab-btn" data-tab="tab-photos">
+                    <i data-lucide="image" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    Galeria de fotos
+                </button>
+                <button class="admin-tab-btn" data-tab="tab-config">
+                    <i data-lucide="database" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    Configurar Supabase
+                </button>
+                
+                <button class="admin-tab-btn btn-danger" id="logout-btn" style="margin-top: 3rem; text-align: left; color: white;">
+                    <i data-lucide="log-out" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    Tancar Sessió
+                </button>
+            </aside>
+
+            <!-- Main Work Panels -->
+            <main style="min-width: 0;"> <!-- prevent grid overflow -->
+                
+                <!-- NEWS PANEL -->
+                <div class="admin-panel active" id="tab-news">
+                    <div class="admin-actions">
+                        <h3>Gestionar Notícies</h3>
+                        <button class="btn btn-sm" id="btn-new-news">
+                            <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Afegir Notícia
+                        </button>
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Imatge</th>
+                                    <th>Títol</th>
+                                    <th>Data</th>
+                                    <th>Accions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-news-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- EVENTS PANEL -->
+                <div class="admin-panel" id="tab-events">
+                    <div class="admin-actions">
+                        <h3>Gestionar Esdeveniments</h3>
+                        <button class="btn btn-sm" id="btn-new-event">
+                            <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Afegir Acte
+                        </button>
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Data i Hora</th>
+                                    <th>Acte</th>
+                                    <th>Localització</th>
+                                    <th>Categoria</th>
+                                    <th>Accions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-events-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Category Colors Customization Form -->
+                    <div style="margin-top: 3rem; padding-top: 2rem; border-top: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <h4 style="text-transform: uppercase; margin-bottom: 0.5rem; font-family: var(--font-heading); font-size: 1.1rem; letter-spacing: 0.05em; color: var(--text-primary);">Personalitzar Colors de Categoria</h4>
+                                <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 0; font-weight: 300;">
+                                    Configura els colors de fons i de text per a les etiquetes de cada categoria de la programació. Els canvis s'aplicaran en temps real a la web.
+                                </p>
+                            </div>
+                            <button type="button" class="btn btn-sm" id="btn-new-category" style="height: 38px;">
+                                <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Crear Etiqueta
+                            </button>
+                        </div>
+                        <form id="form-category-colors" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                            <!-- Dynamically populated categories -->
+                            <div id="category-cards-container" style="display: contents;"></div>
+                            
+                            <div style="grid-column: 1/-1; display: flex; gap: 1rem; margin-top: 1rem;">
+                                <button type="submit" class="btn btn-sm">Guardar Colors</button>
+                                <button type="button" class="btn btn-sm btn-secondary" id="btn-reset-colors">Restablir Valors per Defecte</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- PHOTOS PANEL -->
+                <div class="admin-panel" id="tab-photos">
+                    <div class="admin-actions" style="display: flex; gap: 1rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
+                        <h3>Gestionar Galeria</h3>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <select id="admin-photo-filter" style="padding: 0.5rem 1rem; font-size: 0.8rem; height: 38px; border: 1px solid var(--border-color); background-color: var(--bg-primary); font-family: var(--font-heading); text-transform: uppercase; font-weight: 700; border-radius: 8px;">
+                                <option value="all">Totes les categories</option>
+                            </select>
+                            <button class="btn btn-sm" id="btn-new-photo">
+                                <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Pujar Foto
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="overflow-x: auto;">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Foto</th>
+                                    <th>Títol</th>
+                                    <th>Categoria</th>
+                                    <th>Accions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-photos-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- SUPABASE CONFIG PANEL -->
+                <div class="admin-panel" id="tab-config">
+                    <h3>Configurar Base de Dades Supabase</h3>
+                    <p style="margin-bottom: 2rem;">
+                        Per a sincronitzar les teues dades al núvol de manera gratuïta i allotjar la web en producció, crea un projecte en <a href="https://supabase.com" target="_blank" style="text-decoration: underline;">Supabase</a>, configura les taules corresponents i introdueix les credencials a continuació.
+                    </p>
+
+                    <div class="db-config-box">
+                        <form id="config-form">
+                            <div class="form-group">
+                                <label for="config-url">Supabase Project URL</label>
+                                <input type="url" id="config-url" placeholder="https://xxxxxxxxxxxxxxxxxxxx.supabase.co" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="config-key">Supabase Anon API Key (Public)</label>
+                                <input type="password" id="config-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required>
+                            </div>
+                            
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-sm">
+                                    <i data-lucide="save" style="width: 14px; height: 14px;"></i> Guardar i Connectar
+                                </button>
+                                <button type="button" class="btn btn-sm btn-secondary" id="btn-reset-db">
+                                    Desconnectar (Tornar a Demo)
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div style="border: 1px solid var(--border-color); padding: 2rem;">
+                        <h4 style="margin-bottom: 1rem; text-transform: uppercase;">ℹ️ Estructura SQL de les Taules en Supabase</h4>
+                        <p>Si uses Supabase, has de crear aquestes 3 taules en el teu projecte (Editor SQL):</p>
+                        
+                        <pre style="background-color: var(--bg-tertiary); padding: 1.5rem; overflow-x: auto; font-size: 0.75rem; border: 1px solid var(--border-color);">
+-- Taula de Notícies (news)
+CREATE TABLE news (
+  id TEXT PRIMARY KEY,
+  created_at DATE DEFAULT now(),
+  title TEXT NOT NULL,
+  content TEXT NOT NULL,
+  image_url TEXT,
+  author TEXT DEFAULT 'Comissió de Festes'
+);
+
+-- Taula d'Esdeveniments (events)
+CREATE TABLE events (
+  id TEXT PRIMARY KEY,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  date DATE NOT NULL,
+  time TEXT NOT NULL,
+  location TEXT NOT NULL,
+  category TEXT NOT NULL
+);
+
+-- Taula de Galeria (photos)
+CREATE TABLE photos (
+  id TEXT PRIMARY KEY,
+  created_at DATE DEFAULT now(),
+  title TEXT NOT NULL,
+  image_url TEXT NOT NULL,
+  category TEXT NOT NULL
+);
+                        </pre>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- FORM MODALS (Added/Edited Content Forms) -->
+    
+
+
+    <!-- Event Modal -->
+    <div class="admin-form-modal" id="modal-event">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3 id="event-modal-title">Nou Acte</h3>
+                <button class="admin-modal-close" onclick="closeModal('modal-event')">&times;</button>
+            </div>
+            <form id="form-event">
+                <input type="hidden" id="event-id">
+                <div class="form-group">
+                    <label for="event-title">Nom de l'acte</label>
+                    <input type="text" id="event-title" required placeholder="Ex. Orquestra Centauro">
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="event-date">Data</label>
+                        <input type="date" id="event-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="event-time">Hora d'inici</label>
+                        <input type="text" id="event-time" required placeholder="Ex. 18:30 o 23:59">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-location">Localització</label>
+                    <input type="text" id="event-location" required placeholder="Ex. Plaça Major o Poliesportiu">
+                </div>
+
+                <div class="form-group">
+                    <label for="event-category">Categoria</label>
+                    <select id="event-category" required>
+                        <!-- Loaded dynamically -->
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-image">URL de la imatge de l'acte (Opcional si es puja fitxer)</label>
+                    <input type="url" id="event-image" placeholder="https://images.unsplash.com/...">
+                </div>
+
+                <div class="form-group">
+                    <label for="event-image-file">O puja una foto per a l'acte</label>
+                    <input type="file" id="event-image-file" accept="image/*" style="border: none; padding: 0.5rem 0;">
+                </div>
+
+                <div class="form-group">
+                    <label for="event-description">Descripció o resum curt</label>
+                    <textarea id="event-description" rows="2" required placeholder="Resum curt de l'acte per al llistat públic..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="event-long-description">Informació ampliada o detallada (Opcional, accepta text enriquit/HTML)</label>
+                    <textarea id="event-long-description" rows="5" placeholder="Escriu informació addicional: detalls dels premis del concurs, orquestres teloneres, preu de tiquets si escau, etc..."></textarea>
+                </div>
+                
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">
+                    Guardar Acte
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Photo Modal -->
+    <div class="admin-form-modal" id="modal-photo">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3>Afegir Foto a Galeria</h3>
+                <button class="admin-modal-close" onclick="closeModal('modal-photo')">&times;</button>
+            </div>
+            <form id="form-photo">
+                <div class="form-group">
+                    <label for="photo-title">Títol de la fotografia (Opcional si puja diversos fitxers)</label>
+                    <input type="text" id="photo-title" placeholder="Ex. Cercavila d'inici de Festes">
+                </div>
+                
+                <div class="form-group">
+                    <label for="photo-image">URL de la imatge (Opcional si es pugen fitxers)</label>
+                    <input type="url" id="photo-image" placeholder="https://images.unsplash.com/...">
+                </div>
+
+                <div class="form-group">
+                    <label for="photo-file">O puja una o més fotos localment</label>
+                    <input type="file" id="photo-file" accept="image/*" multiple style="border: none; padding: 0.5rem 0;">
+                </div>
+
+                <div class="form-group">
+                    <label for="photo-category-select">Categoria / Any</label>
+                    <select id="photo-category-select" required style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); background-color: var(--bg-primary); border-radius: 8px; font-family: var(--font-body);">
+                        <!-- Populated dynamically via JavaScript -->
+                    </select>
+                </div>
+
+                <div class="form-group" id="new-category-group" style="display: none;">
+                    <label for="photo-category-new">Nom de la nova categoria</label>
+                    <input type="text" id="photo-category-new" placeholder="Ex. Festes 2026">
+                </div>
+
+                <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">
+                    Pujar Imatge
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Standalone Admin Footer -->
+    <footer class="main-footer" style="margin-top: 4rem; padding: 2rem 0; border-top: 1px solid var(--border-color); background-color: var(--bg-secondary); text-align: center;">
+        <div class="container" style="font-size: 0.8rem; color: var(--text-muted);">
+            &copy; ${new Date().getFullYear()} Comissió de Festes d'Ares del Maestrat. Panel d'Administració Privat.
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="../js/db.js"></script>
+    <script src="gestio.js"></script>
+    <script>
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+    </script>
+</body>
+</html>

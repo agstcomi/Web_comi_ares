@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galeria de Fotos | Comissió de Festes d'Ares del Maestrat</title>
+    <meta name="description" content="Imatges i moments inoblidables de les festes, fires i esdeveniments populars a Ares del Maestrat.">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Dynamic Navbar Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Intro Header -->
+    <div class="page-intro container">
+        <h1>GALERIA DE FOTOS</h1>
+        <p>
+            Reviu els millors moments de les festes i esdeveniments organitzats per la Comissió. Un recorregut visual per les nostres tradicions, el nostre patrimoni i la nostra gent.
+        </p>
+    </div>
+
+    <!-- Gallery Section -->
+    <section style="border-bottom: none;">
+        <div class="container" style="padding-top: 1rem; padding-bottom: 8rem;">
+            <!-- Filters Bar -->
+            <div class="filter-bar">
+                <div class="filter-categories" id="gallery-categories">
+                    <!-- Loaded dynamically -->
+                    <button class="filter-btn active" data-category="all">Totes</button>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Loaded dynamically -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
+                    Carregant fotografies...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightbox-close">&times;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev">&#10094;</button>
+        <div class="lightbox-content">
+            <img src="" id="lightbox-img" alt="Imatge ampliada">
+            <div class="lightbox-caption" id="lightbox-caption">Títol de la foto</div>
+        </div>
+        <button class="lightbox-nav lightbox-next" id="lightbox-next">&#10095;</button>
+    </div>
+
+    <!-- Dynamic Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/galeria.js"></script>
+</body>
+</html>

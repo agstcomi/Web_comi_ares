@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programació | Comissió de Festes d'Ares del Maestrat</title>
+    <meta name="description" content="Consulta la programació d'actes, horaris i localització dels esdeveniments de les festes de la Comissió d'Ares del Maestrat.">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/styles.css">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Dynamic Navbar Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Intro Header -->
+    <div class="page-intro container">
+        <h1>PROGRAMACIÓ</h1>
+        <p>
+            No et perdes cap de les activitats programades per a les properes festes. Filtra per categories, busca els actes que més t'interessen i viu el Maestrat al màxim.
+        </p>
+    </div>
+
+    <!-- Filter and Search Bar -->
+    <!-- Filter and Search Bar -->
+    <section style="border-bottom: none;">
+        <div class="container" style="padding-top: 1rem; padding-bottom: 5rem;">
+            <div class="filter-bar">
+                <div class="filter-categories" id="categories-container">
+                    <button class="filter-btn active" data-category="all">Tots els actes</button>
+                    <button class="filter-btn" data-category="musica">Música</button>
+                    <button class="filter-btn" data-category="cultura">Cultura</button>
+                    <button class="filter-btn" data-category="menjars">Menjars</button>
+                    <button class="filter-btn" data-category="populars">Populars</button>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <div class="search-box">
+                        <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+                        <input type="text" id="search-input" placeholder="Buscar acte, lloc...">
+                    </div>
+
+                    <button class="btn btn-sm btn-secondary" id="btn-download-full-calendar" style="padding: 0.5rem 1rem; font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem; height: 38px;">
+                        <i data-lucide="calendar-plus" style="width: 14px; height: 14px;"></i>
+                        <span>Exportar Calendari</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Timeline for Events -->
+            <div class="events-timeline" id="events-timeline">
+                <!-- Dynamic events loaded by programacio.js -->
+                <div style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                    Carregant programa d'actes...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Detail Modal -->
+    <div id="event-detail-modal" class="event-modal-overlay">
+        <div class="event-modal-card">
+            <button class="event-modal-close-btn" id="event-detail-close">&times;</button>
+            <div id="event-detail-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Dynamic Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <script src="js/db.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/programacio.js"></script>
+</body>
+</html>
