@@ -1579,3 +1579,17 @@ pre,
         grid-row: auto;
     }
 }
+
+/* Style the logout button in the admin sidebar to be clearly visible and solid red */
+#logout-btn.btn-danger {
+    background-color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    color: white !important;
+    font-weight: 600;
+}
+
+#logout-btn.btn-danger:hover {
+    background-color: #dc2626 !important;
+    border-color: #dc2626 !important;
+    color: white !important;
+}
