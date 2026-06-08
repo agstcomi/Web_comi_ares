@@ -2,8 +2,8 @@
 
 // CONFIGURACIÓ DE SUPABASE (PRODUCCIÓ)
 // Introdueix la teva URL i Anon Key per connectar la base de dades a producció per a qualsevol ordinador:
-const SUPABASE_URL = "";
-const SUPABASE_ANON_KEY = "";
+const SUPABASE_URL = "https://wqelwzlnxhbhiedmxona.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_INr3m7b6-y55MSRt9c9-ew_paoZMPan";
 
 // Mock Data representing real events/news of Comissió de Festes d'Ares
 const MOCK_NEWS = [
