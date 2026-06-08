@@ -189,13 +189,45 @@
                 form.addEventListener('submit', (e) => {
                     e.preventDefault();
 
-                    // Simulating form submission
-                    form.style.display = 'none';
-                    feedback.style.display = 'block';
-                    
-                    if (window.lucide) {
-                        window.lucide.createIcons();
-                    }
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalBtnHTML = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span>Enviant...</span>';
+
+                    const name = document.getElementById('name').value;
+                    const email = document.getElementById('email').value;
+                    const subject = document.getElementById('subject').value;
+                    const message = document.getElementById('message').value;
+
+                    // Send using FormSubmit AJAX API
+                    fetch("https://formsubmit.co/ajax/info@comiares.es", {
+                        method: "POST",
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            Nom: name,
+                            Email: email,
+                            Assumpte: subject,
+                            Missatge: message,
+                            _subject: `Nou missatge web [${subject.toUpperCase()}]: ${name}`
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        form.style.display = 'none';
+                        feedback.style.display = 'block';
+                        if (window.lucide) {
+                            window.lucide.createIcons();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting form:', error);
+                        alert('S\'ha produït un error en enviar el missatge. Per favor, torna-ho a provar més tard o escriu directament a info@comiares.es.');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnHTML;
+                    });
                 });
             }
         });
