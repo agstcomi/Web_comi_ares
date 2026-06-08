@@ -283,7 +283,9 @@
 CREATE TABLE news (
   id TEXT PRIMARY KEY,
   created_at DATE DEFAULT now(),
+  updated_at DATE,
   title TEXT NOT NULL,
+  subtitle TEXT,
   content TEXT NOT NULL,
   image_url TEXT,
   author TEXT DEFAULT 'Comissió de Festes',
