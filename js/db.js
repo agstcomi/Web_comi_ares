@@ -281,6 +281,10 @@ class AppDatabase {
     }
 
     isSupabaseConfigured() {
+        const session = localStorage.getItem('ares_mock_session');
+        if (session) {
+            return false;
+        }
         return this.supabase !== null;
     }
 
@@ -670,8 +674,17 @@ class AppDatabase {
         return true;
     }
 
-    // Login logic
     async login(email, password) {
+        // Clear any previous mock session first
+        localStorage.removeItem('ares_mock_session');
+
+        // Allow entering Demo Mode using the mock password 'ares2026'
+        if (password === 'ares2026') {
+            const mockUser = { email: email || 'admin@ares.com', role: 'admin' };
+            localStorage.setItem('ares_mock_session', JSON.stringify(mockUser));
+            return { success: true, user: mockUser };
+        }
+
         if (this.isSupabaseConfigured()) {
             try {
                 const { data, error } = await this.supabase.auth.signInWithPassword({
@@ -685,14 +698,7 @@ class AppDatabase {
                 return { success: false, error: err.message };
             }
         } else {
-            // Local Mock Login: Check hardcoded credentials
-            if (password === 'ares2026') {
-                const mockUser = { email: email || 'admin@ares.com', role: 'admin' };
-                localStorage.setItem('ares_mock_session', JSON.stringify(mockUser));
-                return { success: true, user: mockUser };
-            } else {
-                return { success: false, error: "Contrasenya incorrecta. Utilitza 'ares2026' en mode Demo." };
-            }
+            return { success: false, error: "Contrasenya incorrecta. Utilitza 'ares2026' en mode Demo." };
         }
     }
 
