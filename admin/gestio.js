@@ -575,6 +575,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Backup & Sync listeners
+    const btnExportDb = document.getElementById('btn-export-db');
+    const inputImportDb = document.getElementById('input-import-db');
+
+    if (btnExportDb) {
+        btnExportDb.addEventListener('click', async () => {
+            try {
+                const data = await window.db.exportLocalData();
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+                const downloadAnchor = document.createElement('a');
+                downloadAnchor.setAttribute("href", dataStr);
+                downloadAnchor.setAttribute("download", `ares_backup_${new Date().toISOString().split('T')[0]}.json`);
+                document.body.appendChild(downloadAnchor);
+                downloadAnchor.click();
+                downloadAnchor.remove();
+            } catch (err) {
+                alert("Error en exportar la còpia de seguretat: " + err.message);
+            }
+        });
+    }
+
+    if (inputImportDb) {
+        inputImportDb.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async (event) => {
+                try {
+                    const data = JSON.parse(event.target.result);
+                    if (!data.news && !data.events && !data.photos) {
+                        throw new Error("El fitxer no té el format de còpia de seguretat correcte.");
+                    }
+                    
+                    const countNews = data.news ? data.news.length : 0;
+                    const countEvents = data.events ? data.events.length : 0;
+                    const countPhotos = data.photos ? data.photos.length : 0;
+                    
+                    const confirmMsg = `Es restauraran:\n- ${countNews} notícies\n- ${countEvents} actes\n- ${countPhotos} fotos\n\nEstàs segur que vols continuar? Les dades existents es sobreescriuran/actualitzaran.`;
+                    
+                    if (confirm(confirmMsg)) {
+                        const result = await window.db.importBackup(data);
+                        if (result.success) {
+                            alert("Còpia de seguretat importada correctament!");
+                            checkAuthState(); // reload tables
+                        } else {
+                            alert("S'han produït errors durant la importació:\n" + result.errors.join("\n"));
+                            checkAuthState();
+                        }
+                    }
+                } catch (err) {
+                    alert("Error en llegir o importar el fitxer: " + err.message);
+                }
+                inputImportDb.value = "";
+            };
+            reader.readAsText(file);
+        });
+    }
+
     // Category Colors Management functions & listeners
     function loadCategoryColorsForm() {
         const colors = window.db.getCategoryColors();

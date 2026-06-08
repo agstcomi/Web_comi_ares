@@ -252,6 +252,28 @@
                         </form>
                     </div>
 
+                    <!-- BACKUP & SYNC CONTAINER -->
+                    <div style="border: 1px solid var(--border-color); padding: 2rem; margin-bottom: 2rem;">
+                        <h4 style="margin-bottom: 1rem; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;">
+                            <i data-lucide="archive" style="width: 18px; height: 18px;"></i>
+                            Còpies de Seguretat i Sincronització
+                        </h4>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem; font-weight: 300;">
+                            Descarrega una còpia de seguretat de totes les teves notícies, actes i galeria local, o restaura dades prèviament exportades des d'un arxiu JSON. Això et permetrà passar fàcilment les dades del mode local a la teva base de dades en línia de Supabase.
+                        </p>
+                        
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <button type="button" class="btn btn-sm" id="btn-export-db" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="download" style="width: 14px; height: 14px;"></i> Exportar a JSON
+                            </button>
+                            
+                            <label class="btn btn-sm btn-secondary" style="cursor: pointer; display: inline-flex; align-items: center; margin-bottom: 0; gap: 0.5rem;">
+                                <i data-lucide="upload" style="width: 14px; height: 14px;"></i> Importar des de JSON
+                                <input type="file" id="input-import-db" accept=".json" style="display: none;">
+                            </label>
+                        </div>
+                    </div>
+
                     <div style="border: 1px solid var(--border-color); padding: 2rem;">
                         <h4 style="margin-bottom: 1rem; text-transform: uppercase;">ℹ️ Estructura SQL de les Taules en Supabase</h4>
                         <p>Si uses Supabase, has de crear aquestes 3 taules en el teu projecte (Editor SQL):</p>
@@ -264,7 +286,8 @@ CREATE TABLE news (
   title TEXT NOT NULL,
   content TEXT NOT NULL,
   image_url TEXT,
-  author TEXT DEFAULT 'Comissió de Festes'
+  author TEXT DEFAULT 'Comissió de Festes',
+  additional_images TEXT[] DEFAULT '{}'::text[]
 );
 
 -- Taula d'Esdeveniments (events)
@@ -275,7 +298,9 @@ CREATE TABLE events (
   date DATE NOT NULL,
   time TEXT NOT NULL,
   location TEXT NOT NULL,
-  category TEXT NOT NULL
+  category TEXT NOT NULL,
+  long_description TEXT,
+  image_url TEXT
 );
 
 -- Taula de Galeria (photos)

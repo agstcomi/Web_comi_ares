@@ -878,6 +878,85 @@ class AppDatabase {
 
         return body.innerHTML;
     }
+
+    async exportLocalData() {
+        await this.dbPromise;
+        const news = await this.getAllIDB('news');
+        const events = await this.getAllIDB('events');
+        const photos = await this.getAllIDB('photos');
+        const categoryColors = this.getCategoryColors();
+        return { news, events, photos, categoryColors };
+    }
+
+    async importBackup(data) {
+        if (!data) return { success: false, error: 'No s\'han proveït dades de còpia.' };
+        
+        // Import category colors if present
+        if (data.categoryColors) {
+            this.saveCategoryColors(data.categoryColors);
+        }
+        
+        const errors = [];
+        
+        // Import news
+        if (data.news && Array.isArray(data.news)) {
+            for (const item of data.news) {
+                if (this.isSupabaseConfigured()) {
+                    try {
+                        const { error } = await this.supabase
+                            .from('news')
+                            .upsert([item]);
+                        if (error) throw error;
+                    } catch (e) {
+                        console.error("Error upserting news:", e);
+                        errors.push(`Error notícies (${item.title}): ${e.message}`);
+                    }
+                }
+                await this.putIDB('news', item);
+            }
+        }
+        
+        // Import events
+        if (data.events && Array.isArray(data.events)) {
+            for (const item of data.events) {
+                if (this.isSupabaseConfigured()) {
+                    try {
+                        const { error } = await this.supabase
+                            .from('events')
+                            .upsert([item]);
+                        if (error) throw error;
+                    } catch (e) {
+                        console.error("Error upserting event:", e);
+                        errors.push(`Error actes (${item.title}): ${e.message}`);
+                    }
+                }
+                await this.putIDB('events', item);
+            }
+        }
+        
+        // Import photos
+        if (data.photos && Array.isArray(data.photos)) {
+            for (const item of data.photos) {
+                if (this.isSupabaseConfigured()) {
+                    try {
+                        const { error } = await this.supabase
+                            .from('photos')
+                            .upsert([item]);
+                        if (error) throw error;
+                    } catch (e) {
+                        console.error("Error upserting photo:", e);
+                        errors.push(`Error fotos (${item.title}): ${e.message}`);
+                    }
+                }
+                await this.putIDB('photos', item);
+            }
+        }
+        
+        if (errors.length > 0) {
+            return { success: false, errors };
+        }
+        return { success: true };
+    }
 }
 
 // Instantiate globally
