@@ -70,7 +70,13 @@
                     <input type="text" id="news-subtitle" placeholder="Ex. Sorteig especial el 22 de desembre" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+                <div class="form-group">
+                    <label for="news-slug">Slug (URL amigable per a SEO)</label>
+                    <input type="text" id="news-slug" required placeholder="Ex. ja-tenim-el-programa-a-la-venda" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 300; display: block; margin-top: 0.25rem;">La URL serà: <code>noticies.html?slug=el-teu-slug</code>. S'autogenera des del títol, però pots personalitzar-lo.</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem;">
                     <div class="form-group">
                         <label for="news-author">Autor de la notícia</label>
                         <input type="text" id="news-author" placeholder="Ex. Comissió de Festes" value="Comissió de Festes" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
@@ -82,6 +88,13 @@
                     <div class="form-group">
                         <label for="news-edit-date">Data d'edició (Opcional)</label>
                         <input type="date" id="news-edit-date" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-heading); background-color: var(--bg-secondary);">
+                    </div>
+                    <div class="form-group">
+                        <label for="news-status">Estat</label>
+                        <select id="news-status" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-heading); background-color: var(--bg-secondary); height: 50px; color: var(--text-primary); outline: none;">
+                            <option value="published">Publicat</option>
+                            <option value="draft">Esborrany</option>
+                        </select>
                     </div>
                 </div>
 
@@ -97,6 +110,17 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="news-image-alt">Descripció SEO de la imatge de portada (Alt Text)</label>
+                    <input type="text" id="news-image-alt" placeholder="Ex. Cartell de la programació de les festes patronals d'Ares 2026" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                </div>
+
+                <div class="form-group">
+                    <label for="news-tags">Etiquetes (separades per comes)</label>
+                    <input type="text" id="news-tags" placeholder="Ex. Loteria, Festes, Sant Antoni, 2026" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 300; display: block; margin-top: 0.25rem;">Introdueix etiquetes per categoritzar la notícia (Ex: Loteria, Festes, Anunci).</span>
+                </div>
+
+                <div class="form-group">
                     <label for="news-editor">Contingut del text de la notícia</label>
                     <!-- Rich Text Editor Toolbar -->
                     <div class="editor-toolbar" style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px 8px 0 0; background-color: var(--bg-secondary); flex-wrap: wrap; align-items: center;">
@@ -108,6 +132,10 @@
                             <option value="h2">Títol H2</option>
                             <option value="h3">Títol H3</option>
                         </select>
+                        <button type="button" class="editor-btn" data-cmd="justifyLeft" title="Alinea a l'esquerra" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-left" style="width: 14px; height: 14px;"></i></button>
+                        <button type="button" class="editor-btn" data-cmd="justifyCenter" title="Centra" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-center" style="width: 14px; height: 14px;"></i></button>
+                        <button type="button" class="editor-btn" data-cmd="justifyRight" title="Alinea a la dreta" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-right" style="width: 14px; height: 14px;"></i></button>
+                        <button type="button" class="editor-btn" data-cmd="justifyFull" title="Justifica" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-justify" style="width: 14px; height: 14px;"></i></button>
                         <button type="button" class="editor-btn" data-cmd="insertUnorderedList" title="Llista de viñetes" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="list" style="width: 14px; height: 14px;"></i> Viñetes</button>
                         <button type="button" class="editor-btn" data-cmd="createLink" title="Afegir Enllaç" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="link" style="width: 14px; height: 14px;"></i> Enllaç</button>
                         <button type="button" class="editor-btn" data-cmd="unlink" title="Eliminar Enllaç" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="link-2-off" style="width: 14px; height: 14px;"></i> Traure</button>
@@ -125,8 +153,8 @@
                 </div>
 
                 <div class="form-group" id="existing-additional-images-group" style="display: none; margin-bottom: 2rem;">
-                    <label style="font-weight: 700;">Imatges addicionals actuals (clica a la creu per esborrar-ne)</label>
-                    <div id="existing-additional-images-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 1rem; margin-top: 0.75rem;"></div>
+                    <label style="font-weight: 700;">Imatges addicionals de la galeria i descripcions SEO</label>
+                    <div id="existing-additional-images-container" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 0.75rem;"></div>
                 </div>
                 
                 <div class="editor-btn-group">
@@ -145,6 +173,53 @@
         document.addEventListener('DOMContentLoaded', () => {
             // Setup rich text editor
             initRichTextEditor();
+
+            // Setup slug generation helper
+            const titleInput = document.getElementById('news-title');
+            const slugInput = document.getElementById('news-slug');
+            let isSlugManuallyEdited = false;
+
+            function slugify(text) {
+                return text
+                    .toString()
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/[^\w\-]+/g, '')
+                    .replace(/\-\-+/g, '-')
+                    .replace(/^-+/, '')
+                    .replace(/-+$/, '');
+            }
+
+            if (titleInput && slugInput) {
+                titleInput.addEventListener('input', function() {
+                    if (!isSlugManuallyEdited) {
+                        slugInput.value = slugify(this.value);
+                    }
+                });
+
+                slugInput.addEventListener('input', function() {
+                    isSlugManuallyEdited = true;
+                    // Relaxed validation during typing to allow trailing hyphens
+                    this.value = this.value
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/\s+/g, '-')
+                        .replace(/[^\w\-]+/g, '')
+                        .replace(/\-\-+/g, '-');
+                });
+
+                slugInput.addEventListener('blur', function() {
+                    this.value = slugify(this.value);
+                });
+            }
+
+            window.setSlugManuallyEdited = function(val) {
+                isSlugManuallyEdited = val;
+            };
+            window.slugify = slugify;
 
             // Load news content if ID is in parameters
             setTimeout(async () => {
@@ -209,6 +284,18 @@
             }
         }
 
+        function parseImageUrlAndAlt(imageStr) {
+            if (!imageStr) return { url: '', alt: '' };
+            const hashIdx = imageStr.indexOf('#alt=');
+            if (hashIdx !== -1) {
+                return {
+                    url: imageStr.substring(0, hashIdx),
+                    alt: decodeURIComponent(imageStr.substring(hashIdx + 5))
+                };
+            }
+            return { url: imageStr, alt: '' };
+        }
+
         function renderExistingAdditionalImages() {
             const container = document.getElementById('existing-additional-images-container');
             const group = document.getElementById('existing-additional-images-group');
@@ -221,12 +308,33 @@
             }
 
             group.style.display = 'block';
-            container.innerHTML = currentAdditionalImages.map((img, idx) => `
-                <div style="position: relative; width: 100px; height: 100px; border: 1px solid var(--border-color); border-radius: 6px; overflow: hidden; background-color: var(--bg-secondary);">
-                    <img src="${img}" style="width: 100%; height: 100%; object-fit: cover;">
-                    <button type="button" class="btn-delete-existing-img" data-index="${idx}" style="position: absolute; top: 0.25rem; right: 0.25rem; background-color: rgba(239, 68, 68, 0.9); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 0.75rem; font-weight: 700; line-height: 1;" title="Eliminar imatge">&times;</button>
-                </div>
-            `).join('');
+            container.innerHTML = currentAdditionalImages.map((img, idx) => {
+                const { url, alt } = parseImageUrlAndAlt(img);
+                return `
+                    <div class="additional-image-row" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                        <div style="width: 80px; height: 80px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background-color: var(--bg-primary);">
+                            <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <div style="flex-grow: 1;">
+                            <label style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.25rem; display: block; color: var(--text-secondary);">Descripció Alt (SEO)</label>
+                            <input type="text" class="additional-img-alt" data-index="${idx}" value="${window.db.escapeHTML(alt)}" placeholder="Ex. Vista dels carrers d'Ares de nit" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--bg-primary); font-size: 0.9rem;">
+                        </div>
+                        <button type="button" class="btn-delete-existing-img" data-index="${idx}" style="background-color: #ef4444; color: white; border: none; border-radius: 6px; padding: 0.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Eliminar imatge">
+                            <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+                        </button>
+                    </div>
+                `;
+            }).join('');
+
+            // Bind input change listeners to update currentAdditionalImages in real-time
+            container.querySelectorAll('.additional-img-alt').forEach(input => {
+                input.addEventListener('input', (e) => {
+                    const idx = parseInt(input.getAttribute('data-index'));
+                    const val = e.target.value.trim();
+                    const { url } = parseImageUrlAndAlt(currentAdditionalImages[idx]);
+                    currentAdditionalImages[idx] = url + (val ? '#alt=' + encodeURIComponent(val) : '');
+                });
+            });
 
             container.querySelectorAll('.btn-delete-existing-img').forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -236,7 +344,40 @@
                     renderExistingAdditionalImages();
                 });
             });
+
+            if (window.lucide) window.lucide.createIcons();
         }
+
+        // Setup immediate upload on file selection for additional images
+        document.addEventListener('DOMContentLoaded', () => {
+            const additionalFileInput = document.getElementById('news-additional-files');
+            if (additionalFileInput) {
+                additionalFileInput.addEventListener('change', async (e) => {
+                    const files = e.target.files;
+                    if (files.length === 0) return;
+
+                    const submitBtn = document.getElementById('btn-save-news');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.disabled = true;
+
+                    for (let i = 0; i < files.length; i++) {
+                        submitBtn.textContent = `Pujant imatge ${i+1}/${files.length}...`;
+                        try {
+                            const url = await window.db.uploadImage(files[i]);
+                            currentAdditionalImages.push(url);
+                        } catch (err) {
+                            console.error(err);
+                            alert("Error en pujar la imatge.");
+                        }
+                    }
+
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = originalText;
+                    additionalFileInput.value = ''; // clear selection
+                    renderExistingAdditionalImages();
+                });
+            }
+        });
 
         async function loadNewsData() {
             const urlParams = new URLSearchParams(window.location.search);
@@ -254,10 +395,17 @@
                     document.getElementById('news-id').value = item.id;
                     document.getElementById('news-title').value = item.title;
                     document.getElementById('news-subtitle').value = item.subtitle || '';
+                    document.getElementById('news-slug').value = item.slug || (window.slugify ? window.slugify(item.title) : '');
+                    if (window.setSlugManuallyEdited) {
+                        window.setSlugManuallyEdited(!!item.slug);
+                    }
                     document.getElementById('news-author').value = item.author || 'Comissió de Festes';
                     document.getElementById('news-date').value = item.created_at || '';
                     document.getElementById('news-edit-date').value = item.updated_at || '';
                     document.getElementById('news-image').value = item.image_url || '';
+                    document.getElementById('news-image-alt').value = item.image_alt || '';
+                    document.getElementById('news-status').value = item.status || 'published';
+                    document.getElementById('news-tags').value = item.tags ? item.tags.join(', ') : '';
                     document.getElementById('news-content').value = item.content;
                     document.getElementById('news-editor').innerHTML = window.db.sanitizeHTML(item.content || '');
                     
@@ -271,15 +419,20 @@
             const newsId = document.getElementById('news-id').value;
             const title = document.getElementById('news-title').value;
             const subtitle = document.getElementById('news-subtitle').value;
+            const slug = document.getElementById('news-slug').value.trim() || (window.slugify ? window.slugify(title) : '');
             const author = document.getElementById('news-author').value || 'Comissió de Festes';
             const created_at = document.getElementById('news-date').value || new Date().toISOString().split('T')[0];
             const updated_at = document.getElementById('news-edit-date').value || null;
             const content = document.getElementById('news-content').value;
             
             const fileInput = document.getElementById('news-image-file');
-            const additionalFileInput = document.getElementById('news-additional-files');
             
             let image_url = document.getElementById('news-image').value.trim();
+            const image_alt = document.getElementById('news-image-alt').value.trim();
+            const status = document.getElementById('news-status').value || 'published';
+            
+            const tagsVal = document.getElementById('news-tags').value;
+            const tags = tagsVal ? tagsVal.split(',').map(t => t.trim()).filter(t => t.length > 0) : [];
 
             const submitBtn = document.getElementById('btn-save-news');
             submitBtn.disabled = true;
@@ -298,19 +451,20 @@
                     return;
                 }
 
-                // Additional images (keep existing, add new)
-                let additional_images = [...currentAdditionalImages];
-
-                if (additionalFileInput && additionalFileInput.files.length > 0) {
-                    const files = additionalFileInput.files;
-                    for (let i = 0; i < files.length; i++) {
-                        submitBtn.textContent = `Pujant imatge adicional ${i+1}/${files.length}...`;
-                        const url = await window.db.uploadImage(files[i]);
-                        additional_images.push(url);
-                    }
-                }
-
-                const newsData = { title, subtitle, author, created_at, updated_at, content, image_url, additional_images };
+                const newsData = { 
+                    title, 
+                    slug,
+                    subtitle, 
+                    author, 
+                    created_at, 
+                    updated_at, 
+                    content, 
+                    image_url, 
+                    image_alt,
+                    status,
+                    tags,
+                    additional_images: currentAdditionalImages 
+                };
 
                 if (newsId) {
                     await window.db.editNews(newsId, newsData);

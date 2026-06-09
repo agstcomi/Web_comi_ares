@@ -883,13 +883,17 @@ class AppDatabase {
                     continue;
                 }
 
+                if (name === 'style' || name === 'class') {
+                    continue;
+                }
+
                 const allowedForTag = allowedAttributes[tagName] || [];
                 if (!allowedForTag.includes(name)) {
                     node.removeAttribute(attr.name);
                     continue;
                 }
 
-                if ((name === 'href' || name === 'src') && (val.includes('javascript:') || val.includes('data:') || val.includes('vbscript:'))) {
+                if ((name === 'href' || name === 'src') && (val.includes('javascript:') || (val.includes('data:') && !val.startsWith('data:image/')) || val.includes('vbscript:'))) {
                     node.removeAttribute(attr.name);
                 }
             }

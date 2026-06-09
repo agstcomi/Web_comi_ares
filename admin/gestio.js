@@ -175,10 +175,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const escCreatedAt = window.db.escapeHTML(item.created_at);
             const escUpdatedAt = item.updated_at ? window.db.escapeHTML(item.updated_at) : '';
             const escId = window.db.escapeHTML(item.id);
+            
+            const status = item.status || 'published';
+            const isDraft = status === 'draft';
+            const badgeBg = isDraft ? '#e2e8f0' : '#dcfce7';
+            const badgeTextColors = isDraft ? '#475569' : '#15803d';
+            const badgeText = isDraft ? 'Esborrany' : 'Publicat';
+            
             return `
                 <tr>
                     <td><img class="admin-table-img" src="${escImgUrl}" alt="Notícia"></td>
-                    <td style="font-weight: 600;">${escTitle}</td>
+                    <td style="font-weight: 600;">
+                        <div>${escTitle}</div>
+                        <div style="margin-top: 0.35rem;">
+                            <span style="font-size: 0.7rem; font-weight: 700; padding: 0.15rem 0.4rem; background-color: ${badgeBg}; color: ${badgeTextColors}; border-radius: 4px; text-transform: uppercase; display: inline-block; border: 1px solid rgba(0,0,0,0.05);">${badgeText}</span>
+                        </div>
+                    </td>
                     <td>
                         <div>Pub: ${escCreatedAt}</div>
                         ${escUpdatedAt ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">Ed: ${escUpdatedAt}</div>` : ''}

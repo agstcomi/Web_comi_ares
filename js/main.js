@@ -109,50 +109,52 @@ function renderFooter() {
     footerPlaceholder.innerHTML = `
         <footer class="main-footer">
             <div class="container">
-                <a href="index.html" class="logo" style="font-size: 1.5rem;">
-                    Comissió de Festes d'Ares
-                </a>
-                <ul class="footer-nav">
-                    <li><a href="index.html">Inici</a></li>
-                    <li><a href="noticies.html">Notícies</a></li>
-                    <li><a href="programacio.html">Programació</a></li>
-                    <li><a href="galeria.html">Galeria</a></li>
-                    <li><a href="quisom.html">Qui Som</a></li>
-                    <li><a href="contacte.html">Contacte</a></li>
-                </ul>
-                <div class="social-links">
-                    <a href="https://www.instagram.com/comi_ares" target="_blank" class="social-btn" aria-label="Instagram">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="12" fill="#000000"/>
-                            <rect x="7" y="7" width="10" height="10" rx="2.5" stroke="#ffffff" stroke-width="1.2"/>
-                            <circle cx="12" cy="12" r="2.2" stroke="#ffffff" stroke-width="1.2"/>
-                            <circle cx="15.5" cy="8.5" r="0.6" fill="#ffffff"/>
-                        </svg>
+                <div class="footer-top-row">
+                    <a href="index.html" class="footer-brand">
+                        <img src="img/logo.svg" alt="Logo Comissió Ares">
                     </a>
-                    <a href="https://www.facebook.com/profile.php?id=61572448208798#" target="_blank" class="social-btn" aria-label="Facebook">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="12" fill="#000000"/>
-                            <path d="M14 18.5V12h2.2l.3-2.6H14V7.8c0-.7.2-1.2 1.3-1.2H16.5V4.3c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8V9.4H8.4V12h2.2v6.5H14z" fill="#ffffff"/>
-                        </svg>
-                    </a>
-                    <a href="https://www.youtube.com/@comi_ares" target="_blank" class="social-btn" aria-label="Youtube">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="none">
-                            <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58 2.78 2.78 0 0 0 1.95 1.96C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.96A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" fill="#000000"/>
-                            <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill="#ffffff"/>
-                        </svg>
-                    </a>
-                    <a href="mailto:info@comiares.es" class="social-btn" aria-label="Email">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" viewBox="0 0 24 24" fill="none">
-                            <circle cx="12" cy="12" r="12" fill="#000000"/>
-                            <rect x="6" y="8" width="12" height="8" rx="1.5" stroke="#ffffff" stroke-width="1.2" fill="none"/>
-                            <path d="M6 9l6 4 6-4" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </a>
+                    <ul class="footer-nav">
+                        <li><a href="index.html">Inici</a></li>
+                        <li><a href="noticies.html">Notícies</a></li>
+                        <li><a href="programacio.html">Programació</a></li>
+                        <li><a href="galeria.html">Galeria</a></li>
+                        <li><a href="quisom.html">Qui Som</a></li>
+                        <li><a href="contacte.html">Contacte</a></li>
+                    </ul>
+                    <div class="footer-socials">
+                        <a href="https://instagram.com/comi_ares" target="_blank" class="footer-social-circle" aria-label="Instagram">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                        </a>
+                        <a href="https://www.facebook.com/profile.php?id=61572448208798#" target="_blank" class="footer-social-circle" aria-label="Facebook">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                        </a>
+                        <a href="https://www.youtube.com/@comi_ares" target="_blank" class="footer-social-circle" aria-label="YouTube">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: block;"><path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17z"/><path d="m10 15 5-3-5-3z"/></svg>
+                        </a>
+                    </div>
                 </div>
-                <div class="copyright">
-                    &copy; ${new Date().getFullYear()} Comissió de Festes d'Ares del Maestrat.
+                
+                <div class="footer-middle-grid">
+                    <div class="footer-contact-col">
+                        <a href="contacte.html" class="footer-contact-pill">Contacta'ns</a>
+                        <div class="footer-contact-info">
+                            <div><strong>Email:</strong> <a href="mailto:info@comiares.es">info@comiares.es</a></div>
+                            <div><strong>Adreça:</strong> Plaça Major, 1. 12165 Ares del Maestrat (Castelló)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom-row">
+                    <div class="footer-copyright">
+                        &copy; ${new Date().getFullYear()} Comissió de Festes d'Ares del Maestrat. Tots els drets reservats.
+                    </div>
                 </div>
             </div>
         </footer>
     `;
+
+    // Initialize Lucide icons if available
+    if (window.lucide) {
+        window.lucide.createIcons();
+    }
 }

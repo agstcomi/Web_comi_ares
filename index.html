@@ -225,22 +225,27 @@
                 const newsList = await window.db.getNews();
                 const newsContainer = document.getElementById('news-container');
                 
-                if (newsList && newsList.length > 0) {
-                    newsContainer.innerHTML = newsList.slice(0, 3).map(item => {
+                // Filter out drafts
+                const publicNewsList = (newsList || []).filter(item => (item.status || 'published') !== 'draft');
+                
+                if (publicNewsList && publicNewsList.length > 0) {
+                    newsContainer.innerHTML = publicNewsList.slice(0, 3).map(item => {
                         const plainContent = stripHTML(item.content);
                         const excerpt = item.subtitle || (plainContent.length > 100 ? plainContent.substring(0, 100) + '...' : plainContent);
                         const escTitle = window.db.escapeHTML(item.title);
                         const escExcerpt = window.db.escapeHTML(excerpt);
+                        const escAlt = item.image_alt ? window.db.escapeHTML(item.image_alt) : escTitle;
+                        const articleUrl = item.slug ? `noticies.html?slug=${item.slug}` : `noticies.html?id=${item.id}`;
                         return `
-                            <article class="news-card" style="cursor: pointer;" onclick="window.location.href='noticies.html?id=${item.id}'">
+                            <article class="news-card" style="cursor: pointer;" onclick="window.location.href='${articleUrl}'">
                                 <div class="news-img-wrapper">
-                                    <img src="${item.image_url || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800'}" alt="${escTitle}">
+                                    <img src="${item.image_url || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800'}" alt="${escAlt}">
                                 </div>
                                 <div class="news-info">
                                     <span class="news-date">${formatNewsDate(item.created_at)}</span>
                                     <h3 class="news-title" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">${escTitle}</h3>
                                     <p class="news-excerpt" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; font-size: 0.9rem;">${escExcerpt}</p>
-                                    <a href="noticies.html?id=${item.id}" class="news-more" style="margin-top: auto;">Llegir més <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i></a>
+                                    <a href="${articleUrl}" class="news-more" style="margin-top: auto;">Llegir més <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i></a>
                                 </div>
                             </article>
                         `;
