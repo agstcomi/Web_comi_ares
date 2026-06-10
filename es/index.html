@@ -142,7 +142,7 @@
     <section id="oratge" style="background-color: var(--bg-primary);">
         <div class="container">
             <div id="weather-widget" class="weather-widget-container" style="margin-top: 0;">
-                <div class="weather-card" style="margin: 0 auto;">
+                <div class="weather-card animate-fade-in-up" style="margin: 0 auto; transition-delay: 0.1s;">
                     <div class="weather-card-header">
                         <h3>
                             <i data-lucide="cloud-sun"></i> El Tiempo en Ares del Maestrat
@@ -268,7 +268,7 @@
                 const publicNewsList = (newsList || []).filter(item => (item.status || 'published') !== 'draft');
                 
                 if (publicNewsList && publicNewsList.length > 0) {
-                    newsContainer.innerHTML = publicNewsList.slice(0, 3).map(item => {
+                    newsContainer.innerHTML = publicNewsList.slice(0, 3).map((item, idx) => {
                         const title = item.title_es || item.title;
                         const subtitle = item.subtitle_es || item.subtitle;
                         const content = item.content_es || item.content;
@@ -286,7 +286,7 @@
                         const imgSrc = window.getAssetPath(item.image_url) || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800';
                         
                         return `
-                            <article class="news-card" style="cursor: pointer;" onclick="window.location.href='${articleUrl}'">
+                            <article class="news-card animate-fade-in-up" style="cursor: pointer; transition-delay: ${idx * 0.05}s;" onclick="window.location.href='${articleUrl}'">
                                 <div class="news-img-wrapper">
                                     <img src="${imgSrc}" alt="${escAlt}">
                                 </div>
@@ -313,7 +313,7 @@
                     let upcoming = eventsList.filter(e => e.date >= today);
                     if (upcoming.length === 0) upcoming = eventsList; // fallback to all if none in future
 
-                    eventsContainer.innerHTML = upcoming.slice(0, 3).map(item => {
+                    eventsContainer.innerHTML = upcoming.slice(0, 3).map((item, idx) => {
                         const catColors = colors[item.category] || { bg: '#e4e4e7', text: '#18181b' };
                         const title = item.title_es || item.title;
                         const desc = item.description_es || item.description;
@@ -326,7 +326,7 @@
                         const escCat = window.db.escapeHTML(categoryLabel);
                         
                         return `
-                            <article class="news-card" style="cursor: pointer;" onclick="window.location.href='programacio.html'">
+                            <article class="news-card animate-fade-in-up" style="cursor: pointer; transition-delay: ${idx * 0.05}s;" onclick="window.location.href='programacio.html'">
                                 <div class="news-info" style="border-top: 4px solid ${catColors.bg};">
                                     <span class="news-date" style="display: flex; justify-content: space-between; align-items: center;">
                                         <span>${formatDate(item.date)}</span>

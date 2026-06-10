@@ -23,6 +23,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (window.lucide) window.lucide.createIcons();
             }
         });
+
+        // Close menu when clicking on the dark overlay (navMenu itself)
+        navMenu.addEventListener('click', (e) => {
+            if (e.target === navMenu) {
+                navMenu.classList.remove('active');
+                const icon = navToggle.querySelector('i');
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'menu');
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            }
+        });
     }
 
     // 3. Scroll Header Effect
@@ -58,6 +70,93 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.lucide) {
         window.lucide.createIcons();
     }
+
+    // 5. Scroll to top when clicking links of the current page
+    document.addEventListener('click', (e) => {
+        const anchor = e.target.closest('header.main-header a');
+        if (!anchor) return;
+
+        const href = anchor.getAttribute('href');
+        if (!href) return;
+
+        const path = window.location.pathname;
+        const page = path.split("/").pop() || 'index.html';
+
+        // Match if href points to the current page file
+        const isCurrentPage = href === page || 
+                              (href === 'index.html' && (page === 'index.html' || page === ''));
+
+        if (isCurrentPage) {
+            e.preventDefault();
+            // Close mobile menu if active
+            const navMenu = document.getElementById('nav-menu');
+            if (navMenu && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                const navToggle = document.getElementById('nav-toggle');
+                const icon = navToggle ? navToggle.querySelector('i') : null;
+                if (icon) {
+                    icon.setAttribute('data-lucide', 'menu');
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            }
+            
+            // Scroll to top smoothly
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+    });
+
+    // 6. Scroll & Entrance Animation Observer
+    const initEntranceAnimations = () => {
+        if (!('IntersectionObserver' in window)) return;
+
+        const scrollObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, {
+            root: null,
+            rootMargin: '0px 0px -40px 0px',
+            threshold: 0.05
+        });
+
+        // Function to find and observe candidates
+        const observeNewElements = (container) => {
+            if (!container) return;
+            const targets = container.querySelectorAll ? container.querySelectorAll('.animate-fade-in-up') : [];
+            targets.forEach(target => scrollObserver.observe(target));
+            // Check container itself
+            if (container.classList && container.classList.contains('animate-fade-in-up')) {
+                scrollObserver.observe(container);
+            }
+        };
+
+        // Observe initial elements in the DOM
+        observeNewElements(document);
+
+        // Setup MutationObserver to watch for dynamic DOM updates (news grid, events grid, etc.)
+        if ('MutationObserver' in window) {
+            const mutObserver = new MutationObserver((mutations) => {
+                mutations.forEach(mutation => {
+                    mutation.addedNodes.forEach(node => {
+                        if (node.nodeType === Node.ELEMENT_NODE) {
+                            observeNewElements(node);
+                        }
+                    });
+                });
+            });
+            mutObserver.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+        }
+    };
+    initEntranceAnimations();
 });
 
 function renderHeader() {
@@ -93,13 +192,11 @@ function renderHeader() {
         menuHTML += `<li><a href="${item.file}" ${isActive}>${item.name}</a></li>`;
     });
 
-    // Add language switcher with preserved query string
+    // Generate language switcher HTML
     const searchParams = window.location.search;
-    if (isEs) {
-        menuHTML += `<li class="lang-switch"><a href="../${page}${searchParams}" title="Canviar a Valencià">VAL</a></li>`;
-    } else {
-        menuHTML += `<li class="lang-switch"><a href="es/${page}${searchParams}" title="Cambiar a Castellano">ESP</a></li>`;
-    }
+    const langSwitchHTML = isEs
+        ? `<a href="../${page}${searchParams}" title="Canviar a Valencià">VAL</a>`
+        : `<a href="es/${page}${searchParams}" title="Cambiar a Castellano">ESP</a>`;
 
     const logoPath = isEs ? '../img/logo.svg' : 'img/logo.svg';
 
@@ -115,8 +212,16 @@ function renderHeader() {
                 <nav class="nav-menu" id="nav-menu">
                     <ul>
                         ${menuHTML}
+                        <!-- Mobile-only language switcher -->
+                        <li class="mobile-lang-switch">
+                            ${langSwitchHTML}
+                        </li>
                     </ul>
                 </nav>
+                <!-- Desktop-only language switcher -->
+                <div class="desktop-lang-switch">
+                    ${langSwitchHTML}
+                </div>
             </div>
         </header>
     `;

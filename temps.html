@@ -644,7 +644,7 @@
             <div class="weather-dashboard-wrapper" id="weather-dashboard" style="display: none;">
                 
                 <!-- 1. LEFT COLUMN: Current Selected Day Weather Card -->
-                <aside class="weather-sidebar" id="sidebar-card">
+                <aside class="weather-sidebar animate-fade-in-up" id="sidebar-card">
                     <div class="weather-sidebar-icon organic-fade" id="sidebar-icon-container">
                         <i id="sidebar-icon" data-lucide="sun" style="width: 90px; height: 90px;"></i>
                     </div>
@@ -701,7 +701,7 @@
                         
                         <div class="weather-highlights-grid">
                             <!-- 0. HOURLY TEMPERATURE EVOLUTION -->
-                            <div class="weather-highlight-card" style="grid-column: 1 / -1; min-height: 280px; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div class="weather-highlight-card animate-fade-in-up" style="grid-column: 1 / -1; min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; transition-delay: 0.15s;">
                                 <div class="weather-highlight-header" style="margin-bottom: 0.5rem;">
                                     <span class="weather-highlight-title" id="hourly-chart-title">Evolució per hores</span>
                                 </div>
@@ -779,7 +779,7 @@
                                 </div>
                             </div>
                             <!-- 1. UV INDEX -->
-                            <div class="weather-highlight-card">
+                            <div class="weather-highlight-card animate-fade-in-up" style="transition-delay: 0.2s;">
                                 <div class="weather-highlight-header">
                                     <span class="weather-highlight-title">Índex UV</span>
                                 </div>
@@ -795,7 +795,7 @@
                             </div>
 
                             <!-- 2. WIND STATUS -->
-                            <div class="weather-highlight-card">
+                            <div class="weather-highlight-card animate-fade-in-up" style="transition-delay: 0.25s;">
                                 <div class="weather-highlight-header">
                                     <span class="weather-highlight-title">Estat del Vent</span>
                                 </div>
@@ -815,7 +815,7 @@
                             </div>
 
                             <!-- 3. SUNRISE AND SUNSET -->
-                            <div class="weather-highlight-card">
+                            <div class="weather-highlight-card animate-fade-in-up" style="transition-delay: 0.3s;">
                                 <div class="weather-highlight-header">
                                     <span class="weather-highlight-title">Eixida i Posta del Sol</span>
                                 </div>
@@ -842,7 +842,7 @@
                             </div>
 
                             <!-- 4. HUMIDITY -->
-                            <div class="weather-highlight-card">
+                            <div class="weather-highlight-card animate-fade-in-up" style="transition-delay: 0.35s;">
                                 <div class="weather-highlight-header">
                                     <span class="weather-highlight-title">Humitat</span>
                                 </div>
@@ -862,7 +862,7 @@
                             </div>
 
                             <!-- 5. THERMAL SENSATION -->
-                            <div class="weather-highlight-card">
+                            <div class="weather-highlight-card animate-fade-in-up" style="transition-delay: 0.4s;">
                                 <div class="weather-highlight-header">
                                     <span class="weather-highlight-title">Sensació Tèrmica</span>
                                 </div>
@@ -880,7 +880,7 @@
                             </div>
 
                             <!-- 6. PRECIPITATION PROBABILITY -->
-                            <div class="weather-highlight-card">
+                            <div class="weather-highlight-card animate-fade-in-up" style="transition-delay: 0.45s;">
                                 <div class="weather-highlight-header">
                                     <span class="weather-highlight-title">Probabilitat de Pluja</span>
                                 </div>
@@ -900,7 +900,7 @@
                             </div>
 
                             <!-- 7. LIVE RADAR MAP -->
-                            <div class="weather-highlight-card" style="grid-column: 1 / -1; min-height: 480px; display: flex; flex-direction: column; justify-content: flex-start; gap: 1rem;">
+                            <div class="weather-highlight-card animate-fade-in-up" style="grid-column: 1 / -1; min-height: 480px; display: flex; flex-direction: column; justify-content: flex-start; gap: 1rem; transition-delay: 0.5s;">
                                 <div class="weather-highlight-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem;">
                                     <span class="weather-highlight-title" style="display: flex; align-items: center; gap: 0.5rem;">
                                         <i data-lucide="map"></i> <span id="radar-title">Mapa de Precipitació en Directe</span>
@@ -1171,7 +1171,7 @@
                 const minTemp = day.tempMin !== null ? `${day.tempMin}°` : '--';
 
                 return `
-                    <div class="weather-week-card ${idx === selectedDayIndex ? 'active' : ''}" data-idx="${idx}" onclick="updateSelectedDay(${idx})">
+                    <div class="weather-week-card ${idx === selectedDayIndex ? 'active' : ''} animate-fade-in-up" data-idx="${idx}" style="transition-delay: ${idx * 0.05}s;" onclick="updateSelectedDay(${idx})">
                         <span class="weather-week-day">${dayLabel}</span>
                         <i data-lucide="${iconName}" style="width: 28px; height: 28px; color: var(--text-primary);"></i>
                         <div class="weather-week-temp">

@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="timeline-day-group">
                     <h3 class="timeline-date-header">${formatFullDate(dateStr)}</h3>
                     <div class="timeline-events-list">
-                        ${events.map(event => {
+                        ${events.map((event, idx) => {
                             const catColors = colors[event.category] || { bg: '#e4e4e7', text: '#18181b' };
                             const title = isEs && event.title_es ? event.title_es : event.title;
                             const desc = isEs && event.description_es ? event.description_es : event.description;
@@ -120,7 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const escId = window.db.escapeHTML(event.id);
                             const addText = isEs ? "Añadir" : "Afegir";
                             return `
-                                <div class="event-row" data-id="${escId}" style="cursor: pointer;">
+                                <div class="event-row animate-fade-in-up" data-id="${escId}" style="cursor: pointer; transition-delay: ${idx * 0.05}s;">
                                     <div class="event-time">${escTime}</div>
                                     <div class="event-detail">
                                         <h3>${escTitle}</h3>

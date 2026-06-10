@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const escTitle = window.db.escapeHTML(title);
             const escCat = window.db.escapeHTML(cat);
             return `
-                <div class="gallery-item ${sizeClass}" data-index="${index}">
+                <div class="gallery-item ${sizeClass} animate-fade-in-up" data-index="${index}" style="transition-delay: ${index * 0.04}s;">
                     <img src="${escUrl}" alt="${escTitle}" loading="lazy">
                     <div class="gallery-item-overlay">
                         <h4>${escTitle}</h4>

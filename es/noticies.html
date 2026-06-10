@@ -195,7 +195,7 @@
                 const publicNewsList = (newsList || []).filter(item => (item.status || 'published') !== 'draft');
 
                 if (publicNewsList && publicNewsList.length > 0) {
-                    container.innerHTML = publicNewsList.map(item => {
+                    container.innerHTML = publicNewsList.map((item, idx) => {
                         const title = isEs && item.title_es ? item.title_es : item.title;
                         const subtitle = isEs && item.subtitle_es ? item.subtitle_es : item.subtitle;
                         const imageAlt = isEs && item.image_alt_es ? item.image_alt_es : item.image_alt;
@@ -210,7 +210,7 @@
                         const readMoreText = isEs ? 'Leer más' : 'Llegir més';
 
                         return `
-                            <article class="news-card" style="cursor: pointer;" onclick="navigateToNews('${escId}', '${escSlug}')">
+                            <article class="news-card animate-fade-in-up" style="cursor: pointer; transition-delay: ${idx * 0.05}s;" onclick="navigateToNews('${escId}', '${escSlug}')">
                                 <div class="news-img-wrapper">
                                     <img src="${imgSrc}" alt="${escAlt}">
                                 </div>
@@ -333,7 +333,7 @@
                 }
 
                 detailContainer.innerHTML = `
-                    <article class="container" style="padding-top: calc(var(--header-height) + 2rem); padding-bottom: 8rem; max-width: 800px;">
+                    <article class="container animate-fade-in-up" style="padding-top: calc(var(--header-height) + 2rem); padding-bottom: 8rem; max-width: 800px;">
                         <a href="#" style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; margin-bottom: 2rem; color: var(--text-secondary); text-decoration: underline;" onclick="event.preventDefault(); navigateToNews(null)">
                             &larr; ${backToListText}
                         </a>

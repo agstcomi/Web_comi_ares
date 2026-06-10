@@ -161,20 +161,28 @@ section {
    ========================================================================== */
 header.main-header {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: var(--header-height);
-    background-color: rgba(255, 255, 255, 0.9);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-color);
-    z-index: 100;
-    transition: var(--transition);
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 1300px;
+    height: 75px;
+    background-color: rgba(244, 244, 245, 0.85);
+    backdrop-filter: blur(16px) saturate(120%);
+    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    border: 1px solid rgba(228, 228, 231, 0.7);
+    border-radius: 100px;
+    z-index: 1000;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 header.main-header.scrolled {
-    height: 70px;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    top: 10px;
+    height: 68px;
+    background-color: rgba(244, 244, 245, 0.95);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.1);
+    border-color: rgba(228, 228, 231, 1);
 }
 
 header.main-header .container {
@@ -183,52 +191,64 @@ header.main-header .container {
     justify-content: space-between;
     height: 100%;
     max-width: 100%;
-    padding: 0 4rem;
+    padding: 0 2rem 0 2.5rem;
 }
 
 .logo {
-    font-family: var(--font-heading);
-    font-weight: 800;
-    font-size: 1.25rem;
-    letter-spacing: -0.03em;
-    text-transform: uppercase;
+    display: flex;
+    align-items: center;
 }
 
-.logo span {
-    font-weight: 300;
-    color: var(--text-muted);
+.logo img {
+    height: 42px !important;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover img {
+    transform: scale(1.05);
+}
+
+nav.nav-menu {
+    display: flex;
+    align-items: center;
 }
 
 nav.nav-menu ul {
     display: flex;
     list-style: none;
-    gap: 2.5rem;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 nav.nav-menu ul li a {
+    display: inline-block;
     font-family: var(--font-heading);
     font-weight: 700;
     text-transform: uppercase;
-    font-size: 0.8rem;
-    letter-spacing: 0.05em;
-    padding: 0.5rem 0;
+    font-size: 0.78rem;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    padding: 0.55rem 1.1rem;
+    border-radius: 100px;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     position: relative;
+    border: 1px solid transparent;
+}
+
+nav.nav-menu ul li a:hover {
+    color: var(--text-primary);
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+nav.nav-menu ul li a.active {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    border-color: #000000;
 }
 
 nav.nav-menu ul li a::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--text-primary);
-    transition: var(--transition);
-}
-
-nav.nav-menu ul li a:hover::after,
-nav.nav-menu ul li a.active::after {
-    width: 100%;
+    display: none !important;
 }
 
 /* Mobile Nav Toggle */
@@ -239,44 +259,114 @@ nav.nav-menu ul li a.active::after {
     cursor: pointer;
     font-size: 1.5rem;
     padding: 0.5rem;
-    z-index: 101;
+    z-index: 1001;
 }
 
 @media (max-width: 768px) {
-    header.main-header .container {
-        padding: 0 1.5rem;
+    header.main-header {
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: calc(100% - 20px);
+        height: 60px;
+        border-radius: 100px;
     }
-
+    
+    header.main-header .container {
+        position: relative;
+        padding: 0;
+        height: 100%;
+        width: 100%;
+    }
+    
+    .logo {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1001;
+    }
+    
+    .logo img {
+        height: 34px !important;
+    }
+    
     .nav-toggle {
         display: block;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        position: absolute;
+        left: 1.25rem;
+        top: 50%;
+        transform: translateY(-50%);
+        z-index: 1002;
+        color: var(--text-primary);
     }
-
+    
     nav.nav-menu {
         position: fixed;
         top: 0;
-        right: -100%;
-        width: 100%;
+        left: 0;
+        width: 100vw;
         height: 100vh;
-        background-color: var(--bg-primary);
-        z-index: 100;
+        background-color: rgba(0, 0, 0, 0);
+        backdrop-filter: none;
+        border-radius: 0;
+        z-index: 1000;
         display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: var(--transition);
+        justify-content: flex-start;
+        align-items: stretch;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.4s ease, visibility 0.4s ease, background-color 0.4s ease;
     }
-
+    
     nav.nav-menu.active {
-        right: 0;
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+        background-color: rgba(0, 0, 0, 0.55);
     }
-
+    
     nav.nav-menu ul {
         flex-direction: column;
         align-items: center;
-        gap: 2rem;
+        justify-content: center;
+        gap: 1.5rem;
+        width: 75%;
+        max-width: 320px;
+        height: 100%;
+        background-color: var(--bg-primary);
+        padding: 2rem;
+        box-shadow: 5px 0 25px rgba(0, 0, 0, 0.2);
+        transform: translateX(-100%);
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    
+    nav.nav-menu.active ul {
+        transform: translateX(0);
+    }
+    
+    nav.nav-menu ul li {
+        width: 100%;
+        text-align: center;
+    }
+    
+    nav.nav-menu ul li a {
+        font-size: 1.3rem;
+        padding: 0.8rem 2rem;
+        display: inline-block;
+        width: auto;
     }
 
-    nav.nav-menu ul li a {
-        font-size: 1.5rem;
+    nav.nav-menu ul li a.active {
+        background-color: #000000 !important;
+        color: #ffffff !important;
+        border-radius: 100px;
+        padding: 0.6rem 2rem;
     }
 }
 
@@ -1429,9 +1519,10 @@ footer.main-footer {
    Header Transparency on Hero
    ========================================================================== */
 header.main-header.on-hero {
-    background-color: transparent;
-    border-bottom-color: transparent;
-    backdrop-filter: none;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     box-shadow: none;
 }
 
@@ -1448,23 +1539,50 @@ header.main-header.on-hero .nav-toggle {
     header.main-header.on-hero nav.nav-menu ul li a {
         color: #ffffff;
     }
-
-    header.main-header.on-hero nav.nav-menu ul li a::after {
+    header.main-header.on-hero nav.nav-menu ul li a:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+    }
+    header.main-header.on-hero nav.nav-menu ul li a.active {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border-color: #ffffff;
+    }
+    header.main-header.on-hero .desktop-lang-switch a {
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.4);
+    }
+    header.main-header.on-hero .desktop-lang-switch a:hover {
         background-color: #ffffff;
+        color: #000000 !important;
+        border-color: #ffffff;
     }
 }
 
-/* Ensure mobile menu active state forces white background and black icons */
-header.main-header:has(nav.nav-menu.active) {
-    background-color: var(--bg-primary) !important;
-    border-bottom: 1px solid var(--border-color) !important;
-    backdrop-filter: blur(10px) !important;
+/* Desktop Centering Layout */
+@media (min-width: 769px) {
+    header.main-header .container {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        height: 100%;
+        max-width: 100%;
+        padding: 0 2.5rem;
+    }
+    
+    .logo {
+        justify-self: start;
+    }
+    
+    nav.nav-menu {
+        justify-self: center;
+    }
+    
+    .desktop-lang-switch {
+        justify-self: end;
+    }
 }
 
-header.main-header:has(nav.nav-menu.active) .logo img {
-    filter: none !important;
-}
-
+/* Ensure mobile menu active state toggle button turns black over the white drawer */
 header.main-header:has(nav.nav-menu.active) .nav-toggle {
     color: var(--text-primary) !important;
 }
@@ -1809,43 +1927,66 @@ pre,
 }
 
 /* Language Switcher Styling */
-nav.nav-menu ul li.lang-switch {
+.desktop-lang-switch {
     display: flex;
     align-items: center;
 }
-nav.nav-menu ul li.lang-switch a {
-    border: 1px solid var(--border-color);
-    padding: 0.25rem 0.6rem;
-    border-radius: 4px;
+
+.desktop-lang-switch a {
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 0.4rem 0.8rem;
+    border-radius: 100px;
     font-size: 0.75rem;
     font-family: var(--font-heading);
     font-weight: 700;
     transition: var(--transition);
+    color: var(--text-primary);
 }
-nav.nav-menu ul li.lang-switch a::after {
-    display: none;
-}
-nav.nav-menu ul li.lang-switch a:hover {
+
+.desktop-lang-switch a:hover {
     background-color: var(--text-primary);
-    color: var(--bg-primary);
+    color: var(--bg-primary) !important;
     border-color: var(--text-primary);
 }
 
-/* On mobile header / hero header override */
-header.main-header.on-hero nav.nav-menu ul li.lang-switch a {
-    border-color: rgba(255, 255, 255, 0.4);
-    color: #ffffff;
-}
-header.main-header.on-hero nav.nav-menu ul li.lang-switch a:hover {
-    background-color: #ffffff;
-    color: #000000;
-    border-color: #ffffff;
+.mobile-lang-switch {
+    display: none;
 }
 
 @media (max-width: 768px) {
-    nav.nav-menu ul li.lang-switch {
-        justify-content: center;
-        margin-top: 1rem;
+    .desktop-lang-switch {
+        display: none !important;
+    }
+    
+    .mobile-lang-switch {
+        display: block !important;
+        margin-top: 1.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid rgba(0, 0, 0, 0.08);
+        width: 80%;
+        text-align: center;
+    }
+    
+    .mobile-lang-switch a {
+        border: 1.5px solid var(--text-primary);
+        padding: 0.4rem 1rem;
+        border-radius: 100px;
+        font-size: 0.78rem;
+        font-family: var(--font-heading);
+        font-weight: 800;
+        display: inline-block;
+        color: var(--text-primary);
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        background-color: rgba(0, 0, 0, 0.02);
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-lang-switch a:hover,
+    .mobile-lang-switch a:active {
+        background-color: var(--text-primary);
+        color: var(--bg-primary) !important;
+        border-color: var(--text-primary);
     }
 }
 
@@ -1973,4 +2114,50 @@ header.main-header.on-hero nav.nav-menu ul li.lang-switch a:hover {
         margin-left: auto;
     }
 }
+
+/* ==========================================================================
+   Multi-Page View Transitions (SPA-like Native Transitions)
+   ========================================================================== */
+@view-transition {
+    navigation: auto;
+}
+
+/* Define a smooth slide and fade animation when transitioning pages */
+::view-transition-old(root) {
+    animation: 0.35s cubic-bezier(0.16, 1, 0.3, 1) both slide-out;
+}
+::view-transition-new(root) {
+    animation: 0.35s cubic-bezier(0.16, 1, 0.3, 1) both slide-in;
+}
+
+@keyframes slide-out {
+    to {
+        transform: translateX(-30px);
+        opacity: 0;
+    }
+}
+
+@keyframes slide-in {
+    from {
+        transform: translateX(30px);
+        opacity: 0;
+    }
+}
+
+/* ==========================================================================
+   Smooth Entrance & Load Animations (Bottom-to-Top)
+   ========================================================================== */
+.animate-fade-in-up {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: transform, opacity;
+}
+
+.animate-fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
 
