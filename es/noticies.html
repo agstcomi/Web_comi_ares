@@ -1,27 +1,27 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notícies | Comissió de Festes d'Ares del Maestrat</title>
-    <meta name="description" content="Informa't de tots els avisos oficials, novetats, rifes de Nadal i última hora de la Comissió de Festes d'Ares del Maestrat.">
+    <title>Noticias | Comisión de Fiestas de Ares del Maestrat</title>
+    <meta name="description" content="Infórmate de todos los avisos oficiales, novedades, rifas de Navidad y última hora de la Comisión de Fiestas de Ares del Maestrat.">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.comiares.es/noticies.html">
-    <meta property="og:title" content="Notícies | Comissió de Festes d'Ares del Maestrat">
-    <meta property="og:description" content="Informa't de tots els avisos oficials, novetats, rifes de Nadal i última hora de la Comissió de Festes d'Ares del Maestrat.">
+    <meta property="og:url" content="https://www.comiares.es/es/noticies.html">
+    <meta property="og:title" content="Noticias | Comisión de Fiestas de Ares del Maestrat">
+    <meta property="og:description" content="Infórmate de todos los avisos oficiales, novedades, rifas de Navidad y última hora de la Comisión de Fiestas de Ares del Maestrat.">
     <meta property="og:image" content="https://www.comiares.es/img/portada.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.comiares.es/noticies.html">
-    <meta property="twitter:title" content="Notícies | Comissió de Festes d'Ares del Maestrat">
-    <meta property="twitter:description" content="Informa't de tots els avisos oficials, novetats, rifes de Nadal i última hora de la Comissió de Festes d'Ares del Maestrat.">
+    <meta property="twitter:url" content="https://www.comiares.es/es/noticies.html">
+    <meta property="twitter:title" content="Noticias | Comisión de Fiestas de Ares del Maestrat">
+    <meta property="twitter:description" content="Infórmate de todos los avisos oficiales, novedades, rifas de Navidad y última hora de la Comisión de Fiestas de Ares del Maestrat.">
     <meta property="twitter:image" content="https://www.comiares.es/img/portada.jpg">
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/styles.css?v=1.1">
+    <link rel="stylesheet" href="../css/styles.css?v=1.1">
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -35,9 +35,9 @@
     <div id="news-list-view">
         <!-- Intro Header -->
         <div class="page-intro container">
-            <h1>NOTÍCIES</h1>
+            <h1>NOTICIAS</h1>
             <p>
-                Estigues al dia dels comunicats oficials, publicacions, activitats de preparació i avisos d'última hora de la Comissió d'Ares del Maestrat.
+                Mantente al día de los comunicados oficiales, publicaciones, actividades de preparación y avisos de última hora de la Comisión de Ares del Maestrat.
             </p>
         </div>
 
@@ -46,7 +46,7 @@
             <div class="news-grid" id="news-grid-container">
                 <!-- Populated dynamically via JS -->
                 <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
-                    Carregant notícies...
+                    Cargando noticias...
                 </div>
             </div>
         </section>
@@ -62,7 +62,7 @@
         <button class="lightbox-close" id="news-lightbox-close">&times;</button>
         <button class="lightbox-nav lightbox-prev" id="news-lightbox-prev">&#10094;</button>
         <div class="lightbox-content">
-            <img src="" id="news-lightbox-img" alt="Imatge ampliada">
+            <img src="" id="news-lightbox-img" alt="Imagen ampliada">
             <div class="lightbox-caption" id="news-lightbox-caption"></div>
         </div>
         <button class="lightbox-nav lightbox-next" id="news-lightbox-next">&#10095;</button>
@@ -74,8 +74,8 @@
     <!-- Scripts -->
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/db.js"></script>
-    <script src="js/main.js?v=1.1"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/main.js?v=1.1"></script>
     <script>
         let currentGallery = [];
         let currentImgIndex = 0;

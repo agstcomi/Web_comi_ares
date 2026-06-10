@@ -29,8 +29,12 @@ document.addEventListener('DOMContentLoaded', () => {
             initLightboxEvents();
         } catch (error) {
             console.error("Error loading gallery:", error);
+            const isEs = window.location.pathname.includes('/es/');
+            const errorMsg = isEs 
+                ? 'Error al cargar la galería. Reinténtalo más tarde.'
+                : 'Error al carregar la galeria. Reintenta-ho més tard.';
             document.getElementById('gallery-grid').innerHTML = 
-                '<div style="text-align: center; color: red; padding: 2rem;">Error al carregar la galeria. Reintenta-ho més tard.</div>';
+                `<div style="text-align: center; color: red; padding: 2rem;">${errorMsg}</div>`;
         }
     }
 
@@ -38,13 +42,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const categoriesContainer = document.getElementById('gallery-categories');
         if (!categoriesContainer) return;
 
-        // Extract unique categories
+        const isEs = window.location.pathname.includes('/es/');
+
+        // Extract unique categories based on language
         const categories = new Set();
         allPhotos.forEach(photo => {
-            if (photo.category) categories.add(photo.category.trim());
+            const catVal = isEs && photo.category_es ? photo.category_es.trim() : (photo.category ? photo.category.trim() : '');
+            if (catVal) categories.add(catVal);
         });
 
-        let categoriesHTML = '<button class="filter-btn active" data-category="all">Totes</button>';
+        let categoriesHTML = `<button class="filter-btn active" data-category="all">${isEs ? 'Todas' : 'Totes'}</button>`;
         categories.forEach(cat => {
             const safeCat = window.db.escapeHTML(cat);
             categoriesHTML += `<button class="filter-btn" data-category="${safeCat}">${safeCat}</button>`;
@@ -66,10 +73,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function filterPhotos() {
+        const isEs = window.location.pathname.includes('/es/');
         if (currentCategory === 'all') {
             filteredPhotos = [...allPhotos];
         } else {
-            filteredPhotos = allPhotos.filter(p => p.category === currentCategory);
+            filteredPhotos = allPhotos.filter(p => {
+                const catVal = isEs && p.category_es ? p.category_es.trim() : (p.category ? p.category.trim() : '');
+                return catVal === currentCategory;
+            });
         }
         renderPhotos();
     }
@@ -78,10 +89,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const grid = document.getElementById('gallery-grid');
         if (!grid) return;
 
+        const isEs = window.location.pathname.includes('/es/');
+
         if (filteredPhotos.length === 0) {
+            const emptyMsg = isEs
+                ? 'No se ha encontrado ninguna fotografía para esta categoría.'
+                : "No s'ha trobat cap fotografia per a aquesta categoria.";
             grid.innerHTML = `
                 <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
-                    No s'ha trobat cap fotografia per a aquesta categoria.
+                    ${emptyMsg}
                 </div>
             `;
             return;
@@ -89,14 +105,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Render pictures with visual interest (alternating sizes for pseudo-masonry)
         grid.innerHTML = filteredPhotos.map((photo, index) => {
-            // Apply different layouts based on index patterns to create a beautiful structure
             let sizeClass = '';
             if (index % 5 === 0) sizeClass = 'wide';
             else if (index % 5 === 3) sizeClass = 'tall';
 
-            const escUrl = window.db.escapeHTML(photo.image_url);
-            const escTitle = window.db.escapeHTML(photo.title);
-            const escCat = window.db.escapeHTML(photo.category || 'Festes');
+            const title = isEs && photo.title_es ? photo.title_es : photo.title;
+            const cat = isEs && photo.category_es ? photo.category_es : (photo.category || (isEs ? 'Fiestas' : 'Festes'));
+
+            const escUrl = window.db.escapeHTML(window.getAssetPath(photo.image_url));
+            const escTitle = window.db.escapeHTML(title);
+            const escCat = window.db.escapeHTML(cat);
             return `
                 <div class="gallery-item ${sizeClass}" data-index="${index}">
                     <img src="${escUrl}" alt="${escTitle}" loading="lazy">
@@ -125,8 +143,12 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (!photo) return;
 
-        lightboxImg.src = photo.image_url;
-        lightboxCaption.textContent = `${photo.title} — ${photo.category || ''}`;
+        const isEs = window.location.pathname.includes('/es/');
+        const title = isEs && photo.title_es ? photo.title_es : photo.title;
+        const cat = isEs && photo.category_es ? photo.category_es : (photo.category || '');
+
+        lightboxImg.src = window.getAssetPath(photo.image_url);
+        lightboxCaption.textContent = `${title} — ${cat}`;
         
         lightbox.style.display = 'flex';
         setTimeout(() => {
@@ -159,11 +181,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const photo = filteredPhotos[currentPhotoIndex];
         if (!photo) return;
 
+        const isEs = window.location.pathname.includes('/es/');
+        const title = isEs && photo.title_es ? photo.title_es : photo.title;
+        const cat = isEs && photo.category_es ? photo.category_es : (photo.category || '');
+
         // Add a soft fade transition out/in for smooth visuals
         lightboxImg.style.opacity = 0;
         setTimeout(() => {
-            lightboxImg.src = photo.image_url;
-            lightboxCaption.textContent = `${photo.title} — ${photo.category || ''}`;
+            lightboxImg.src = window.getAssetPath(photo.image_url);
+            lightboxCaption.textContent = `${title} — ${cat}`;
             lightboxImg.style.opacity = 1;
         }, 150);
     }

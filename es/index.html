@@ -1,27 +1,27 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Comissió de Festes d'Ares del Maestrat — Web Oficial</title>
-    <meta name="description" content="Benvinguts a la web oficial de la Comissió de Festes d'Ares. Consulta la programació d'actes, les últimes notícies i la galeria fotogràfica de les nostres festes.">
+    <title>Comisión de Fiestas de Ares del Maestrat — Web Oficial</title>
+    <meta name="description" content="Bienvenidos a la web oficial de la Comisión de Fiestas de Ares. Consulta la programación de actos, las últimas noticias y la galería fotográfica de nuestras fiestas.">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.comiares.es/">
-    <meta property="og:title" content="Comissió de Festes d'Ares del Maestrat — Web Oficial">
-    <meta property="og:description" content="Benvinguts a la web oficial de la Comissió de Festes d'Ares. Consulta la programació d'actes, les últimes notícies i la galeria fotogràfica de les nostres festes.">
+    <meta property="og:url" content="https://www.comiares.es/es/">
+    <meta property="og:title" content="Comisión de Fiestas de Ares del Maestrat — Web Oficial">
+    <meta property="og:description" content="Bienvenidos a la web oficial de la Comisión de Fiestas de Ares. Consulta la programación de actos, las últimas noticias y la galería fotográfica de nuestras fiestas.">
     <meta property="og:image" content="https://www.comiares.es/img/portada.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.comiares.es/">
-    <meta property="twitter:title" content="Comissió de Festes d'Ares del Maestrat — Web Oficial">
-    <meta property="twitter:description" content="Benvinguts a la web oficial de la Comissió de Festes d'Ares. Consulta la programació d'actes, les últimes notícies i la galeria fotogràfica de les nostres festes.">
+    <meta property="twitter:url" content="https://www.comiares.es/es/">
+    <meta property="twitter:title" content="Comisión de Fiestas de Ares del Maestrat — Web Oficial">
+    <meta property="twitter:description" content="Bienvenidos a la web oficial de la Comisión de Fiestas de Ares. Consulta la programación de actos, las últimas noticias y la galería fotográfica de nuestras fiestas.">
     <meta property="twitter:image" content="https://www.comiares.es/img/portada.jpg">
     
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="css/styles.css?v=1.1">
+    <link rel="stylesheet" href="../css/styles.css?v=1.1">
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -32,15 +32,15 @@
     <div id="header-placeholder"></div>
 
     <!-- Fullscreen Cover Hero Banner -->
-    <section class="hero" id="hero" style="background-image: url('img/portada.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <section class="hero" id="hero" style="background-image: url('../img/portada.jpg'); background-size: cover; background-position: center; background-repeat: no-repeat;">
         <div class="hero-overlay"></div>
         
         <div class="hero-content">
-            <img src="img/logo_text.png" alt="Logo Comissió" style="height: 140px; width: auto; display: block; margin: 0 auto; filter: brightness(0) invert(1) drop-shadow(0px 4px 10px rgba(0,0,0,0.5)); opacity: 0; transform: translateY(20px); animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
+            <img src="../img/logo_text.png" alt="Logo Comisión" style="height: 140px; width: auto; display: block; margin: 0 auto; filter: brightness(0) invert(1) drop-shadow(0px 4px 10px rgba(0,0,0,0.5)); opacity: 0; transform: translateY(20px); animation: fadeInUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;">
         </div>
 
         <a href="#welcome-section" class="scroll-down-btn" id="scroll-down">
-            <span>Descobreix més</span>
+            <span>Descubre más</span>
             <i data-lucide="chevron-down"></i>
         </a>
     </section>
@@ -49,7 +49,7 @@
     <section id="welcome-section" style="padding: 5rem 0 3rem 0; text-align: center; border-bottom: none;">
         <div class="container" style="max-width: 800px; padding: 0 2rem;">
             <p style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); line-height: 1.8; color: var(--text-primary); font-weight: 300; margin-bottom: 0; font-family: var(--font-body);">
-                Benvinguts a la web oficial de la Comissió de Festes d'Ares. Ací podràs trobar tota la informació sobre les activitats i esdeveniments que l'associació realitza al poble: programació, concursos i molt més.
+                Bienvenidos a la web oficial de la Comisión de Fiestas de Ares. Aquí podrás encontrar toda la información sobre las actividades y eventos que la asociación realiza en el pueblo: programación, concursos y mucho más.
             </p>
         </div>
     </section>
@@ -58,37 +58,37 @@
     <section id="countdown-section" style="padding: 1.5rem 0 3.5rem 0; border-bottom: 1px solid var(--border-color); text-align: center;">
         <div class="container">
             <h2 style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2.5rem; letter-spacing: 0.05em; text-transform: uppercase;">
-                FESTES D'ARES 2026
+                FIESTAS DE ARES 2026
             </h2>
             
             <div class="countdown-wrapper">
                 <div class="countdown-box">
                     <span id="countdown-months">00</span>
-                    <span>Mesos</span>
+                    <span>Meses</span>
                 </div>
                 <div class="countdown-divider">:</div>
                 
                 <div class="countdown-box">
                     <span id="countdown-days">00</span>
-                    <span>Dies</span>
+                    <span>Días</span>
                 </div>
                 <div class="countdown-divider">:</div>
 
                 <div class="countdown-box">
                     <span id="countdown-hours">00</span>
-                    <span>Hores</span>
+                    <span>Horas</span>
                 </div>
                 <div class="countdown-divider">:</div>
                 
                 <div class="countdown-box">
                     <span id="countdown-minutes">00</span>
-                    <span>Minuts</span>
+                    <span>Minutos</span>
                 </div>
                 <div class="countdown-divider">:</div>
                 
                 <div class="countdown-box">
                     <span id="countdown-seconds">00</span>
-                    <span>Segons</span>
+                    <span>Segundos</span>
                 </div>
             </div>
         </div>
@@ -98,14 +98,14 @@
     <section id="noticies">
         <div class="container">
             <div class="section-header-flex">
-                <h2>Últimes Notícies</h2>
-                <p style="margin-bottom: 0;"><a href="quisom.html" style="text-decoration: underline;">Saber més de nosaltres &rarr;</a></p>
+                <h2>Últimas Noticias</h2>
+                <p style="margin-bottom: 0;"><a href="quisom.html" style="text-decoration: underline;">Saber más de nosotros &rarr;</a></p>
             </div>
             
             <div class="news-grid" id="news-container">
                 <!-- News loaded dynamically via JS -->
                 <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
-                    Carregant publicacions...
+                    Cargando publicaciones...
                 </div>
             </div>
         </div>
@@ -115,14 +115,14 @@
     <section style="background-color: var(--bg-secondary);">
         <div class="container">
             <div class="section-header-flex">
-                <h2>Pròxims Actes Destacats</h2>
-                <p style="margin-bottom: 0;"><a href="programacio.html" style="text-decoration: underline;">Veure programa complet &rarr;</a></p>
+                <h2>Próximos Actos Destacados</h2>
+                <p style="margin-bottom: 0;"><a href="programacio.html" style="text-decoration: underline;">Ver programa completo &rarr;</a></p>
             </div>
             
             <div class="news-grid" id="events-highlight-container">
                 <!-- Events loaded dynamically via JS -->
                 <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
-                    Carregant esdeveniments...
+                    Cargando eventos...
                 </div>
             </div>
         </div>
@@ -132,12 +132,12 @@
     <section style="border-bottom: none; text-align: center; padding: 5rem 0;">
         <div class="container" style="max-width: 800px; padding: 0 2rem;">
             <h2 style="font-size: clamp(2rem, 5vw, 3.5rem); margin: 0 auto 2rem auto;">
-                VOLS SABER QUÈ FEM AL POBLE?
+                ¿QUIERES SABER QUÉ HACEMOS EN EL PUEBLO?
             </h2>
             <p style="max-width: 600px; margin: 0 auto 3rem auto; font-size: 1.1rem;">
-                Tradició, música, germanor i cultura al cor del Maestrat. Estigues al dia de tots els actes organitzats per la Comissió.
+                Tradición, música, hermandad y cultura en el corazón del Maestrat. Estate al día de todos los actos organizados por la Comisión.
             </p>
-            <a href="programacio.html" class="btn">CONSULTA LA PROGRAMACIÓ</a>
+            <a href="programacio.html" class="btn">CONSULTA LA PROGRAMACIÓN</a>
         </div>
     </section>
 
@@ -147,8 +147,8 @@
     <!-- Scripts -->
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/db.js"></script>
-    <script src="js/main.js?v=1.1"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/main.js?v=1.1"></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             // Wait for DB to be initialized
@@ -230,28 +230,38 @@
                 
                 if (publicNewsList && publicNewsList.length > 0) {
                     newsContainer.innerHTML = publicNewsList.slice(0, 3).map(item => {
-                        const plainContent = stripHTML(item.content);
-                        const excerpt = item.subtitle || (plainContent.length > 100 ? plainContent.substring(0, 100) + '...' : plainContent);
-                        const escTitle = window.db.escapeHTML(item.title);
+                        const title = item.title_es || item.title;
+                        const subtitle = item.subtitle_es || item.subtitle;
+                        const content = item.content_es || item.content;
+                        const plainContent = stripHTML(content);
+                        const excerpt = subtitle || (plainContent.length > 100 ? plainContent.substring(0, 100) + '...' : plainContent);
+                        
+                        const escTitle = window.db.escapeHTML(title);
                         const escExcerpt = window.db.escapeHTML(excerpt);
-                        const escAlt = item.image_alt ? window.db.escapeHTML(item.image_alt) : escTitle;
-                        const articleUrl = item.slug ? `noticies.html?slug=${item.slug}` : `noticies.html?id=${item.id}`;
+                        const imageAlt = item.image_alt_es || item.image_alt;
+                        const escAlt = imageAlt ? window.db.escapeHTML(imageAlt) : escTitle;
+                        
+                        // In Spanish version, dynamic news slugs are slug_es or slug
+                        const activeSlug = item.slug_es || item.slug;
+                        const articleUrl = activeSlug ? `noticies.html?slug=${activeSlug}` : `noticies.html?id=${item.id}`;
+                        const imgSrc = window.getAssetPath(item.image_url) || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800';
+                        
                         return `
                             <article class="news-card" style="cursor: pointer;" onclick="window.location.href='${articleUrl}'">
                                 <div class="news-img-wrapper">
-                                    <img src="${item.image_url || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800'}" alt="${escAlt}">
+                                    <img src="${imgSrc}" alt="${escAlt}">
                                 </div>
                                 <div class="news-info">
                                     <span class="news-date">${formatNewsDate(item.created_at)}</span>
                                     <h3 class="news-title" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">${escTitle}</h3>
                                     <p class="news-excerpt" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; font-size: 0.9rem;">${escExcerpt}</p>
-                                    <a href="${articleUrl}" class="news-more" style="margin-top: auto;">Llegir més <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i></a>
+                                    <a href="${articleUrl}" class="news-more" style="margin-top: auto;">Leer más <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i></a>
                                 </div>
                             </article>
                         `;
                     }).join('');
                 } else {
-                    newsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">No hi ha notícies publicades actualment.</div>';
+                    newsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">No hay noticias publicadas actualmente.</div>';
                 }
 
                 // Load Events (Max 3 upcoming)
@@ -260,17 +270,22 @@
                 const colors = window.db.getCategoryColors();
 
                 if (eventsList && eventsList.length > 0) {
-                    // Filter upcoming events (or just show the first 3 if none are future)
                     const today = new Date().toISOString().split('T')[0];
                     let upcoming = eventsList.filter(e => e.date >= today);
                     if (upcoming.length === 0) upcoming = eventsList; // fallback to all if none in future
 
                     eventsContainer.innerHTML = upcoming.slice(0, 3).map(item => {
                         const catColors = colors[item.category] || { bg: '#e4e4e7', text: '#18181b' };
-                        const escTitle = window.db.escapeHTML(item.title);
-                        const escDesc = window.db.escapeHTML(item.description);
-                        const escLoc = window.db.escapeHTML(item.location);
-                        const escCat = window.db.escapeHTML(window.getCategoryName(item.category));
+                        const title = item.title_es || item.title;
+                        const desc = item.description_es || item.description;
+                        const loc = item.location_es || item.location;
+                        
+                        const escTitle = window.db.escapeHTML(title);
+                        const escDesc = window.db.escapeHTML(desc);
+                        const escLoc = window.db.escapeHTML(loc);
+                        const categoryLabel = window.getCategoryName(item.category);
+                        const escCat = window.db.escapeHTML(categoryLabel);
+                        
                         return `
                             <article class="news-card" style="cursor: pointer;" onclick="window.location.href='programacio.html'">
                                 <div class="news-info" style="border-top: 4px solid ${catColors.bg};">
@@ -291,7 +306,7 @@
                         `;
                     }).join('');
                 } else {
-                    eventsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">No hi ha esdeveniments programats.</div>';
+                    eventsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">No hay eventos programados.</div>';
                 }
 
                 // Refresh Lucide icons loaded dynamically
@@ -306,14 +321,14 @@
         function formatDate(dateStr) {
             const options = { day: 'numeric', month: 'short' };
             const date = new Date(dateStr);
-            return date.toLocaleDateString('ca-ES', options).toUpperCase();
+            return date.toLocaleDateString('es-ES', options).toUpperCase();
         }
 
         function formatNewsDate(dateStr) {
             if (!dateStr) return '';
             const options = { day: 'numeric', month: 'long', year: 'numeric' };
             const date = new Date(dateStr);
-            return date.toLocaleDateString('ca-ES', options);
+            return date.toLocaleDateString('es-ES', options);
         }
 
         function stripHTML(html) {

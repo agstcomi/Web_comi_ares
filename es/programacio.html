@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programación de Actos | Comisión de Fiestas de Ares del Maestrat</title>
+    <meta name="description" content="Consulta el programa oficial de actos de las Fiestas de Ares 2026: pasacalles, comidas populares, orquestas, actividades infantiles y mucho más.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.comiares.es/es/programacio.html">
+    <meta property="og:title" content="Programación de Actos | Comisión de Fiestas de Ares del Maestrat">
+    <meta property="og:description" content="Consulta el programa oficial de actos de las Fiestas de Ares 2026: pasacalles, comidas populares, orquestas, actividades infantiles y mucho más.">
+    <meta property="og:image" content="https://www.comiares.es/img/portada.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.comiares.es/es/programacio.html">
+    <meta property="twitter:title" content="Programación de Actos | Comisión de Fiestas de Ares del Maestrat">
+    <meta property="twitter:description" content="Consulta el programa oficial de actos de las Fiestas de Ares 2026: pasacalles, comidas populares, orquestas, actividades infantiles y mucho más.">
+    <meta property="twitter:image" content="https://www.comiares.es/img/portada.jpg">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/styles.css?v=1.1">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Dynamic Navbar Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Intro Header -->
+    <div class="page-intro container">
+        <h1>PROGRAMACIÓN</h1>
+        <p>
+            No te pierdas ninguna de las actividades programadas para las próximas fiestas. Filtra por categorías, busca los actos que más te interesen y vive el Maestrat al máximo.
+        </p>
+    </div>
+
+    <!-- Filter and Search Bar -->
+    <section style="border-bottom: none;">
+        <div class="container" style="padding-top: 1rem; padding-bottom: 5rem;">
+            <div class="filter-bar">
+                <div class="filter-categories" id="categories-container">
+                    <button class="filter-btn active" data-category="all">Todos los actos</button>
+                    <button class="filter-btn" data-category="musica">Música</button>
+                    <button class="filter-btn" data-category="cultura">Cultura</button>
+                    <button class="filter-btn" data-category="menjars">Comidas</button>
+                    <button class="filter-btn" data-category="populars">Populares</button>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: center; flex-wrap: wrap;">
+                    <div class="search-box">
+                        <i data-lucide="search" style="width: 16px; height: 16px;"></i>
+                        <input type="text" id="search-input" placeholder="Buscar acto, lugar...">
+                    </div>
+
+                    <button class="btn btn-sm btn-secondary" id="btn-download-full-calendar" style="padding: 0.5rem 1rem; font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem; height: 38px;">
+                        <i data-lucide="calendar-plus" style="width: 14px; height: 14px;"></i>
+                        <span>Exportar Calendario</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Timeline for Events -->
+            <div class="events-timeline" id="events-timeline">
+                <!-- Dynamic events loaded by programacio.js -->
+                <div style="text-align: center; padding: 4rem; color: var(--text-muted);">
+                    Cargando programa de actos...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Event Detail Modal -->
+    <div id="event-detail-modal" class="event-modal-overlay">
+        <div class="event-modal-card">
+            <button class="event-modal-close-btn" id="event-detail-close">&times;</button>
+            <div id="event-detail-modal-body"></div>
+        </div>
+    </div>
+
+    <!-- Dynamic Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/main.js?v=1.1"></script>
+    <script src="../js/programacio.js"></script>
+</body>
+</html>

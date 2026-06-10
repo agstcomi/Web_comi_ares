@@ -283,6 +283,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('event-description').value = item.description || '';
                     document.getElementById('event-long-description').value = item.long_description || '';
                     document.getElementById('event-image').value = item.image_url || '';
+                    
+                    // Spanish fields
+                    document.getElementById('event-title-es').value = item.title_es || '';
+                    document.getElementById('event-location-es').value = item.location_es || '';
+                    document.getElementById('event-description-es').value = item.description_es || '';
+                    document.getElementById('event-long-description-es').value = item.long_description_es || '';
+
                     document.getElementById('event-modal-title').textContent = 'Editar Acte';
                     modalEvent.classList.add('active');
                 }
@@ -403,7 +410,9 @@ document.addEventListener('DOMContentLoaded', () => {
         btnNewPhoto.addEventListener('click', () => {
             formPhoto.reset();
             const newCategoryGroup = document.getElementById('new-category-group');
+            const newCategoryGroupEs = document.getElementById('new-category-group-es');
             if (newCategoryGroup) newCategoryGroup.style.display = 'none';
+            if (newCategoryGroupEs) newCategoryGroupEs.style.display = 'none';
             modalPhoto.classList.add('active');
         });
     }
@@ -411,19 +420,27 @@ document.addEventListener('DOMContentLoaded', () => {
     // Bind event listeners for dropdown category assignment and category filter
     const selectCategory = document.getElementById('photo-category-select');
     const newCategoryGroup = document.getElementById('new-category-group');
+    const newCategoryGroupEs = document.getElementById('new-category-group-es');
     const inputNewCategory = document.getElementById('photo-category-new');
+    const inputNewCategoryEs = document.getElementById('photo-category-new-es');
     
     if (selectCategory) {
         selectCategory.addEventListener('change', () => {
             if (selectCategory.value === '__new__') {
                 if (newCategoryGroup) newCategoryGroup.style.display = 'block';
+                if (newCategoryGroupEs) newCategoryGroupEs.style.display = 'block';
                 if (inputNewCategory) {
                     inputNewCategory.required = true;
                     inputNewCategory.focus();
                 }
+                if (inputNewCategoryEs) {
+                    inputNewCategoryEs.required = true;
+                }
             } else {
                 if (newCategoryGroup) newCategoryGroup.style.display = 'none';
+                if (newCategoryGroupEs) newCategoryGroupEs.style.display = 'none';
                 if (inputNewCategory) inputNewCategory.required = false;
+                if (inputNewCategoryEs) inputNewCategoryEs.required = false;
             }
         });
     }
@@ -454,6 +471,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const category = document.getElementById('event-category').value;
                 const description = document.getElementById('event-description').value;
                 const long_description = document.getElementById('event-long-description').value;
+
+                // Spanish fields
+                const title_es = document.getElementById('event-title-es').value;
+                const location_es = document.getElementById('event-location-es').value;
+                const description_es = document.getElementById('event-description-es').value;
+                const long_description_es = document.getElementById('event-long-description-es').value;
                 
                 const fileInput = document.getElementById('event-image-file');
                 let image_url = document.getElementById('event-image').value.trim();
@@ -462,7 +485,20 @@ document.addEventListener('DOMContentLoaded', () => {
                     image_url = await window.db.uploadImage(fileInput.files[0]);
                 }
 
-                const eventData = { title, date, time, location, category, description, long_description, image_url };
+                const eventData = { 
+                    title, 
+                    date, 
+                    time, 
+                    location, 
+                    category, 
+                    description, 
+                    long_description, 
+                    image_url,
+                    title_es,
+                    location_es,
+                    description_es,
+                    long_description_es
+                };
 
                 if (id) {
                     await window.db.editEvent(id, eventData);
@@ -526,7 +562,34 @@ document.addEventListener('DOMContentLoaded', () => {
                             photoTitle = file.name.split('.').slice(0, -1).join('.') || `Foto ${Date.now()}`;
                         }
 
-                        await window.db.addPhoto({ title: photoTitle, image_url: fileUrl, category });
+                        // Spanish photo title (we can append number just like Valencian)
+                        const title_es_val = document.getElementById('photo-title-es').value.trim();
+                        let photoTitleEs = title_es_val;
+                        if (files.length > 1) {
+                            if (photoTitleEs) {
+                                photoTitleEs = `${photoTitleEs} (${i + 1})`;
+                            } else {
+                                photoTitleEs = photoTitle; // Fallback to Valencian title
+                            }
+                        } else if (!photoTitleEs) {
+                            photoTitleEs = photoTitle;
+                        }
+
+                        // Spanish Category (if category is custom new category)
+                        let category_es = category;
+                        const selectCategory = document.getElementById('photo-category-select');
+                        const inputNewCategoryEs = document.getElementById('photo-category-new-es');
+                        if (selectCategory.value === '__new__' && inputNewCategoryEs) {
+                            category_es = inputNewCategoryEs.value.trim() || category;
+                        }
+
+                        await window.db.addPhoto({ 
+                            title: photoTitle, 
+                            title_es: photoTitleEs,
+                            image_url: fileUrl, 
+                            category,
+                            category_es
+                        });
                     }
                 } else {
                     // Single upload via URL
@@ -539,12 +602,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     
                     let photoTitle = titleInput || `Foto URL ${Date.now()}`;
-                    await window.db.addPhoto({ title: photoTitle, image_url, category });
+                    const title_es_val = document.getElementById('photo-title-es').value.trim();
+                    let photoTitleEs = title_es_val || photoTitle;
+
+                    let category_es = category;
+                    const selectCategory = document.getElementById('photo-category-select');
+                    const inputNewCategoryEs = document.getElementById('photo-category-new-es');
+                    if (selectCategory.value === '__new__' && inputNewCategoryEs) {
+                        category_es = inputNewCategoryEs.value.trim() || category;
+                    }
+
+                    await window.db.addPhoto({ 
+                        title: photoTitle, 
+                        title_es: photoTitleEs,
+                        image_url, 
+                        category,
+                        category_es
+                    });
                 }
                 
                 modalPhoto.classList.remove('active');
                 formPhoto.reset();
+                const newCategoryGroup = document.getElementById('new-category-group');
+                const newCategoryGroupEs = document.getElementById('new-category-group-es');
                 if (newCategoryGroup) newCategoryGroup.style.display = 'none';
+                if (newCategoryGroupEs) newCategoryGroupEs.style.display = 'none';
                 loadPhotosTable();
             } catch (err) {
                 console.error("Error adding photo:", err);

@@ -33,8 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const downloadCalBtn = document.getElementById('btn-download-full-calendar');
             if (downloadCalBtn) {
                 downloadCalBtn.addEventListener('click', () => {
+                    const isEs = window.location.pathname.includes('/es/');
                     if (activeFilteredEvents.length === 0) {
-                        alert("No hi ha actes per exportar.");
+                        const alertMsg = isEs ? "No hay actos para exportar." : "No hi ha actes per exportar.";
+                        alert(alertMsg);
                         return;
                     }
                     downloadICS(activeFilteredEvents, 'programa-festes-ares.ics');
@@ -42,8 +44,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         } catch (error) {
             console.error("Error initializing programacio:", error);
+            const isEs = window.location.pathname.includes('/es/');
+            const errorMsg = isEs 
+                ? 'Error al cargar los actos. Reinténtalo más tarde.'
+                : 'Error al carregar els actes. Reintenta-ho més tard.';
             document.getElementById('events-timeline').innerHTML = 
-                '<div style="text-align: center; color: red; padding: 2rem;">Error al carregar els actes. Reintenta-ho més tard.</div>';
+                `<div style="text-align: center; color: red; padding: 2rem;">${errorMsg}</div>`;
         }
     }
 
@@ -52,21 +58,29 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!timeline) return;
 
         const colors = window.db.getCategoryColors();
+        const isEs = window.location.pathname.includes('/es/');
 
         // Filter events
         activeFilteredEvents = allEvents.filter(e => {
+            const title = isEs && e.title_es ? e.title_es : e.title;
+            const desc = isEs && e.description_es ? e.description_es : e.description;
+            const loc = isEs && e.location_es ? e.location_es : e.location;
+
             const matchesCategory = currentCategory === 'all' || e.category === currentCategory;
-            const matchesSearch = (e.title || '').toLowerCase().includes(searchQuery) || 
-                                  (e.description || '').toLowerCase().includes(searchQuery) ||
-                                  (e.location || '').toLowerCase().includes(searchQuery);
+            const matchesSearch = (title || '').toLowerCase().includes(searchQuery) || 
+                                  (desc || '').toLowerCase().includes(searchQuery) ||
+                                  (loc || '').toLowerCase().includes(searchQuery);
             return matchesCategory && matchesSearch;
         });
 
         if (activeFilteredEvents.length === 0) {
+            const emptyText = isEs 
+                ? 'No se ha encontrado ningún acto que coincida con los criterios de búsqueda.'
+                : "No s'ha trobat cap acte que coincidisca amb els criteris de cerca.";
             timeline.innerHTML = `
                 <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
                     <i data-lucide="calendar-x" style="width: 48px; height: 48px; margin-bottom: 1rem; color: var(--text-muted);"></i>
-                    <p>No s'ha trobat cap acte que coincidisca amb els criteris de cerca.</p>
+                    <p>${emptyText}</p>
                 </div>
             `;
             if (window.lucide) window.lucide.createIcons();
@@ -94,12 +108,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div class="timeline-events-list">
                         ${events.map(event => {
                             const catColors = colors[event.category] || { bg: '#e4e4e7', text: '#18181b' };
-                            const escTitle = window.db.escapeHTML(event.title);
+                            const title = isEs && event.title_es ? event.title_es : event.title;
+                            const desc = isEs && event.description_es ? event.description_es : event.description;
+                            const loc = isEs && event.location_es ? event.location_es : event.location;
+
+                            const escTitle = window.db.escapeHTML(title);
                             const escTime = window.db.escapeHTML(event.time);
-                            const escDesc = window.db.escapeHTML(event.description || '');
-                            const escLoc = window.db.escapeHTML(event.location || '');
-                            const escCat = window.db.escapeHTML(event.category || '');
+                            const escDesc = window.db.escapeHTML(desc || '');
+                            const escLoc = window.db.escapeHTML(loc || '');
+                            const escCat = window.db.escapeHTML(window.getCategoryName(event.category));
                             const escId = window.db.escapeHTML(event.id);
+                            const addText = isEs ? "Añadir" : "Afegir";
                             return `
                                 <div class="event-row" data-id="${escId}" style="cursor: pointer;">
                                     <div class="event-time">${escTime}</div>
@@ -115,7 +134,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                         <span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text};">${escCat}</span>
                                         <button class="btn btn-sm btn-secondary btn-add-cal" data-id="${escId}" style="padding: 0.35rem 0.6rem; font-size: 0.65rem; display: flex; align-items: center; gap: 0.25rem;">
                                             <i data-lucide="calendar-plus" style="width: 12px; height: 12px;"></i>
-                                            <span>Afegir</span>
+                                            <span>${addText}</span>
                                         </button>
                                     </div>
                                 </div>
@@ -162,7 +181,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function downloadICS(events, filename) {
         let icsContent = "BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//Comissio de Festes d Ares//NONSGML//CA\r\nCALSCALE:GREGORIAN\r\n";
-        
+        const isEs = window.location.pathname.includes('/es/');
+
         events.forEach(e => {
             // Parse date
             const dateParts = e.date.split('-');
@@ -189,15 +209,19 @@ document.addEventListener('DOMContentLoaded', () => {
             
             const endTimeStr = String(endHour).padStart(2, '0') + String(minute).padStart(2, '0') + '00';
             const dtEnd = `${endDateStr}T${endTimeStr}`;
+
+            const title = isEs && e.title_es ? e.title_es : e.title;
+            const desc = isEs && e.description_es ? e.description_es : e.description;
+            const loc = isEs && e.location_es ? e.location_es : e.location;
             
             icsContent += "BEGIN:VEVENT\r\n";
             icsContent += `UID:${e.id}@comissiodefestesares.cat\r\n`;
             icsContent += `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z\r\n`;
             icsContent += `DTSTART;TZID=Europe/Madrid:${dtStart}\r\n`;
             icsContent += `DTEND;TZID=Europe/Madrid:${dtEnd}\r\n`;
-            icsContent += `SUMMARY:${e.title.replace(/,/g, '\\,')}\r\n`;
-            icsContent += `DESCRIPTION:${e.description.replace(/,/g, '\\,')}\r\n`;
-            icsContent += `LOCATION:${e.location.replace(/,/g, '\\,')}\r\n`;
+            icsContent += `SUMMARY:${title.replace(/,/g, '\\,')}\r\n`;
+            icsContent += `DESCRIPTION:${desc.replace(/,/g, '\\,')}\r\n`;
+            icsContent += `LOCATION:${loc.replace(/,/g, '\\,')}\r\n`;
             icsContent += "END:VEVENT\r\n";
         });
         
@@ -218,19 +242,36 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function formatFullDate(dateStr) {
-        const days = ['Diumenge', 'Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte'];
-        const months = [
-            'de Gener', 'de Febrer', 'de Març', 'd\'Abril', 'de Maig', 'de Juny', 
-            'de Juliol', 'd\'Agost', 'de Setembre', 'd\'Octubre', 'de Novembre', 'de Desembre'
-        ];
-        
-        const date = new Date(dateStr);
-        const dayOfWeek = days[date.getDay()];
-        const dayOfMonth = date.getDate();
-        const monthName = months[date.getMonth()];
-        const year = date.getFullYear();
+        const isEs = window.location.pathname.includes('/es/');
+        if (isEs) {
+            const days = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const months = [
+                'de Enero', 'de Febrero', 'de Marzo', 'de Abril', 'de Mayo', 'de Junio', 
+                'de Julio', 'de Agosto', 'de Septiembre', 'de Octubre', 'de Noviembre', 'de Diciembre'
+            ];
+            
+            const date = new Date(dateStr);
+            const dayOfWeek = days[date.getDay()];
+            const dayOfMonth = date.getDate();
+            const monthName = months[date.getMonth()];
+            const year = date.getFullYear();
 
-        return `${dayOfWeek}, ${dayOfMonth} ${monthName} ${year}`;
+            return `${dayOfWeek}, ${dayOfMonth} ${monthName} ${year}`;
+        } else {
+            const days = ['Diumenge', 'Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte'];
+            const months = [
+                'de Gener', 'de Febrer', 'de Març', 'd\'Abril', 'de Maig', 'de Juny', 
+                'de Juliol', 'd\'Agost', 'de Setembre', 'd\'Octubre', 'de Novembre', 'de Desembre'
+            ];
+            
+            const date = new Date(dateStr);
+            const dayOfWeek = days[date.getDay()];
+            const dayOfMonth = date.getDate();
+            const monthName = months[date.getMonth()];
+            const year = date.getFullYear();
+
+            return `${dayOfWeek}, ${dayOfMonth} ${monthName} ${year}`;
+        }
     }
 
     function renderCategoryFilters() {
@@ -238,9 +279,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!container) return;
 
         const colors = window.db.getCategoryColors();
-        let html = '<button class="filter-btn active" data-category="all">Tots els actes</button>';
+        const isEs = window.location.pathname.includes('/es/');
+        const allBtnText = isEs ? 'Todos los actos' : 'Tots els actes';
+        
+        let html = `<button class="filter-btn active" data-category="all">${allBtnText}</button>`;
         Object.keys(colors).forEach(cat => {
-            const displayName = cat.charAt(0).toUpperCase() + cat.slice(1);
+            const displayName = window.getCategoryName(cat);
             const safeCat = window.db.escapeHTML(cat);
             const safeDisplayName = window.db.escapeHTML(displayName);
             html += `<button class="filter-btn" data-category="${safeCat}">${safeDisplayName}</button>`;
@@ -266,18 +310,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const colors = window.db.getCategoryColors();
         const catColors = colors[event.category] || { bg: '#e4e4e7', text: '#18181b' };
+        const isEs = window.location.pathname.includes('/es/');
 
-        const escTitle = window.db.escapeHTML(event.title);
+        const title = isEs && event.title_es ? event.title_es : event.title;
+        const desc = isEs && event.description_es ? event.description_es : event.description;
+        const longDesc = isEs && event.long_description_es ? event.long_description_es : event.long_description;
+        const loc = isEs && event.location_es ? event.location_es : event.location;
+
+        const escTitle = window.db.escapeHTML(title);
         const escTime = window.db.escapeHTML(event.time);
         const escDate = formatFullDate(event.date);
-        const escDesc = window.db.escapeHTML(event.description || '');
-        const sanitizedLongDesc = window.db.sanitizeHTML(event.long_description || '');
-        const escLoc = window.db.escapeHTML(event.location || '');
-        const escCat = window.db.escapeHTML(event.category || '');
+        const escDesc = window.db.escapeHTML(desc || '');
+        const sanitizedLongDesc = window.db.sanitizeHTML(longDesc || '');
+        const escLoc = window.db.escapeHTML(loc || '');
+        const escCat = window.db.escapeHTML(window.getCategoryName(event.category));
 
         let imageHTML = '';
         if (event.image_url) {
-            const escImg = window.db.escapeHTML(event.image_url);
+            const escImg = window.db.escapeHTML(window.getAssetPath(event.image_url));
             imageHTML = `
                 <div class="event-modal-img-wrapper" style="width: 100%; margin-bottom: 1.5rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
                     <img src="${escImg}" alt="${escTitle}" style="width: 100%; height: auto; display: block; max-height: 320px; object-fit: cover;">

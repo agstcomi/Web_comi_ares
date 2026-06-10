@@ -335,8 +335,12 @@ CREATE TABLE photos (
             <form id="form-event">
                 <input type="hidden" id="event-id">
                 <div class="form-group">
-                    <label for="event-title">Nom de l'acte</label>
+                    <label for="event-title">Nom de l'acte (Valencià)</label>
                     <input type="text" id="event-title" required placeholder="Ex. Orquestra Centauro">
+                </div>
+                <div class="form-group">
+                    <label for="event-title-es">Nombre del acto (Castellano)</label>
+                    <input type="text" id="event-title-es" placeholder="Ej. Orquesta Centauro">
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
@@ -351,8 +355,12 @@ CREATE TABLE photos (
                 </div>
 
                 <div class="form-group">
-                    <label for="event-location">Localització</label>
+                    <label for="event-location">Localització (Valencià)</label>
                     <input type="text" id="event-location" required placeholder="Ex. Plaça Major o Poliesportiu">
+                </div>
+                <div class="form-group">
+                    <label for="event-location-es">Localización (Castellano)</label>
+                    <input type="text" id="event-location-es" placeholder="Ej. Plaza Mayor o Polideportivo">
                 </div>
 
                 <div class="form-group">
@@ -373,13 +381,21 @@ CREATE TABLE photos (
                 </div>
 
                 <div class="form-group">
-                    <label for="event-description">Descripció o resum curt</label>
+                    <label for="event-description">Descripció o resum curt (Valencià)</label>
                     <textarea id="event-description" rows="2" required placeholder="Resum curt de l'acte per al llistat públic..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="event-description-es">Descripción o resumen corto (Castellano)</label>
+                    <textarea id="event-description-es" rows="2" placeholder="Resumen corto del acto para el listado público..."></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="event-long-description">Informació ampliada o detallada (Opcional, accepta text enriquit/HTML)</label>
-                    <textarea id="event-long-description" rows="5" placeholder="Escriu informació addicional: detalls dels premis del concurs, orquestres teloneres, preu de tiquets si escau, etc..."></textarea>
+                    <label for="event-long-description">Informació ampliada o detallada (Valencià - Opcional, accepta text enriquit/HTML)</label>
+                    <textarea id="event-long-description" rows="3" placeholder="Escriu informació addicional: detalls dels premis, orquestres, etc..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="event-long-description-es">Información ampliada o detallada (Castellano - Opcional, acepta texto enriquecido/HTML)</label>
+                    <textarea id="event-long-description-es" rows="3" placeholder="Escribe información adicional: detalles de los premios, orquestas, etc..."></textarea>
                 </div>
                 
                 <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">
@@ -398,8 +414,12 @@ CREATE TABLE photos (
             </div>
             <form id="form-photo">
                 <div class="form-group">
-                    <label for="photo-title">Títol de la fotografia (Opcional si puja diversos fitxers)</label>
+                    <label for="photo-title">Títol de la fotografia (Valencià - Opcional si puja diversos fitxers)</label>
                     <input type="text" id="photo-title" placeholder="Ex. Cercavila d'inici de Festes">
+                </div>
+                <div class="form-group">
+                    <label for="photo-title-es">Título de la fotografía (Castellano - Opcional)</label>
+                    <input type="text" id="photo-title-es" placeholder="Ej. Pasacalles de inicio de Fiestas">
                 </div>
                 
                 <div class="form-group">
@@ -420,8 +440,12 @@ CREATE TABLE photos (
                 </div>
 
                 <div class="form-group" id="new-category-group" style="display: none;">
-                    <label for="photo-category-new">Nom de la nova categoria</label>
+                    <label for="photo-category-new">Nom de la nova categoria (Valencià)</label>
                     <input type="text" id="photo-category-new" placeholder="Ex. Festes 2026">
+                </div>
+                <div class="form-group" id="new-category-group-es" style="display: none;">
+                    <label for="photo-category-new-es">Nombre de la nueva categoría (Castellano)</label>
+                    <input type="text" id="photo-category-new-es" placeholder="Ej. Fiestas 2026">
                 </div>
 
                 <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">

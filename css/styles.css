@@ -1782,3 +1782,44 @@ pre,
     transform: translateY(-2px);
 }
 
+/* Language Switcher Styling */
+nav.nav-menu ul li.lang-switch {
+    display: flex;
+    align-items: center;
+}
+nav.nav-menu ul li.lang-switch a {
+    border: 1px solid var(--border-color);
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    transition: var(--transition);
+}
+nav.nav-menu ul li.lang-switch a::after {
+    display: none;
+}
+nav.nav-menu ul li.lang-switch a:hover {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+    border-color: var(--text-primary);
+}
+
+/* On mobile header / hero header override */
+header.main-header.on-hero nav.nav-menu ul li.lang-switch a {
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+}
+header.main-header.on-hero nav.nav-menu ul li.lang-switch a:hover {
+    background-color: #ffffff;
+    color: #000000;
+    border-color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    nav.nav-menu ul li.lang-switch {
+        justify-content: center;
+        margin-top: 1rem;
+    }
+}
+

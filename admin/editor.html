@@ -60,23 +60,113 @@
             <form id="form-editor-news">
                 <input type="hidden" id="news-id">
                 
-                <div class="form-group">
-                    <label for="news-title">Títol de la notícia</label>
-                    <input type="text" id="news-title" required placeholder="Ex. Ja tenim el programa a la venda" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1.25rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-secondary);">
-                </div>
-                
-                <div class="form-group">
-                    <label for="news-subtitle">Subtítol o Resum Curt</label>
-                    <input type="text" id="news-subtitle" placeholder="Ex. Sorteig especial el 22 de desembre" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                <!-- Pestanyes de llenguatge -->
+                <div class="lang-tabs" style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                    <button type="button" class="lang-tab-btn active" data-lang="ca" style="padding: 0.5rem 1rem; font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; background: none; border: none; cursor: pointer; color: var(--text-primary); border-bottom: 2px solid var(--text-primary); margin-bottom: -1.2rem; transition: var(--transition); outline: none;">Valencià</button>
+                    <button type="button" class="lang-tab-btn" data-lang="es" style="padding: 0.5rem 1rem; font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; background: none; border: none; cursor: pointer; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1.2rem; transition: var(--transition); outline: none;">Castellano</button>
                 </div>
 
-                <div class="form-group">
-                    <label for="news-slug">Slug (URL amigable per a SEO)</label>
-                    <input type="text" id="news-slug" required placeholder="Ex. ja-tenim-el-programa-a-la-venda" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
-                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 300; display: block; margin-top: 0.25rem;">La URL serà: <code>noticies.html?slug=el-teu-slug</code>. S'autogenera des del títol, però pots personalitzar-lo.</span>
+                <!-- Grup Valencià -->
+                <div class="lang-group lang-ca-group">
+                    <div class="form-group">
+                        <label for="news-title">Títol de la notícia (Valencià)</label>
+                        <input type="text" id="news-title" required placeholder="Ex. Ja tenim el programa a la venda" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1.25rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-secondary);">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="news-subtitle">Subtítol o Resum Curt (Valencià)</label>
+                        <input type="text" id="news-subtitle" placeholder="Ex. Sorteig especial el 22 de desembre" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-slug">Slug (URL amigable per a SEO - Valencià)</label>
+                        <input type="text" id="news-slug" required placeholder="Ex. ja-tenim-el-programa-a-la-venda" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                        <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 300; display: block; margin-top: 0.25rem;">La URL serà: <code>noticies.html?slug=el-teu-slug</code>. S'autogenera des del títol, però pots personalitzar-lo.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-image-alt">Descripció SEO de la imatge de portada (Alt Text - Valencià)</label>
+                        <input type="text" id="news-image-alt" placeholder="Ex. Cartell de la programació de les festes patronals d'Ares 2026" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-editor">Contingut del text de la notícia (Valencià)</label>
+                        <!-- Rich Text Editor Toolbar -->
+                        <div class="editor-toolbar" style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px 8px 0 0; background-color: var(--bg-secondary); flex-wrap: wrap; align-items: center;">
+                            <button type="button" class="editor-btn" data-cmd="bold" title="Negreta" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 900; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);">B</button>
+                            <button type="button" class="editor-btn" data-cmd="italic" title="Cursiva" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-style: italic; font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);">I</button>
+                            <button type="button" class="editor-btn" data-cmd="underline" title="Subratllat" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); text-decoration: underline; font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);">U</button>
+                            <select class="editor-select editor-heading-select" title="Estil de text" style="padding: 0 0.5rem; font-size: 0.8rem; font-family: var(--font-heading); background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; height: 32px; color: var(--text-primary); outline: none; margin-right: 0.25rem;">
+                                <option value="p">Paràgraf</option>
+                                <option value="h2">Títol H2</option>
+                                <option value="h3">Títol H3</option>
+                            </select>
+                            <button type="button" class="editor-btn" data-cmd="justifyLeft" title="Alinea a l'esquerra" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-left" style="width: 14px; height: 14px;"></i></button>
+                            <button type="button" class="editor-btn" data-cmd="justifyCenter" title="Centra" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-center" style="width: 14px; height: 14px;"></i></button>
+                            <button type="button" class="editor-btn" data-cmd="justifyRight" title="Alinea a la dreta" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-right" style="width: 14px; height: 14px;"></i></button>
+                            <button type="button" class="editor-btn" data-cmd="justifyFull" title="Justifica" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-justify" style="width: 14px; height: 14px;"></i></button>
+                            <button type="button" class="editor-btn" data-cmd="insertUnorderedList" title="Llista de viñetes" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="list" style="width: 14px; height: 14px;"></i> Viñetes</button>
+                            <button type="button" class="editor-btn" data-cmd="createLink" title="Afegir Enllaç" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="link" style="width: 14px; height: 14px;"></i> Enllaç</button>
+                            <button type="button" class="editor-btn" data-cmd="unlink" title="Eliminar Enllaç" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="link-2-off" style="width: 14px; height: 14px;"></i> Traure</button>
+                            <button type="button" class="editor-btn" data-cmd="removeFormat" title="Netejar Format" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="eraser" style="width: 14px; height: 14px;"></i> Netejar</button>
+                        </div>
+                        <!-- Editor Area -->
+                        <div id="news-editor" contenteditable="true" style="min-height: 400px; max-height: 700px; overflow-y: auto; padding: 1.5rem; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 8px 8px; background-color: var(--bg-primary); font-family: var(--font-body); font-weight: 300; line-height: 1.8; outline: none;"></div>
+                        <textarea id="news-content" style="display: none;"></textarea>
+                    </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem;">
+                <!-- Grup Castellà -->
+                <div class="lang-group lang-es-group" style="display: none;">
+                    <div class="form-group">
+                        <label for="news-title-es">Título de la noticia (Castellano)</label>
+                        <input type="text" id="news-title-es" placeholder="Ej. Ya tenemos el programa a la venta" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1.25rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-secondary);">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="news-subtitle-es">Subtítulo o Resumen Corto (Castellano)</label>
+                        <input type="text" id="news-subtitle-es" placeholder="Ej. Sorteo especial el 22 de diciembre" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-slug-es">Slug (URL amigable para SEO - Castellano)</label>
+                        <input type="text" id="news-slug-es" placeholder="Ej. ya-tenemos-el-programa-a-la-venta" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                        <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 300; display: block; margin-top: 0.25rem;">La URL será: <code>es/noticies.html?slug=tu-slug</code>. S'autogenera des del títol, però pots personalitzar-lo.</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-image-alt-es">Descripción SEO de la imagen de portada (Alt Text - Castellano)</label>
+                        <input type="text" id="news-image-alt-es" placeholder="Ej. Cartel de la programación de las fiestas patronales de Ares 2026" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="news-editor-es">Contenido del texto de la noticia (Castellano)</label>
+                        <!-- Rich Text Editor Toolbar -->
+                        <div class="editor-toolbar" style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px 8px 0 0; background-color: var(--bg-secondary); flex-wrap: wrap; align-items: center;">
+                            <button type="button" class="editor-btn" data-cmd="bold" title="Negrita" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 900; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);">B</button>
+                            <button type="button" class="editor-btn" data-cmd="italic" title="Cursiva" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-style: italic; font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);">I</button>
+                            <button type="button" class="editor-btn" data-cmd="underline" title="Subratllat" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); text-decoration: underline; font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);">U</button>
+                            <select class="editor-select editor-heading-select" title="Estil de text" style="padding: 0 0.5rem; font-size: 0.8rem; font-family: var(--font-heading); background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; height: 32px; color: var(--text-primary); outline: none; margin-right: 0.25rem;">
+                                <option value="p">Párrafo</option>
+                                <option value="h2">Título H2</option>
+                                <option value="h3">Título H3</option>
+                            </select>
+                            <button type="button" class="editor-btn" data-cmd="justifyLeft" title="Alinea a la izquierda" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-left" style="width: 14px; height: 14px;"></i></button>
+                            <button type="button" class="editor-btn" data-cmd="justifyCenter" title="Centra" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-center" style="width: 14px; height: 14px;"></i></button>
+                            <button type="button" class="editor-btn" data-cmd="justifyRight" title="Alinea a la derecha" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-right" style="width: 14px; height: 14px;"></i></button>
+                            <button type="button" class="editor-btn" data-cmd="justifyFull" title="Justifica" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-justify" style="width: 14px; height: 14px;"></i></button>
+                            <button type="button" class="editor-btn" data-cmd="insertUnorderedList" title="Lista de viñetas" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="list" style="width: 14px; height: 14px;"></i> Viñetas</button>
+                            <button type="button" class="editor-btn" data-cmd="createLink" title="Añadir Enlace" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="link" style="width: 14px; height: 14px;"></i> Enlace</button>
+                            <button type="button" class="editor-btn" data-cmd="unlink" title="Eliminar Enlace" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="link-2-off" style="width: 14px; height: 14px;"></i> Quitar</button>
+                            <button type="button" class="editor-btn" data-cmd="removeFormat" title="Limpiar Formato" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="eraser" style="width: 14px; height: 14px;"></i> Limpiar</button>
+                        </div>
+                        <!-- Editor Area -->
+                        <div id="news-editor-es" contenteditable="true" style="min-height: 400px; max-height: 700px; overflow-y: auto; padding: 1.5rem; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 8px 8px; background-color: var(--bg-primary); font-family: var(--font-body); font-weight: 300; line-height: 1.8; outline: none;"></div>
+                        <textarea id="news-content-es" style="display: none;"></textarea>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
                     <div class="form-group">
                         <label for="news-author">Autor de la notícia</label>
                         <input type="text" id="news-author" placeholder="Ex. Comissió de Festes" value="Comissió de Festes" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
@@ -110,40 +200,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="news-image-alt">Descripció SEO de la imatge de portada (Alt Text)</label>
-                    <input type="text" id="news-image-alt" placeholder="Ex. Cartell de la programació de les festes patronals d'Ares 2026" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
-                </div>
-
-                <div class="form-group">
                     <label for="news-tags">Etiquetes (separades per comes)</label>
                     <input type="text" id="news-tags" placeholder="Ex. Loteria, Festes, Sant Antoni, 2026" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
                     <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 300; display: block; margin-top: 0.25rem;">Introdueix etiquetes per categoritzar la notícia (Ex: Loteria, Festes, Anunci).</span>
-                </div>
-
-                <div class="form-group">
-                    <label for="news-editor">Contingut del text de la notícia</label>
-                    <!-- Rich Text Editor Toolbar -->
-                    <div class="editor-toolbar" style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem; border: 1px solid var(--border-color); padding: 0.75rem; border-radius: 8px 8px 0 0; background-color: var(--bg-secondary); flex-wrap: wrap; align-items: center;">
-                        <button type="button" class="editor-btn" data-cmd="bold" title="Negreta" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 900; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);">B</button>
-                        <button type="button" class="editor-btn" data-cmd="italic" title="Cursiva" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-style: italic; font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);">I</button>
-                        <button type="button" class="editor-btn" data-cmd="underline" title="Subratllat" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); text-decoration: underline; font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);">U</button>
-                        <select class="editor-select" id="editor-heading-select" title="Estil de text" style="padding: 0 0.5rem; font-size: 0.8rem; font-family: var(--font-heading); background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; height: 32px; color: var(--text-primary); outline: none; margin-right: 0.25rem;">
-                            <option value="p">Paràgraf</option>
-                            <option value="h2">Títol H2</option>
-                            <option value="h3">Títol H3</option>
-                        </select>
-                        <button type="button" class="editor-btn" data-cmd="justifyLeft" title="Alinea a l'esquerra" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-left" style="width: 14px; height: 14px;"></i></button>
-                        <button type="button" class="editor-btn" data-cmd="justifyCenter" title="Centra" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-center" style="width: 14px; height: 14px;"></i></button>
-                        <button type="button" class="editor-btn" data-cmd="justifyRight" title="Alinea a la dreta" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-right" style="width: 14px; height: 14px;"></i></button>
-                        <button type="button" class="editor-btn" data-cmd="justifyFull" title="Justifica" style="padding: 0.35rem 0.5rem; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary);"><i data-lucide="align-justify" style="width: 14px; height: 14px;"></i></button>
-                        <button type="button" class="editor-btn" data-cmd="insertUnorderedList" title="Llista de viñetes" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="list" style="width: 14px; height: 14px;"></i> Viñetes</button>
-                        <button type="button" class="editor-btn" data-cmd="createLink" title="Afegir Enllaç" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="link" style="width: 14px; height: 14px;"></i> Enllaç</button>
-                        <button type="button" class="editor-btn" data-cmd="unlink" title="Eliminar Enllaç" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="link-2-off" style="width: 14px; height: 14px;"></i> Traure</button>
-                        <button type="button" class="editor-btn" data-cmd="removeFormat" title="Netejar Format" style="padding: 0.35rem 0.75rem; font-size: 0.85rem; font-family: var(--font-heading); font-weight: 700; background-color: var(--bg-primary); border: 1px solid var(--border-color); border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; min-width: auto; height: 32px; color: var(--text-primary); gap: 0.25rem;"><i data-lucide="eraser" style="width: 14px; height: 14px;"></i> Netejar</button>
-                    </div>
-                    <!-- Editor Area -->
-                    <div id="news-editor" contenteditable="true" style="min-height: 400px; max-height: 700px; overflow-y: auto; padding: 1.5rem; border: 1px solid var(--border-color); border-top: none; border-radius: 0 0 8px 8px; background-color: var(--bg-primary); font-family: var(--font-body); font-weight: 300; line-height: 1.8; outline: none;"></div>
-                    <textarea id="news-content" style="display: none;"></textarea>
                 </div>
 
                 <div class="form-group">
@@ -169,15 +228,43 @@
     <script src="../js/db.js"></script>
     <script>
         let currentAdditionalImages = [];
+        let isSlugManuallyEdited = false;
+        let isSlugManuallyEditedEs = false;
 
         document.addEventListener('DOMContentLoaded', () => {
             // Setup rich text editor
             initRichTextEditor();
 
-            // Setup slug generation helper
+            // Setup language tab switching
+            const tabBtns = document.querySelectorAll('.lang-tab-btn');
+            const caGroup = document.querySelector('.lang-ca-group');
+            const esGroup = document.querySelector('.lang-es-group');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => {
+                        b.classList.remove('active');
+                        b.style.color = 'var(--text-muted)';
+                        b.style.borderBottomColor = 'transparent';
+                    });
+                    btn.classList.add('active');
+                    btn.style.color = 'var(--text-primary)';
+                    btn.style.borderBottomColor = 'var(--text-primary)';
+
+                    const selectedLang = btn.getAttribute('data-lang');
+                    if (selectedLang === 'ca') {
+                        if (caGroup) caGroup.style.display = 'block';
+                        if (esGroup) esGroup.style.display = 'none';
+                    } else {
+                        if (caGroup) caGroup.style.display = 'none';
+                        if (esGroup) esGroup.style.display = 'block';
+                    }
+                });
+            });
+
+            // Setup slug generation helper - Valencian
             const titleInput = document.getElementById('news-title');
             const slugInput = document.getElementById('news-slug');
-            let isSlugManuallyEdited = false;
 
             function slugify(text) {
                 return text
@@ -201,7 +288,6 @@
 
                 slugInput.addEventListener('input', function() {
                     isSlugManuallyEdited = true;
-                    // Relaxed validation during typing to allow trailing hyphens
                     this.value = this.value
                         .toLowerCase()
                         .normalize('NFD')
@@ -216,8 +302,38 @@
                 });
             }
 
+            // Setup slug generation helper - Spanish
+            const titleInputEs = document.getElementById('news-title-es');
+            const slugInputEs = document.getElementById('news-slug-es');
+
+            if (titleInputEs && slugInputEs) {
+                titleInputEs.addEventListener('input', function() {
+                    if (!isSlugManuallyEditedEs) {
+                        slugInputEs.value = slugify(this.value);
+                    }
+                });
+
+                slugInputEs.addEventListener('input', function() {
+                    isSlugManuallyEditedEs = true;
+                    this.value = this.value
+                        .toLowerCase()
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .replace(/\s+/g, '-')
+                        .replace(/[^\w\-]+/g, '')
+                        .replace(/\-\-+/g, '-');
+                });
+
+                slugInputEs.addEventListener('blur', function() {
+                    this.value = slugify(this.value);
+                });
+            }
+
             window.setSlugManuallyEdited = function(val) {
                 isSlugManuallyEdited = val;
+            };
+            window.setSlugManuallyEditedEs = function(val) {
+                isSlugManuallyEditedEs = val;
             };
             window.slugify = slugify;
 
@@ -245,6 +361,8 @@
             const editorBtns = document.querySelectorAll('.editor-btn');
             const newsEditor = document.getElementById('news-editor');
             const newsContent = document.getElementById('news-content');
+            const newsEditorEs = document.getElementById('news-editor-es');
+            const newsContentEs = document.getElementById('news-content-es');
 
             editorBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -262,38 +380,50 @@
                 });
             });
 
-            const headingSelect = document.getElementById('editor-heading-select');
-            if (headingSelect) {
-                headingSelect.addEventListener('change', (e) => {
-                    const val = headingSelect.value;
+            const headingSelects = document.querySelectorAll('.editor-heading-select');
+            headingSelects.forEach(select => {
+                select.addEventListener('change', (e) => {
+                    const val = select.value;
                     document.execCommand('formatBlock', false, `<${val}>`);
                     syncEditorContent();
-                    headingSelect.value = 'p'; // Reset
+                    select.value = 'p'; // Reset
                 });
-            }
+            });
 
             if (newsEditor) {
                 newsEditor.addEventListener('input', syncEditorContent);
                 newsEditor.addEventListener('blur', syncEditorContent);
             }
 
+            if (newsEditorEs) {
+                newsEditorEs.addEventListener('input', syncEditorContent);
+                newsEditorEs.addEventListener('blur', syncEditorContent);
+            }
+
             function syncEditorContent() {
                 if (newsEditor && newsContent) {
                     newsContent.value = newsEditor.innerHTML;
+                }
+                if (newsEditorEs && newsContentEs) {
+                    newsContentEs.value = newsEditorEs.innerHTML;
                 }
             }
         }
 
         function parseImageUrlAndAlt(imageStr) {
-            if (!imageStr) return { url: '', alt: '' };
-            const hashIdx = imageStr.indexOf('#alt=');
+            if (!imageStr) return { url: '', alt: '', alt_es: '' };
+            const hashIdx = imageStr.indexOf('#');
             if (hashIdx !== -1) {
+                const url = imageStr.substring(0, hashIdx);
+                const hashPart = imageStr.substring(hashIdx + 1);
+                const params = new URLSearchParams(hashPart);
                 return {
-                    url: imageStr.substring(0, hashIdx),
-                    alt: decodeURIComponent(imageStr.substring(hashIdx + 5))
+                    url: url,
+                    alt: params.get('alt') || '',
+                    alt_es: params.get('alt_es') || ''
                 };
             }
-            return { url: imageStr, alt: '' };
+            return { url: imageStr, alt: '', alt_es: '' };
         }
 
         function renderExistingAdditionalImages() {
@@ -309,17 +439,23 @@
 
             group.style.display = 'block';
             container.innerHTML = currentAdditionalImages.map((img, idx) => {
-                const { url, alt } = parseImageUrlAndAlt(img);
+                const { url, alt, alt_es } = parseImageUrlAndAlt(img);
                 return `
-                    <div class="additional-image-row" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
+                    <div class="additional-image-row" style="display: flex; align-items: center; gap: 1rem; padding: 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary); margin-bottom: 1rem;">
                         <div style="width: 80px; height: 80px; border-radius: 6px; overflow: hidden; flex-shrink: 0; background-color: var(--bg-primary);">
                             <img src="${url}" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
-                        <div style="flex-grow: 1;">
-                            <label style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.25rem; display: block; color: var(--text-secondary);">Descripció Alt (SEO)</label>
-                            <input type="text" class="additional-img-alt" data-index="${idx}" value="${window.db.escapeHTML(alt)}" placeholder="Ex. Vista dels carrers d'Ares de nit" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--bg-primary); font-size: 0.9rem;">
+                        <div style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                            <div>
+                                <label style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.25rem; display: block; color: var(--text-secondary);">Descripció Alt Valencià (SEO)</label>
+                                <input type="text" class="additional-img-alt" data-index="${idx}" value="${window.db.escapeHTML(alt)}" placeholder="Ex. Vista dels carrers d'Ares de nit" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--bg-primary); font-size: 0.9rem;">
+                            </div>
+                            <div>
+                                <label style="font-size: 0.75rem; font-weight: 700; margin-bottom: 0.25rem; display: block; color: var(--text-secondary);">Descripción Alt Castellano (SEO)</label>
+                                <input type="text" class="additional-img-alt-es" data-index="${idx}" value="${window.db.escapeHTML(alt_es)}" placeholder="Ex. Vista de las calles de Ares de noche" style="width: 100%; padding: 0.5rem 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; background-color: var(--bg-primary); font-size: 0.9rem;">
+                            </div>
                         </div>
-                        <button type="button" class="btn-delete-existing-img" data-index="${idx}" style="background-color: #ef4444; color: white; border: none; border-radius: 6px; padding: 0.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer;" title="Eliminar imatge">
+                        <button type="button" class="btn-delete-existing-img" data-index="${idx}" style="background-color: #ef4444; color: white; border: none; border-radius: 6px; padding: 0.5rem; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0;" title="Eliminar imatge">
                             <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
                         </button>
                     </div>
@@ -327,12 +463,26 @@
             }).join('');
 
             // Bind input change listeners to update currentAdditionalImages in real-time
-            container.querySelectorAll('.additional-img-alt').forEach(input => {
+            const updateImageParams = (idx) => {
+                const rows = container.querySelectorAll('.additional-image-row');
+                const row = rows[idx];
+                if (!row) return;
+                const altVal = row.querySelector('.additional-img-alt').value.trim();
+                const altEsVal = row.querySelector('.additional-img-alt-es').value.trim();
+                const { url } = parseImageUrlAndAlt(currentAdditionalImages[idx]);
+                
+                const params = new URLSearchParams();
+                if (altVal) params.set('alt', altVal);
+                if (altEsVal) params.set('alt_es', altEsVal);
+                
+                const paramsStr = params.toString();
+                currentAdditionalImages[idx] = url + (paramsStr ? '#' + paramsStr : '');
+            };
+
+            container.querySelectorAll('.additional-img-alt, .additional-img-alt-es').forEach(input => {
                 input.addEventListener('input', (e) => {
                     const idx = parseInt(input.getAttribute('data-index'));
-                    const val = e.target.value.trim();
-                    const { url } = parseImageUrlAndAlt(currentAdditionalImages[idx]);
-                    currentAdditionalImages[idx] = url + (val ? '#alt=' + encodeURIComponent(val) : '');
+                    updateImageParams(idx);
                 });
             });
 
@@ -399,6 +549,16 @@
                     if (window.setSlugManuallyEdited) {
                         window.setSlugManuallyEdited(!!item.slug);
                     }
+
+                    // Spanish fields loading
+                    document.getElementById('news-title-es').value = item.title_es || '';
+                    document.getElementById('news-subtitle-es').value = item.subtitle_es || '';
+                    document.getElementById('news-slug-es').value = item.slug_es || '';
+                    if (window.setSlugManuallyEditedEs) {
+                        window.setSlugManuallyEditedEs(!!item.slug_es);
+                    }
+                    document.getElementById('news-image-alt-es').value = item.image_alt_es || '';
+
                     document.getElementById('news-author').value = item.author || 'Comissió de Festes';
                     document.getElementById('news-date').value = item.created_at || '';
                     document.getElementById('news-edit-date').value = item.updated_at || '';
@@ -406,8 +566,15 @@
                     document.getElementById('news-image-alt').value = item.image_alt || '';
                     document.getElementById('news-status').value = item.status || 'published';
                     document.getElementById('news-tags').value = item.tags ? item.tags.join(', ') : '';
-                    document.getElementById('news-content').value = item.content;
+                    
+                    document.getElementById('news-content').value = item.content || '';
                     document.getElementById('news-editor').innerHTML = window.db.sanitizeHTML(item.content || '');
+
+                    document.getElementById('news-content-es').value = item.content_es || '';
+                    const newsEditorEs = document.getElementById('news-editor-es');
+                    if (newsEditorEs) {
+                        newsEditorEs.innerHTML = window.db.sanitizeHTML(item.content_es || '');
+                    }
                     
                     currentAdditionalImages = item.additional_images || [];
                     renderExistingAdditionalImages();
@@ -420,6 +587,14 @@
             const title = document.getElementById('news-title').value;
             const subtitle = document.getElementById('news-subtitle').value;
             const slug = document.getElementById('news-slug').value.trim() || (window.slugify ? window.slugify(title) : '');
+
+            // Spanish fields saving
+            const title_es = document.getElementById('news-title-es').value;
+            const subtitle_es = document.getElementById('news-subtitle-es').value;
+            const slug_es = document.getElementById('news-slug-es').value.trim() || (title_es ? (window.slugify ? window.slugify(title_es) : '') : '');
+            const image_alt_es = document.getElementById('news-image-alt-es').value.trim();
+            const content_es = document.getElementById('news-content-es').value;
+
             const author = document.getElementById('news-author').value || 'Comissió de Festes';
             const created_at = document.getElementById('news-date').value || new Date().toISOString().split('T')[0];
             const updated_at = document.getElementById('news-edit-date').value || null;
@@ -455,6 +630,11 @@
                     title, 
                     slug,
                     subtitle, 
+                    title_es,
+                    slug_es,
+                    subtitle_es,
+                    image_alt_es,
+                    content_es,
                     author, 
                     created_at, 
                     updated_at, 

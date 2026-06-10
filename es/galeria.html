@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Galería de Fotos | Comisión de Fiestas de Ares del Maestrat</title>
+    <meta name="description" content="Revive en imágenes los mejores momentos de nuestras fiestas, el tradicional Ball Pla y las actividades populares en Ares del Maestrat.">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://www.comiares.es/es/galeria.html">
+    <meta property="og:title" content="Galería de Fotos | Comisión de Fiestas de Ares del Maestrat">
+    <meta property="og:description" content="Revive en imágenes los mejores momentos de nuestras fiestas, el tradicional Ball Pla y las actividades populares en Ares del Maestrat.">
+    <meta property="og:image" content="https://www.comiares.es/img/ballpla1.jpg">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://www.comiares.es/es/galeria.html">
+    <meta property="twitter:title" content="Galería de Fotos | Comisión de Fiestas de Ares del Maestrat">
+    <meta property="twitter:description" content="Revive en imágenes los mejores momentos de nuestras fiestas, el tradicional Ball Pla y las actividades populares en Ares del Maestrat.">
+    <meta property="twitter:image" content="https://www.comiares.es/img/ballpla1.jpg">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../css/styles.css?v=1.1">
+    
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+    <!-- Dynamic Navbar Placeholder -->
+    <div id="header-placeholder"></div>
+
+    <!-- Intro Header -->
+    <div class="page-intro container">
+        <h1>GALERÍA DE FOTOS</h1>
+        <p>
+            Revive los mejores momentos de las fiestas y eventos organizados por la Comisión. Un recorrido visual por nuestras tradiciones, nuestro patrimonio y nuestra gente.
+        </p>
+    </div>
+
+    <!-- Gallery Section -->
+    <section style="border-bottom: none;">
+        <div class="container" style="padding-top: 1rem; padding-bottom: 8rem;">
+            <!-- Filters Bar -->
+            <div class="filter-bar">
+                <div class="filter-categories" id="gallery-categories">
+                    <!-- Loaded dynamically -->
+                    <button class="filter-btn active" data-category="all">Todas</button>
+                </div>
+            </div>
+
+            <!-- Grid -->
+            <div class="gallery-grid" id="gallery-grid">
+                <!-- Loaded dynamically -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
+                    Cargando fotografías...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox-close" id="lightbox-close">&times;</button>
+        <button class="lightbox-nav lightbox-prev" id="lightbox-prev">&#10094;</button>
+        <div class="lightbox-content">
+            <img src="" id="lightbox-img" alt="Imagen ampliada">
+            <div class="lightbox-caption" id="lightbox-caption">Título de la foto</div>
+        </div>
+        <button class="lightbox-nav lightbox-next" id="lightbox-next">&#10095;</button>
+    </div>
+
+    <!-- Dynamic Footer Placeholder -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Scripts -->
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/db.js"></script>
+    <script src="../js/main.js?v=1.1"></script>
+    <script src="../js/galeria.js"></script>
+</body>
+</html>
