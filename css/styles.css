@@ -1128,12 +1128,20 @@ nav.nav-menu ul li a::after {
     grid-template-columns: 240px 1fr;
     gap: 3rem;
     margin-top: 40px;
+    max-width: 100%;
+}
+
+.admin-layout main {
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
 }
 
 @media (max-width: 768px) {
     .admin-layout {
         grid-template-columns: 1fr;
         gap: 2rem;
+        max-width: 100%;
     }
 }
 
@@ -1151,14 +1159,73 @@ nav.nav-menu ul li a::after {
 }
 
 @media (max-width: 768px) {
+    .admin-sidebar-toggle {
+        display: block !important;
+    }
+    .admin-header-title {
+        display: none !important;
+    }
+
     .admin-sidebar {
-        flex-direction: row;
-        overflow-x: auto;
-        border-radius: 12px;
-        padding: 0.75rem;
-        height: auto;
-        min-height: unset;
-        box-shadow: none;
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 260px;
+        height: 100vh;
+        z-index: 1010;
+        background-color: var(--bg-primary);
+        box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
+        display: flex;
+        flex-direction: column;
+        padding: 6rem 1.25rem 2rem 1.25rem;
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        border-radius: 0 20px 20px 0;
+        border: none;
+        border-right: 1px solid var(--border-color);
+        box-sizing: border-box;
+    }
+
+    .admin-sidebar.active {
+        transform: translateX(280px);
+    }
+
+    .admin-sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        z-index: 1009;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+
+    .admin-sidebar-overlay.active {
+        display: block;
+        opacity: 1;
+    }
+
+    .admin-actions {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+    .admin-actions h3 {
+        font-size: 1.5rem;
+    }
+    .admin-actions .btn {
+        width: 100%;
+    }
+    .admin-login-wrapper {
+        padding: 1.5rem !important;
+    }
+    .db-config-box {
+        padding: 1.25rem !important;
     }
 }
 
@@ -1179,11 +1246,7 @@ nav.nav-menu ul li a::after {
     transition: var(--transition);
 }
 
-@media (max-width: 768px) {
-    .admin-tab-btn {
-        flex-shrink: 0;
-    }
-}
+
 
 .admin-tab-btn:hover {
     background-color: var(--bg-secondary);
@@ -1207,16 +1270,23 @@ nav.nav-menu ul li a::after {
     box-sizing: border-box;
 }
 
-@media (max-width: 768px) {
-    .admin-profile-card {
-        margin-top: 0 !important;
-        margin-left: auto;
-        padding-top: 0 !important;
-        border-top: none !important;
-        border-left: 1px solid var(--border-color);
-        padding-left: 1rem;
-    }
+.admin-profile-clickable {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-grow: 1;
+    cursor: pointer;
+    min-width: 0;
+    padding: 0.35rem 0.5rem;
+    border-radius: 8px;
+    transition: var(--transition);
 }
+
+.admin-profile-clickable:hover {
+    background-color: var(--bg-secondary);
+}
+
+
 
 .admin-profile-avatar {
     width: 38px;
@@ -1276,12 +1346,26 @@ nav.nav-menu ul li a::after {
     color: #ef4444;
 }
 
+@keyframes adminPanelFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 .admin-panel {
     display: none;
+    width: 100%;
+    overflow-x: hidden;
 }
 
 .admin-panel.active {
     display: block;
+    animation: adminPanelFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .admin-actions {
@@ -1289,6 +1373,8 @@ nav.nav-menu ul li a::after {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
 }
 
 /* List Table styling */

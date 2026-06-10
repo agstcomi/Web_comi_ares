@@ -50,10 +50,34 @@ document.addEventListener('DOMContentLoaded', () => {
         dashboardContainer.style.display = 'none';
     }
 
+    let currentUser = null;
+
+    // Helper functions for user profile persistence in local storage
+    function getProfile(user) {
+        const defaultAvatar = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100";
+        const defaultName = user.email.split('@')[0];
+        const stored = localStorage.getItem(`ares_profile_${user.email}`);
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch (e) {
+                // ignore
+            }
+        }
+        return { name: defaultName, avatarUrl: defaultAvatar };
+    }
+
+    function saveProfile(user, name, avatarUrl) {
+        localStorage.setItem(`ares_profile_${user.email}`, JSON.stringify({ name, avatarUrl }));
+    }
+
     function showDashboard(user) {
+        currentUser = user;
         loginContainer.style.display = 'none';
         dashboardContainer.style.display = 'block';
-        userGreeting.textContent = `Hola, ${user.email.split('@')[0]}!`;
+        
+        const profile = getProfile(user);
+        userGreeting.textContent = `Hola, ${profile.name}!`;
         
         // Update database connection status badge
         updateDbStatusBadge();
@@ -61,11 +85,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Update profile card in sidebar
         const profileName = document.querySelector('.admin-profile-name');
         const profileRole = document.querySelector('.admin-profile-role');
+        const profileAvatar = document.querySelector('.admin-profile-avatar img');
         if (profileName) {
-            profileName.textContent = user.email.split('@')[0];
+            profileName.textContent = profile.name;
         }
         if (profileRole) {
             profileRole.textContent = user.email;
+        }
+        if (profileAvatar && profile.avatarUrl) {
+            profileAvatar.src = profile.avatarUrl;
+        }
+
+        // Populate profile form inputs
+        const profileNameInput = document.getElementById('profile-name-input');
+        const profileAvatarUrlInput = document.getElementById('profile-avatar-url-input');
+        const profilePreviewImg = document.getElementById('profile-preview-img');
+        if (profileNameInput) {
+            profileNameInput.value = profile.name;
+        }
+        if (profileAvatarUrlInput) {
+            profileAvatarUrlInput.value = profile.avatarUrl;
+        }
+        if (profilePreviewImg) {
+            profilePreviewImg.src = profile.avatarUrl;
         }
         
         // Load configurations into input fields if present
@@ -160,6 +202,43 @@ document.addEventListener('DOMContentLoaded', () => {
             if (targetPanel) targetPanel.classList.add('active');
         });
     });
+
+    const profileClickable = document.querySelector('.admin-profile-clickable');
+    if (profileClickable) {
+        profileClickable.addEventListener('click', () => {
+            tabs.forEach(t => t.classList.remove('active'));
+            panels.forEach(p => p.classList.remove('active'));
+
+            const targetPanel = document.getElementById('tab-profile');
+            if (targetPanel) targetPanel.classList.add('active');
+        });
+    }
+
+    // Mobile sidebar drawer toggle
+    const sidebarToggle = document.querySelector('.admin-sidebar-toggle');
+    const sidebar = document.querySelector('.admin-sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+    if (sidebarToggle && sidebar && sidebarOverlay) {
+        const toggleSidebar = () => {
+            sidebar.classList.toggle('active');
+            sidebarOverlay.classList.toggle('active');
+        };
+
+        sidebarToggle.addEventListener('click', toggleSidebar);
+        sidebarOverlay.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking any of the tab buttons on mobile
+        const sidebarButtons = document.querySelectorAll('.admin-tab-btn, .admin-profile-clickable');
+        sidebarButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                }
+            });
+        });
+    }
 
     // 3. Populate and Manage News Table
     async function loadNewsTable() {
@@ -676,6 +755,64 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('config-key').value = '';
                 checkAuthState();
             }
+        });
+    }
+
+    // Profile Form Event Listeners
+    const profileForm = document.getElementById('profile-form');
+    const profileNameInput = document.getElementById('profile-name-input');
+    const profileAvatarUrlInput = document.getElementById('profile-avatar-url-input');
+    const profileAvatarFile = document.getElementById('profile-avatar-file');
+    const profilePreviewImg = document.getElementById('profile-preview-img');
+
+    if (profileAvatarUrlInput && profilePreviewImg) {
+        profileAvatarUrlInput.addEventListener('input', () => {
+            profilePreviewImg.src = profileAvatarUrlInput.value || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100";
+        });
+    }
+
+    if (profileAvatarFile && profilePreviewImg && profileAvatarUrlInput) {
+        profileAvatarFile.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            try {
+                let url = "";
+                if (window.db && typeof window.db.isSupabaseConfigured === 'function' && window.db.isSupabaseConfigured()) {
+                    url = await window.db.uploadImage(file);
+                } else {
+                    const reader = new FileReader();
+                    url = await new Promise((resolve) => {
+                        reader.onload = (event) => resolve(event.target.result);
+                        reader.readAsDataURL(file);
+                    });
+                }
+                profileAvatarUrlInput.value = url;
+                profilePreviewImg.src = url;
+            } catch (err) {
+                console.error("Error uploading profile photo:", err);
+                alert("Error al carregar la foto de perfil.");
+            }
+        });
+    }
+
+    if (profileForm) {
+        profileForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+
+            const name = profileNameInput.value.trim();
+            const avatarUrl = profileAvatarUrlInput.value.trim();
+
+            saveProfile(currentUser, name, avatarUrl);
+
+            userGreeting.textContent = `Hola, ${name}!`;
+            const profileName = document.querySelector('.admin-profile-name');
+            const profileAvatar = document.querySelector('.admin-profile-avatar img');
+            if (profileName) profileName.textContent = name;
+            if (profileAvatar) profileAvatar.src = avatarUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100";
+
+            alert("Perfil actualitzat correctament.");
         });
     }
 

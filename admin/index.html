@@ -26,13 +26,19 @@
 </head>
 <body>
 
+    <!-- Sidebar Overlay for Mobile Drawer -->
+    <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
     <!-- Standalone Admin Header -->
     <header class="main-header">
         <div class="container">
+            <button class="nav-toggle admin-sidebar-toggle" aria-label="Menú" style="display: none;">
+                <i data-lucide="menu"></i>
+            </button>
             <a href="../index.html" class="logo">
                 <img src="../img/logo.svg" alt="Logo Comissió Ares" style="height: 40px; width: auto;">
             </a>
-            <span style="font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; border-bottom: 2px solid var(--text-primary); padding-bottom: 0.25rem;">
+            <span class="admin-header-title" style="font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; border-bottom: 2px solid var(--text-primary); padding-bottom: 0.25rem;">
                 Panel de Control
             </span>
         </div>
@@ -113,12 +119,14 @@
                 
                 <!-- Profile Card with Integrated Logout -->
                 <div class="admin-profile-card">
-                    <div class="admin-profile-avatar">
-                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Avatar">
-                    </div>
-                    <div class="admin-profile-info">
-                        <h4 class="admin-profile-name">Admin</h4>
-                        <span class="admin-profile-role">admin@ares.com</span>
+                    <div class="admin-profile-clickable">
+                        <div class="admin-profile-avatar">
+                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Avatar">
+                        </div>
+                        <div class="admin-profile-info">
+                            <h4 class="admin-profile-name">Admin</h4>
+                            <span class="admin-profile-role">admin@ares.com</span>
+                        </div>
                     </div>
                     <button id="logout-btn" title="Tancar Sessió" aria-label="Tancar Sessió">
                         <i data-lucide="log-out"></i>
@@ -328,6 +336,45 @@ CREATE TABLE photos (
   category TEXT NOT NULL
 );
                         </pre>
+                    </div>
+                </div>
+
+                <!-- PROFILE PANEL -->
+                <div class="admin-panel" id="tab-profile">
+                    <h3>Perfil de l'Administrador</h3>
+                    <p style="margin-bottom: 2rem;">
+                        Modifica el teu nom de visualització i la teua imatge de perfil. Aquestes dades es guarden de manera local vinculades al teu compte.
+                    </p>
+
+                    <div class="db-config-box" style="max-width: 600px;">
+                        <form id="profile-form">
+                            <div class="form-group" style="display: flex; align-items: center; gap: 1.5rem; margin-bottom: 2rem;">
+                                <div class="admin-profile-avatar" style="width: 80px; height: 80px; font-size: 2rem; border-radius: 50%; overflow: hidden; border: 2px solid var(--border-color); flex-shrink: 0;">
+                                    <img id="profile-preview-img" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Avatar Preview" style="width: 100%; height: 100%; object-fit: cover;">
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 0.5rem; justify-content: center;">
+                                    <label for="profile-avatar-file" style="margin-bottom: 0; font-weight: 600; cursor: pointer;">Puja una foto nova</label>
+                                    <input type="file" id="profile-avatar-file" accept="image/*" style="border: none; padding: 0; display: block; font-size: 0.85rem;">
+                                    <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 300;">Format JPG, PNG o WebP.</span>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profile-name-input">Nom de l'Administrador</label>
+                                <input type="text" id="profile-name-input" placeholder="Ex. Admin" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="profile-avatar-url-input">O URL de la Imatge de Perfil</label>
+                                <input type="url" id="profile-avatar-url-input" placeholder="https://images.unsplash.com/...">
+                            </div>
+
+                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                                <button type="submit" class="btn btn-sm">
+                                    <i data-lucide="save" style="width: 14px; height: 14px;"></i> Guardar Canvis
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
 
