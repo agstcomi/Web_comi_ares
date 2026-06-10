@@ -261,9 +261,7 @@ function renderFooter() {
     const contactText = isEs ? 'Contáctanos' : "Contacta'ns";
     const emailLabel = 'Email:';
     const addressLabel = isEs ? 'Dirección:' : 'Adreça:';
-    const addressValue = isEs 
-        ? 'Plaza Mayor, 1. 12165 Ares del Maestrat (Castellón)' 
-        : 'Plaça Major, 1. 12165 Ares del Maestrat (Castelló)';
+    const addressValue = 'Pl. Major, 9, 12165 Ares del Maestrat, Castelló';
     
     const copyrightText = isEs 
         ? `&copy; ${new Date().getFullYear()} Comisión de Fiestas de Ares del Maestrat. Todos los derechos reservados.`
