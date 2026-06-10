@@ -1,0 +1,33 @@
+{
+  "name": "Comissió de Festes d'Ares del Maestrat",
+  "short_name": "Comissió Ares",
+  "description": "Web oficial de la Comissió de Festes d'Ares del Maestrat. Programació, notícies, temps i més.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0a0a0a",
+  "lang": "ca",
+  "orientation": "portrait",
+  "scope": "/",
+  "categories": ["lifestyle", "entertainment"],
+  "icons": [
+    {
+      "src": "/img/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
