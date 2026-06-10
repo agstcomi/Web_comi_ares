@@ -1856,6 +1856,8 @@ header.main-header.on-hero nav.nav-menu ul li.lang-switch a:hover {
     margin-top: 3.5rem;
     display: none;
     justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .weather-card {
@@ -1865,6 +1867,7 @@ header.main-header.on-hero nav.nav-menu ul li.lang-switch a:hover {
     padding: 2rem;
     max-width: 600px;
     width: 100%;
+    box-sizing: border-box;
     text-align: left;
     box-shadow: 0 4px 25px rgba(0,0,0,0.02);
     transition: var(--transition);
@@ -1929,8 +1932,15 @@ header.main-header.on-hero nav.nav-menu ul li.lang-switch a:hover {
 }
 
 @media (max-width: 500px) {
+    .weather-widget-container {
+        padding: 0;
+    }
     .weather-card {
-        padding: 1.5rem;
+        padding: 1.25rem 1rem;
+        box-sizing: border-box;
+        width: 100%;
+        max-width: 100%;
+        border-radius: 8px;
     }
     .weather-forecast-grid {
         grid-template-columns: 1fr;

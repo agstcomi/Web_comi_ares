@@ -146,6 +146,12 @@
                             Cargando previsión del tiempo...
                         </div>
                     </div>
+                    
+                    <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
+                        <a href="temps.html" style="font-size: 0.85rem; font-weight: 500; color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: var(--transition);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                            Ver previsión detallada a 7 días <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -506,7 +512,7 @@
                     ];
                 }
                 
-                renderWeather(forecast);
+                renderWeather(forecast.slice(0, 3));
             } catch (err) {
                 console.error("Error loading weather:", err);
                 const container = document.getElementById('weather-forecast-container');

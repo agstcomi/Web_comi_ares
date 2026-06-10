@@ -75,6 +75,7 @@ function renderHeader() {
         { name: 'Programación', file: 'programacio.html' },
         { name: 'Galería', file: 'galeria.html' },
         { name: 'Quiénes Somos', file: 'quisom.html' },
+        { name: 'Tiempo', file: 'temps.html' },
         { name: 'Contacto', file: 'contacte.html' }
     ] : [
         { name: 'Inici', file: 'index.html' },
@@ -82,6 +83,7 @@ function renderHeader() {
         { name: 'Programació', file: 'programacio.html' },
         { name: 'Galeria', file: 'galeria.html' },
         { name: 'Qui Som', file: 'quisom.html' },
+        { name: 'Temps', file: 'temps.html' },
         { name: 'Contacte', file: 'contacte.html' }
     ];
 
@@ -134,6 +136,7 @@ function renderFooter() {
         { name: 'Programación', file: 'programacio.html' },
         { name: 'Galería', file: 'galeria.html' },
         { name: 'Quiénes Somos', file: 'quisom.html' },
+        { name: 'Tiempo', file: 'temps.html' },
         { name: 'Contacto', file: 'contacte.html' }
     ] : [
         { name: 'Inici', file: 'index.html' },
@@ -141,6 +144,7 @@ function renderFooter() {
         { name: 'Programació', file: 'programacio.html' },
         { name: 'Galeria', file: 'galeria.html' },
         { name: 'Qui Som', file: 'quisom.html' },
+        { name: 'Temps', file: 'temps.html' },
         { name: 'Contacte', file: 'contacte.html' }
     ];
 
