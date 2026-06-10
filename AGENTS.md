@@ -26,7 +26,7 @@ Todas las tareas del panel de administración principal se completaron, verifica
 ---
 
 ## 4. Mejoras Visuales, Animaciones y Tarjetas de Eventos (PRO)
-Todas las tareas de rediseño visual y animaciones fueron completadas, validadas y **subidas a la rama principal (PRO)** en el commit `3f39f02` (y seguimiento en `cc9b41a` para la documentación):
+Todas las tareas de rediseño visual y animaciones fueron completadas, validadas y **subidas a la rama principal (PRO)** en el commit `3f39f02`:
 * **Jerarquía de Fechas**: Se invirtió la prioridad visual en `/programacio.html` haciendo que la fecha exacta (`.timeline-date-full`) sea grande y negrita, y el día de la semana (`.timeline-date-day`) sea secundario y gris.
 * **Separación del Botón de Cierre en Modales**: Se aplicaron márgenes superiores a la imagen del evento en modales para evitar que el botón de cierre circular "X" se superponga sobre las fotografías.
 * **Carrusel de Noticias Móvil**: Se solucionó de manera robusta el desborde lateral y el recorte del primer elemento eliminando el margen negativo izquierdo (`margin-left: 0`) para alinearlo naturalmente con el título 'ÚLTIMES NOTÍCIES'. El carrusel sangra y fluye solo hacia la derecha (`margin-right: -2rem`, `padding-right: 2rem`), y se añadió `overflow-y: hidden;` para evitar un scroll vertical parásito.
