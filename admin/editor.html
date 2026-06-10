@@ -774,8 +774,29 @@
             return chunks;
         }
 
+        async function translateTextDirect(text) {
+            if (!text || !text.trim()) return '';
+            try {
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`MyMemory API error: ${res.status}`);
+                const data = await res.json();
+                if (data && data.responseData && data.responseData.translatedText) {
+                    return data.responseData.translatedText;
+                }
+                throw new Error('Invalid response format');
+            } catch (err) {
+                console.error('Translation error:', err);
+                return text; // Fallback to original text
+            }
+        }
+
         async function translateText(text) {
             if (!text || !text.trim()) return '';
+            
+            if (text.length <= 450) {
+                return await translateTextDirect(text);
+            }
             
             const chunks = chunkTextBySentences(text, 450);
             const translatedChunks = [];
@@ -785,20 +806,8 @@
                     translatedChunks.push(chunk);
                     continue;
                 }
-                try {
-                    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=ca|es`;
-                    const res = await fetch(url);
-                    if (!res.ok) throw new Error(`MyMemory API error: ${res.status}`);
-                    const data = await res.json();
-                    if (data && data.responseData && data.responseData.translatedText) {
-                        translatedChunks.push(data.responseData.translatedText);
-                    } else {
-                        throw new Error('Invalid response format');
-                    }
-                } catch (err) {
-                    console.error('Translation error for chunk:', err);
-                    translatedChunks.push(chunk); // Fallback to original chunk
-                }
+                const translated = await translateTextDirect(chunk);
+                translatedChunks.push(translated);
             }
             
             return translatedChunks.join(' ');
@@ -812,21 +821,34 @@
             }
             
             if (node.nodeType === Node.ELEMENT_NODE) {
-                const structuralTags = ['UL', 'OL', 'DL', 'TABLE', 'TBODY', 'TR', 'THEAD'];
-                if (structuralTags.includes(node.tagName)) {
-                    const clone = node.cloneNode(false);
-                    for (const child of node.childNodes) {
-                        clone.innerHTML += await translateNode(child);
-                    }
-                    return clone.outerHTML;
-                }
-                
                 const innerHTML = node.innerHTML;
                 if (!innerHTML.trim()) return node.outerHTML;
                 
-                const translatedInner = await translateText(innerHTML);
+                // Case 1: Fits in a single API query (preserves context and tags perfectly)
+                if (innerHTML.length <= 450) {
+                    const translatedInner = await translateTextDirect(innerHTML);
+                    const clone = node.cloneNode(false);
+                    clone.innerHTML = translatedInner;
+                    return clone.outerHTML;
+                }
+                
+                // Case 2: Exceeds 450 characters.
+                // Check if it has any element children.
+                const hasElementChildren = Array.from(node.childNodes).some(child => child.nodeType === Node.ELEMENT_NODE);
+                
+                if (!hasElementChildren) {
+                    // It's a plain block of text without inline tags, so we can chunk it safely by sentences.
+                    const translatedInner = await translateText(node.textContent);
+                    const clone = node.cloneNode(false);
+                    clone.innerHTML = translatedInner;
+                    return clone.outerHTML;
+                }
+                
+                // Case 3: It is long and contains inline tags. We must recurse to translate each child separately.
                 const clone = node.cloneNode(false);
-                clone.innerHTML = translatedInner;
+                for (const child of node.childNodes) {
+                    clone.innerHTML += await translateNode(child);
+                }
                 return clone.outerHTML;
             }
             return '';
