@@ -877,21 +877,67 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    function chunkTextBySentences(text, maxLength = 450) {
+        if (text.length <= maxLength) return [text];
+        
+        const sentences = text.match(/[^.!?]+[.!?]+(\s+|$)|[^.!?]+$/g) || [text];
+        const chunks = [];
+        let currentChunk = '';
+        
+        for (const sentence of sentences) {
+            if ((currentChunk + sentence).length > maxLength) {
+                if (currentChunk.trim()) {
+                    chunks.push(currentChunk.trim());
+                }
+                currentChunk = sentence;
+                
+                // If a single sentence is still longer than maxLength, force split it
+                while (currentChunk.length > maxLength) {
+                    let splitIdx = currentChunk.lastIndexOf(' ', maxLength);
+                    if (splitIdx === -1) splitIdx = maxLength;
+                    chunks.push(currentChunk.substring(0, splitIdx).trim());
+                    currentChunk = currentChunk.substring(splitIdx);
+                }
+            } else {
+                currentChunk += sentence;
+            }
+        }
+        
+        if (currentChunk.trim()) {
+            chunks.push(currentChunk.trim());
+        }
+        
+        return chunks;
+    }
+
     async function translateText(text) {
         if (!text || !text.trim()) return '';
-        try {
-            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es`;
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`MyMemory API error: ${res.status}`);
-            const data = await res.json();
-            if (data && data.responseData && data.responseData.translatedText) {
-                return data.responseData.translatedText;
+        
+        const chunks = chunkTextBySentences(text, 450);
+        const translatedChunks = [];
+        
+        for (const chunk of chunks) {
+            if (!chunk.trim()) {
+                translatedChunks.push(chunk);
+                continue;
             }
-            throw new Error('Invalid response format');
-        } catch (err) {
-            console.error('Translation error:', err);
-            return text; // Fallback to original text
+            try {
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(chunk)}&langpair=ca|es`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`MyMemory API error: ${res.status}`);
+                const data = await res.json();
+                if (data && data.responseData && data.responseData.translatedText) {
+                    translatedChunks.push(data.responseData.translatedText);
+                } else {
+                    throw new Error('Invalid response format');
+                }
+            } catch (err) {
+                console.error('Translation error for chunk:', err);
+                translatedChunks.push(chunk); // Fallback to original chunk
+            }
         }
+        
+        return translatedChunks.join(' ');
     }
 
     async function translateNode(node) {
