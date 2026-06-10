@@ -18,12 +18,11 @@ serve(async (req) => {
     }
 
     const municipio = "12014"; // Ares del Maestrat
-    const url = `https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/diaria/${municipio}`;
+    const url = `https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/diaria/${municipio}?api_key=${apiKey}`;
 
     // Step 1: Call AEMET to get the temporary data URL
     const aemetRes = await fetch(url, {
       headers: {
-        "api_key": apiKey,
         "accept": "application/json"
       }
     });

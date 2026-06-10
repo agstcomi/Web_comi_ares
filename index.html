@@ -439,10 +439,15 @@
                 const dbStatus = window.db ? window.db.getStatus() : 'local';
                 
                 if (dbStatus === 'supabase' && window.db.supabase) {
-                    const { data, error } = await window.db.supabase.functions.invoke('aemet-weather');
-                    if (error) throw error;
-                    if (data && data.forecast) {
-                        forecast = data.forecast;
+                    try {
+                        const { data, error } = await window.db.supabase.functions.invoke('aemet-weather');
+                        if (error) {
+                            console.warn("Error invoking aemet-weather function, falling back to mock data:", error);
+                        } else if (data && data.forecast) {
+                            forecast = data.forecast;
+                        }
+                    } catch (e) {
+                        console.warn("Failed to fetch weather from Supabase function, falling back to mock data:", e);
                     }
                 }
                 
