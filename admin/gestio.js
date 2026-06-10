@@ -868,7 +868,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (error) {
                 console.error("Error durant la traducció de l'acte:", error);
-                alert("S'ha produït un error durant la traducció automàtica. Revisa els camps.");
+                alert("S'ha produït un error durant la traducció automàtica: " + error.message);
             } finally {
                 btnTranslateEvent.disabled = false;
                 btnTranslateEvent.innerHTML = originalHTML;
@@ -913,17 +913,30 @@ document.addEventListener('DOMContentLoaded', () => {
     async function translateTextDirect(text) {
         if (!text || !text.trim()) return '';
         try {
-            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es`;
+            let email = '';
+            if (window.db && typeof window.db.getCurrentUser === 'function') {
+                const user = await window.db.getCurrentUser();
+                if (user && user.email) {
+                    email = user.email;
+                }
+            }
+            if (!email) {
+                email = 'comissio@aresdelmaestrat.com';
+            }
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es&de=${encodeURIComponent(email)}`;
             const res = await fetch(url);
-            if (!res.ok) throw new Error(`MyMemory API error: ${res.status}`);
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
+            if (data && data.responseStatus && data.responseStatus !== 200) {
+                throw new Error(data.responseDetails || `API status ${data.responseStatus}`);
+            }
             if (data && data.responseData && data.responseData.translatedText) {
                 return data.responseData.translatedText;
             }
             throw new Error('Invalid response format');
         } catch (err) {
-            console.error('Translation error:', err);
-            return text; // Fallback to original text
+            console.error('Translation API call error:', err);
+            throw err;
         }
     }
 
