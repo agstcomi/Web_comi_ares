@@ -1849,3 +1849,118 @@ header.main-header.on-hero nav.nav-menu ul li.lang-switch a:hover {
     }
 }
 
+/* ==========================================================================
+   Weather Widget (Modern Minimalist Card)
+   ========================================================================== */
+.weather-widget-container {
+    margin-top: 3.5rem;
+    display: none;
+    justify-content: center;
+}
+
+.weather-card {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 100%;
+    text-align: left;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.02);
+    transition: var(--transition);
+}
+
+.weather-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+}
+
+.weather-card-header h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    font-family: var(--font-heading);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-primary);
+}
+
+.weather-forecast-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.weather-day-item {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.weather-day-item:hover {
+    border-color: var(--text-primary);
+}
+
+.weather-day-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 0.75rem;
+    letter-spacing: 0.05em;
+}
+
+.weather-day-temp {
+    display: flex;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+}
+
+@media (max-width: 500px) {
+    .weather-card {
+        padding: 1.5rem;
+    }
+    .weather-forecast-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    .weather-day-item {
+        flex-direction: row !important;
+        justify-content: space-between;
+        padding: 0.75rem 1.25rem;
+        text-align: left;
+    }
+    .weather-day-label {
+        margin-bottom: 0 !important;
+        width: 70px;
+        text-align: left;
+    }
+    .weather-day-item i {
+        margin-bottom: 0 !important;
+        width: 28px !important;
+        height: 28px !important;
+    }
+    .weather-day-item span[style*="capitalize"] {
+        margin-bottom: 0 !important;
+        height: auto !important;
+        width: 80px;
+        text-align: center;
+        font-size: 0.75rem !important;
+    }
+    .weather-day-temp {
+        margin-left: auto;
+    }
+}
+

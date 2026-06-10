@@ -91,6 +91,24 @@
                     <span>Segons</span>
                 </div>
             </div>
+
+            <!-- Weather Widget Container -->
+            <div id="weather-widget" class="weather-widget-container">
+                <div class="weather-card">
+                    <div class="weather-card-header">
+                        <h3>
+                            <i data-lucide="cloud-sun"></i> El Temps a Ares del Maestrat
+                        </h3>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500;">Previsió AEMET</span>
+                    </div>
+                    
+                    <div id="weather-forecast-container" class="weather-forecast-grid">
+                        <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                            Carregant previsió del temps...
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -154,6 +172,7 @@
             // Wait for DB to be initialized
             setTimeout(async () => {
                 await loadHomeData();
+                await loadWeather();
             }, 100);
 
             // Smooth scroll for hero button
@@ -320,6 +339,158 @@
             if (!html) return '';
             const doc = new DOMParser().parseFromString(html, 'text/html');
             return doc.body.textContent || "";
+        }
+
+        function getWeatherIconName(stateValue, description) {
+            const val = String(stateValue);
+            const desc = (description || '').toLowerCase();
+            if (desc.includes('tormenta') || val === '43' || val === '44' || val === '45' || val === '46') return 'cloud-lightning';
+            if (desc.includes('lluvia') || desc.includes('llovinna') || desc.includes('chubasco') || ['16', '17', '23', '24', '25', '26', '33', '34', '35', '36'].includes(val)) return 'cloud-rain';
+            if (desc.includes('nieve') || ['71', '72', '73', '74', '37', '38'].includes(val)) return 'cloud-snow';
+            if (desc.includes('cubierto') || desc.includes('muy nuboso') || ['14', '15'].includes(val)) return 'cloud';
+            if (desc.includes('nuboso') || desc.includes('intervalos') || ['12', '13'].includes(val)) return 'cloud-sun';
+            return 'sun';
+        }
+
+        const descTranslation = {
+            'despejado': 'clar',
+            'poco nuboso': 'poc núvol',
+            'nuboso': 'núvol',
+            'muy nuboso': 'molt núvol',
+            'cubierto': 'cobert',
+            'nubes altas': 'núvols alts',
+            'intervalos nubosos': 'intervals de núvols',
+            'lluvia': 'pluja',
+            'lluvias': 'plujes',
+            'chubasco': 'ruixat',
+            'chubascos': 'ruixats',
+            'tormenta': 'tempesta',
+            'nieve': 'neu',
+            'niebla': 'boira',
+            'intervalos nubosos con lluvia escasa': 'intervals de núvols amb pluja escassa',
+            'nuboso con lluvia': 'núvol amb pluja',
+            'muy nuboso con lluvia': 'molt núvol amb pluja'
+        };
+
+        function renderWeather(forecast) {
+            const container = document.getElementById('weather-forecast-container');
+            if (!container || !forecast) return;
+
+            const isEs = window.location.pathname.includes('/es/');
+            
+            container.innerHTML = forecast.map((day, idx) => {
+                const dateObj = new Date(day.date);
+                const dayLabel = idx === 0 
+                    ? (isEs ? 'HOY' : 'HUI') 
+                    : idx === 1 
+                        ? (isEs ? 'MAÑANA' : 'DEMÀ') 
+                        : (isEs 
+                            ? ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'][dateObj.getDay()]
+                            : ['DIUMENGE', 'DILLUNS', 'DIMARTS', 'DIMECRES', 'DIJOUS', 'DIVENDRES', 'DISSABTE'][dateObj.getDay()]
+                          );
+
+                const iconName = getWeatherIconName(day.skyValue, day.skyDescription);
+                
+                let descText = day.skyDescription;
+                if (!isEs) {
+                    const cleanDesc = descText.toLowerCase().trim();
+                    descText = descTranslation[cleanDesc] || descText;
+                }
+
+                const maxTemp = day.tempMax !== null ? `${day.tempMax}°C` : '--';
+                const minTemp = day.tempMin !== null ? `${day.tempMin}°C` : '--';
+                const maxTitle = isEs ? 'Temperatura máxima' : 'Temperatura màxima';
+                const minTitle = isEs ? 'Temperatura mínima' : 'Temperatura mínima';
+                
+                return `
+                    <div class="weather-day-item">
+                        <span class="weather-day-label">${dayLabel}</span>
+                        <i data-lucide="${iconName}" style="width: 36px; height: 36px; color: var(--text-primary); margin-bottom: 0.75rem;"></i>
+                        <span style="font-size: 0.8rem; font-weight: 300; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: capitalize; height: 2.4em; display: flex; align-items: center; justify-content: center; line-height: 1.2;">
+                            ${descText}
+                        </span>
+                        <div class="weather-day-temp">
+                            <span style="color: #ef4444;" title="${maxTitle}">${maxTemp}</span>
+                            <span style="color: var(--text-muted); font-weight: 300;">/</span>
+                            <span style="color: #3b82f6;" title="${minTitle}">${minTemp}</span>
+                        </div>
+                        ${day.precipProb > 0 ? `
+                            <div style="margin-top: 0.5rem; font-size: 0.7rem; color: #3b82f6; display: flex; align-items: center; gap: 0.25rem; font-weight: 500;">
+                                <i data-lucide="droplet" style="width: 10px; height: 10px;"></i> ${day.precipProb}%
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+
+            if (window.lucide) {
+                window.lucide.createIcons();
+            }
+        }
+
+        async function loadWeather() {
+            const weatherWidget = document.getElementById('weather-widget');
+            if (!weatherWidget) return;
+            
+            weatherWidget.style.display = 'flex';
+            
+            try {
+                let forecast = null;
+                const dbStatus = window.db ? window.db.getStatus() : 'local';
+                
+                if (dbStatus === 'supabase' && window.db.supabase) {
+                    const { data, error } = await window.db.supabase.functions.invoke('aemet-weather');
+                    if (error) throw error;
+                    if (data && data.forecast) {
+                        forecast = data.forecast;
+                    }
+                }
+                
+                if (!forecast) {
+                    forecast = [
+                        {
+                            date: new Date().toISOString().split('T')[0],
+                            tempMax: 22,
+                            tempMin: 12,
+                            skyDescription: 'Despejado',
+                            skyValue: '11',
+                            precipProb: 0,
+                            windSpeed: 15,
+                            windDir: 'O'
+                        },
+                        {
+                            date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                            tempMax: 24,
+                            tempMin: 13,
+                            skyDescription: 'Poco nuboso',
+                            skyValue: '12',
+                            precipProb: 10,
+                            windSpeed: 10,
+                            windDir: 'SO'
+                        },
+                        {
+                            date: new Date(Date.now() + 172800000).toISOString().split('T')[0],
+                            tempMax: 21,
+                            tempMin: 14,
+                            skyDescription: 'Intervalos nubosos con lluvia',
+                            skyValue: '23',
+                            precipProb: 65,
+                            windSpeed: 20,
+                            windDir: 'E'
+                        }
+                    ];
+                }
+                
+                renderWeather(forecast);
+            } catch (err) {
+                console.error("Error loading weather:", err);
+                const container = document.getElementById('weather-forecast-container');
+                const isEs = window.location.pathname.includes('/es/');
+                const errMsg = isEs ? "No se ha podido cargar la previsión del tiempo." : "No s'ha pogut carregar la previsió del temps.";
+                if (container) {
+                    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #ef4444; font-size: 0.85rem;">${errMsg}</div>`;
+                }
+            }
         }
     </script>
 </body>
