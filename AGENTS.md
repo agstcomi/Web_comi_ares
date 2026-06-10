@@ -25,5 +25,19 @@ Todas las tareas del panel de administración principal se completaron, verifica
 
 ---
 
-## 4. Próximo Paso
+## 4. Mejoras Visuales, Animaciones y Tarjetas de Eventos (PRO)
+Todas las tareas de rediseño visual y animaciones fueron completadas, validadas y **subidas a la rama principal (PRO)** en el commit `c985719`:
+* **Jerarquía de Fechas**: Se invirtió la prioridad visual en `/programacio.html` haciendo que la fecha exacta (`.timeline-date-full`) sea grande y negrita, y el día de la semana (`.timeline-date-day`) sea secundario y gris.
+* **Separación del Botón de Cierre en Modales**: Se aplicaron márgenes superiores a la imagen del evento en modales para evitar que el botón de cierre circular "X" se superponga sobre las fotografías.
+* **Carrusel de Noticias Móvil**: Se solucionó el recorte del primer elemento mediante márgenes `:first-child` y `:last-child` en lugar de paddings de contenedor, asegurando que se alinee perfectamente con el título.
+* **Tarjetas de Eventos Destacados (Home)**: Se sustituyó la rejilla de noticias por tarjetas individuales blancas `.home-event-card` con bordes redondeados de `20px` y sombras, distribuidas de forma horizontal (eje de abscisas) en escritorio y en pila vertical en móvil, ubicando siempre la etiqueta de categoría de forma consistente debajo del título.
+* **Bordes del Widget de Tiempo**: Se unificaron los radios de borde del tiempo en la home (`20px` la tarjeta y `14px` las celdas diarias, alineándose con `temps.html`).
+* **Visualización del Tiempo en Móvil**: Se resolvió la desaparición de los iconos meteorológicos de Lucide y el desborde lateral mediante el uso de `flex-shrink: 0`, `min-width: 0` y paddings horizontales optimizados.
+* **Dropdown de Idiomas**: Apertura por clic y diseño de cápsula integrado en la cabecera.
+* **Reloj Mecánico en Cuenta Atrás**: Animación vertical elástica al cambiar los dígitos en la landing home.
+* **Cache-Busting (v1.3)**: Se actualizó el parámetro de consulta a `?v=1.3` en todas las referencias del stylesheet en los archivos HTML del proyecto para forzar la actualización inmediata de la caché del navegador de los usuarios.
+
+---
+
+## 5. Próximo Paso
 * Esperar a nuevas instrucciones del usuario.
