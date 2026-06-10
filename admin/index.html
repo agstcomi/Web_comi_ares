@@ -27,9 +27,9 @@
 <body>
 
     <!-- Standalone Admin Header -->
-    <header class="main-header" style="position: static; margin-bottom: 2rem;">
-        <div class="container" style="display: flex; align-items: center; justify-content: space-between; height: var(--header-height);">
-            <a href="../index.html" class="logo" style="display: flex; align-items: center; height: 100%;">
+    <header class="main-header">
+        <div class="container">
+            <a href="../index.html" class="logo">
                 <img src="../img/logo.svg" alt="Logo Comissió Ares" style="height: 40px; width: auto;">
             </a>
             <span style="font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; border-bottom: 2px solid var(--text-primary); padding-bottom: 0.25rem;">
@@ -38,7 +38,7 @@
         </div>
     </header>
 
-    <div class="page-intro container" style="padding-top: 1rem;">
+    <div class="page-intro container">
         <h1>PANEL DE GESTIÓ</h1>
         <p>
             Administra els continguts visibles a la web oficial: notícies, programa d'actes i galeria de fotografies.
@@ -72,10 +72,6 @@
                 Contrasenya incorrecta.
             </div>
 
-            <div style="margin-top: 2rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem; font-size: 0.8rem; color: var(--text-secondary);">
-                <p style="margin-bottom: 0.5rem; font-weight: 700;">💡 Mode Demo (LocalStorage):</p>
-                <p style="margin-bottom: 0;">Usa qualsevol correu i la contrasenya <code style="font-weight: 700; background-color: var(--bg-tertiary); padding: 0.1rem 0.3rem;">ares2026</code> per provar el gestor sense bases de dades externes.</p>
-            </div>
         </div>
     </div>
 
@@ -99,26 +95,35 @@
             <!-- Sidebar Navigation tabs -->
             <aside class="admin-sidebar">
                 <button class="admin-tab-btn active" data-tab="tab-news">
-                    <i data-lucide="newspaper" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    <i data-lucide="newspaper" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
                     Notícies
                 </button>
                 <button class="admin-tab-btn" data-tab="tab-events">
-                    <i data-lucide="calendar" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    <i data-lucide="calendar" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
                     Programa d'actes
                 </button>
                 <button class="admin-tab-btn" data-tab="tab-photos">
-                    <i data-lucide="image" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    <i data-lucide="image" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
                     Galeria de fotos
                 </button>
                 <button class="admin-tab-btn" data-tab="tab-config">
-                    <i data-lucide="database" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
+                    <i data-lucide="database" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
                     Configurar Supabase
                 </button>
                 
-                <button class="admin-tab-btn btn-danger" id="logout-btn" style="margin-top: 3rem; text-align: left; color: white;">
-                    <i data-lucide="log-out" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i>
-                    Tancar Sessió
-                </button>
+                <!-- Profile Card with Integrated Logout -->
+                <div class="admin-profile-card">
+                    <div class="admin-profile-avatar">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Avatar">
+                    </div>
+                    <div class="admin-profile-info">
+                        <h4 class="admin-profile-name">Admin</h4>
+                        <span class="admin-profile-role">admin@ares.com</span>
+                    </div>
+                    <button id="logout-btn" title="Tancar Sessió" aria-label="Tancar Sessió">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
             </aside>
 
             <!-- Main Work Panels -->
@@ -254,9 +259,9 @@
                                 <button type="submit" class="btn btn-sm">
                                     <i data-lucide="save" style="width: 14px; height: 14px;"></i> Guardar i Connectar
                                 </button>
-                                <button type="button" class="btn btn-sm btn-secondary" id="btn-reset-db">
-                                    Desconnectar (Tornar a Demo)
-                                </button>
+                                 <button type="button" class="btn btn-sm btn-secondary" id="btn-reset-db">
+                                     Desconnectar (Mode Local)
+                                 </button>
                             </div>
                         </form>
                     </div>
@@ -475,11 +480,14 @@ CREATE TABLE photos (
     </div>
 
     <!-- Standalone Admin Footer -->
-    <footer class="main-footer" style="margin-top: 4rem; padding: 2rem 0; border-top: 1px solid var(--border-color); background-color: var(--bg-secondary); text-align: center;">
-        <div class="container" style="font-size: 0.8rem; color: var(--text-muted);">
-            &copy; ${new Date().getFullYear()} Comissió de Festes d'Ares del Maestrat. Panel d'Administració Privat.
+    <footer class="main-footer" style="padding: 2.5rem 0; background-color: #000000; border-radius: 20px 20px 0 0; text-align: center; margin-top: 5rem; border-top: none;">
+        <div class="container" style="display: flex; justify-content: center; align-items: center; font-size: 0.8rem; color: rgba(255, 255, 255, 0.5);">
+            &copy; <span id="footer-year">2026</span> Comissió de Festes d'Ares del Maestrat. Panel d'Administració Privat.
         </div>
     </footer>
+    <script>
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+    </script>
 
     <!-- Scripts -->
     <script src="../js/db.js" defer></script>

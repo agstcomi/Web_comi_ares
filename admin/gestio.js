@@ -57,6 +57,16 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Update database connection status badge
         updateDbStatusBadge();
+
+        // Update profile card in sidebar
+        const profileName = document.querySelector('.admin-profile-name');
+        const profileRole = document.querySelector('.admin-profile-role');
+        if (profileName) {
+            profileName.textContent = user.email.split('@')[0];
+        }
+        if (profileRole) {
+            profileRole.textContent = user.email;
+        }
         
         // Load configurations into input fields if present
         loadDbConfigFields();
@@ -77,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
             dbStatusBadge.textContent = 'Supabase Cloud';
         } else {
             dbStatusBadge.classList.add('status-local');
-            dbStatusBadge.textContent = 'Mode Demo (Local)';
+            dbStatusBadge.textContent = 'Mode Local';
         }
     }
 
