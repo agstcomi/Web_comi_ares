@@ -92,23 +92,6 @@
                 </div>
             </div>
 
-            <!-- Weather Widget Container -->
-            <div id="weather-widget" class="weather-widget-container">
-                <div class="weather-card">
-                    <div class="weather-card-header">
-                        <h3>
-                            <i data-lucide="cloud-sun"></i> El Temps a Ares del Maestrat
-                        </h3>
-                        <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500;">Previsió AEMET</span>
-                    </div>
-                    
-                    <div id="weather-forecast-container" class="weather-forecast-grid">
-                        <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
-                            Carregant previsió del temps...
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </section>
 
@@ -141,6 +124,28 @@
                 <!-- Events loaded dynamically via JS -->
                 <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
                     Carregant esdeveniments...
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Weather Forecast Section -->
+    <section id="oratge" style="background-color: var(--bg-primary);">
+        <div class="container">
+            <div id="weather-widget" class="weather-widget-container" style="margin-top: 0;">
+                <div class="weather-card" style="margin: 0 auto;">
+                    <div class="weather-card-header">
+                        <h3>
+                            <i data-lucide="cloud-sun"></i> El Temps a Ares del Maestrat
+                        </h3>
+                        <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500;">Previsió AEMET</span>
+                    </div>
+                    
+                    <div id="weather-forecast-container" class="weather-forecast-grid">
+                        <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
+                            Carregant previsió del temps...
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
