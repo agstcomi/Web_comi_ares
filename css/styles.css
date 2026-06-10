@@ -512,15 +512,16 @@ nav.nav-menu ul li a::after {
     #news-container {
         display: flex;
         overflow-x: auto;
+        overflow-y: hidden;
         scroll-snap-type: x mandatory;
         padding-bottom: 1.5rem;
         gap: 1.5rem;
         scrollbar-width: none;
         -webkit-overflow-scrolling: touch;
-        margin-left: -2rem;
+        margin-left: 0;
         margin-right: -2rem;
         padding-left: 0;
-        padding-right: 0;
+        padding-right: 2rem;
     }
     #news-container::-webkit-scrollbar {
         display: none;
@@ -528,12 +529,7 @@ nav.nav-menu ul li a::after {
     #news-container .news-card {
         flex: 0 0 290px;
         scroll-snap-align: start;
-    }
-    #news-container .news-card:first-child {
-        margin-left: 2rem;
-    }
-    #news-container .news-card:last-child {
-        margin-right: 2rem;
+        margin: 0;
     }
     #news-container .news-card .news-info {
         padding: 1.5rem;
