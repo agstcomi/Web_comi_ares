@@ -418,6 +418,32 @@ nav.nav-menu ul li a.active::after {
     gap: 2rem;
 }
 
+@media (max-width: 768px) {
+    #news-container {
+        display: flex;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding-bottom: 1.5rem;
+        gap: 1.5rem;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+        margin-left: -2rem;
+        margin-right: -2rem;
+        padding-left: 2rem;
+        padding-right: 2rem;
+    }
+    #news-container::-webkit-scrollbar {
+        display: none;
+    }
+    #news-container .news-card {
+        flex: 0 0 290px;
+        scroll-snap-align: start;
+    }
+    #news-container .news-card .news-info {
+        padding: 1.5rem;
+    }
+}
+
 @media (max-width: 480px) {
     .news-grid {
         grid-template-columns: 1fr;
