@@ -35,6 +35,13 @@
             border-top: 1px solid var(--border-color);
             padding-top: 2rem;
         }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .spin {
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 <body>
@@ -61,9 +68,14 @@
                 <input type="hidden" id="news-id">
                 
                 <!-- Pestanyes de llenguatge -->
-                <div class="lang-tabs" style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
-                    <button type="button" class="lang-tab-btn active" data-lang="ca" style="padding: 0.5rem 1rem; font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; background: none; border: none; cursor: pointer; color: var(--text-primary); border-bottom: 2px solid var(--text-primary); margin-bottom: -1.2rem; transition: var(--transition); outline: none;">Valencià</button>
-                    <button type="button" class="lang-tab-btn" data-lang="es" style="padding: 0.5rem 1rem; font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; background: none; border: none; cursor: pointer; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1.2rem; transition: var(--transition); outline: none;">Castellano</button>
+                <div class="lang-tabs" style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; align-items: center; justify-content: space-between;">
+                    <div style="display: flex; gap: 1rem;">
+                        <button type="button" class="lang-tab-btn active" data-lang="ca" style="padding: 0.5rem 1rem; font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; background: none; border: none; cursor: pointer; color: var(--text-primary); border-bottom: 2px solid var(--text-primary); margin-bottom: -1.2rem; transition: var(--transition); outline: none;">Valencià</button>
+                        <button type="button" class="lang-tab-btn" data-lang="es" style="padding: 0.5rem 1rem; font-family: var(--font-heading); font-weight: 700; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.05em; background: none; border: none; cursor: pointer; color: var(--text-muted); border-bottom: 2px solid transparent; margin-bottom: -1.2rem; transition: var(--transition); outline: none;">Castellano</button>
+                    </div>
+                    <button type="button" id="btn-translate-news" class="btn btn-sm" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.75rem; font-family: var(--font-heading); font-weight: 700; align-items: center; gap: 0.25rem; background-color: var(--text-primary); color: var(--bg-primary); border: 1px solid var(--text-primary); border-radius: 6px; cursor: pointer;">
+                        <i data-lucide="languages" style="width: 14px; height: 14px;"></i> Traduir al Castellà
+                    </button>
                 </div>
 
                 <!-- Grup Valencià -->
@@ -239,6 +251,7 @@
             const tabBtns = document.querySelectorAll('.lang-tab-btn');
             const caGroup = document.querySelector('.lang-ca-group');
             const esGroup = document.querySelector('.lang-es-group');
+            const btnTranslateNews = document.getElementById('btn-translate-news');
 
             tabBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
@@ -255,9 +268,11 @@
                     if (selectedLang === 'ca') {
                         if (caGroup) caGroup.style.display = 'block';
                         if (esGroup) esGroup.style.display = 'none';
+                        if (btnTranslateNews) btnTranslateNews.style.display = 'none';
                     } else {
                         if (caGroup) caGroup.style.display = 'none';
                         if (esGroup) esGroup.style.display = 'block';
+                        if (btnTranslateNews) btnTranslateNews.style.display = 'inline-flex';
                     }
                 });
             });
@@ -348,6 +363,64 @@
                 form.addEventListener('submit', async (e) => {
                     e.preventDefault();
                     await saveNews();
+                });
+            }
+
+            // Setup news translation button handler
+            if (btnTranslateNews) {
+                btnTranslateNews.addEventListener('click', async () => {
+                    const title = document.getElementById('news-title').value.trim();
+                    const subtitle = document.getElementById('news-subtitle').value.trim();
+                    const alt = document.getElementById('news-image-alt').value.trim();
+                    const newsEditor = document.getElementById('news-editor');
+                    const htmlContent = newsEditor ? newsEditor.innerHTML : '';
+
+                    if (!title && !htmlContent.trim()) {
+                        alert("Si us plau, introdueix primer el títol o el contingut en Valencià.");
+                        return;
+                    }
+
+                    const originalHTML = btnTranslateNews.innerHTML;
+                    btnTranslateNews.disabled = true;
+                    btnTranslateNews.innerHTML = '<i data-lucide="loader" class="spin" style="width: 14px; height: 14px;"></i> Traduint...';
+                    if (window.lucide) window.lucide.createIcons();
+
+                    try {
+                        if (title) {
+                            const transTitle = await translateText(title);
+                            document.getElementById('news-title-es').value = transTitle;
+                            
+                            // Auto-generate Spanish slug
+                            const slugInputEs = document.getElementById('news-slug-es');
+                            if (slugInputEs && (!slugInputEs.value.trim() || !isSlugManuallyEditedEs)) {
+                                slugInputEs.value = slugify(transTitle);
+                            }
+                        }
+                        if (subtitle) {
+                            document.getElementById('news-subtitle-es').value = await translateText(subtitle);
+                        }
+                        if (alt) {
+                            document.getElementById('news-image-alt-es').value = await translateText(alt);
+                        }
+                        if (htmlContent.trim()) {
+                            const transHTML = await translateHTML(htmlContent);
+                            const newsEditorEs = document.getElementById('news-editor-es');
+                            if (newsEditorEs) {
+                                newsEditorEs.innerHTML = transHTML;
+                            }
+                            const newsContentEs = document.getElementById('news-content-es');
+                            if (newsContentEs) {
+                                newsContentEs.value = transHTML;
+                            }
+                        }
+                    } catch (error) {
+                        console.error("Error durant la traducció:", error);
+                        alert("S'ha produït un error durant la traducció automàtica. Revisa els camps.");
+                    } finally {
+                        btnTranslateNews.disabled = false;
+                        btnTranslateNews.innerHTML = originalHTML;
+                        if (window.lucide) window.lucide.createIcons();
+                    }
                 });
             }
 
@@ -666,6 +739,61 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Guardar Notícia';
             }
+        }
+
+        async function translateText(text) {
+            if (!text || !text.trim()) return '';
+            try {
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`MyMemory API error: ${res.status}`);
+                const data = await res.json();
+                if (data && data.responseData && data.responseData.translatedText) {
+                    return data.responseData.translatedText;
+                }
+                throw new Error('Invalid response format');
+            } catch (err) {
+                console.error('Translation error:', err);
+                return text; // Fallback to original text
+            }
+        }
+
+        async function translateNode(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                const text = node.textContent;
+                if (!text.trim()) return text;
+                return await translateText(text);
+            }
+            
+            if (node.nodeType === Node.ELEMENT_NODE) {
+                const structuralTags = ['UL', 'OL', 'DL', 'TABLE', 'TBODY', 'TR', 'THEAD'];
+                if (structuralTags.includes(node.tagName)) {
+                    const clone = node.cloneNode(false);
+                    for (const child of node.childNodes) {
+                        clone.innerHTML += await translateNode(child);
+                    }
+                    return clone.outerHTML;
+                }
+                
+                const innerHTML = node.innerHTML;
+                if (!innerHTML.trim()) return node.outerHTML;
+                
+                const translatedInner = await translateText(innerHTML);
+                const clone = node.cloneNode(false);
+                clone.innerHTML = translatedInner;
+                return clone.outerHTML;
+            }
+            return '';
+        }
+
+        async function translateHTML(htmlStr) {
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = htmlStr;
+            let result = '';
+            for (const node of tempDiv.childNodes) {
+                result += await translateNode(node);
+            }
+            return result;
         }
     </script>
 </body>

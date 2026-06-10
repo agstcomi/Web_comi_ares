@@ -834,4 +834,103 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Setup event translation button handler
+    const btnTranslateEvent = document.getElementById('btn-translate-event');
+    if (btnTranslateEvent) {
+        btnTranslateEvent.addEventListener('click', async () => {
+            const title = document.getElementById('event-title').value.trim();
+            const location = document.getElementById('event-location').value.trim();
+            const description = document.getElementById('event-description').value.trim();
+            const longDesc = document.getElementById('event-long-description').value.trim();
+
+            if (!title && !description) {
+                alert("Si us plau, introdueix primer el títol o la descripció de l'acte en Valencià.");
+                return;
+            }
+
+            const originalHTML = btnTranslateEvent.innerHTML;
+            btnTranslateEvent.disabled = true;
+            btnTranslateEvent.innerHTML = '<i data-lucide="loader" class="spin" style="width: 14px; height: 14px;"></i> Traduint...';
+            if (window.lucide) window.lucide.createIcons();
+
+            try {
+                if (title) {
+                    document.getElementById('event-title-es').value = await translateText(title);
+                }
+                if (location) {
+                    document.getElementById('event-location-es').value = await translateText(location);
+                }
+                if (description) {
+                    document.getElementById('event-description-es').value = await translateText(description);
+                }
+                if (longDesc) {
+                    document.getElementById('event-long-description-es').value = await translateHTML(longDesc);
+                }
+            } catch (error) {
+                console.error("Error durant la traducció de l'acte:", error);
+                alert("S'ha produït un error durant la traducció automàtica. Revisa els camps.");
+            } finally {
+                btnTranslateEvent.disabled = false;
+                btnTranslateEvent.innerHTML = originalHTML;
+                if (window.lucide) window.lucide.createIcons();
+            }
+        });
+    }
+
+    async function translateText(text) {
+        if (!text || !text.trim()) return '';
+        try {
+            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es`;
+            const res = await fetch(url);
+            if (!res.ok) throw new Error(`MyMemory API error: ${res.status}`);
+            const data = await res.json();
+            if (data && data.responseData && data.responseData.translatedText) {
+                return data.responseData.translatedText;
+            }
+            throw new Error('Invalid response format');
+        } catch (err) {
+            console.error('Translation error:', err);
+            return text; // Fallback to original text
+        }
+    }
+
+    async function translateNode(node) {
+        if (node.nodeType === Node.TEXT_NODE) {
+            const text = node.textContent;
+            if (!text.trim()) return text;
+            return await translateText(text);
+        }
+        
+        if (node.nodeType === Node.ELEMENT_NODE) {
+            const structuralTags = ['UL', 'OL', 'DL', 'TABLE', 'TBODY', 'TR', 'THEAD'];
+            if (structuralTags.includes(node.tagName)) {
+                const clone = node.cloneNode(false);
+                for (const child of node.childNodes) {
+                    clone.innerHTML += await translateNode(child);
+                }
+                return clone.outerHTML;
+            }
+            
+            const innerHTML = node.innerHTML;
+            if (!innerHTML.trim()) return node.outerHTML;
+            
+            const translatedInner = await translateText(innerHTML);
+            const clone = node.cloneNode(false);
+            clone.innerHTML = translatedInner;
+            return clone.outerHTML;
+        }
+        return '';
+    }
+
+    async function translateHTML(htmlStr) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlStr;
+        let result = '';
+        for (const node of tempDiv.childNodes) {
+            result += await translateNode(node);
+        }
+        return result;
+    }
+
 });
+
