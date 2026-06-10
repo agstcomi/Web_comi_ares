@@ -950,10 +950,18 @@
     <script src="/js/db.js" defer></script>
     <script src="/js/main.js?v=1.6" defer></script>
     <script>
+        function getLocalDateStr(offsetDays = 0) {
+            const d = new Date();
+            if (offsetDays !== 0) {
+                d.setDate(d.getDate() + offsetDays);
+            }
+            return d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
+        }
+
         // Mock weather data fallback for 7 days
         const MOCK_WEATHER = [
             {
-                date: new Date().toISOString().split('T')[0],
+                date: getLocalDateStr(0),
                 tempMax: 22,
                 tempMin: 12,
                 skyDescription: 'Despejado',
@@ -970,7 +978,7 @@
                 sunset: '21:28'
             },
             {
-                date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+                date: getLocalDateStr(1),
                 tempMax: 24,
                 tempMin: 13,
                 skyDescription: 'Poco nuboso',
@@ -987,7 +995,7 @@
                 sunset: '21:29'
             },
             {
-                date: new Date(Date.now() + 172800000).toISOString().split('T')[0],
+                date: getLocalDateStr(2),
                 tempMax: 21,
                 tempMin: 14,
                 skyDescription: 'Intervalos nubosos con lluvia',
@@ -1004,7 +1012,7 @@
                 sunset: '21:29'
             },
             {
-                date: new Date(Date.now() + 259200000).toISOString().split('T')[0],
+                date: getLocalDateStr(3),
                 tempMax: 19,
                 tempMin: 11,
                 skyDescription: 'Muy nuboso con lluvia',
@@ -1021,7 +1029,7 @@
                 sunset: '21:30'
             },
             {
-                date: new Date(Date.now() + 345600000).toISOString().split('T')[0],
+                date: getLocalDateStr(4),
                 tempMax: 20,
                 tempMin: 10,
                 skyDescription: 'Nuboso',
@@ -1038,7 +1046,7 @@
                 sunset: '21:30'
             },
             {
-                date: new Date(Date.now() + 432000000).toISOString().split('T')[0],
+                date: getLocalDateStr(5),
                 tempMax: 23,
                 tempMin: 12,
                 skyDescription: 'Despejado',
@@ -1055,7 +1063,7 @@
                 sunset: '21:31'
             },
             {
-                date: new Date(Date.now() + 518400000).toISOString().split('T')[0],
+                date: getLocalDateStr(6),
                 tempMax: 25,
                 tempMin: 14,
                 skyDescription: 'Despejado',
@@ -1137,6 +1145,14 @@
                 }
                 
                 if (!weatherData) {
+                    weatherData = MOCK_WEATHER;
+                }
+
+                // Filter out past days so that today (current local date in Spain) is the first day
+                const localTodayStr = getLocalDateStr(0);
+                weatherData = weatherData.filter(day => day.date >= localTodayStr);
+                
+                if (weatherData.length === 0) {
                     weatherData = MOCK_WEATHER;
                 }
 

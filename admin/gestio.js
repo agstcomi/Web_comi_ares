@@ -52,11 +52,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentUser = null;
 
-    // Helper functions for user profile persistence in local storage
+    // Helper functions for user profile persistence in local storage and cloud database (Supabase)
     function getProfile(user) {
         const defaultAvatar = "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100";
-        const defaultName = user.email.split('@')[0];
-        const stored = localStorage.getItem(`ares_profile_${user.email}`);
+        const defaultName = user.email ? user.email.split('@')[0] : "Admin";
+
+        // 1. Try to get metadata from Supabase user object if available (highest priority)
+        if (user && user.user_metadata) {
+            const metaName = user.user_metadata.display_name;
+            const metaAvatar = user.user_metadata.avatar_url;
+            if (metaName || metaAvatar) {
+                return {
+                    name: metaName || defaultName,
+                    avatarUrl: metaAvatar || defaultAvatar
+                };
+            }
+        }
+
+        // 2. Fallback to localStorage
+        const emailKey = user.email || 'default_admin';
+        const stored = localStorage.getItem(`ares_profile_${emailKey}`);
         if (stored) {
             try {
                 return JSON.parse(stored);
@@ -67,8 +82,29 @@ document.addEventListener('DOMContentLoaded', () => {
         return { name: defaultName, avatarUrl: defaultAvatar };
     }
 
-    function saveProfile(user, name, avatarUrl) {
-        localStorage.setItem(`ares_profile_${user.email}`, JSON.stringify({ name, avatarUrl }));
+    async function saveProfile(user, name, avatarUrl) {
+        const emailKey = user.email || 'default_admin';
+
+        // 1. If Supabase is configured and online, update user_metadata in Supabase Auth so it synchronizes across devices
+        if (window.db && typeof window.db.isSupabaseConfigured === 'function' && window.db.isSupabaseConfigured() && window.db.supabase) {
+            try {
+                const { data, error } = await window.db.supabase.auth.updateUser({
+                    data: {
+                        display_name: name,
+                        avatar_url: avatarUrl
+                    }
+                });
+                if (error) throw error;
+                if (data && data.user) {
+                    currentUser = data.user; // update active user object reference
+                }
+            } catch (e) {
+                console.error("Error saving profile in Supabase Auth user_metadata:", e);
+            }
+        }
+
+        // 2. Save in localStorage as cache or fallback
+        localStorage.setItem(`ares_profile_${emailKey}`, JSON.stringify({ name, avatarUrl }));
     }
 
     async function showDashboard(user) {
@@ -791,9 +827,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const file = e.target.files[0];
             if (!file) return;
 
+            profilePreviewImg.style.opacity = "0.5";
+
             try {
                 let url = "";
-                if (window.db && typeof window.db.isSupabaseConfigured === 'function' && window.db.isSupabaseConfigured()) {
+                // Always use window.db.uploadImage to enable client-side compression & avoid QuotaExceededError in localStorage
+                if (window.db && typeof window.db.uploadImage === 'function') {
                     url = await window.db.uploadImage(file);
                 } else {
                     const reader = new FileReader();
@@ -807,27 +846,47 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (err) {
                 console.error("Error uploading profile photo:", err);
                 alert("Error al carregar la foto de perfil.");
+            } finally {
+                profilePreviewImg.style.opacity = "1";
             }
         });
     }
 
     if (profileForm) {
-        profileForm.addEventListener('submit', (e) => {
+        profileForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!currentUser) return;
 
-            const name = profileNameInput.value.trim();
-            const avatarUrl = profileAvatarUrlInput.value.trim();
+            const submitBtn = profileForm.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="spin" data-lucide="loader" style="width: 14px; height: 14px; margin-right: 0.5rem; display: inline-block;"></i> Guardant...';
+                if (window.lucide) window.lucide.createIcons();
+            }
 
-            saveProfile(currentUser, name, avatarUrl);
+            try {
+                const name = profileNameInput.value.trim();
+                const avatarUrl = profileAvatarUrlInput.value.trim();
 
-            userGreeting.textContent = `Hola, ${name}!`;
-            const profileName = document.querySelector('.admin-profile-name');
-            const profileAvatar = document.querySelector('.admin-profile-avatar img');
-            if (profileName) profileName.textContent = name;
-            if (profileAvatar) profileAvatar.src = avatarUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100";
+                await saveProfile(currentUser, name, avatarUrl);
 
-            alert("Perfil actualitzat correctament.");
+                userGreeting.textContent = `Hola, ${name}!`;
+                const profileName = document.querySelector('.admin-profile-name');
+                const profileAvatar = document.querySelector('.admin-profile-avatar img');
+                if (profileName) profileName.textContent = name;
+                if (profileAvatar) profileAvatar.src = avatarUrl || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100";
+
+                alert("Perfil actualitzat correctament.");
+            } catch (err) {
+                console.error("Error saving profile:", err);
+                alert("S'ha produït un error al guardar el perfil.");
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i data-lucide="save" style="width: 14px; height: 14px;"></i> Guardar Canvis';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            }
         });
     }
 

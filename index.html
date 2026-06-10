@@ -735,6 +735,14 @@
             }
         }
 
+        function getLocalDateStr(offsetDays = 0) {
+            const d = new Date();
+            if (offsetDays !== 0) {
+                d.setDate(d.getDate() + offsetDays);
+            }
+            return d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
+        }
+
         async function loadWeather() {
             const weatherWidget = document.getElementById('weather-widget');
             if (!weatherWidget) return;
@@ -758,39 +766,49 @@
                     }
                 }
                 
+                const mockForecast = [
+                    {
+                        date: getLocalDateStr(0),
+                        tempMax: 22,
+                        tempMin: 12,
+                        skyDescription: 'Despejado',
+                        skyValue: '11',
+                        precipProb: 0,
+                        windSpeed: 15,
+                        windDir: 'O'
+                    },
+                    {
+                        date: getLocalDateStr(1),
+                        tempMax: 24,
+                        tempMin: 13,
+                        skyDescription: 'Poco nuboso',
+                        skyValue: '12',
+                        precipProb: 10,
+                        windSpeed: 10,
+                        windDir: 'SO'
+                    },
+                    {
+                        date: getLocalDateStr(2),
+                        tempMax: 21,
+                        tempMin: 14,
+                        skyDescription: 'Intervalos nubosos con lluvia',
+                        skyValue: '23',
+                        precipProb: 65,
+                        windSpeed: 20,
+                        windDir: 'E'
+                    }
+                ];
+
                 if (!forecast) {
-                    forecast = [
-                        {
-                            date: new Date().toISOString().split('T')[0],
-                            tempMax: 22,
-                            tempMin: 12,
-                            skyDescription: 'Despejado',
-                            skyValue: '11',
-                            precipProb: 0,
-                            windSpeed: 15,
-                            windDir: 'O'
-                        },
-                        {
-                            date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
-                            tempMax: 24,
-                            tempMin: 13,
-                            skyDescription: 'Poco nuboso',
-                            skyValue: '12',
-                            precipProb: 10,
-                            windSpeed: 10,
-                            windDir: 'SO'
-                        },
-                        {
-                            date: new Date(Date.now() + 172800000).toISOString().split('T')[0],
-                            tempMax: 21,
-                            tempMin: 14,
-                            skyDescription: 'Intervalos nubosos con lluvia',
-                            skyValue: '23',
-                            precipProb: 65,
-                            windSpeed: 20,
-                            windDir: 'E'
-                        }
-                    ];
+                    forecast = mockForecast;
+                }
+
+                // Filter out past days so that today (current local date in Spain) is the first day
+                const localTodayStr = getLocalDateStr(0);
+                forecast = forecast.filter(day => day.date >= localTodayStr);
+                
+                if (forecast.length === 0) {
+                    forecast = mockForecast;
                 }
                 
                 renderWeather(forecast.slice(0, 3));
