@@ -247,6 +247,17 @@ nav.nav-menu ul li a.active {
     border-color: #000000;
 }
 
+nav.nav-menu ul li a.nav-btn-socis {
+    border: 1px solid var(--text-primary) !important;
+    padding: 0.55rem 1.25rem;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+nav.nav-menu ul li a.nav-btn-socis:hover {
+    background-color: var(--text-primary) !important;
+    color: var(--bg-primary) !important;
+}
+
 nav.nav-menu ul li a::after {
     display: none !important;
 }
@@ -1736,6 +1747,14 @@ header.main-header.on-hero .nav-toggle {
         background-color: #ffffff;
         color: #000000 !important;
         border-color: #ffffff;
+    }
+    header.main-header.on-hero nav.nav-menu ul li a.nav-btn-socis {
+        border-color: rgba(255, 255, 255, 0.8) !important;
+        color: #ffffff !important;
+    }
+    header.main-header.on-hero nav.nav-menu ul li a.nav-btn-socis:hover {
+        background-color: #ffffff !important;
+        color: #000000 !important;
     }
 }
 

@@ -192,6 +192,10 @@ function renderHeader() {
         menuHTML += `<li><a href="${item.file}" ${isActive}>${item.name}</a></li>`;
     });
 
+    const adminLink = isEs ? '../admin/index.html' : 'admin/index.html';
+    const adminLabel = isEs ? 'Área de Socio' : 'Àrea de Soci';
+    menuHTML += `<li class="menu-item-socis"><a href="${adminLink}" class="nav-btn-socis">${adminLabel}</a></li>`;
+
     // Generate language switcher HTML
     const searchParams = window.location.search;
     const langSwitchHTML = isEs
