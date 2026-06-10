@@ -192,11 +192,23 @@ function renderHeader() {
         menuHTML += `<li><a href="${item.file}" ${isActive}>${item.name}</a></li>`;
     });
 
-    // Generate language switcher HTML
+    // Generate language switcher HTML with dropdown
     const searchParams = window.location.search;
-    const langSwitchHTML = isEs
-        ? `<a href="../${page}${searchParams}" title="Canviar a Valencià">VAL</a>`
-        : `<a href="es/${page}${searchParams}" title="Cambiar a Castellano">ESP</a>`;
+    const valLink = isEs ? `../${page}${searchParams}` : `${page}${searchParams}`;
+    const esLink = isEs ? `${page}${searchParams}` : `es/${page}${searchParams}`;
+
+    const langDropdownHTML = `
+        <div class="lang-dropdown">
+            <button class="lang-dropdown-btn" aria-label="Seleccionar idioma">
+                <span>${isEs ? 'ESP' : 'VAL'}</span>
+                <i data-lucide="chevron-down" style="width: 14px; height: 14px; margin-left: 4px;"></i>
+            </button>
+            <div class="lang-dropdown-content">
+                <a href="${valLink}" class="${!isEs ? 'active' : ''}">Valencià</a>
+                <a href="${esLink}" class="${isEs ? 'active' : ''}">Castellano</a>
+            </div>
+        </div>
+    `;
 
     const logoPath = isEs ? '../img/logo.svg' : 'img/logo.svg';
 
@@ -214,17 +226,53 @@ function renderHeader() {
                         ${menuHTML}
                         <!-- Mobile-only language switcher -->
                         <li class="mobile-lang-switch">
-                            ${langSwitchHTML}
+                            ${langDropdownHTML}
                         </li>
                     </ul>
                 </nav>
                 <!-- Desktop-only language switcher -->
                 <div class="desktop-lang-switch">
-                    ${langSwitchHTML}
+                    ${langDropdownHTML}
                 </div>
             </div>
         </header>
     `;
+
+    // Bind events to toggle language dropdown (especially for touch/mobile devices)
+    document.querySelectorAll('.lang-dropdown-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Close other dropdowns
+            document.querySelectorAll('.lang-dropdown-content').forEach(d => {
+                if (d !== btn.nextElementSibling) {
+                    d.classList.remove('show');
+                    const otherBtn = d.previousElementSibling;
+                    if (otherBtn) otherBtn.classList.remove('active');
+                }
+            });
+
+            const content = btn.nextElementSibling;
+            if (content) {
+                const isShowing = content.classList.contains('show');
+                content.classList.toggle('show');
+                btn.classList.toggle('active');
+            }
+        });
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.lang-dropdown-content').forEach(d => {
+            d.classList.remove('show');
+        });
+        document.querySelectorAll('.lang-dropdown-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+    });
+
+    if (window.lucide) window.lucide.createIcons();
 }
 
 function renderFooter() {

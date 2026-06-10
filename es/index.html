@@ -30,7 +30,7 @@
     <meta name="theme-color" content="#ffffff">
     <link rel="apple-touch-icon" href="../img/icon-512.svg">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="../css/styles.css?v=1.1">
+    <link rel="stylesheet" href="../css/styles.css?v=1.3">
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
@@ -129,7 +129,7 @@
                 <p style="margin-bottom: 0;"><a href="programacio.html" style="text-decoration: underline;">Ver programa completo &rarr;</a></p>
             </div>
             
-            <div class="news-grid" id="events-highlight-container">
+            <div class="home-events-grid" id="events-highlight-container">
                 <!-- Events loaded dynamically via JS -->
                 <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
                     Cargando eventos...
@@ -208,16 +208,27 @@
         function initCountdown() {
             const targetDate = new Date("2026-08-16T00:00:00");
 
+            function updateValue(id, newValue) {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (el.textContent !== newValue) {
+                    el.textContent = newValue;
+                    el.classList.remove('animate-roll');
+                    void el.offsetWidth; // Force reflow
+                    el.classList.add('animate-roll');
+                }
+            }
+
             function update() {
                 const currentDate = new Date();
                 let diffMs = targetDate - currentDate;
 
                 if (diffMs <= 0) {
-                    document.getElementById('countdown-months').textContent = "00";
-                    document.getElementById('countdown-days').textContent = "00";
-                    document.getElementById('countdown-hours').textContent = "00";
-                    document.getElementById('countdown-minutes').textContent = "00";
-                    document.getElementById('countdown-seconds').textContent = "00";
+                    updateValue('countdown-months', "00");
+                    updateValue('countdown-days', "00");
+                    updateValue('countdown-hours', "00");
+                    updateValue('countdown-minutes', "00");
+                    updateValue('countdown-seconds', "00");
                     return;
                 }
 
@@ -247,11 +258,11 @@
 
                 const seconds = Math.floor(remainingMs / 1000);
 
-                document.getElementById('countdown-months').textContent = String(months).padStart(2, '0');
-                document.getElementById('countdown-days').textContent = String(days).padStart(2, '0');
-                document.getElementById('countdown-hours').textContent = String(hours).padStart(2, '0');
-                document.getElementById('countdown-minutes').textContent = String(minutes).padStart(2, '0');
-                document.getElementById('countdown-seconds').textContent = String(seconds).padStart(2, '0');
+                updateValue('countdown-months', String(months).padStart(2, '0'));
+                updateValue('countdown-days', String(days).padStart(2, '0'));
+                updateValue('countdown-hours', String(hours).padStart(2, '0'));
+                updateValue('countdown-minutes', String(minutes).padStart(2, '0'));
+                updateValue('countdown-seconds', String(seconds).padStart(2, '0'));
             }
 
             setInterval(update, 1000);
@@ -322,30 +333,33 @@
                         const escTitle = window.db.escapeHTML(title);
                         const escDesc = window.db.escapeHTML(desc);
                         const escLoc = window.db.escapeHTML(loc);
-                        const categoryLabel = window.getCategoryName(item.category);
-                        const escCat = window.db.escapeHTML(categoryLabel);
-                        
+                        const escCat = window.db.escapeHTML(window.getCategoryName(item.category));
+                        const escId = window.db.escapeHTML(item.id);
+                        const formattedDate = formatDate(item.date);
                         return `
-                            <article class="news-card animate-fade-in-up" style="cursor: pointer; transition-delay: ${idx * 0.05}s;" onclick="window.location.href='programacio.html'">
-                                <div class="news-info" style="border-top: 4px solid ${catColors.bg};">
-                                    <span class="news-date" style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span>${formatDate(item.date)}</span>
-                                        <span style="font-weight: 700;">${item.time}h</span>
-                                    </span>
-                                    <h3 class="news-title">${escTitle}</h3>
-                                    <p class="news-excerpt" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; font-size: 0.9rem;">${escDesc}</p>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 1rem;">
-                                        <span class="event-location" style="margin-top: 0; font-size: 0.8rem;">
-                                            <i data-lucide="map-pin" style="width: 14px; height: 14px; vertical-align: middle;"></i> ${escLoc}
-                                        </span>
-                                        <span class="event-tag" style="margin-top: 0; font-size: 0.65rem; padding: 0.25rem 0.5rem; background-color: ${catColors.bg}; color: ${catColors.text}; font-weight: 700; text-transform: uppercase; border-radius: 4px;">${escCat}</span>
+                            <div class="home-event-card animate-fade-in-up" data-id="${escId}" style="transition-delay: ${idx * 0.05}s;" onclick="window.location.href='programacio.html'">
+                                <div class="event-title-row">
+                                    <h3>${escTitle}</h3>
+                                    <span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text}; flex-shrink: 0;">${escCat}</span>
+                                </div>
+                                ${escDesc ? `<p class="event-desc">${escDesc}</p>` : ''}
+                                <div class="event-footer">
+                                    <div class="event-meta">
+                                        <span class="event-date-time">${formattedDate} — ${item.time}h</span>
+                                        <div class="event-location">
+                                            <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
+                                            <span>${escLoc}</span>
+                                        </div>
+                                    </div>
+                                    <div class="event-arrow">
+                                        <i data-lucide="chevron-right"></i>
                                     </div>
                                 </div>
-                            </article>
+                            </div>
                         `;
                     }).join('');
                 } else {
-                    eventsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">No hay eventos programados.</div>';
+                    eventsContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay eventos programados.</div>';
                 }
 
                 // Refresh Lucide icons loaded dynamically

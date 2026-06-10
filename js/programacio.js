@@ -102,9 +102,24 @@ document.addEventListener('DOMContentLoaded', () => {
         let timelineHTML = '';
         sortedDates.forEach(dateStr => {
             const events = grouped[dateStr];
+            const dateObj = new Date(dateStr);
+            
+            const daysCa = ['Diumenge', 'Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte'];
+            const daysEs = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+            const monthsCa = ['de Gener', 'de Febrer', 'de Març', 'd\'Abril', 'de Maig', 'de Juny', 'de Juliol', 'd\'Agost', 'de Setembre', 'd\'Octubre', 'de Novembre', 'de Desembre'];
+            const monthsEs = ['de Enero', 'de Febrero', 'de Marzo', 'de Abril', 'de Mayo', 'de Junio', 'de Julio', 'de Agosto', 'de Septiembre', 'de Octubre', 'de Noviembre', 'de Diciembre'];
+            
+            const dayOfWeek = isEs ? daysEs[dateObj.getDay()] : daysCa[dateObj.getDay()];
+            const dayOfMonth = dateObj.getDate();
+            const monthName = isEs ? monthsEs[dateObj.getMonth()] : monthsCa[dateObj.getMonth()];
+            const year = dateObj.getFullYear();
+
             timelineHTML += `
-                <div class="timeline-day-group">
-                    <h3 class="timeline-date-header">${formatFullDate(dateStr)}</h3>
+                <div class="timeline-day-group animate-fade-in-up">
+                    <div class="timeline-date-container">
+                        <h3 class="timeline-date-full">${dayOfMonth} ${monthName} ${year}</h3>
+                        <p class="timeline-date-day">${dayOfWeek}</p>
+                    </div>
                     <div class="timeline-events-list">
                         ${events.map((event, idx) => {
                             const catColors = colors[event.category] || { bg: '#e4e4e7', text: '#18181b' };
@@ -120,19 +135,24 @@ document.addEventListener('DOMContentLoaded', () => {
                             const escId = window.db.escapeHTML(event.id);
                             const addText = isEs ? "Añadir" : "Afegir";
                             return `
-                                <div class="event-row animate-fade-in-up" data-id="${escId}" style="cursor: pointer; transition-delay: ${idx * 0.05}s;">
-                                    <div class="event-time">${escTime}</div>
-                                    <div class="event-detail">
-                                        <h3>${escTitle}</h3>
-                                        <p>${escDesc}</p>
-                                        <div class="event-location">
-                                            <i data-lucide="map-pin" style="width: 14px; height: 14px;"></i>
-                                            <span>${escLoc}</span>
+                                <div class="event-row" data-id="${escId}" style="cursor: pointer;">
+                                    <div class="event-content-col">
+                                        <div class="event-title-row">
+                                            <h3>${escTitle}</h3>
+                                            <span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text};">${escCat}</span>
                                         </div>
+                                        <div class="event-meta-row">
+                                            <span class="event-meta-time">${escTime} h</span>
+                                            <span class="event-meta-separator">•</span>
+                                            <div class="event-meta-location">
+                                                <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
+                                                <span>${escLoc}</span>
+                                            </div>
+                                        </div>
+                                        ${escDesc ? `<p class="event-desc">${escDesc}</p>` : ''}
                                     </div>
-                                    <div class="event-actions-col" style="justify-self: end; display: flex; flex-direction: column; align-items: flex-end; gap: 0.5rem;">
-                                        <span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text};">${escCat}</span>
-                                        <button class="btn btn-sm btn-secondary btn-add-cal" data-id="${escId}" style="padding: 0.35rem 0.6rem; font-size: 0.65rem; display: flex; align-items: center; gap: 0.25rem;">
+                                    <div class="event-actions-col">
+                                        <button class="btn-add-cal" data-id="${escId}">
                                             <i data-lucide="calendar-plus" style="width: 12px; height: 12px;"></i>
                                             <span>${addText}</span>
                                         </button>
@@ -329,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.image_url) {
             const escImg = window.db.escapeHTML(window.getAssetPath(event.image_url));
             imageHTML = `
-                <div class="event-modal-img-wrapper" style="width: 100%; margin-bottom: 1.5rem; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color);">
+                <div class="event-modal-img-wrapper">
                     <img src="${escImg}" alt="${escTitle}" style="width: 100%; height: auto; display: block; max-height: 320px; object-fit: cover;">
                 </div>
             `;
