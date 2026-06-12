@@ -31,5 +31,10 @@ if __name__ == '__main__':
             port = int(sys.argv[1])
         except ValueError:
             pass
+    # Asegurar tipos MIME para XML y XSL
+    http.server.SimpleHTTPRequestHandler.extensions_map.update({
+        '.xml': 'application/xml',
+        '.xsl': 'application/xml',
+    })
     print(f"Iniciando servidor local en http://localhost:{port} (con soporte para URLs limpias)...")
     http.server.test(HandlerClass=CleanURLHandler, port=port)
