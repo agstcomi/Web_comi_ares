@@ -633,7 +633,7 @@ nav.nav-menu ul li a::after {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     gap: 1.5rem;
     padding-bottom: 2rem;
     border-bottom: 1px solid var(--border-color);
@@ -675,13 +675,16 @@ nav.nav-menu ul li a::after {
 
 .search-box input {
     width: 100%;
-    padding: 0.6rem 1rem 0.6rem 2.5rem;
+    height: 38px;
+    box-sizing: border-box;
+    padding: 0 1rem 0 2.5rem;
     font-family: var(--font-body);
     font-size: 0.875rem;
     border: 1px solid var(--border-color);
     background-color: var(--bg-secondary);
     outline: none;
     transition: var(--transition);
+    border-radius: 8px;
 }
 
 .search-box input:focus {
@@ -2043,9 +2046,6 @@ pre,
 }
 
 /* Fix specific components border-radius layout overrides */
-.search-box input {
-    border-radius: 0 8px 8px 0 !important;
-}
 .search-box {
     border-radius: 8px !important;
 }
