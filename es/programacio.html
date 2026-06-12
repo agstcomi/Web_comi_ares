@@ -92,10 +92,15 @@
                         <input type="text" id="search-input" placeholder="Buscar acto, lugar...">
                     </div>
 
-                    <button class="btn btn-sm btn-secondary" id="btn-download-full-calendar" style="padding: 0.5rem 1rem; font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem; height: 38px;">
-                        <i data-lucide="calendar-plus" style="width: 14px; height: 14px;"></i>
-                        <span>Exportar Calendario</span>
-                    </button>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                        <button class="btn btn-sm btn-secondary" id="btn-download-full-calendar" style="padding: 0.5rem 1rem; font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem; height: 38px;" title="Exporta el calendario en formato .ics compatible con Google, Apple y Outlook">
+                            <i data-lucide="calendar-plus" style="width: 14px; height: 14px;"></i>
+                            <span>Exportar Calendario</span>
+                        </button>
+                        <span style="font-size: 0.65rem; color: var(--text-muted); margin-top: 0.25rem; text-align: right; display: block; max-width: 180px;">
+                            Añadir a tu calendario (Google, Apple, Outlook)
+                        </span>
+                    </div>
                 </div>
             <!-- Timeline for Events -->
             <div class="events-timeline" id="events-timeline">

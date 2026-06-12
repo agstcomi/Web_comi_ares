@@ -40,6 +40,32 @@ document.addEventListener('DOMContentLoaded', () => {
                         return;
                     }
                     downloadICS(activeFilteredEvents, 'programa-festes-ares.ics');
+
+                    // Visual confirmation micro-interaction
+                    const originalHTML = downloadCalBtn.innerHTML;
+                    const successText = isEs ? '¡Exportado!' : 'Exportat!';
+                    downloadCalBtn.innerHTML = `<i data-lucide="check" style="width: 14px; height: 14px;"></i> <span>${successText}</span>`;
+                    downloadCalBtn.classList.remove('btn-secondary');
+                    downloadCalBtn.style.backgroundColor = '#10b981'; // Success Green
+                    downloadCalBtn.style.color = '#ffffff';
+                    downloadCalBtn.style.borderColor = '#10b981';
+                    downloadCalBtn.style.pointerEvents = 'none';
+
+                    if (window.lucide) {
+                        window.lucide.createIcons();
+                    }
+
+                    setTimeout(() => {
+                        downloadCalBtn.innerHTML = originalHTML;
+                        downloadCalBtn.classList.add('btn-secondary');
+                        downloadCalBtn.style.backgroundColor = '';
+                        downloadCalBtn.style.color = '';
+                        downloadCalBtn.style.borderColor = '';
+                        downloadCalBtn.style.pointerEvents = 'auto';
+                        if (window.lucide) {
+                            window.lucide.createIcons();
+                        }
+                    }, 2500);
                 });
             }
         } catch (error) {
@@ -189,6 +215,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 const selectedEvent = allEvents.find(event => event.id === id);
                 if (selectedEvent) {
                     downloadICS([selectedEvent], `${selectedEvent.title.toLowerCase().replace(/[^a-z0-9]/g, '-')}.ics`);
+
+                    // Visual confirmation
+                    const originalHTML = btn.innerHTML;
+                    const successText = isEs ? '¡Añadido!' : 'Afegit!';
+                    btn.innerHTML = `<i data-lucide="check" style="width: 12px; height: 12px;"></i> <span>${successText}</span>`;
+                    btn.style.backgroundColor = '#d1fae5'; // Soft green background
+                    btn.style.color = '#065f46'; // Dark green text
+                    btn.style.borderColor = '#34d399';
+                    btn.style.pointerEvents = 'none';
+
+                    if (window.lucide) {
+                        window.lucide.createIcons();
+                    }
+
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                        btn.style.backgroundColor = '';
+                        btn.style.color = '';
+                        btn.style.borderColor = '';
+                        btn.style.pointerEvents = 'auto';
+                        if (window.lucide) {
+                            window.lucide.createIcons();
+                        }
+                    }, 2000);
                 }
             });
         });
