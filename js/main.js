@@ -425,3 +425,54 @@ window.getCategoryName = function(category) {
     // Capitalize first letter as fallback
     return category.charAt(0).toUpperCase() + category.slice(1);
 };
+
+// Reusable Skeleton HTML Loaders
+window.getNewsSkeletonHTML = function(count = 6) {
+    let html = '';
+    for (let i = 0; i < count; i++) {
+        html += `
+            <div class="news-card skeleton-card">
+                <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                <div class="news-info">
+                    <div class="skeleton skeleton-text" style="width: 30%; margin-bottom: 0.75rem;"></div>
+                    <div class="skeleton skeleton-title" style="width: 85%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 70%; margin-bottom: 1.5rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                </div>
+            </div>
+        `;
+    }
+    return html;
+};
+
+window.getNewsDetailSkeletonHTML = function() {
+    return `
+        <article class="container animate-fade-in-up" style="padding-top: calc(var(--header-height) + 2rem); padding-bottom: 8rem; max-width: 800px; pointer-events: none; user-select: none;">
+            <div class="skeleton skeleton-text" style="width: 150px; height: 1rem; margin-bottom: 2rem;"></div>
+            
+            <div class="skeleton skeleton-title" style="width: 90%; height: 3rem; margin-bottom: 1.5rem;"></div>
+            <div class="skeleton skeleton-title" style="width: 75%; height: 3rem; margin-bottom: 2rem;"></div>
+            
+            <div class="skeleton skeleton-text" style="width: 100%; height: 1.5rem; margin-bottom: 2.5rem;"></div>
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); margin-bottom: 2.5rem;">
+                <div style="display: flex; gap: 0.5rem; width: 60%;">
+                    <div class="skeleton skeleton-text" style="width: 120px; height: 1rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 100px; height: 1rem;"></div>
+                </div>
+                <div class="skeleton skeleton-text" style="width: 80px; height: 1rem;"></div>
+            </div>
+            
+            <div class="skeleton" style="width: 100%; aspect-ratio: 16/9; border-radius: 8px; margin-bottom: 2.5rem;"></div>
+            
+            <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.75rem;"></div>
+            <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.75rem;"></div>
+            <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.75rem;"></div>
+            <div class="skeleton skeleton-text" style="width: 98%; margin-bottom: 0.75rem;"></div>
+            <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 2rem;"></div>
+        </article>
+    `;
+};
+

@@ -273,9 +273,7 @@
             detailContainer.style.display = 'none';
             
             const container = document.getElementById('news-grid-container');
-            container.innerHTML = isEs 
-                ? '<div style="text-align: center; padding: 4rem; color: var(--text-muted);">Cargando noticias...</div>'
-                : '<div style="text-align: center; padding: 4rem; color: var(--text-muted);">Carregant notícies...</div>';
+            container.innerHTML = window.getNewsSkeletonHTML(6);
             
             try {
                 const newsList = await window.db.getNews();
@@ -333,9 +331,7 @@
             listContainer.style.display = 'none';
             detailContainer.style.display = 'block';
             
-            detailContainer.innerHTML = isEs
-                ? '<div style="text-align: center; padding: 8rem 0; color: var(--text-muted);">Cargando artículo...</div>'
-                : '<div style="text-align: center; padding: 8rem 0; color: var(--text-muted);">Carregant article...</div>';
+            detailContainer.innerHTML = window.getNewsDetailSkeletonHTML();
             
             try {
                 const newsList = await window.db.getNews();

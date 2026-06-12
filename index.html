@@ -249,8 +249,24 @@
                     </div>
                     
                     <div id="weather-forecast-container" class="weather-forecast-grid">
-                        <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); font-size: 0.9rem;">
-                            Carregant previsió del temps...
+                        <!-- Skeletons shown during load -->
+                        <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                            <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                        </div>
+                        <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                            <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                        </div>
+                        <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                            <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
                         </div>
                     </div>
                     

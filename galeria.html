@@ -85,12 +85,16 @@
                 </div>
             </div>
 
-            <!-- Grid -->
             <div class="gallery-grid" id="gallery-grid">
-                <!-- Loaded dynamically -->
-                <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
-                    Carregant fotografies...
-                </div>
+                <!-- Loaded dynamically (Skeletons shown during load) -->
+                <div class="gallery-item wide skeleton" style="cursor: default; pointer-events: none;"></div>
+                <div class="gallery-item skeleton" style="cursor: default; pointer-events: none;"></div>
+                <div class="gallery-item skeleton" style="cursor: default; pointer-events: none;"></div>
+                <div class="gallery-item tall skeleton" style="cursor: default; pointer-events: none;"></div>
+                <div class="gallery-item skeleton" style="cursor: default; pointer-events: none;"></div>
+                <div class="gallery-item wide skeleton" style="cursor: default; pointer-events: none;"></div>
+                <div class="gallery-item skeleton" style="cursor: default; pointer-events: none;"></div>
+                <div class="gallery-item skeleton" style="cursor: default; pointer-events: none;"></div>
             </div>
         </div>
     </section>
