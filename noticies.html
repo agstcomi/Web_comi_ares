@@ -6,16 +6,21 @@
     <title>Notícies | Comissió de Festes d'Ares del Maestrat</title>
     <meta name="description" content="Informa't de tots els avisos oficials, novetats, rifes de Nadal i última hora de la Comissió de Festes d'Ares del Maestrat.">
     
+    <link rel="canonical" href="https://www.comiares.es/noticies">
+    <link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies">
+    <link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies">
+    <link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.comiares.es/noticies.html">
+    <meta property="og:url" content="https://www.comiares.es/noticies">
     <meta property="og:title" content="Notícies | Comissió de Festes d'Ares del Maestrat">
     <meta property="og:description" content="Informa't de tots els avisos oficials, novetats, rifes de Nadal i última hora de la Comissió de Festes d'Ares del Maestrat.">
     <meta property="og:image" content="https://www.comiares.es/img/portada.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.comiares.es/noticies.html">
+    <meta property="twitter:url" content="https://www.comiares.es/noticies">
     <meta property="twitter:title" content="Notícies | Comissió de Festes d'Ares del Maestrat">
     <meta property="twitter:description" content="Informa't de tots els avisos oficials, novetats, rifes de Nadal i última hora de la Comissió de Festes d'Ares del Maestrat.">
     <meta property="twitter:image" content="https://www.comiares.es/img/portada.jpg">
@@ -34,6 +39,27 @@
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- JSON-LD Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Comissió de Festes d'Ares del Maestrat",
+      "url": "https://www.comiares.es/",
+      "logo": "https://www.comiares.es/img/logo.svg",
+      "image": "https://www.comiares.es/img/portada.jpg",
+      "description": "Web oficial de la Comissió de Festes d'Ares del Maestrat. Organització dels actes, festes patronals i activitats culturals.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Pl. Major, 9",
+        "addressLocality": "Ares del Maestrat",
+        "addressRegion": "Castellón",
+        "addressCountry": "ES",
+        "postalCode": "12165"
+      }
+    }
+    </script>
 </head>
 <body>
 
@@ -53,9 +79,72 @@
         <!-- News Grid -->
         <section class="container" style="padding-top: 1rem; padding-bottom: 8rem; border-bottom: none;">
             <div class="news-grid" id="news-grid-container">
-                <!-- Populated dynamically via JS -->
-                <div style="grid-column: 1/-1; text-align: center; padding: 4rem; color: var(--text-muted);">
-                    Carregant notícies...
+                <!-- Populated dynamically via JS (Skeletons shown during load) -->
+                <div class="news-card skeleton-card">
+                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                    <div class="news-info">
+                        <div class="skeleton skeleton-text" style="width: 30%; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-title" style="width: 85%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 70%; margin-bottom: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    </div>
+                </div>
+                <div class="news-card skeleton-card">
+                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                    <div class="news-info">
+                        <div class="skeleton skeleton-text" style="width: 25%; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-title" style="width: 80%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 65%; margin-bottom: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    </div>
+                </div>
+                <div class="news-card skeleton-card">
+                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                    <div class="news-info">
+                        <div class="skeleton skeleton-text" style="width: 35%; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-title" style="width: 90%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    </div>
+                </div>
+                <div class="news-card skeleton-card">
+                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                    <div class="news-info">
+                        <div class="skeleton skeleton-text" style="width: 20%; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-title" style="width: 75%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 70%; margin-bottom: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    </div>
+                </div>
+                <div class="news-card skeleton-card">
+                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                    <div class="news-info">
+                        <div class="skeleton skeleton-text" style="width: 30%; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-title" style="width: 85%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 60%; margin-bottom: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    </div>
+                </div>
+                <div class="news-card skeleton-card">
+                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                    <div class="news-info">
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-title" style="width: 90%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -403,11 +492,11 @@
         }
 
         function navigateToNews(id, slug) {
-            let url = 'noticies.html';
+            let url = 'noticies';
             if (slug) {
-                url = `noticies.html?slug=${slug}`;
+                url = `noticies?slug=${slug}`;
             } else if (id) {
-                url = `noticies.html?id=${id}`;
+                url = `noticies?id=${id}`;
             }
             window.history.pushState({}, '', url);
             route();

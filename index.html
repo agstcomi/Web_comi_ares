@@ -6,6 +6,11 @@
     <title>Comissió de Festes d'Ares del Maestrat — Web Oficial</title>
     <meta name="description" content="Benvinguts a la web oficial de la Comissió de Festes d'Ares. Consulta la programació d'actes, les últimes notícies i la galeria fotogràfica de les nostres festes.">
     
+    <link rel="canonical" href="https://www.comiares.es/">
+    <link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/">
+    <link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/">
+    <link rel="alternate" hreflang="x-default" href="https://www.comiares.es/">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.comiares.es/">
@@ -34,6 +39,27 @@
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- JSON-LD Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Comissió de Festes d'Ares del Maestrat",
+      "url": "https://www.comiares.es/",
+      "logo": "https://www.comiares.es/img/logo.svg",
+      "image": "https://www.comiares.es/img/portada.jpg",
+      "description": "Web oficial de la Comissió de Festes d'Ares del Maestrat. Organització dels actes, festes patronals i activitats culturals.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Pl. Major, 9",
+        "addressLocality": "Ares del Maestrat",
+        "addressRegion": "Castellón",
+        "addressCountry": "ES",
+        "postalCode": "12165"
+      }
+    }
+    </script>
 </head>
 <body>
 
@@ -109,13 +135,43 @@
         <div class="container">
             <div class="section-header-flex">
                 <h2>Últimes Notícies</h2>
-                <p style="margin-bottom: 0;"><a href="quisom.html" style="text-decoration: underline;">Saber més de nosaltres &rarr;</a></p>
+                <p style="margin-bottom: 0;"><a href="quisom" style="text-decoration: underline;">Saber més de nosaltres &rarr;</a></p>
             </div>
             
             <div class="news-grid" id="news-container">
-                <!-- News loaded dynamically via JS -->
-                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
-                    Carregant publicacions...
+                <!-- Populated dynamically via JS (Skeletons shown during load) -->
+                <div class="news-card skeleton-card">
+                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                    <div class="news-info">
+                        <div class="skeleton skeleton-text" style="width: 30%; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-title" style="width: 85%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 70%; margin-bottom: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    </div>
+                </div>
+                <div class="news-card skeleton-card">
+                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                    <div class="news-info">
+                        <div class="skeleton skeleton-text" style="width: 25%; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-title" style="width: 80%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 65%; margin-bottom: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    </div>
+                </div>
+                <div class="news-card skeleton-card">
+                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                    <div class="news-info">
+                        <div class="skeleton skeleton-text" style="width: 35%; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-title" style="width: 90%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 1.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -126,13 +182,55 @@
         <div class="container">
             <div class="section-header-flex">
                 <h2>Pròxims Actes Destacats</h2>
-                <p style="margin-bottom: 0;"><a href="programacio.html" style="text-decoration: underline;">Veure programa complet &rarr;</a></p>
+                <p style="margin-bottom: 0;"><a href="programacio" style="text-decoration: underline;">Veure programa complet &rarr;</a></p>
             </div>
             
             <div class="home-events-grid" id="events-highlight-container">
-                <!-- Events loaded dynamically via JS -->
-                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-muted);">
-                    Carregant esdeveniments...
+                <!-- Events loaded dynamically via JS (Skeletons shown during load) -->
+                <div class="home-event-card skeleton-card">
+                    <div class="event-title-row">
+                        <div class="skeleton skeleton-title" style="width: 70%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 20%; height: 1.25rem; border-radius: 9999px;"></div>
+                    </div>
+                    <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 1.5rem;"></div>
+                    <div class="event-footer">
+                        <div class="event-meta" style="width: 100%;">
+                            <div class="skeleton skeleton-text" style="width: 50%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="home-event-card skeleton-card">
+                    <div class="event-title-row">
+                        <div class="skeleton skeleton-title" style="width: 60%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 25%; height: 1.25rem; border-radius: 9999px;"></div>
+                    </div>
+                    <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 1.5rem;"></div>
+                    <div class="event-footer">
+                        <div class="event-meta" style="width: 100%;">
+                            <div class="skeleton skeleton-text" style="width: 45%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 35%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="home-event-card skeleton-card">
+                    <div class="event-title-row">
+                        <div class="skeleton skeleton-title" style="width: 80%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 15%; height: 1.25rem; border-radius: 9999px;"></div>
+                    </div>
+                    <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                    <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 1.5rem;"></div>
+                    <div class="event-footer">
+                        <div class="event-meta" style="width: 100%;">
+                            <div class="skeleton skeleton-text" style="width: 55%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 45%;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -157,7 +255,7 @@
                     </div>
                     
                     <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
-                        <a href="temps.html" style="font-size: 0.85rem; font-weight: 500; color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: var(--transition);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                        <a href="temps" style="font-size: 0.85rem; font-weight: 500; color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: var(--transition);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
                             Veure previsió detallada a 7 dies <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
                         </a>
                     </div>
@@ -175,7 +273,7 @@
             <p style="max-width: 600px; margin: 0 auto 3rem auto; font-size: 1.1rem;">
                 Tradició, música, germanor i cultura al cor del Maestrat. Estigues al dia de tots els actes organitzats per la Comissió.
             </p>
-            <a href="programacio.html" class="btn">CONSULTA LA PROGRAMACIÓ</a>
+            <a href="programacio" class="btn">CONSULTA LA PROGRAMACIÓ</a>
         </div>
     </section>
 
@@ -285,7 +383,7 @@
                         const escTitle = window.db.escapeHTML(item.title);
                         const escExcerpt = window.db.escapeHTML(excerpt);
                         const escAlt = item.image_alt ? window.db.escapeHTML(item.image_alt) : escTitle;
-                        const articleUrl = item.slug ? `noticies.html?slug=${item.slug}` : `noticies.html?id=${item.id}`;
+                        const articleUrl = item.slug ? `noticies?slug=${item.slug}` : `noticies?id=${item.id}`;
                         return `
                             <article class="news-card animate-fade-in-up" style="cursor: pointer; transition-delay: ${idx * 0.05}s;" onclick="window.location.href='${articleUrl}'">
                                 <div class="news-img-wrapper">
@@ -324,7 +422,7 @@
                         const escId = window.db.escapeHTML(item.id);
                         const formattedDate = formatDate(item.date);
                         return `
-                            <div class="home-event-card animate-fade-in-up" data-id="${escId}" style="transition-delay: ${idx * 0.05}s;" onclick="window.location.href='programacio.html'">
+                            <div class="home-event-card animate-fade-in-up" data-id="${escId}" style="transition-delay: ${idx * 0.05}s;" onclick="window.location.href='programacio'">
                                 <div class="event-title-row">
                                     <h3>${escTitle}</h3>
                                     <span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text}; flex-shrink: 0;">${escCat}</span>

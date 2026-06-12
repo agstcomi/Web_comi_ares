@@ -1,5 +1,20 @@
 // js/main.js
 
+// 0. Redirección de URLs con extensión .html a URLs limpias
+(function() {
+    const currentPath = window.location.pathname;
+    if (currentPath.endsWith('.html')) {
+        let cleanPath = currentPath.slice(0, -5); // Quita '.html'
+        if (cleanPath.endsWith('/index')) {
+            cleanPath = cleanPath.slice(0, -5); // Convierte /index a / o /es/index a /es/
+        }
+        if (cleanPath === '' || cleanPath === '/es') {
+            cleanPath = cleanPath + '/';
+        }
+        window.location.replace(cleanPath + window.location.search + window.location.hash);
+    }
+})();
+
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Render Header and Footer dynamically if container exists
     renderHeader();
@@ -80,11 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!href) return;
 
         const path = window.location.pathname;
-        const page = path.split("/").pop() || 'index.html';
+        let page = path.split("/").pop() || '';
+        if (page === 'es' && path.endsWith('/es/')) {
+            page = '';
+        }
 
-        // Match if href points to the current page file
+        // Match if href points to the current page
         const isCurrentPage = href === page || 
-                              (href === 'index.html' && (page === 'index.html' || page === ''));
+                              ((href === '.' || href === '') && page === '');
 
         if (isCurrentPage) {
             e.preventDefault();
@@ -166,29 +184,32 @@ function renderHeader() {
     // Get current filename to highlight active page
     const path = window.location.pathname;
     const isEs = path.includes('/es/');
-    const page = path.split("/").pop() || 'index.html';
+    let page = path.split("/").pop() || '';
+    if (page === 'es' && path.endsWith('/es/')) {
+        page = '';
+    }
 
     const menuItems = isEs ? [
-        { name: 'Inicio', file: 'index.html' },
-        { name: 'Noticias', file: 'noticies.html' },
-        { name: 'Programación', file: 'programacio.html' },
-        { name: 'Galería', file: 'galeria.html' },
-        { name: 'Quiénes Somos', file: 'quisom.html' },
-        { name: 'Tiempo', file: 'temps.html' },
-        { name: 'Contacto', file: 'contacte.html' }
+        { name: 'Inicio', file: '.' },
+        { name: 'Noticias', file: 'noticies' },
+        { name: 'Programación', file: 'programacio' },
+        { name: 'Galería', file: 'galeria' },
+        { name: 'Quiénes Somos', file: 'quisom' },
+        { name: 'Tiempo', file: 'temps' },
+        { name: 'Contacto', file: 'contacte' }
     ] : [
-        { name: 'Inici', file: 'index.html' },
-        { name: 'Notícies', file: 'noticies.html' },
-        { name: 'Programació', file: 'programacio.html' },
-        { name: 'Galeria', file: 'galeria.html' },
-        { name: 'Qui Som', file: 'quisom.html' },
-        { name: 'Temps', file: 'temps.html' },
-        { name: 'Contacte', file: 'contacte.html' }
+        { name: 'Inici', file: '.' },
+        { name: 'Notícies', file: 'noticies' },
+        { name: 'Programació', file: 'programacio' },
+        { name: 'Galeria', file: 'galeria' },
+        { name: 'Qui Som', file: 'quisom' },
+        { name: 'Temps', file: 'temps' },
+        { name: 'Contacte', file: 'contacte' }
     ];
 
     let menuHTML = '';
     menuItems.forEach(item => {
-        const isActive = page === item.file ? 'class="active"' : '';
+        const isActive = (page === item.file || (item.file === '.' && page === '')) ? 'class="active"' : '';
         menuHTML += `<li><a href="${item.file}" ${isActive}>${item.name}</a></li>`;
     });
 
@@ -215,7 +236,7 @@ function renderHeader() {
     headerPlaceholder.innerHTML = `
         <header class="main-header">
             <div class="container">
-                <a href="index.html" class="logo" style="display: flex; align-items: center; height: 100%;">
+                <a href="." class="logo" style="display: flex; align-items: center; height: 100%;">
                     <img src="${logoPath}" alt="Logo Comissió Ares" style="height: 40px; width: auto;">
                 </a>
                 <button class="nav-toggle" id="nav-toggle" aria-label="Toggle Menu">
@@ -284,21 +305,21 @@ function renderFooter() {
     const logoPath = isEs ? '../img/logo.svg' : 'img/logo.svg';
 
     const menuItems = isEs ? [
-        { name: 'Inicio', file: 'index.html' },
-        { name: 'Noticias', file: 'noticies.html' },
-        { name: 'Programación', file: 'programacio.html' },
-        { name: 'Galería', file: 'galeria.html' },
-        { name: 'Quiénes Somos', file: 'quisom.html' },
-        { name: 'Tiempo', file: 'temps.html' },
-        { name: 'Contacto', file: 'contacte.html' }
+        { name: 'Inicio', file: '.' },
+        { name: 'Noticias', file: 'noticies' },
+        { name: 'Programación', file: 'programacio' },
+        { name: 'Galería', file: 'galeria' },
+        { name: 'Quiénes Somos', file: 'quisom' },
+        { name: 'Tiempo', file: 'temps' },
+        { name: 'Contacto', file: 'contacte' }
     ] : [
-        { name: 'Inici', file: 'index.html' },
-        { name: 'Notícies', file: 'noticies.html' },
-        { name: 'Programació', file: 'programacio.html' },
-        { name: 'Galeria', file: 'galeria.html' },
-        { name: 'Qui Som', file: 'quisom.html' },
-        { name: 'Temps', file: 'temps.html' },
-        { name: 'Contacte', file: 'contacte.html' }
+        { name: 'Inici', file: '.' },
+        { name: 'Notícies', file: 'noticies' },
+        { name: 'Programació', file: 'programacio' },
+        { name: 'Galeria', file: 'galeria' },
+        { name: 'Qui Som', file: 'quisom' },
+        { name: 'Temps', file: 'temps' },
+        { name: 'Contacte', file: 'contacte' }
     ];
 
     let navHTML = '';
@@ -319,7 +340,7 @@ function renderFooter() {
         <footer class="main-footer">
             <div class="container">
                 <div class="footer-top-row">
-                    <a href="index.html" class="footer-brand">
+                    <a href="." class="footer-brand">
                         <img src="${logoPath}" alt="Logo Comissió Ares">
                     </a>
                     <ul class="footer-nav">
@@ -340,7 +361,7 @@ function renderFooter() {
                 
                 <div class="footer-middle-grid">
                     <div class="footer-contact-col">
-                        <a href="contacte.html" class="footer-contact-pill">${contactText}</a>
+                        <a href="contacte" class="footer-contact-pill">${contactText}</a>
                         <div class="footer-contact-info">
                             <div><strong>${emailLabel}</strong> <a href="mailto:info@comiares.es">info@comiares.es</a></div>
                             <div><strong>${addressLabel}</strong> ${addressValue}</div>

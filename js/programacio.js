@@ -197,6 +197,67 @@ document.addEventListener('DOMContentLoaded', () => {
         if (window.lucide) {
             window.lucide.createIcons();
         }
+
+        // Inyectar datos estructurados JSON-LD (Schema Event)
+        const oldJsonLd = document.getElementById('dynamic-event-jsonld');
+        if (oldJsonLd) oldJsonLd.remove();
+
+        const eventSchemas = activeFilteredEvents.map(event => {
+            const title = isEs && event.title_es ? event.title_es : event.title;
+            const desc = isEs && event.description_es ? event.description_es : event.description;
+            const loc = isEs && event.location_es ? event.location_es : event.location;
+
+            // Fecha de inicio (ISO 8601) con zona horaria de Madrid (+02:00 en agosto/verano)
+            const startIso = `${event.date}T${event.time}:00+02:00`;
+            // Calcular fecha de fin estimada (por defecto, hora de inicio + 2 horas)
+            let endHour = parseInt(event.time.split(':')[0]) + 2;
+            let endDateStr = event.date;
+            if (endHour >= 24) {
+                endHour = endHour - 24;
+                const dateObj = new Date(event.date);
+                dateObj.setDate(dateObj.getDate() + 1);
+                endDateStr = dateObj.toISOString().split('T')[0];
+            }
+            const endHourStr = String(endHour).padStart(2, '0');
+            const endMinuteStr = event.time.split(':')[1] || '00';
+            const endIso = `${endDateStr}T${endHourStr}:${endMinuteStr}:00+02:00`;
+
+            return {
+                "@context": "https://schema.org",
+                "@type": "Event",
+                "name": title,
+                "description": desc || title,
+                "startDate": startIso,
+                "endDate": endIso,
+                "eventStatus": "https://schema.org/EventScheduled",
+                "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                "location": {
+                    "@type": "Place",
+                    "name": loc || "Ares del Maestrat",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": loc || "Ares del Maestrat",
+                        "addressLocality": "Ares del Maestrat",
+                        "addressRegion": "Castellón",
+                        "addressCountry": "ES",
+                        "postalCode": "12165"
+                    }
+                },
+                "organizer": {
+                    "@type": "Organization",
+                    "name": "Comissió de Festes d'Ares del Maestrat",
+                    "url": "https://www.comiares.es/"
+                }
+            };
+        });
+
+        if (eventSchemas.length > 0) {
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.id = 'dynamic-event-jsonld';
+            script.text = JSON.stringify(eventSchemas);
+            document.head.appendChild(script);
+        }
     }
 
     function downloadICS(events, filename) {

@@ -6,19 +6,24 @@
     <title>Programación de Actos | Comisión de Fiestas de Ares del Maestrat</title>
     <meta name="description" content="Consulta el programa oficial de actos de las Fiestas de Ares 2026: pasacalles, comidas populares, orquestas, actividades infantiles y mucho más.">
     
+    <link rel="canonical" href="https://www.comiares.es/es/programacio">
+    <link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/programacio">
+    <link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/programacio">
+    <link rel="alternate" hreflang="x-default" href="https://www.comiares.es/programacio">
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.comiares.es/es/programacio.html">
+    <meta property="og:url" content="https://www.comiares.es/es/programacio">
     <meta property="og:title" content="Programación de Actos | Comisión de Fiestas de Ares del Maestrat">
     <meta property="og:description" content="Consulta el programa oficial de actos de las Fiestas de Ares 2026: pasacalles, comidas populares, orquestas, actividades infantiles y mucho más.">
-    <meta property="og:image" content="https://www.comiares.es/img/portada.jpg">
+    <meta property="og:image" content="https://www.comiares.es/img/ballpla2.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.comiares.es/es/programacio.html">
+    <meta property="twitter:url" content="https://www.comiares.es/es/programacio">
     <meta property="twitter:title" content="Programación de Actos | Comisión de Fiestas de Ares del Maestrat">
     <meta property="twitter:description" content="Consulta el programa oficial de actos de las Fiestas de Ares 2026: pasacalles, comidas populares, orquestas, actividades infantiles y mucho más.">
-    <meta property="twitter:image" content="https://www.comiares.es/img/portada.jpg">
+    <meta property="twitter:image" content="https://www.comiares.es/img/ballpla2.jpg">
     
 
     <!-- ===== PWA MANIFEST ===== -->
@@ -34,6 +39,27 @@
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest" defer></script>
+
+    <!-- JSON-LD Structured Data: Organization -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Comisión de Fiestas de Ares del Maestrat",
+      "url": "https://www.comiares.es/es/",
+      "logo": "https://www.comiares.es/img/logo.svg",
+      "image": "https://www.comiares.es/img/portada.jpg",
+      "description": "Web oficial de la Comisión de Fiestas de Ares del Maestrat. Organización de los actos, fiestas patronales y actividades culturales.",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Pl. Major, 9",
+        "addressLocality": "Ares del Maestrat",
+        "addressRegion": "Castellón",
+        "addressCountry": "ES",
+        "postalCode": "12165"
+      }
+    }
+    </script>
 </head>
 <body>
 
@@ -71,13 +97,57 @@
                         <span>Exportar Calendario</span>
                     </button>
                 </div>
-            </div>
-
             <!-- Timeline for Events -->
             <div class="events-timeline" id="events-timeline">
-                <!-- Dynamic events loaded by programacio.js -->
-                <div style="text-align: center; padding: 4rem; color: var(--text-muted);">
-                    Cargando programa de actos...
+                <!-- Dynamic events loaded by programacio.js (Skeletons shown during load) -->
+                <div class="timeline-day-group skeleton-card">
+                    <div class="timeline-date-container">
+                        <div class="skeleton skeleton-title" style="width: 40%; height: 1.75rem; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 20%; height: 0.875rem;"></div>
+                    </div>
+                    <div class="timeline-events-list">
+                        <div class="event-row">
+                            <div class="event-content-col" style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div class="event-time-category" style="display: flex; gap: 1rem; align-items: center;">
+                                    <div class="skeleton skeleton-text" style="width: 80px; height: 1rem; margin-bottom: 0;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 60px; height: 1rem; border-radius: 9999px; margin-bottom: 0;"></div>
+                                </div>
+                                <div class="skeleton skeleton-title" style="width: 60%; height: 1.25rem; margin-bottom: 0.25rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.25rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0;"></div>
+                            </div>
+                        </div>
+                        <div class="event-row">
+                            <div class="event-content-col" style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div class="event-time-category" style="display: flex; gap: 1rem; align-items: center;">
+                                    <div class="skeleton skeleton-text" style="width: 80px; height: 1rem; margin-bottom: 0;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 60px; height: 1rem; border-radius: 9999px; margin-bottom: 0;"></div>
+                                </div>
+                                <div class="skeleton skeleton-title" style="width: 50%; height: 1.25rem; margin-bottom: 0.25rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.25rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 0;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-day-group skeleton-card">
+                    <div class="timeline-date-container">
+                        <div class="skeleton skeleton-title" style="width: 35%; height: 1.75rem; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 15%; height: 0.875rem;"></div>
+                    </div>
+                    <div class="timeline-events-list">
+                        <div class="event-row">
+                            <div class="event-content-col" style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                                <div class="event-time-category" style="display: flex; gap: 1rem; align-items: center;">
+                                    <div class="skeleton skeleton-text" style="width: 80px; height: 1rem; margin-bottom: 0;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 60px; height: 1rem; border-radius: 9999px; margin-bottom: 0;"></div>
+                                </div>
+                                <div class="skeleton skeleton-title" style="width: 55%; height: 1.25rem; margin-bottom: 0.25rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.25rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 0;"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -8,33 +8,78 @@ const SUPABASE_ANON_KEY = "sb_publishable_INr3m7b6-y55MSRt9c9-ew_paoZMPan";
 // Mock Data representing real events/news of Comissió de Festes d'Ares
 const MOCK_NEWS = [
     {
-        id: "news-1",
-        title: "Ja està disponible la Loteria de Nadal de la Comissió 2026!",
-        subtitle: "Col·labora amb la comissió comprant participacions del número 48.293",
-        content: "Com cada any, la Comissió de Festes d'Ares posa a la venda les participacions per al sorteig de Nadal. Enguany juguem el número 48.293. Pots adquirir els teus dècims a través de qualsevol membre de la comissió o en els comerços locals associats. No te quedes sense el teu número i col·labora amb les festes del nostre poble!",
+        id: "news-1781014774735",
+        title: "Torna la Mostra de Productes de la Terra d'Ares del Maestrat: una cita amb l'artesania i els sabors del Maestrat",
+        title_es: "Vuelve la Muestra de Productos de la Tierra de Ares del Maestrat: una cita con la artesanía y los sabores del Maestrat",
+        subtitle: "Després d'anys d'absència, la Comissió de Festes ha anunciat oficialment la tornada d'un dels esdeveniments més estimats i arrelats del municipi: la VII Mostra de Productes de la Terra d'Ares del Maestrat.",
+        subtitle_es: "Tras años de ausencia, la Comisión de Fiestas ha anunciado oficialmente el regreso de uno de los eventos más queridos y arraigados en el municipio: la VII Muestra de Productos de la Tierra de Ares del Maestrat.",
+        content: "Després d'anys d'absència, la Comissió de Festes ha anunciat oficialment la tornada d'un dels esdeveniments més estimats i arrelats del municipi: la VII Mostra de Productes de la Terra d'Ares del Maestrat. La mostra comptarà amb parades de formatges, mel, carns i embotits, a mmés d'artesania tradicional i tallers en directe per a tota la família.",
+        content_es: "Tras años de ausencia, la Comisión de Fiestas ha anunciado oficialmente el regreso de uno de los eventos más queridos y arraigados en el municipio: la VII Muestra de Productos de la Tierra de Ares del Maestrat. La muestra contará con puestos de quesos, miel, carnes y embutidos, además de artesanía tradicional y talleres en directo para toda la familia.",
         image_url: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&q=80&w=800",
+        created_at: "2026-06-09",
+        author: "Comissió de Festes",
+        slug: "mostra-productes-de-la-terra-ares-del-maestrat",
+        slug_es: "mostra-productes-de-la-terra-ares",
+        additional_images: []
+    },
+    {
+        id: "news-1780944142960",
+        title: "On vore l'eclipsi solar 2026 a Castelló? Programació a Ares del Maestrat",
+        title_es: "¿Dónde ver el eclipse solar de 2026 en Castellón? Programación en Ares del Maestrat",
+        subtitle: "El pròxim 12 d'agost de 2026, el nostre poble serà un dels punts privilegiats del món per a observar l'eclipsi solar total. L'Ajuntament d'Ares i la Comissió de Festes hem unit esforços per a dissenyar una programació especial que permeta a veïns i visitants gaudir d'aquest fenomen d'una manera segura i inoblidable.",
+        subtitle_es: "El 12 de agosto de 2026, nuestro pueblo será uno de los lugares privilegiados del mundo para observar el eclipse solar total. El Ayuntamiento de Ares y el Comité de Fiestas han unido fuerzas para diseñar un programa especial que permita a vecinos y visitantes disfrutar de este fenómeno de una manera segura e inolvidable.",
+        content: "El pròxim 12 d'agost de 2026, el nostre poble serà un dels punts privilegiats del món per a observar l'eclipsi solar total. L'Ajuntament d'Ares i la Comissió de Festes hem unit esforços per a dissenyar una programació especial que permeta a veïns i visitants gaudir d'aquest fenomen d'una manera segura i inoblidable. Hi haurà xarrades d'astrònoms, punts d'observació amb telescopis homologats i ulleres de protecció gratuïtes per a tots els assistents.",
+        content_es: "El 12 de agosto de 2026, nuestro pueblo será uno de los lugares privilegiados del mundo para observar el eclipse solar total. El Ayuntamiento de Ares y el Comité de Fiestas han unido fuerzas para diseñar un programa especial que permita a vecinos y visitantes disfrutar de este fenómeno de una manera segura e inolvidable. Habrá charlas de astrónomos, puntos de observación con telescopios homologados y gafas de protección gratuitas para todos los asistentes.",
+        image_url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800",
+        created_at: "2026-06-08",
+        author: "Comissió de Festes",
+        slug: "eclipsi-solar-2026-castello-ares-del-maestrat",
+        slug_es: "donde-ver-eclipse-solar-castellon",
+        additional_images: []
+    },
+    {
+        id: "news-1780998724193",
+        title: "Ares del Maestrat convoca el II Concurs de Relat Breu «Terme d’Ares» per a dinamitzar la cultura local",
+        title_es: "Ares del Maestrat convoca el II Concurso de Cuentos \"Terme d 'Ares\" para dinamizar la cultura local",
+        subtitle: "La Comissió de Festes llança la segona edició d'aquest certamen literari en valencià, on les històries participants hauran d'estar ambientades al municipi.",
+        subtitle_es: "La Comisión de Fiestas pone en marcha la segunda edición de este certamen literario en valenciano, donde los cuentos participantes deben ambientarse en el municipio.",
+        content: "La Comissió de Festes llança la segona edició d'aquest certamen literari en valencià, on les històries participants hauran d'estar ambientades al municipi. Les bases del concurs inclouen un primer premi en metàl·lic i la publicació de les obres seleccionades. Consulta tota la informació en el web de l'Ajuntament.",
+        content_es: "La Comisión de Fiestas pone en marcha la segunda edición de este certamen literario en valenciano, donde los cuentos participantes deben ambientarse en el municipio. Las bases del concurso incluyen un primer premio en metálico y la publicación de las obras seleccionadas. Consulta toda la información en la web del Ayuntamiento.",
+        image_url: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800",
+        created_at: "2026-06-02",
+        author: "Comissió de Festes",
+        slug: "concurs-relat-breu-terme-dares",
+        slug_es: "concurso-relatos-breves-terme-dares",
+        additional_images: []
+    },
+    {
+        id: "news-1780997853233",
+        title: "Ares del Maestrat busca el millor disseny per a les seues Festes de 2026 amb l’eclipsi com a protagonista",
+        title_es: "Ares del Maestrat busca el mejor diseño para sus Fiestas de 2026 con el eclipse como protagonista",
+        subtitle: "La Comissió de Festes convoca la 4a edició d’aquest concurs obert a professionals i aficionats.",
+        subtitle_es: "La Comisión de Fiestas convoca la 4ª edición de este certamen abierto a profesionales y aficionados.",
+        content: "La Comissió de Festes convoca la 4a edició d’aquest concurs obert a professionals i aficionats. Els participants podran enviar els seus dissenys inspirats en el proper eclipsi solar i en la riquesa cultural d'Ares del Maestrat. El cartell guanyador serà la imatge oficial de la programació d'actes.",
+        content_es: "La Comisión de Fiestas convoca la 4ª edición de este certamen abierto a profesionales y aficionados. Los participantes podrán enviar sus diseños inspirados en el próximo eclipse solar y en la riqueza cultural de Ares del Maestrat. El cartel ganador será la imagen oficial de la programación de actos.",
+        image_url: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=800",
         created_at: "2026-06-01",
         author: "Comissió de Festes",
+        slug: "concurs-disseny-festes-ares-2026",
+        slug_es: "concurso-diseno-fiestas-ares-2026",
         additional_images: []
     },
     {
-        id: "news-2",
-        title: "Èxit rotund en la celebració de Sant Antoni",
-        subtitle: "Gran ambient i participació en els tradicionals actes d'hivern",
-        content: "Volem agrair a tot el poble d'Ares i visitants la gran participació en els actes de Sant Antoni. Des de la tradicional arrossegada de troncs amb els cavalls fins a la foguera en la plaça i el posterior repartiment de coquetes. Les fotos de la jornada ja estan disponibles a la nostra galeria web. Gràcies a tots per fer-ho possible una vegada més!",
-        image_url: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800",
-        created_at: "2026-05-15",
+        id: "news-1781010770325",
+        title: "Què vore a Ares del Maestrat: un viatge al cor de l'Alt Maestrat",
+        title_es: "Qué ver en Ares del Maestrat: un viaje al corazón del Alt Maestrat",
+        subtitle: "Si estàs buscant una escapada que combine història, paisatges impressionants i un patrimoni cultural únic, Ares del Maestrat és la teua destinació ideal. Situat a la província de Castelló, este poble s'alça majestuós sobre un turó de roca a més de 1.100 metres d'altitud, oferint una de les estampes meés boniques de l'interior del País Valencià..",
+        subtitle_es: "Si buscas una escapada que combine historia, paisajes impresionantes y un patrimonio cultural único, Ares del Maestrat es tu destino ideal. Situado en la provincia de Castellón, este pueblo se alza majestuoso sobre una colina rocosa a más de 1.100 metros sobre el nivel del mar, ofreciendo una de las vistas más bellas del interior del País Valenciano.",
+        content: "Passejar pel centre històric d'Ares del Maestrat és com fer un viatge en el temps. Els seus carrers empedrats i escarpats conserven l'essència de l'època medieval i et conviden a descobrir racons amb encant.",
+        content_es: "Pasear por el centro histórico de Ares del Maestrat es como hacer un viaje en el tiempo. Sus calles empedradas y escarpadas conservan la esencia de la época medieval y te invitan a descubrir rincones con encanto.",
+        image_url: "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&q=80&w=800",
+        created_at: "2026-05-22",
         author: "Comissió de Festes",
-        additional_images: []
-    },
-    {
-        id: "news-3",
-        title: "Es busquen voluntaris per a les Festes Patronals 2026",
-        subtitle: "Inscriu-te per a col·laborar amb la preparació de les calderes i el muntatge de la plaça",
-        content: "Queden pocs mesos per a les nostres festes grans d'agost i estem ultimant els detalls. Necesitem voluntaris per a la preparació de les calderes, el muntatge de la plaça de bous i la coordinació dels jocs infantils. Si vols ajudar a fer d'enguany unes festes inoblidables, apunta't en el formulari de contacte o parla amb nosaltres.",
-        image_url: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800",
-        created_at: "2026-05-02",
-        author: "Comissió de Festes",
+        slug: "que-vore-a-ares-del-maestrat",
+        slug_es: "que-ver-en-ares-del-maestrat",
         additional_images: []
     }
 ];
@@ -173,20 +218,32 @@ class AppDatabase {
     }
 
     async migrateFromLocalStorage() {
-        const migratedKey = 'ares_indexeddb_migrated_v1';
+        const migratedKey = 'ares_indexeddb_migrated_v3';
         if (localStorage.getItem(migratedKey)) return;
 
         console.log("Migrating database storage from localStorage to IndexedDB...");
         try {
-            // Read from local storage (or default to mock data if empty)
-            const localNews = JSON.parse(localStorage.getItem('ares_news') || '[]');
+            // Read from local storage and filter out old mock data
+            const localNews = (JSON.parse(localStorage.getItem('ares_news') || '[]'))
+                .filter(item => item && item.id !== 'news-1' && item.id !== 'news-2' && item.id !== 'news-3');
             const newsToMigrate = localNews.length > 0 ? localNews : MOCK_NEWS;
 
-            const localEvents = JSON.parse(localStorage.getItem('ares_events') || '[]');
+            const localEvents = (JSON.parse(localStorage.getItem('ares_events') || '[]'))
+                .filter(item => item && !['event-1', 'event-2', 'event-3', 'event-4', 'event-5', 'event-6'].includes(item.id));
             const eventsToMigrate = localEvents.length > 0 ? localEvents : MOCK_EVENTS;
 
-            const localPhotos = JSON.parse(localStorage.getItem('ares_photos') || '[]');
+            const localPhotos = (JSON.parse(localStorage.getItem('ares_photos') || '[]'))
+                .filter(item => item && !['photo-1', 'photo-2', 'photo-3', 'photo-4', 'photo-5'].includes(item.id));
             const photosToMigrate = localPhotos.length > 0 ? localPhotos : MOCK_PHOTOS;
+
+            // Clear IndexedDB stores to prevent old mock data duplicates
+            await new Promise((resolve) => {
+                const tx = this.idb.transaction(['news', 'events', 'photos'], 'readwrite');
+                tx.objectStore('news').clear();
+                tx.objectStore('events').clear();
+                tx.objectStore('photos').clear();
+                tx.oncomplete = () => resolve();
+            });
 
             // Save to IndexedDB
             for (const item of newsToMigrate) {
