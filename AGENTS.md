@@ -40,11 +40,11 @@ Todas las tareas de rediseño visual y animaciones fueron completadas, validadas
 ---
 
 ## 5. Previsualización de Compartir en Redes Sociales (PRO)
-Todas las tareas para resolver la previsualización al compartir notícias en redes sociales (como WhatsApp) se completaron, verificaron, desplegaron en Supabase y se **subieron a la rama principal (PRO)** en el commit `eceb468`:
-* **Edge Function de Supabase (`share`)**: Se creó la función `supabase/functions/share/index.ts` que intercepta las peticiones de compartido, realiza la consulta a la base de datos de noticias en Supabase, genera dinámicamente las etiquetas Open Graph y Twitter correspondientes y redirige de inmediato los navegadores de usuarios reales al artículo final (`noticies.html` o `es/noticies.html` según el idioma de la noticia o parámetro `lang`).
-* **Proxy de imágenes en Base64**: La Edge Function incluye un proxy que decodifica y sirve imágenes binarias para noticias cuyas imágenes se encuentren guardadas en Base64 en la base de datos, posibilitando previsualizaciones correctas en WhatsApp y otras redes.
-* **Integración en Botones de Compartir**: Se modificaron `noticies.html` y `es/noticies.html` para generar URLs de compartido que apunten a la Edge Function de Supabase.
-* **Despliegue Completo**: La Edge Function fue desplegada exitosamente a producción (`wqelwzlnxhbhiedmxona`).
+Todas las tareas para resolver la previsualización al compartir notícias en redes sociales (como WhatsApp) se completaron con un enfoque JAMstack estático (Opción B) en el commit `350e28c`:
+* **Generación Estática**: Se creó el script `scripts/generate-news.js` que descarga las noticias publicadas en Supabase y genera archivos HTML físicos en `noticies/[slug]/index.html` (y en castellano en `es/noticies/[slug_es]/index.html`), permitiendo URLs limpias directamente bajo el dominio principal (`www.comiares.es/noticies/[slug]`).
+* **Flujo GitHub Actions (`deploy.yml`)**: Compila las noticias estáticas y despliega la web entera en GitHub Pages en cada push a `main` y ante disparadores externos.
+* **Integración del Webhook de Supabase**: Se creó y desplegó la Edge Function `trigger-deploy` (`supabase/functions/trigger-deploy/index.ts`), la cual es llamada por un webhook de base de datos de Supabase ante cambios en la tabla `news` y dispara el flujo de GitHub Actions usando la clave `GITHUB_PAT`. Esto posibilita que el sitio se recompile automáticamente al guardar cambios en el panel de administración.
+* **Modificaciones en el Frontend**: Se actualizaron `noticies.html` y `es/noticies.html` para soportar las URLs limpias del enrutamiento de la SPA, leer la variable inyectada `window.staticArticleSlug` y hacer que los botones de compartir apunten a los enlaces normales de la web en lugar de una redirección externa.
 
 ---
 
