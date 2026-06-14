@@ -105,7 +105,7 @@ serve(async (req) => {
     let ogImageUrl = article.image_url || "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800";
     if (ogImageUrl.startsWith("data:image")) {
       // Si la imagen es Base64, la servimos a través del proxy de la función
-      const functionBase = `https://${url.hostname}${url.pathname}`;
+      const functionBase = `https://${url.hostname}/functions/v1/share`;
       if (article.slug) {
         ogImageUrl = `${functionBase}?image-for-slug=${article.slug}`;
       } else {
