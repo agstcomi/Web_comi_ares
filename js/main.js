@@ -210,13 +210,26 @@ function renderHeader() {
     let menuHTML = '';
     menuItems.forEach(item => {
         const isActive = (page === item.file || (item.file === '.' && page === '')) ? 'class="active"' : '';
-        menuHTML += `<li><a href="${item.file}" ${isActive}>${item.name}</a></li>`;
+        let href = '';
+        if (item.file === '.') {
+            href = isEs ? '/es/' : '/';
+        } else {
+            href = isEs ? `/es/${item.file}` : `/${item.file}`;
+        }
+        menuHTML += `<li><a href="${href}" ${isActive}>${item.name}</a></li>`;
     });
 
     // Generate language switcher HTML with dropdown
     const searchParams = window.location.search;
-    const valLink = isEs ? `../${page}${searchParams}` : `${page}${searchParams}`;
-    const esLink = isEs ? `${page}${searchParams}` : `es/${page}${searchParams}`;
+    let valLink = '/';
+    let esLink = '/es/';
+    if (page !== '' && page !== '.' && !path.includes('/noticies/')) {
+        valLink = `/${page}${searchParams}`;
+        esLink = `/es/${page}${searchParams}`;
+    } else if (path.includes('/noticies/')) {
+        valLink = `/noticies${searchParams}`;
+        esLink = `/es/noticies${searchParams}`;
+    }
 
     const langDropdownHTML = `
         <div class="lang-dropdown">
@@ -231,12 +244,13 @@ function renderHeader() {
         </div>
     `;
 
-    const logoPath = isEs ? '../img/logo.svg' : 'img/logo.svg';
+    const logoPath = '/img/logo.svg';
+    const logoHref = isEs ? '/es/' : '/';
 
     headerPlaceholder.innerHTML = `
         <header class="main-header">
             <div class="container">
-                <a href="." class="logo" style="display: flex; align-items: center; height: 100%;">
+                <a href="${logoHref}" class="logo" style="display: flex; align-items: center; height: 100%;">
                     <img src="${logoPath}" alt="Logo Comissió Ares" style="height: 40px; width: auto;">
                 </a>
                 <button class="nav-toggle" id="nav-toggle" aria-label="Toggle Menu">
@@ -302,7 +316,8 @@ function renderFooter() {
 
     const path = window.location.pathname;
     const isEs = path.includes('/es/');
-    const logoPath = isEs ? '../img/logo.svg' : 'img/logo.svg';
+    const logoPath = '/img/logo.svg';
+    const logoHref = isEs ? '/es/' : '/';
 
     const menuItems = isEs ? [
         { name: 'Inicio', file: '.' },
@@ -324,13 +339,20 @@ function renderFooter() {
 
     let navHTML = '';
     menuItems.forEach(item => {
-        navHTML += `<li><a href="${item.file}">${item.name}</a></li>`;
+        let href = '';
+        if (item.file === '.') {
+            href = isEs ? '/es/' : '/';
+        } else {
+            href = isEs ? `/es/${item.file}` : `/${item.file}`;
+        }
+        navHTML += `<li><a href="${href}">${item.name}</a></li>`;
     });
 
     const contactText = isEs ? 'Contáctanos' : "Contacta'ns";
     const emailLabel = 'Email:';
     const addressLabel = isEs ? 'Dirección:' : 'Adreça:';
     const addressValue = 'Pl. Major, 9, 12165 Ares del Maestrat, Castelló';
+    const contactHref = isEs ? '/es/contacte' : '/contacte';
     
     const copyrightText = isEs 
         ? `&copy; ${new Date().getFullYear()} Comisión de Fiestas de Ares del Maestrat. Todos los derechos reservados.`
@@ -340,7 +362,7 @@ function renderFooter() {
         <footer class="main-footer">
             <div class="container">
                 <div class="footer-top-row">
-                    <a href="." class="footer-brand">
+                    <a href="${logoHref}" class="footer-brand">
                         <img src="${logoPath}" alt="Logo Comissió Ares">
                     </a>
                     <ul class="footer-nav">
@@ -361,7 +383,7 @@ function renderFooter() {
                 
                 <div class="footer-middle-grid">
                     <div class="footer-contact-col">
-                        <a href="contacte" class="footer-contact-pill">${contactText}</a>
+                        <a href="${contactHref}" class="footer-contact-pill">${contactText}</a>
                         <div class="footer-contact-info">
                             <div><strong>${emailLabel}</strong> <a href="mailto:info@comiares.es">info@comiares.es</a></div>
                             <div><strong>${addressLabel}</strong> ${addressValue}</div>
