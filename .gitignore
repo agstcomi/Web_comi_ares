@@ -2,3 +2,7 @@
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Generated news subdirectories
+noticies/
+es/noticies/

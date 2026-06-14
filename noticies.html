@@ -252,7 +252,7 @@
         async function route() {
             const urlParams = new URLSearchParams(window.location.search);
             const newsId = urlParams.get('id');
-            const slug = urlParams.get('slug') || urlParams.get('n');
+            const slug = window.staticArticleSlug || urlParams.get('slug') || urlParams.get('n');
             
             if (newsId) {
                 await renderNewsDetail(newsId, null);
@@ -400,9 +400,10 @@
                 const escId = window.db.escapeHTML(article.id);
                 const escAlt = imageAlt ? window.db.escapeHTML(imageAlt) : escTitle;
                 const sanitizedContent = window.db.sanitizeHTML(content);
-                // Enllaç a través de la Edge Function per habilitar la previsualització de metadades (og:image, og:title)
-                const functionBase = 'https://wqelwzlnxhbhiedmxona.supabase.co/functions/v1/share';
-                const shareUrl = functionBase + (slugForShare ? '?slug=' + slugForShare : '?id=' + escId) + (isEs ? '&lang=es' : '');
+                // Enllaç per compartir l'article directament (URL neta estàtica)
+                const shareUrl = slugForShare 
+                    ? window.location.origin + (isEs ? '/es/noticies/' : '/noticies/') + slugForShare + '/'
+                    : window.location.origin + window.location.pathname + '?id=' + escId;
                 const imgSrc = window.getAssetPath(article.image_url) || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800';
                 const backToListText = isEs ? "Volver a noticias" : "Tornar a notícies";
                 const shareText = isEs ? "Compartir" : "Compartir";
@@ -490,11 +491,13 @@
         }
 
         function navigateToNews(id, slug) {
-            let url = 'noticies';
+            const isEs = window.location.pathname.includes('/es/');
+            const base = isEs ? '/es/noticies' : '/noticies';
+            let url = base;
             if (slug) {
-                url = `noticies?slug=${slug}`;
+                url = isEs ? `/es/noticies/${slug}/` : `/noticies/${slug}/`;
             } else if (id) {
-                url = `noticies?id=${id}`;
+                url = `${base}?id=${id}`;
             }
             window.history.pushState({}, '', url);
             route();
