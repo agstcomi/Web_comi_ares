@@ -39,5 +39,14 @@ Todas las tareas de rediseño visual y animaciones fueron completadas, validadas
 
 ---
 
-## 5. Próximo Paso
+## 5. Previsualización de Compartir en Redes Sociales (PRO)
+Todas las tareas para resolver la previsualización al compartir notícias en redes sociales (como WhatsApp) se completaron, verificaron, desplegaron en Supabase y se **subieron a la rama principal (PRO)** en el commit `eceb468`:
+* **Edge Function de Supabase (`share`)**: Se creó la función `supabase/functions/share/index.ts` que intercepta las peticiones de compartido, realiza la consulta a la base de datos de noticias en Supabase, genera dinámicamente las etiquetas Open Graph y Twitter correspondientes y redirige de inmediato los navegadores de usuarios reales al artículo final (`noticies.html` o `es/noticies.html` según el idioma de la noticia o parámetro `lang`).
+* **Proxy de imágenes en Base64**: La Edge Function incluye un proxy que decodifica y sirve imágenes binarias para noticias cuyas imágenes se encuentren guardadas en Base64 en la base de datos, posibilitando previsualizaciones correctas en WhatsApp y otras redes.
+* **Integración en Botones de Compartir**: Se modificaron `noticies.html` y `es/noticies.html` para generar URLs de compartido que apunten a la Edge Function de Supabase.
+* **Despliegue Completo**: La Edge Function fue desplegada exitosamente a producción (`wqelwzlnxhbhiedmxona`).
+
+---
+
+## 6. Próximo Paso
 * Esperar a nuevas instrucciones del usuario.
