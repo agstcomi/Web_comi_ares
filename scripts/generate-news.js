@@ -90,10 +90,7 @@ async function main() {
         // Canonical
         html = html.replace(/<link rel="canonical" href="[^"]*">/i, `<link rel="canonical" href="${redirectUrl}">`);
 
-        // Ajustar rutas relativas (subir 2 niveles desde noticies/[slug]/index.html)
-        html = html.replace(/href="css\/styles\.css/g, 'href="../../css/styles.css');
-        html = html.replace(/src="js\/db\.js/g, 'src="../../js/db.js');
-        html = html.replace(/src="js\/main\.js/g, 'src="../../js/main.js');
+        // Rutas absolutas a la raíz / se usan por defecto, no es necesario ajustar profundidades
 
         // Inyectar variable de slug estático en el head para la SPA
         const injectionScript = `
@@ -142,12 +139,7 @@ async function main() {
         // Canonical
         html = html.replace(/<link rel="canonical" href="[^"]*">/i, `<link rel="canonical" href="${redirectUrl}">`);
 
-        // Ajustar rutas relativas (subir 3 niveles desde es/noticies/[slug_es]/index.html)
-        html = html.replace(/href="\.\.\/css\/styles\.css/g, 'href="../../../css/styles.css');
-        html = html.replace(/src="\.\.\/js\/db\.js/g, 'src="../../../js/db.js');
-        html = html.replace(/src="\.\.\/js\/main\.js/g, 'src="../../../js/main.js');
-        html = html.replace(/href="\.\.\/img\/icon-512\.svg/g, 'href="../../../img/icon-512.svg');
-        html = html.replace(/href="\.\.\/manifest\.json/g, 'href="../../../manifest.json');
+        // Rutas absolutas a la raíz / se usan por defecto, no es necesario ajustar profundidades
 
         // Inyectar variable de slug estático en el head para la SPA
         const injectionScript = `
@@ -163,6 +155,25 @@ async function main() {
         console.log(`  [OK] Creado: es/noticies/${slugEs}/index.html`);
       }
     }
+
+    // --- GENERAR LISTADOS DE NOTICIAS DE SUBDIRECTORIO ---
+    console.log("Generando archivos index.html para listados de noticias en subdirectorios...");
+    
+    // Valenciano: copiar noticies.html a noticies/index.html
+    const listDirVal = path.join(__dirname, '..', 'noticies');
+    if (!fs.existsSync(listDirVal)) {
+      fs.mkdirSync(listDirVal, { recursive: true });
+    }
+    fs.writeFileSync(path.join(listDirVal, 'index.html'), templateVal, 'utf-8');
+    console.log("  [OK] Creado listado: noticies/index.html");
+
+    // Castellano: copiar es/noticies.html a es/noticies/index.html
+    const listDirCast = path.join(__dirname, '..', 'es', 'noticies');
+    if (!fs.existsSync(listDirCast)) {
+      fs.mkdirSync(listDirCast, { recursive: true });
+    }
+    fs.writeFileSync(path.join(listDirCast, 'index.html'), templateCast, 'utf-8');
+    console.log("  [OK] Creado listado: es/noticies/index.html");
 
     console.log("Generación completada exitosamente.");
   } catch (error) {

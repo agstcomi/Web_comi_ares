@@ -94,35 +94,35 @@ document.addEventListener('DOMContentLoaded', () => {
         const href = anchor.getAttribute('href');
         if (!href) return;
 
-        const path = window.location.pathname;
-        let page = path.split("/").pop() || '';
-        if (page === 'es' && path.endsWith('/es/')) {
-            page = '';
-        }
+        try {
+            const targetPath = new URL(anchor.href).pathname;
+            const currentPath = window.location.pathname;
+            const cleanTarget = targetPath.replace(/\/$/, '');
+            const cleanCurrent = currentPath.replace(/\/$/, '');
+            const isCurrentPage = cleanTarget === cleanCurrent;
 
-        // Match if href points to the current page
-        const isCurrentPage = href === page || 
-                              ((href === '.' || href === '') && page === '');
-
-        if (isCurrentPage) {
-            e.preventDefault();
-            // Close mobile menu if active
-            const navMenu = document.getElementById('nav-menu');
-            if (navMenu && navMenu.classList.contains('active')) {
-                navMenu.classList.remove('active');
-                const navToggle = document.getElementById('nav-toggle');
-                const icon = navToggle ? navToggle.querySelector('i') : null;
-                if (icon) {
-                    icon.setAttribute('data-lucide', 'menu');
-                    if (window.lucide) window.lucide.createIcons();
+            if (isCurrentPage) {
+                e.preventDefault();
+                // Close mobile menu if active
+                const navMenu = document.getElementById('nav-menu');
+                if (navMenu && navMenu.classList.contains('active')) {
+                    navMenu.classList.remove('active');
+                    const navToggle = document.getElementById('nav-toggle');
+                    const icon = navToggle ? navToggle.querySelector('i') : null;
+                    if (icon) {
+                        icon.setAttribute('data-lucide', 'menu');
+                        if (window.lucide) window.lucide.createIcons();
+                    }
                 }
+                
+                // Scroll to top smoothly
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
             }
-            
-            // Scroll to top smoothly
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
+        } catch (err) {
+            console.error("Error matching URL paths:", err);
         }
     });
 
