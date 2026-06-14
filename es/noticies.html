@@ -252,7 +252,13 @@
         async function route() {
             const urlParams = new URLSearchParams(window.location.search);
             const newsId = urlParams.get('id');
-            const slug = window.staticArticleSlug || urlParams.get('slug') || urlParams.get('n');
+            
+            // Extraure el slug del pathname per a suportar clean URLs (ej. /noticies/slug-name/)
+            const pathParts = window.location.pathname.split('/').filter(p => p);
+            const noticiesIndex = pathParts.findIndex(p => p.startsWith('noticies'));
+            const pathSlug = (noticiesIndex !== -1 && pathParts.length > noticiesIndex + 1) ? pathParts[noticiesIndex + 1] : null;
+            
+            const slug = window.staticArticleSlug || pathSlug || urlParams.get('slug') || urlParams.get('n');
             
             if (newsId) {
                 await renderNewsDetail(newsId, null);
