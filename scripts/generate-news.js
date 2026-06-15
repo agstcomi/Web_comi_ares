@@ -1,8 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 
-const SUPABASE_URL = "https://wqelwzlnxhbhiedmxona.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_INr3m7b6-y55MSRt9c9-ew_paoZMPan";
+// Les credencials es llegeixen de variables d'entorn injectades per GitHub Actions Secrets.
+// MAI escriure credencials directament en el codi font.
+const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  console.error("ERROR: Les variables d'entorn SUPABASE_URL i SUPABASE_ANON_KEY són obligatòries.");
+  console.error("Configura-les com a GitHub Secrets i assegura't que el workflow les injecta.");
+  process.exit(1);
+}
+
 
 function escapeHtml(text) {
   if (!text) return "";

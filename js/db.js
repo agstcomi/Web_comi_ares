@@ -1,9 +1,10 @@
 // js/db.js
 
-// CONFIGURACIÓ DE SUPABASE (PRODUCCIÓ)
-// Introdueix la teva URL i Anon Key per connectar la base de dades a producció per a qualsevol ordinador:
-const SUPABASE_URL = "https://wqelwzlnxhbhiedmxona.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_INr3m7b6-y55MSRt9c9-ew_paoZMPan";
+// CONFIGURACIÓ DE SUPABASE
+// Les credencials NO s'han d'escriure aquí directament.
+// L'administrador les configura una vegada des del panell d'administració
+// (apartat "Configuració") i es guarden de forma segura en localStorage.
+// Per a l'entorn de CI/CD (GitHub Actions), es gestionen via GitHub Secrets.
 
 // Mock Data representing real events/news of Comissió de Festes d'Ares
 const MOCK_NEWS = [
@@ -995,30 +996,28 @@ class AppDatabase {
     }
 
     async login(email, password) {
-        // Clear any previous mock session first
+        // Netejar qualsevol sessió anterior
         localStorage.removeItem('ares_mock_session');
 
-        // Allow entering Demo Mode using the mock password 'ares2026'
-        if (password === 'ares2026') {
-            const mockUser = { email: email || 'admin@ares.com', role: 'admin' };
-            localStorage.setItem('ares_mock_session', JSON.stringify(mockUser));
-            return { success: true, user: mockUser };
+        // L'única autenticació vàlida és Supabase Auth.
+        // No hi ha contrasenyes hardcodeades ni mode demo.
+        if (!this.isSupabaseConfigured()) {
+            return {
+                success: false,
+                error: "El panell d'administració requereix connexió a Supabase. Configura les credencials primer."
+            };
         }
 
-        if (this.isSupabaseConfigured()) {
-            try {
-                const { data, error } = await this.supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                if (error) throw error;
-                return { success: true, user: data.user };
-            } catch (err) {
-                console.error("Login failed on Supabase:", err);
-                return { success: false, error: err.message };
-            }
-        } else {
-            return { success: false, error: "Contrasenya incorrecta. Utilitza 'ares2026' en mode Demo." };
+        try {
+            const { data, error } = await this.supabase.auth.signInWithPassword({
+                email: email,
+                password: password
+            });
+            if (error) throw error;
+            return { success: true, user: data.user };
+        } catch (err) {
+            console.error("Login failed on Supabase:", err);
+            return { success: false, error: err.message };
         }
     }
 
@@ -1038,10 +1037,9 @@ class AppDatabase {
             } catch (e) {
                 return null;
             }
-        } else {
-            const session = localStorage.getItem('ares_mock_session');
-            return session ? JSON.parse(session) : null;
         }
+        // Sense Supabase configurat, no hi ha sessió vàlida possible.
+        return null;
     }
 
     async uploadImage(file) {
@@ -1206,7 +1204,9 @@ class AppDatabase {
                     continue;
                 }
 
+                // F8: No permetre 'style' ni 'class' per prevenir CSS Injection
                 if (name === 'style' || name === 'class') {
+                    node.removeAttribute(attr.name);
                     continue;
                 }
 

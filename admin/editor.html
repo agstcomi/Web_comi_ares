@@ -5,15 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editor de Notícies | Comissió de Festes d'Ares del Maestrat</title>
     <meta name="robots" content="noindex, nofollow">
-    
+
+    <!-- ===== CAPCALERES DE SEGURETAT HTTP (F3) ===== -->
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co; font-src 'self'; frame-ancestors 'self'; form-action 'self';">
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="../css/styles.css?v=1.4">
     
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <!-- Lucide Icons CDN (F10: versio anclada) -->
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
     
-    <!-- Supabase JS CDN -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <!-- Supabase JS CDN (F10: versio anclada) -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
     
     <style>
         body {

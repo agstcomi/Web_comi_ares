@@ -6,8 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
         await checkAuthState();
     }, 100);
 
-    // Listen for news updates from full-screen editor tab
+    // Escoltar actualitzacions de noticíies des de la pestanya de l'editor
+    // F6: Validar event.origin per evitar missatges de finestres externes malicioses
     window.addEventListener('message', (event) => {
+        if (event.origin !== window.location.origin) return;
         if (event.data === 'news-saved') {
             loadNewsTable();
         }
@@ -936,18 +938,55 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (!data.news && !data.events && !data.photos) {
                         throw new Error("El fitxer no té el format de còpia de seguretat correcte.");
                     }
-                    
-                    const countNews = data.news ? data.news.length : 0;
-                    const countEvents = data.events ? data.events.length : 0;
-                    const countPhotos = data.photos ? data.photos.length : 0;
-                    
-                    const confirmMsg = `Es restauraran:\n- ${countNews} notícies\n- ${countEvents} actes\n- ${countPhotos} fotos\n\nEstàs segur que vols continuar? Les dades existents es sobreescriuran/actualitzaran.`;
-                    
+
+                    // F9: Validació profunda de l'esquema de cada ítem abans d'importar
+                    function validateNewsItem(item) {
+                        if (!item || typeof item !== 'object') return false;
+                        if (typeof item.id !== 'string' || item.id.length > 100) return false;
+                        if (typeof item.title !== 'string' || item.title.length > 500) return false;
+                        if (item.content && typeof item.content !== 'string') return false;
+                        if (item.image_url && typeof item.image_url !== 'string') return false;
+                        if (item.image_url && item.image_url.length > 2000) return false;
+                        return true;
+                    }
+                    function validateEventItem(item) {
+                        if (!item || typeof item !== 'object') return false;
+                        if (typeof item.id !== 'string' || item.id.length > 100) return false;
+                        if (typeof item.title !== 'string' || item.title.length > 500) return false;
+                        if (item.date && !/^\d{4}-\d{2}-\d{2}$/.test(item.date)) return false;
+                        return true;
+                    }
+                    function validatePhotoItem(item) {
+                        if (!item || typeof item !== 'object') return false;
+                        if (typeof item.id !== 'string' || item.id.length > 100) return false;
+                        if (typeof item.image_url !== 'string') return false;
+                        return true;
+                    }
+
+                    const validNews = (data.news || []).filter(validateNewsItem);
+                    const validEvents = (data.events || []).filter(validateEventItem);
+                    const validPhotos = (data.photos || []).filter(validatePhotoItem);
+                    const skipped = (data.news || []).length - validNews.length +
+                                    (data.events || []).length - validEvents.length +
+                                    (data.photos || []).length - validPhotos.length;
+
+                    const countNews = validNews.length;
+                    const countEvents = validEvents.length;
+                    const countPhotos = validPhotos.length;
+
+                    let confirmMsg = `Es restauraran:\n- ${countNews} notícies\n- ${countEvents} actes\n- ${countPhotos} fotos\n`;
+                    if (skipped > 0) {
+                        confirmMsg += `\n⚠️ ${skipped} ítem(s) descartats per tenir un format invàlid.\n`;
+                    }
+                    confirmMsg += "\nEstàs segur que vols continuar? Les dades existents es sobreescriuran/actualitzaran.";
+
                     if (confirm(confirmMsg)) {
-                        const result = await window.db.importBackup(data);
+                        // Importar només els ítems validats
+                        const safeData = { news: validNews, events: validEvents, photos: validPhotos };
+                        const result = await window.db.importBackup(safeData);
                         if (result.success) {
                             alert("Còpia de seguretat importada correctament!");
-                            checkAuthState(); // reload tables
+                            checkAuthState();
                         } else {
                             alert("S'han produït errors durant la importació:\n" + result.errors.join("\n"));
                             checkAuthState();

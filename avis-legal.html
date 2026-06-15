@@ -2,6 +2,13 @@
 <html lang="ca">
 <head>
     <meta charset="UTF-8">
+    <!-- ===== CAPCALERES DE SEGURETAT HTTP ===== -->
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://opendata.aemet.es; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'self'; form-action 'self';">
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Avís Legal | Comissió de Festes d'Ares del Maestrat</title>
     <meta name="description" content="Avís legal i dades identificatives de l'Associació Joventut d'Ares, titular de la web oficial de la Comissió de Festes d'Ares del Maestrat.">
@@ -40,7 +47,7 @@
     <link rel="stylesheet" href="/css/styles.css?v=1.4">
     
     <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest" defer></script>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
 
     <!-- JSON-LD Structured Data -->
     <script type="application/ld+json">
@@ -170,7 +177,7 @@
     <div id="footer-placeholder"></div>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
     <script src="/js/db.js?v=1.6" defer></script>
     <script src="/js/main.js?v=1.6" defer></script>
 </body>

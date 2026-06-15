@@ -36,6 +36,9 @@ jobs:
 
       - name: Generate static news pages
         run: node scripts/generate-news.js
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
 
       - name: Setup GitHub Pages
         uses: actions/configure-pages@v4
