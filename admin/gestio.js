@@ -87,6 +87,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 1. If Supabase is configured and online, update user_metadata in Supabase Auth so it synchronizes across devices
         if (window.db && typeof window.db.isSupabaseConfigured === 'function' && window.db.isSupabaseConfigured() && window.db.supabase) {
+            
+            // Validate if the avatarUrl is a large Base64 image
+            if (avatarUrl && avatarUrl.startsWith('data:')) {
+                throw new Error("No es pot desar una imatge local (Base64) com a avatar en el servidor de Supabase. Assegura't que s'hagi pujat correctament al storage o utilitza una URL d'imatge externa vàlida.");
+            }
+
             try {
                 const { data, error } = await window.db.supabase.auth.updateUser({
                     data: {
@@ -100,6 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (e) {
                 console.error("Error saving profile in Supabase Auth user_metadata:", e);
+                throw new Error("Error en desar el perfil a Supabase: " + (e.message || e));
             }
         }
 
@@ -834,6 +841,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Always use window.db.uploadImage to enable client-side compression & avoid QuotaExceededError in localStorage
                 if (window.db && typeof window.db.uploadImage === 'function') {
                     url = await window.db.uploadImage(file);
+                    
+                    // If Supabase is configured but the returned url is a local Base64 string, the upload to Storage failed
+                    if (url.startsWith('data:') && window.db.isSupabaseConfigured()) {
+                        throw new Error("No s'ha pogut pujar la imatge al servidor de Supabase (bucket 'photos'). Comprova la teva connexió o els permisos d'emmagatzematge del servidor.");
+                    }
                 } else {
                     const reader = new FileReader();
                     url = await new Promise((resolve) => {
@@ -845,7 +857,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 profilePreviewImg.src = url;
             } catch (err) {
                 console.error("Error uploading profile photo:", err);
-                alert("Error al carregar la foto de perfil.");
+                alert("Error al carregar la foto de perfil: " + err.message);
+                profileAvatarFile.value = ""; // clear selected file
             } finally {
                 profilePreviewImg.style.opacity = "1";
             }
@@ -879,7 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert("Perfil actualitzat correctament.");
             } catch (err) {
                 console.error("Error saving profile:", err);
-                alert("S'ha produït un error al guardar el perfil.");
+                alert("S'ha produït un error al guardar el perfil: " + err.message);
             } finally {
                 if (submitBtn) {
                     submitBtn.disabled = false;

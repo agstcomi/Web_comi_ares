@@ -72,10 +72,18 @@ function getLocalDateStr(offsetDays = 0) {
 - La carga de avatar siempre pasa por `window.db.uploadImage()` (con compresión cliente) en lugar de FileReader puro.
 - El botón "Guardar Canvis" muestra estado de carga mientras guarda.
 
+### 5.3 Robustez y Control de Errores en la Sincronización del Perfil
+**Problema**: Si la subida de la imagen al Storage de Supabase fallaba (por ejemplo, por políticas de acceso RLS), caía silenciosamente en un string Base64. Esto hacía que `updateUser` de Supabase Auth fallara por exceso de tamaño en el token JWT. Dado que `saveProfile` silenciaba la excepción, la UI mostraba éxito y los cambios sólo persistían en el `localStorage` del equipo local, perdiéndose al cambiar de máquina.
+
+**Solución** en `admin/gestio.js`:
+- Se modificó `saveProfile` para validar que no se intenten guardar strings Base64 en `user_metadata` (bajo Supabase activo) y se propagan los errores con `throw` en lugar de silenciarlos.
+- En el listener de subida de imagen del perfil, si Supabase está activo pero se devuelve un string Base64 (indicando que falló la subida al Storage), se arroja un error visible que detiene el guardado y vacía el selector.
+- Se mejoraron las alertas del formulario de perfil en la UI para presentar los mensajes de error específicos del servidor y guiar el diagnóstico.
+
 ---
 
 ## 6. Estado del Código Actual
-* **Árbol de trabajo**: Limpio en la rama `main`.
+* **Árbol de trabajo**: Cambios aplicados localmente en `admin/gestio.js` y documentados en `AGENTS.md`.
 * **Push a origin**: Pendiente de autenticación HTTPS. Ejecutar en terminal si se desea forzar:
   ```bash
   cd /Users/tsoga00/Web_comi_ares
