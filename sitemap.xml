@@ -6,19 +6,23 @@
     <!-- HOME -->
     <url>
         <loc>https://www.comiares.es/</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/"/>
     </url>
     <url>
         <loc>https://www.comiares.es/es/</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>daily</changefreq>
         <priority>1.0</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/"/>
     </url>
@@ -26,19 +30,23 @@
     <!-- EL TEMPS / EL TIEMPO -->
     <url>
         <loc>https://www.comiares.es/temps</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.95</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/temps"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/temps"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/temps"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/temps"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/temps"/>
     </url>
     <url>
         <loc>https://www.comiares.es/es/temps</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.95</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/temps"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/temps"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/temps"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/temps"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/temps"/>
     </url>
@@ -46,19 +54,23 @@
     <!-- PROGRAMACIÓ / PROGRAMACIÓN -->
     <url>
         <loc>https://www.comiares.es/programacio</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/programacio"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/programacio"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/programacio"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/programacio"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/programacio"/>
     </url>
     <url>
         <loc>https://www.comiares.es/es/programacio</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.9</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/programacio"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/programacio"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/programacio"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/programacio"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/programacio"/>
     </url>
@@ -66,19 +78,23 @@
     <!-- NOTÍCIES / NOTICIAS -->
     <url>
         <loc>https://www.comiares.es/noticies</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies"/>
     </url>
     <url>
         <loc>https://www.comiares.es/es/noticies</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>daily</changefreq>
         <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies"/>
     </url>
@@ -86,19 +102,23 @@
     <!-- QUI SOM / QUIÉNES SOMOS -->
     <url>
         <loc>https://www.comiares.es/quisom</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/quisom"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/quisom"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/quisom"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/quisom"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/quisom"/>
     </url>
     <url>
         <loc>https://www.comiares.es/es/quisom</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/quisom"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/quisom"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/quisom"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/quisom"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/quisom"/>
     </url>
@@ -106,19 +126,23 @@
     <!-- GALERIA / GALERÍA -->
     <url>
         <loc>https://www.comiares.es/galeria</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/galeria"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/galeria"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/galeria"/>
     </url>
     <url>
         <loc>https://www.comiares.es/es/galeria</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/galeria"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/galeria"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/galeria"/>
     </url>
@@ -126,19 +150,23 @@
     <!-- CONTACTE / CONTACTO -->
     <url>
         <loc>https://www.comiares.es/contacte</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/contacte"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/contacte"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/contacte"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/contacte"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/contacte"/>
     </url>
     <url>
         <loc>https://www.comiares.es/es/contacte</loc>
-        <lastmod>2026-06-12</lastmod>
+        <lastmod>2026-06-15</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.6</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/contacte"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/contacte"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/contacte"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/contacte"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/contacte"/>
     </url>

@@ -3,25 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notícies | Comissió de Festes d'Ares del Maestrat</title>
+    <title>Últimes Notícies d'Ares del Maestrat | Actualitat i Agenda</title>
     <meta name="description" content="Informa't de tots els avisos oficials, novetats, rifes de Nadal i última hora de la Comissió de Festes d'Ares del Maestrat.">
     
     <link rel="canonical" href="https://www.comiares.es/noticies">
+    <link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies">
     <link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies">
+    <link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies">
     <link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies">
     <link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies">
 
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://www.comiares.es/noticies">
-    <meta property="og:title" content="Notícies | Comissió de Festes d'Ares del Maestrat">
+    <meta property="og:title" content="Últimes Notícies d'Ares del Maestrat | Actualitat i Agenda">
     <meta property="og:description" content="Informa't de tots els avisos oficials, novetats, rifes de Nadal i última hora de la Comissió de Festes d'Ares del Maestrat.">
     <meta property="og:image" content="https://www.comiares.es/img/portada.jpg">
 
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
     <meta property="twitter:url" content="https://www.comiares.es/noticies">
-    <meta property="twitter:title" content="Notícies | Comissió de Festes d'Ares del Maestrat">
+    <meta property="twitter:title" content="Últimes Notícies d'Ares del Maestrat | Actualitat i Agenda">
     <meta property="twitter:description" content="Informa't de tots els avisos oficials, novetats, rifes de Nadal i última hora de la Comissió de Festes d'Ares del Maestrat.">
     <meta property="twitter:image" content="https://www.comiares.es/img/portada.jpg">
     
@@ -31,7 +33,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Comissió Ares">
+    <meta name="apple-mobile-web-app-title" content="Festes Ares">
     <meta name="theme-color" content="#ffffff">
     <link rel="apple-touch-icon" href="/img/icon-512.svg">
     <!-- Stylesheets -->
@@ -49,7 +51,7 @@
       "url": "https://www.comiares.es/",
       "logo": "https://www.comiares.es/img/logo.svg",
       "image": "https://www.comiares.es/img/portada.jpg",
-      "description": "Web oficial de la Comissió de Festes d'Ares del Maestrat. Organització dels actes, festes patronals i activitats culturals.",
+      "description": "Web oficial de la Comissió de Festes d'Ares del Maestrat. Organització dels actes, festes i activitats culturals.",
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Pl. Major, 9",
@@ -278,6 +280,12 @@
             listContainer.style.display = 'block';
             detailContainer.style.display = 'none';
             
+            // Remove any dynamic news schema if we are showing the news list
+            const oldSchema = document.getElementById('dynamic-news-schema');
+            if (oldSchema) {
+                oldSchema.remove();
+            }
+            
             const container = document.getElementById('news-grid-container');
             container.innerHTML = window.getNewsSkeletonHTML(6);
             
@@ -485,6 +493,42 @@
                     </article>
                 `;
                 
+                // Inject Dynamic JSON-LD NewsArticle schema
+                const oldSchema = document.getElementById('dynamic-news-schema');
+                if (oldSchema) {
+                    oldSchema.remove();
+                }
+
+                const schemaData = {
+                    "@context": "https://schema.org",
+                    "@type": "NewsArticle",
+                    "headline": title,
+                    "description": subtitle || title,
+                    "image": [imgSrc],
+                    "datePublished": article.created_at,
+                    "dateModified": article.updated_at || article.created_at,
+                    "author": [{
+                        "@type": "Organization",
+                        "name": author,
+                        "url": window.location.origin + "/"
+                    }],
+                    "publisher": {
+                        "@type": "Organization",
+                        "name": isEs ? "Comisión de Fiestas de Ares del Maestrat" : "Comissió de Festes d'Ares del Maestrat",
+                        "logo": {
+                            "@type": "ImageObject",
+                            "url": window.location.origin + "/img/logo.svg"
+                        }
+                    },
+                    "mainEntityOfPage": shareUrl
+                };
+
+                const scriptNode = document.createElement('script');
+                scriptNode.id = 'dynamic-news-schema';
+                scriptNode.type = 'application/ld+json';
+                scriptNode.text = JSON.stringify(schemaData);
+                document.head.appendChild(scriptNode);
+
                 // Refresh Lucide Icons inside the dynamically loaded container if any
                 if (window.lucide) window.lucide.createIcons();
                 
