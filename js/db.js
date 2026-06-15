@@ -509,23 +509,25 @@ class AppDatabase {
         localStorage.setItem('ares_category_colors', JSON.stringify(colors));
         
         const configItem = {
-            id: '__config_category_colors',
+            id: 'event-config-category-colors',
             title: 'Category Colors Config',
             long_description: JSON.stringify(colors),
             date: '2099-12-31',
             time: '00:00',
             location: 'System Config',
-            category: 'config'
+            category: 'populars'
         };
 
         if (this.isSupabaseConfigured()) {
             try {
-                await this.supabase
+                const { error } = await this.supabase
                     .from('events')
                     .upsert([configItem]);
+                if (error) throw error;
             } catch (err) {
                 console.error("Error saving category colors to Supabase:", err);
                 await this.putIDB('events', configItem);
+                throw err;
             }
         } else {
             await this.putIDB('events', configItem);
@@ -575,7 +577,7 @@ class AppDatabase {
         }
 
         // Process config record if present
-        const configEvent = events.find(e => e.id === '__config_category_colors');
+        const configEvent = events.find(e => e.id === 'event-config-category-colors');
         if (configEvent) {
             try {
                 const colors = JSON.parse(configEvent.long_description);
@@ -586,7 +588,7 @@ class AppDatabase {
         }
 
         // Filter out config record from returned list
-        return events.filter(e => e.id !== '__config_category_colors');
+        return events.filter(e => e.id !== 'event-config-category-colors');
     }
 
     async getLocalEvents() {

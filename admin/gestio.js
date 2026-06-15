@@ -925,10 +925,15 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', async () => {
                 const cat = btn.getAttribute('data-cat');
                 if (confirm(`Estàs segur que vols esborrar l'etiqueta "${cat}"? Els actes d'aquesta categoria s'hauran de reassignar.`)) {
-                    await window.db.deleteCategory(cat);
-                    loadCategoryColorsForm();
-                    loadCategorySelects();
-                    loadEventsTable();
+                    try {
+                        await window.db.deleteCategory(cat);
+                        loadCategoryColorsForm();
+                        loadCategorySelects();
+                        loadEventsTable();
+                    } catch (err) {
+                        console.error("Error deleting category:", err);
+                        alert("Error en esborrar la categoria: " + (err.message || err));
+                    }
                 }
             });
         });
@@ -959,12 +964,17 @@ document.addEventListener('DOMContentLoaded', () => {
         btnNewCategory.addEventListener('click', async () => {
             const name = prompt("Introdueix el nom de la nova etiqueta (ej. taurins, jocs, etc.):");
             if (name) {
-                const key = await window.db.addCategory(name);
-                if (key) {
-                    loadCategoryColorsForm();
-                    loadCategorySelects();
-                } else {
-                    alert("Aquesta etiqueta ja existeix o el nom no és vàlid.");
+                try {
+                    const key = await window.db.addCategory(name);
+                    if (key) {
+                        loadCategoryColorsForm();
+                        loadCategorySelects();
+                    } else {
+                        alert("Aquesta etiqueta ja existeix o el nom no és vàlid.");
+                    }
+                } catch (err) {
+                    console.error("Error adding category:", err);
+                    alert("Error en afegir la categoria: " + (err.message || err));
                 }
             }
         });
@@ -982,9 +992,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 const text = card.querySelector('.color-text-input').value;
                 colors[cat] = { bg, text };
             });
-            await window.db.saveCategoryColors(colors);
-            alert('Colors de categoria guardats correctament.');
-            loadEventsTable();
+            try {
+                await window.db.saveCategoryColors(colors);
+                alert('Colors de categoria guardats correctament.');
+                loadEventsTable();
+            } catch (err) {
+                console.error("Error saving category colors:", err);
+                alert("Error en guardar els colors: " + (err.message || err));
+            }
         });
     }
 
@@ -994,10 +1009,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (confirm('Vols restablir els colors per defecte de les categories?')) {
                 localStorage.removeItem('ares_category_colors');
                 const defaults = window.db.getCategoryColors();
-                await window.db.saveCategoryColors(defaults);
-                loadCategoryColorsForm();
-                loadCategorySelects();
-                await loadEventsTable();
+                try {
+                    await window.db.saveCategoryColors(defaults);
+                    loadCategoryColorsForm();
+                    loadCategorySelects();
+                    await loadEventsTable();
+                } catch (err) {
+                    console.error("Error resetting category colors:", err);
+                    alert("Error en restablir els colors: " + (err.message || err));
+                }
             }
         });
     }
