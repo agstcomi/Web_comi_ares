@@ -87,10 +87,17 @@ function getLocalDateStr(offsetDays = 0) {
 - Se modificaron las funciones `saveCategoryColors(colors)` y `saveFAQs(faqs)` para que los objetos `configItem` de configuración incluyan **todos** los campos del esquema de la tabla `events` (usando strings vacíos o valores por defecto para los que no se utilizan).
 - Esto satisface cualquier restricción `NOT NULL` de la base de datos de Supabase, asegurando que las actualizaciones y el `upsert` tengan éxito en el servidor y sincronizando de forma transparente los colores, etiquetas y FAQs creadas por los usuarios en todos los navegadores.
 
+### 5.5 Solución al desborde de etiquetas de programación (Flex-Wrap)
+**Problema**: Cuando un evento tiene asignadas múltiples etiquetas de categorías (como en la captura del usuario), la fila de badges se desbordaba horizontalmente por la derecha de la tarjeta de evento. Esto sucedía porque los contenedores flex que envuelven a `window.renderCategoryBadges(...)` no tenían configurado el salto de línea (`flex-wrap: nowrap` por defecto) y los badges tienen `flex-shrink: 0`.
+
+**Solución**:
+- Se añadió la propiedad `flex-wrap: wrap;` en los contenedores de etiquetas de la programación pública (en [js/programacio.js](file:///Users/tsoga00/Web_comi_ares/js/programacio.js#L167) y L481) y en el panel de administrador (en [admin/gestio.js](file:///Users/tsoga00/Web_comi_ares/admin/gestio.js#L390)).
+- Se incrementó a `?v=1.6` la importación de `db.js` y `programacio.js` en todos los archivos HTML para obligar a los navegadores a recargar inmediatamente los scripts sin recurrir a la caché.
+
 ---
 
 ## 6. Estado del Código Actual
-* **Árbol de trabajo**: Cambios aplicados en `admin/gestio.js` y `js/db.js`, y documentados en `AGENTS.md`.
+* **Árbol de trabajo**: Cambios de persistencia de perfil, corrección de categorías, control de errores de Storage y maquetación flex-wrap aplicados y confirmados.
 * **Push a origin**: Pendiente de autenticación HTTPS. Ejecutar en terminal si se desea forzar:
   ```bash
   cd /Users/tsoga00/Web_comi_ares
