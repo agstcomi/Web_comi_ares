@@ -96,14 +96,12 @@ function getLocalDateStr(offsetDays = 0) {
 
 ---
 
-## 6. Estado del Código Actual
-* **Árbol de trabajo**: Cambios de persistencia de perfil, corrección de categorías, control de errores de Storage y maquetación flex-wrap aplicados y confirmados.
-* **Push a origin**: Pendiente de autenticación HTTPS. Ejecutar en terminal si se desea forzar:
-  ```bash
-  cd /Users/tsoga00/Web_comi_ares
-  git push origin main
-  ```
-* **Botón Área de Socio**: Descartado. El header público no tiene modificaciones.
+## 6. Optimización de Egress y Caché de Supabase (PRO)
+Completado y subido en el commit `10ada9a` (y el de documentación `AGENTS.md` subsiguiente):
+* **Enfoque JAMstack de Consultas**: Para evitar el límite de 5 GB de transferencia (egress) de la base de datos de Supabase en visitas públicas, el generador estático `generate-news.js` ahora descarga las tablas `news`, `events` y `photos` y las escribe en `data/news.json`, `data/events.json` y `data/photos.json`.
+* **Carga en Cliente**: `js/db.js` detecta si está en el panel `/admin/*`. Si no lo está, los visitantes públicos cargan los archivos JSON estáticos (con la versión `?v=1.6`) servidos gratis por el CDN de GitHub Pages. Se incluyen fallbacks automáticos en vivo si falla la descarga estática.
+* **Cabeceras de Caché de Imágenes**: Las imágenes subidas a través de `uploadImage` a Supabase Storage ahora incluyen la opción `{ cacheControl: '31536000' }` (1 año) para que el navegador y los CDNs las almacenen permanentemente, ahorrando egreso.
+* **Servidor Local Node**: Creado `serve.js` como alternativa multiplataforma basada en Node.js que replica el comportamiento de enrutamiento limpio de `serve.py`.
 
 ---
 
