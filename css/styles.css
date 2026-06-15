@@ -631,13 +631,20 @@ nav.nav-menu ul li a::after {
    ========================================================================== */
 .filter-bar {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
     gap: 1.5rem;
-    padding-bottom: 2rem;
+    padding-bottom: 2.5rem;
     border-bottom: 1px solid var(--border-color);
     margin-bottom: 3rem;
+}
+
+.filter-search-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 1.25rem;
 }
 
 .filter-categories {
