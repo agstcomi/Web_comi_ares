@@ -2979,3 +2979,92 @@ pre,
     color: var(--bg-primary);
     border: none;
 }
+
+/* ==========================================================================
+   News Detail Recommendation Horizontal Card Styles
+   ========================================================================== */
+.news-recommendation-section .news-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    gap: 1.25rem;
+    padding: 0.75rem;
+    border-radius: 12px;
+    background-color: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+}
+
+.news-recommendation-section .news-card .news-img-wrapper {
+    width: 120px;
+    height: 80px;
+    max-width: 120px;
+    aspect-ratio: auto;
+    border-radius: 8px;
+    border: none;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+.news-recommendation-section .news-card .news-img-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.news-recommendation-section .news-card .news-info {
+    width: calc(100% - 140px);
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.news-recommendation-section .news-card .news-date,
+.news-recommendation-section .news-card .news-more {
+    display: none;
+}
+
+.news-recommendation-section .news-card .news-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+    line-height: 1.3;
+    color: var(--text-primary);
+}
+
+.news-recommendation-section .news-card .news-excerpt {
+    margin: 0;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+@media (max-width: 576px) {
+    .news-recommendation-section .news-card {
+        gap: 1rem;
+        padding: 0.5rem;
+    }
+    .news-recommendation-section .news-card .news-img-wrapper {
+        width: 90px;
+        height: 60px;
+        max-width: 90px;
+    }
+    .news-recommendation-section .news-card .news-info {
+        width: calc(100% - 100px);
+    }
+    .news-recommendation-section .news-card .news-title {
+        font-size: 0.95rem;
+    }
+    .news-recommendation-section .news-card .news-excerpt {
+        font-size: 0.8rem;
+        -webkit-line-clamp: 1;
+    }
+}

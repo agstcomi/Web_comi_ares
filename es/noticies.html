@@ -369,6 +369,62 @@
                     `;
                     return;
                 }
+
+                // Find recommendation ("Tal vez te interese...")
+                let recommendationHTML = '';
+                const choices = (newsList || []).filter(n => n.id !== article.id && (n.status || 'published') !== 'draft');
+                if (choices.length > 0) {
+                    let recommendedArticle = null;
+                    if (article.tags && article.tags.length > 0) {
+                        const related = choices.filter(n => n.tags && n.tags.some(t => article.tags.includes(t)));
+                        if (related.length > 0) {
+                            related.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                            recommendedArticle = related[0];
+                        }
+                    }
+                    if (!recommendedArticle) {
+                        choices.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+                        recommendedArticle = choices[0];
+                    }
+
+                    if (recommendedArticle) {
+                        const recTitle = isEs && recommendedArticle.title_es ? recommendedArticle.title_es : recommendedArticle.title;
+                        const recSubtitle = isEs && recommendedArticle.subtitle_es ? recommendedArticle.subtitle_es : recommendedArticle.subtitle;
+                        const recExcerpt = recSubtitle || stripHTML(isEs && recommendedArticle.content_es ? recommendedArticle.content_es : recommendedArticle.content).substring(0, 100) + '...';
+                        const recSlug = isEs && recommendedArticle.slug_es ? recommendedArticle.slug_es : recommendedArticle.slug;
+                        const recAlt = (isEs && recommendedArticle.image_alt_es ? recommendedArticle.image_alt_es : recommendedArticle.image_alt) || recTitle;
+                        
+                        const escRecTitle = window.db.escapeHTML(recTitle);
+                        const escRecExcerpt = window.db.escapeHTML(recExcerpt);
+                        const escRecSlug = recSlug ? window.db.escapeHTML(recSlug) : '';
+                        const escRecAlt = window.db.escapeHTML(recAlt);
+                        const escRecId = window.db.escapeHTML(recommendedArticle.id);
+
+                        const sectionTitle = isEs ? "Tal vez te interese..." : "També et pot interessar...";
+                        const readMoreText = isEs ? "Leer más" : "Llegir més";
+
+                        recommendationHTML = `
+                            <div class="news-recommendation-section" style="margin-top: 5rem; border-top: 1px solid var(--border-color); padding-top: 3rem;">
+                                <h3 style="font-family: var(--font-heading); margin-bottom: 2rem; text-transform: uppercase; font-size: 1.25rem; color: #27272a;">
+                                    ${sectionTitle}
+                                </h3>
+                                <article class="news-card" style="cursor: pointer;" onclick="event.preventDefault(); navigateToNews('${escRecId}', '${escRecSlug}')">
+                                    <div class="news-img-wrapper">
+                                        ${window.getNewsImageHTML(recommendedArticle.image_url, escRecAlt)}
+                                    </div>
+                                    <div class="news-info">
+                                        <span class="news-date">${formatDate(recommendedArticle.created_at)}</span>
+                                        <h3 class="news-title" style="margin-top: 0.5rem; margin-bottom: 0.5rem; font-size: 1.2rem;">${escRecTitle}</h3>
+                                        <p class="news-excerpt" style="display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; font-size: 0.875rem; margin-bottom: 1rem;">${escRecExcerpt}</p>
+                                        <span class="news-more" style="font-size: 0.75rem; text-transform: uppercase; font-weight: 700; display: inline-flex; align-items: center; gap: 0.25rem;">
+                                            ${readMoreText} <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                                        </span>
+                                    </div>
+                                </article>
+                            </div>
+                        `;
+                    }
+                }
                 
                 // Render additional images if any
                 let additionalImagesHTML = '';
@@ -490,6 +546,7 @@
                         </div>
                         
                         ${additionalImagesHTML}
+                        ${recommendationHTML}
                     </article>
                 `;
                 
@@ -572,6 +629,12 @@
             const options = { day: 'numeric', month: 'long', year: 'numeric' };
             const isEs = window.location.pathname.includes('/es/');
             return date.toLocaleDateString(isEs ? 'es-ES' : 'ca-ES', options);
+        }
+
+        function stripHTML(html) {
+            if (!html) return '';
+            const doc = new DOMParser().parseFromString(html, 'text/html');
+            return doc.body.textContent || "";
         }
     </script>
 </body>

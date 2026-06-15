@@ -10,6 +10,14 @@ class CleanURLHandler(http.server.SimpleHTTPRequestHandler):
         
         # Si la ruta no existe físicamente y no tiene extensión de archivo
         if not os.path.exists(translated_path) and not os.path.isdir(translated_path):
+            # Rewrite for clean news detail URLs
+            if path_without_query.startswith('/noticies/') and len(path_without_query.split('/')) >= 3:
+                self.path = '/noticies.html'
+                return super().do_GET()
+            elif path_without_query.startswith('/es/noticies/') and len(path_without_query.split('/')) >= 4:
+                self.path = '/es/noticies.html'
+                return super().do_GET()
+
             _, ext = os.path.splitext(translated_path)
             if not ext:
                 html_path = translated_path + '.html'
