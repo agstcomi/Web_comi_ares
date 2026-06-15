@@ -460,18 +460,18 @@
                     if (upcoming.length === 0) upcoming = eventsList; // fallback to all if none in future
 
                     eventsContainer.innerHTML = upcoming.slice(0, 3).map((item, idx) => {
-                        const catColors = colors[item.category] || { bg: '#e4e4e7', text: '#18181b' };
                         const escTitle = window.db.escapeHTML(item.title);
                         const escDesc = window.db.escapeHTML(item.description);
                         const escLoc = window.db.escapeHTML(item.location);
-                        const escCat = window.db.escapeHTML(window.getCategoryName(item.category));
                         const escId = window.db.escapeHTML(item.id);
                         const formattedDate = formatDate(item.date);
                         return `
                             <div class="home-event-card animate-fade-in-up" data-id="${escId}" style="transition-delay: ${idx * 0.05}s;" onclick="window.location.href='programacio'">
                                 <div class="event-title-row">
                                     <h3>${escTitle}</h3>
-                                    <span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text}; flex-shrink: 0;">${escCat}</span>
+                                    <div style="display: flex; gap: 0.25rem;">
+                                        ${window.renderCategoryBadges(item.category)}
+                                    </div>
                                 </div>
                                 ${escDesc ? `<p class="event-desc">${escDesc}</p>` : ''}
                                 <div class="event-footer">

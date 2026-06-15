@@ -478,6 +478,19 @@ window.getCategoryName = function(category) {
     return category.charAt(0).toUpperCase() + category.slice(1);
 };
 
+// Render category badges supporting comma-separated list of tags
+window.renderCategoryBadges = function(categoryString, extraStyles = '') {
+    if (!categoryString) return '';
+    const colors = window.db.getCategoryColors();
+    const categories = categoryString.split(',').map(c => c.trim()).filter(c => c.length > 0);
+    return categories.map(cat => {
+        const catColors = colors[cat] || { bg: '#e4e4e7', text: '#18181b' };
+        const displayName = window.getCategoryName(cat);
+        const escCat = window.db.escapeHTML(displayName);
+        return `<span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text}; flex-shrink: 0; margin-right: 0.25rem; ${extraStyles}">${escCat}</span>`;
+    }).join('');
+};
+
 // Reusable Skeleton HTML Loaders
 window.getNewsSkeletonHTML = function(count = 6) {
     let html = '';

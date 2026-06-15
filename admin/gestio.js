@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function checkAuthState() {
         const user = await window.db.getCurrentUser();
         if (user) {
-            showDashboard(user);
+            await showDashboard(user);
         } else {
             showLogin();
         }
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(`ares_profile_${user.email}`, JSON.stringify({ name, avatarUrl }));
     }
 
-    function showDashboard(user) {
+    async function showDashboard(user) {
         currentUser = user;
         loginContainer.style.display = 'none';
         dashboardContainer.style.display = 'block';
@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Load tables data
         loadNewsTable();
-        loadEventsTable();
+        await loadEventsTable();
         loadPhotosTable();
         loadCategorySelects();
         loadCategoryColorsForm();
@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const result = await window.db.login(email, password);
 
             if (result.success) {
-                showDashboard(result.user);
+                await showDashboard(result.user);
             } else {
                 loginError.textContent = result.error || "Error de connexió.";
                 loginError.style.display = 'block';
@@ -332,19 +332,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         tbody.innerHTML = events.map(item => {
-            const catColors = colors[item.category] || { bg: '#e4e4e7', text: '#18181b' };
             const escDate = window.db.escapeHTML(item.date);
             const escTime = window.db.escapeHTML(item.time);
             const escTitle = window.db.escapeHTML(item.title);
             const escLoc = window.db.escapeHTML(item.location);
-            const escCat = window.db.escapeHTML(item.category);
             const escId = window.db.escapeHTML(item.id);
             return `
                 <tr>
                     <td style="font-weight: 600;">${escDate} <span style="font-weight: 300;">(${escTime})</span></td>
                     <td>${escTitle}</td>
                     <td>${escLoc}</td>
-                    <td><span class="event-tag" style="margin-top:0; background-color: ${catColors.bg}; color: ${catColors.text};">${escCat}</span></td>
+                    <td>
+                        <div style="display: flex; gap: 0.25rem;">
+                            ${window.renderCategoryBadges(item.category, 'margin-top:0;')}
+                        </div>
+                    </td>
                     <td>
                         <button class="btn btn-sm btn-edit-event" data-id="${escId}" style="padding: 0.35rem 0.6rem; margin-right: 0.5rem; background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary);">
                             <i data-lucide="edit-3" style="width: 12px; height: 12px;"></i> Editar
@@ -368,7 +370,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     document.getElementById('event-date').value = item.date;
                     document.getElementById('event-time').value = item.time;
                     document.getElementById('event-location').value = item.location;
-                    document.getElementById('event-category').value = item.category;
+                    const eventCats = item.category ? item.category.split(',').map(c => c.trim()) : [];
+                    const checkboxes = document.querySelectorAll('input[name="event-category-check"]');
+                    checkboxes.forEach(cb => {
+                        cb.checked = eventCats.includes(cb.value);
+                    });
                     document.getElementById('event-description').value = item.description || '';
                     document.getElementById('event-long-description').value = item.long_description || '';
                     document.getElementById('event-image').value = item.image_url || '';
@@ -557,7 +563,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const date = document.getElementById('event-date').value;
                 const time = document.getElementById('event-time').value;
                 const location = document.getElementById('event-location').value;
-                const category = document.getElementById('event-category').value;
+                const checkboxes = document.querySelectorAll('input[name="event-category-check"]:checked');
+                const category = Array.from(checkboxes).map(cb => cb.value).join(', ');
+
+                if (category === '') {
+                    alert("Si us plau, selecciona almenys una categoria.");
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Guardar';
+                    return;
+                }
                 const description = document.getElementById('event-description').value;
                 const long_description = document.getElementById('event-long-description').value;
 
@@ -924,13 +938,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function loadCategorySelects() {
         const colors = window.db.getCategoryColors();
-        const select = document.getElementById('event-category');
-        if (select) {
-            select.innerHTML = Object.keys(colors).map(cat => {
+        const container = document.getElementById('event-categories-checkboxes');
+        if (container) {
+            container.innerHTML = Object.keys(colors).map(cat => {
                 const displayName = cat.charAt(0).toUpperCase() + cat.slice(1);
                 const safeCat = window.db.escapeHTML(cat);
                 const safeDisplayName = window.db.escapeHTML(displayName);
-                return `<option value="${safeCat}">${safeDisplayName}</option>`;
+                return `
+                    <label style="display: inline-flex; align-items: center; gap: 0.5rem; background-color: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.4rem 0.75rem; border-radius: 6px; cursor: pointer; font-size: 0.85rem; user-select: none;">
+                        <input type="checkbox" name="event-category-check" value="${safeCat}" style="cursor: pointer;">
+                        <span>${safeDisplayName}</span>
+                    </label>
+                `;
             }).join('');
         }
     }
@@ -953,7 +972,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formColors = document.getElementById('form-category-colors');
     if (formColors) {
-        formColors.addEventListener('submit', (e) => {
+        formColors.addEventListener('submit', async (e) => {
             e.preventDefault();
             const colors = {};
             const cards = formColors.querySelectorAll('.category-card');
@@ -963,7 +982,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const text = card.querySelector('.color-text-input').value;
                 colors[cat] = { bg, text };
             });
-            window.db.saveCategoryColors(colors);
+            await window.db.saveCategoryColors(colors);
             alert('Colors de categoria guardats correctament.');
             loadEventsTable();
         });
@@ -971,12 +990,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const btnResetColors = document.getElementById('btn-reset-colors');
     if (btnResetColors) {
-        btnResetColors.addEventListener('click', () => {
+        btnResetColors.addEventListener('click', async () => {
             if (confirm('Vols restablir els colors per defecte de les categories?')) {
                 localStorage.removeItem('ares_category_colors');
+                const defaults = window.db.getCategoryColors();
+                await window.db.saveCategoryColors(defaults);
                 loadCategoryColorsForm();
                 loadCategorySelects();
-                loadEventsTable();
+                await loadEventsTable();
             }
         });
     }

@@ -92,7 +92,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const desc = isEs && e.description_es ? e.description_es : e.description;
             const loc = isEs && e.location_es ? e.location_es : e.location;
 
-            const matchesCategory = currentCategory === 'all' || e.category === currentCategory;
+            const eventCategories = e.category ? e.category.split(',').map(c => c.trim()) : [];
+            const matchesCategory = currentCategory === 'all' || eventCategories.includes(currentCategory);
             const matchesSearch = (title || '').toLowerCase().includes(searchQuery) || 
                                   (desc || '').toLowerCase().includes(searchQuery) ||
                                   (loc || '').toLowerCase().includes(searchQuery);
@@ -148,7 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="timeline-events-list">
                         ${events.map((event, idx) => {
-                            const catColors = colors[event.category] || { bg: '#e4e4e7', text: '#18181b' };
                             const title = isEs && event.title_es ? event.title_es : event.title;
                             const desc = isEs && event.description_es ? event.description_es : event.description;
                             const loc = isEs && event.location_es ? event.location_es : event.location;
@@ -157,7 +157,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             const escTime = window.db.escapeHTML(event.time);
                             const escDesc = window.db.escapeHTML(desc || '');
                             const escLoc = window.db.escapeHTML(loc || '');
-                            const escCat = window.db.escapeHTML(window.getCategoryName(event.category));
                             const escId = window.db.escapeHTML(event.id);
                             const addText = isEs ? "Añadir" : "Afegir";
                             return `
@@ -165,7 +164,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <div class="event-content-col">
                                         <div class="event-title-row">
                                             <h3>${escTitle}</h3>
-                                            <span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text};">${escCat}</span>
+                                            <div style="display: flex; gap: 0.25rem;">
+                                                ${window.renderCategoryBadges(event.category)}
+                                            </div>
                                         </div>
                                         <div class="event-meta-row">
                                             <span class="event-meta-time">${escTime} h</span>
@@ -439,8 +440,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const modalBody = document.getElementById('event-detail-modal-body');
         if (!modal || !modalBody) return;
 
-        const colors = window.db.getCategoryColors();
-        const catColors = colors[event.category] || { bg: '#e4e4e7', text: '#18181b' };
         const isEs = window.location.pathname.includes('/es/');
 
         const title = isEs && event.title_es ? event.title_es : event.title;
@@ -454,7 +453,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const escDesc = window.db.escapeHTML(desc || '');
         const sanitizedLongDesc = window.db.sanitizeHTML(longDesc || '');
         const escLoc = window.db.escapeHTML(loc || '');
-        const escCat = window.db.escapeHTML(window.getCategoryName(event.category));
 
         let imageHTML = '';
         if (event.image_url) {
@@ -479,8 +477,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         modalBody.innerHTML = `
             ${imageHTML}
-            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-                <span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text}; margin-top: 0;">${escCat}</span>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
+                <div style="display: flex; gap: 0.25rem;">
+                    ${window.renderCategoryBadges(event.category, 'margin-top: 0;')}
+                </div>
                 <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 700;">${escDate} — ${escTime}h</span>
             </div>
             <h2 style="font-family: var(--font-heading); font-size: 1.75rem; margin-bottom: 1rem; color: var(--text-primary); text-transform: uppercase;">${escTitle}</h2>

@@ -505,8 +505,31 @@ class AppDatabase {
         return defaultColors;
     }
 
-    saveCategoryColors(colors) {
+    async saveCategoryColors(colors) {
         localStorage.setItem('ares_category_colors', JSON.stringify(colors));
+        
+        const configItem = {
+            id: '__config_category_colors',
+            title: 'Category Colors Config',
+            long_description: JSON.stringify(colors),
+            date: '2099-12-31',
+            time: '00:00',
+            location: 'System Config',
+            category: 'config'
+        };
+
+        if (this.isSupabaseConfigured()) {
+            try {
+                await this.supabase
+                    .from('events')
+                    .upsert([configItem]);
+            } catch (err) {
+                console.error("Error saving category colors to Supabase:", err);
+                await this.putIDB('events', configItem);
+            }
+        } else {
+            await this.putIDB('events', configItem);
+        }
         return true;
     }
 
@@ -517,7 +540,7 @@ class AppDatabase {
         if (colors[key]) return null;
         
         colors[key] = { bg: '#e4e4e7', text: '#18181b' };
-        this.saveCategoryColors(colors);
+        await this.saveCategoryColors(colors);
         return key;
     }
 
@@ -525,7 +548,7 @@ class AppDatabase {
         const colors = this.getCategoryColors();
         if (colors[key]) {
             delete colors[key];
-            this.saveCategoryColors(colors);
+            await this.saveCategoryColors(colors);
             return true;
         }
         return false;
@@ -533,6 +556,7 @@ class AppDatabase {
 
     // Events Actions
     async getEvents() {
+        let events = [];
         if (this.isSupabaseConfigured()) {
             try {
                 const { data, error } = await this.supabase
@@ -541,14 +565,28 @@ class AppDatabase {
                     .order('date', { ascending: true })
                     .order('time', { ascending: true });
                 if (error) throw error;
-                return data;
+                events = data;
             } catch (err) {
                 console.error("Error loading events from Supabase:", err);
-                return await this.getLocalEvents();
+                events = await this.getLocalEvents();
             }
         } else {
-            return await this.getLocalEvents();
+            events = await this.getLocalEvents();
         }
+
+        // Process config record if present
+        const configEvent = events.find(e => e.id === '__config_category_colors');
+        if (configEvent) {
+            try {
+                const colors = JSON.parse(configEvent.long_description);
+                localStorage.setItem('ares_category_colors', JSON.stringify(colors));
+            } catch (e) {
+                console.error("Error parsing category colors from Supabase config event:", e);
+            }
+        }
+
+        // Filter out config record from returned list
+        return events.filter(e => e.id !== '__config_category_colors');
     }
 
     async getLocalEvents() {
@@ -979,7 +1017,7 @@ class AppDatabase {
         
         // Import category colors if present
         if (data.categoryColors) {
-            this.saveCategoryColors(data.categoryColors);
+            await this.saveCategoryColors(data.categoryColors);
         }
         
         const errors = [];
