@@ -218,6 +218,13 @@
                             <textarea id="message" rows="5" required placeholder="Escribe aquí tu mensaje..."></textarea>
                         </div>
 
+                        <div class="form-group" style="display: flex; align-items: flex-start; gap: 0.75rem; margin-top: 1.5rem; margin-bottom: 1.5rem;">
+                            <input type="checkbox" id="privacy-accept" required style="cursor: pointer; width: auto; margin-top: 0.25rem;">
+                            <label for="privacy-accept" style="font-size: 0.85rem; font-weight: normal; color: var(--text-secondary); cursor: pointer; user-select: none; line-height: 1.4;">
+                                Al enviar este formulario acepta el tratamiento de sus datos según nuestra <a href="/es/privacitat" target="_blank" style="color: var(--text-primary); text-decoration: underline;">Política de Privacidad</a>.
+                            </label>
+                        </div>
+
                         <button type="submit" class="btn" style="width: 100%;">
                             <span>Enviar Mensaje</span>
                             <i data-lucide="send" style="width: 14px; height: 14px;"></i>
@@ -241,7 +248,7 @@
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
     <script src="/js/db.js" defer></script>
-    <script src="/js/main.js?v=1.5" defer></script>
+    <script src="/js/main.js?v=1.6" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const form = document.getElementById('contact-form');
