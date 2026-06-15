@@ -977,8 +977,8 @@ class AppDatabase {
                 
                 return publicUrl;
             } catch (err) {
-                console.error("Error uploading to Supabase Storage, falling back to Base64:", err);
-                return this.readFileAsBase64(file);
+                console.error("Error uploading to Supabase Storage:", err);
+                throw new Error(err.message || (err.error && err.error.message) || JSON.stringify(err));
             }
         } else {
             return this.readFileAsBase64(file);
