@@ -127,7 +127,7 @@
     <url>
         <loc>https://www.comiares.es/galeria</loc>
         <lastmod>2026-06-15</lastmod>
-        <changefreq>weekly</changefreq>
+        <changefreq>monthly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
@@ -138,7 +138,7 @@
     <url>
         <loc>https://www.comiares.es/es/galeria</loc>
         <lastmod>2026-06-15</lastmod>
-        <changefreq>weekly</changefreq>
+        <changefreq>monthly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
@@ -248,7 +248,7 @@
     <url>
         <loc>https://www.comiares.es/noticies/mostra-productes-de-la-terra-ares-del-maestrat/</loc>
         <lastmod>2026-06-09</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/mostra-productes-de-la-terra-ares-del-maestrat/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/mostra-productes-de-la-terra-ares-del-maestrat/"/>
@@ -259,7 +259,7 @@
     <url>
         <loc>https://www.comiares.es/es/noticies/mostra-productes-de-la-terra-ares/</loc>
         <lastmod>2026-06-09</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/mostra-productes-de-la-terra-ares-del-maestrat/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/mostra-productes-de-la-terra-ares-del-maestrat/"/>
@@ -270,7 +270,7 @@
     <url>
         <loc>https://www.comiares.es/noticies/eclipsi-solar-2026-castello-ares-del-maestrat/</loc>
         <lastmod>2026-06-08</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/eclipsi-solar-2026-castello-ares-del-maestrat/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/eclipsi-solar-2026-castello-ares-del-maestrat/"/>
@@ -281,7 +281,7 @@
     <url>
         <loc>https://www.comiares.es/es/noticies/donde-ver-eclipse-solar-castellon/</loc>
         <lastmod>2026-06-08</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/eclipsi-solar-2026-castello-ares-del-maestrat/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/eclipsi-solar-2026-castello-ares-del-maestrat/"/>
@@ -292,7 +292,7 @@
     <url>
         <loc>https://www.comiares.es/noticies/concurs-relat-breu-terme-dares/</loc>
         <lastmod>2026-06-02</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/concurs-relat-breu-terme-dares/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/concurs-relat-breu-terme-dares/"/>
@@ -303,7 +303,7 @@
     <url>
         <loc>https://www.comiares.es/es/noticies/concurso-relatos-breves-terme-dares/</loc>
         <lastmod>2026-06-02</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/concurs-relat-breu-terme-dares/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/concurs-relat-breu-terme-dares/"/>
@@ -314,7 +314,7 @@
     <url>
         <loc>https://www.comiares.es/noticies/concurs-disseny-festes-ares-2026/</loc>
         <lastmod>2026-06-01</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/concurs-disseny-festes-ares-2026/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/concurs-disseny-festes-ares-2026/"/>
@@ -325,7 +325,7 @@
     <url>
         <loc>https://www.comiares.es/es/noticies/concurso-diseno-fiestas-ares-2026/</loc>
         <lastmod>2026-06-01</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/concurs-disseny-festes-ares-2026/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/concurs-disseny-festes-ares-2026/"/>
@@ -336,7 +336,7 @@
     <url>
         <loc>https://www.comiares.es/noticies/que-vore-a-ares-del-maestrat/</loc>
         <lastmod>2026-05-25</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/que-vore-a-ares-del-maestrat/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/que-vore-a-ares-del-maestrat/"/>
@@ -347,7 +347,7 @@
     <url>
         <loc>https://www.comiares.es/es/noticies/que-ver-en-ares-del-maestrat/</loc>
         <lastmod>2026-05-25</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/que-vore-a-ares-del-maestrat/"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/que-vore-a-ares-del-maestrat/"/>

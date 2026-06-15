@@ -267,7 +267,7 @@ async function main() {
           dynamicXml += `    <url>
         <loc>${valUrl}</loc>
         <lastmod>${date}</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="${valUrl}"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="${valUrl}"/>
@@ -281,7 +281,7 @@ async function main() {
             dynamicXml += `    <url>
         <loc>${castUrl}</loc>
         <lastmod>${date}</lastmod>
-        <changefreq>monthly</changefreq>
+        <changefreq>weekly</changefreq>
         <priority>0.7</priority>
         <xhtml:link rel="alternate" hreflang="ca" href="${valUrl}"/>
         <xhtml:link rel="alternate" hreflang="ca-ES" href="${valUrl}"/>
