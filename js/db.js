@@ -367,7 +367,8 @@ class AppDatabase {
 
     // News Actions
     async getNews() {
-        if (this.isSupabaseConfigured()) {
+        const isAdmin = window.location.pathname.includes('/admin/');
+        if (this.isSupabaseConfigured() && isAdmin) {
             try {
                 const { data, error } = await this.supabase
                     .from('news')
@@ -380,7 +381,31 @@ class AppDatabase {
                 return await this.getLocalNews();
             }
         } else {
-            return await this.getLocalNews();
+            // Public or Local Mode - fetch static JSON file first
+            try {
+                const isEs = window.location.pathname.includes('/es/');
+                const dataUrl = isEs ? '../data/news.json?v=1.6' : 'data/news.json?v=1.6';
+                const res = await fetch(dataUrl);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                return data;
+            } catch (err) {
+                console.warn("Error loading static news, falling back:", err);
+                if (this.isSupabaseConfigured()) {
+                    try {
+                        const { data, error } = await this.supabase
+                            .from('news')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+                        if (error) throw error;
+                        return data;
+                    } catch (e) {
+                        return await this.getLocalNews();
+                    }
+                } else {
+                    return await this.getLocalNews();
+                }
+            }
         }
     }
 
@@ -591,7 +616,7 @@ class AppDatabase {
                 question: "Els actes de les Festes d'Ares del Maestrat són gratuïts?",
                 question_es: "¿Los actos de las Fiestas de Ares del Maestrat son gratuitos?",
                 answer: "Sí, la gran majoria d'actes culturals, musicals i taurins inclosos en el programa oficial de les festes d'Ares són d'accés lliure i completament gratuït per a veïns i visitants.",
-                answer_es: "Sí, la gran mayoría de actos culturales, musicales y taurinos incluidos en el programa oficial de las fiestas de Ares son de acceso libre y completamente gratuito para vecinos y visitantes."
+                answer_es: "Sí, la mayoría de actos culturales, musicales y taurinos incluidos en el programa oficial de las fiestas de Ares son de acceso libre y completamente gratuito para vecinos y visitantes."
             }
         ];
 
@@ -605,8 +630,9 @@ class AppDatabase {
             }
         }
 
-        // 2. Fetch from DB if configured (or fallback to defaults)
-        if (this.isSupabaseConfigured()) {
+        // 2. Fetch from static data or DB
+        const isAdmin = window.location.pathname.includes('/admin/');
+        if (this.isSupabaseConfigured() && isAdmin) {
             try {
                 const { data, error } = await this.supabase
                     .from('events')
@@ -622,17 +648,35 @@ class AppDatabase {
                 console.warn("Could not load FAQs from Supabase, using local state/cache:", err);
             }
         } else {
-            // Local mode, read config row from local IndexedDB
+            // Try fetching static events.json
             try {
-                const configRow = await this.getIDB('events', 'event-config-faqs');
-                if (configRow && configRow.long_description) {
-                    const faqs = JSON.parse(configRow.long_description);
-                    localStorage.setItem('ares_faqs', JSON.stringify(faqs));
-                    return faqs;
+                const isEs = window.location.pathname.includes('/es/');
+                const dataUrl = isEs ? '../data/events.json?v=1.6' : 'data/events.json?v=1.6';
+                const res = await fetch(dataUrl);
+                if (res.ok) {
+                    const events = await res.json();
+                    const faqConfigEvent = events.find(e => e.id === 'event-config-faqs');
+                    if (faqConfigEvent && faqConfigEvent.long_description) {
+                        const faqs = JSON.parse(faqConfigEvent.long_description);
+                        localStorage.setItem('ares_faqs', JSON.stringify(faqs));
+                        return faqs;
+                    }
                 }
             } catch (err) {
-                console.warn("Could not load FAQs from IDB:", err);
+                console.warn("Could not load FAQs from static config:", err);
             }
+        }
+
+        // Local mode fallback / IndexedDB
+        try {
+            const configRow = await this.getIDB('events', 'event-config-faqs');
+            if (configRow && configRow.long_description) {
+                const faqs = JSON.parse(configRow.long_description);
+                localStorage.setItem('ares_faqs', JSON.stringify(faqs));
+                return faqs;
+            }
+        } catch (err) {
+            console.warn("Could not load FAQs from IDB:", err);
         }
 
         return defaultFAQs;
@@ -677,7 +721,8 @@ class AppDatabase {
     // Events Actions
     async getEvents() {
         let events = [];
-        if (this.isSupabaseConfigured()) {
+        const isAdmin = window.location.pathname.includes('/admin/');
+        if (this.isSupabaseConfigured() && isAdmin) {
             try {
                 const { data, error } = await this.supabase
                     .from('events')
@@ -691,7 +736,31 @@ class AppDatabase {
                 events = await this.getLocalEvents();
             }
         } else {
-            events = await this.getLocalEvents();
+            // Public or Local Mode - fetch static JSON file first
+            try {
+                const isEs = window.location.pathname.includes('/es/');
+                const dataUrl = isEs ? '../data/events.json?v=1.6' : 'data/events.json?v=1.6';
+                const res = await fetch(dataUrl);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                events = await res.json();
+            } catch (err) {
+                console.warn("Error loading static events, falling back:", err);
+                if (this.isSupabaseConfigured()) {
+                    try {
+                        const { data, error } = await this.supabase
+                            .from('events')
+                            .select('*')
+                            .order('date', { ascending: true })
+                            .order('time', { ascending: true });
+                        if (error) throw error;
+                        events = data;
+                    } catch (e) {
+                        events = await this.getLocalEvents();
+                    }
+                } else {
+                    events = await this.getLocalEvents();
+                }
+            }
         }
 
         // Process config record if present
@@ -823,7 +892,8 @@ class AppDatabase {
 
     // Photos Actions
     async getPhotos() {
-        if (this.isSupabaseConfigured()) {
+        const isAdmin = window.location.pathname.includes('/admin/');
+        if (this.isSupabaseConfigured() && isAdmin) {
             try {
                 const { data, error } = await this.supabase
                     .from('photos')
@@ -836,7 +906,31 @@ class AppDatabase {
                 return await this.getLocalPhotos();
             }
         } else {
-            return await this.getLocalPhotos();
+            // Public or Local Mode - fetch static JSON file first
+            try {
+                const isEs = window.location.pathname.includes('/es/');
+                const dataUrl = isEs ? '../data/photos.json?v=1.6' : 'data/photos.json?v=1.6';
+                const res = await fetch(dataUrl);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                return data;
+            } catch (err) {
+                console.warn("Error loading static photos, falling back:", err);
+                if (this.isSupabaseConfigured()) {
+                    try {
+                        const { data, error } = await this.supabase
+                            .from('photos')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+                        if (error) throw error;
+                        return data;
+                    } catch (e) {
+                        return await this.getLocalPhotos();
+                    }
+                } else {
+                    return await this.getLocalPhotos();
+                }
+            }
         }
     }
 
@@ -967,7 +1061,10 @@ class AppDatabase {
                 
                 const { data, error } = await this.supabase.storage
                     .from('photos')
-                    .upload(fileName, file);
+                    .upload(fileName, file, {
+                        cacheControl: '31536000',
+                        upsert: false
+                    });
                 
                 if (error) throw error;
                 

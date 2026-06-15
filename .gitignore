@@ -6,3 +6,6 @@ desktop.ini
 # Generated news subdirectories
 noticies/
 es/noticies/
+
+# Generated database data files
+data/

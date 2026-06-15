@@ -18,20 +18,42 @@ async function main() {
   console.log("Iniciando generación de páginas estáticas de noticias...");
 
   try {
-    // 1. Obtener noticias de Supabase
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/news?status=eq.published&select=*`, {
-      headers: {
-        "apikey": SUPABASE_ANON_KEY,
-        "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
-      }
-    });
+    // 1. Obtener noticias, eventos y fotos de Supabase
+    const headers = {
+      "apikey": SUPABASE_ANON_KEY,
+      "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
+    };
 
-    if (!response.ok) {
-      throw new Error(`Error al consultar Supabase REST API: ${response.status} ${response.statusText}`);
+    const newsResponse = await fetch(`${SUPABASE_URL}/rest/v1/news?status=eq.published&select=*&order=created_at.desc`, { headers });
+    if (!newsResponse.ok) {
+      throw new Error(`Error al consultar noticias en Supabase: ${newsResponse.status} ${newsResponse.statusText}`);
     }
-
-    const news = await response.json();
+    const news = await newsResponse.json();
     console.log(`Se encontraron ${news.length} noticias publicadas.`);
+
+    const eventsResponse = await fetch(`${SUPABASE_URL}/rest/v1/events?select=*&order=date.asc,time.asc`, { headers });
+    if (!eventsResponse.ok) {
+      throw new Error(`Error al consultar eventos en Supabase: ${eventsResponse.status} ${eventsResponse.statusText}`);
+    }
+    const events = await eventsResponse.json();
+    console.log(`Se encontraron ${events.length} eventos (incluyendo configuraciones).`);
+
+    const photosResponse = await fetch(`${SUPABASE_URL}/rest/v1/photos?select=*&order=created_at.desc`, { headers });
+    if (!photosResponse.ok) {
+      throw new Error(`Error al consultar fotos en Supabase: ${photosResponse.status} ${photosResponse.statusText}`);
+    }
+    const photos = await photosResponse.json();
+    console.log(`Se encontraron ${photos.length} fotos.`);
+
+    // Crear la carpeta data/ si no existe y guardar los archivos JSON
+    const dataDir = path.join(__dirname, '..', 'data');
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(path.join(dataDir, 'news.json'), JSON.stringify(news, null, 2), 'utf-8');
+    fs.writeFileSync(path.join(dataDir, 'events.json'), JSON.stringify(events, null, 2), 'utf-8');
+    fs.writeFileSync(path.join(dataDir, 'photos.json'), JSON.stringify(photos, null, 2), 'utf-8');
+    console.log("  [OK] Archivos de datos estáticos guardados en la carpeta /data/");
 
     // 2. Leer las plantillas base
     const templatePathVal = path.join(__dirname, '..', 'noticies.html');
