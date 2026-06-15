@@ -114,9 +114,36 @@ async function main() {
 
         // Rutas absolutas a la raíz / se usan por defecto, no es necesario ajustar profundidades
 
-        // Inyectar variable de slug estático en el head para la SPA
+        // Inyectar variable de slug estático en el head para la SPA, robots tags y metadata Schema.org
         const injectionScript = `
     <!-- Inyectado por el generador JAMstack -->
+    <meta name="robots" content="max-image-preview:large">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": ${JSON.stringify(title)},
+      "description": ${JSON.stringify(subtitle)},
+      "image": [
+        "${imageUrl}"
+      ],
+      "datePublished": "${article.created_at}T08:00:00+02:00",
+      "dateModified": "${article.updated_at || article.created_at}T08:00:00+02:00",
+      "author": [{
+        "@type": "Organization",
+        "name": "Comissió de Festes d'Ares del Maestrat",
+        "url": "https://www.comiares.es"
+      }],
+      "publisher": {
+        "@type": "Organization",
+        "name": "Comissió de Festes d'Ares del Maestrat",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.comiares.es/img/logo.svg"
+        }
+      }
+    }
+    </script>
     <script>
       window.staticArticleSlug = "${slug}";
     </script>
@@ -163,9 +190,36 @@ async function main() {
 
         // Rutas absolutas a la raíz / se usan por defecto, no es necesario ajustar profundidades
 
-        // Inyectar variable de slug estático en el head para la SPA
+        // Inyectar variable de slug estático en el head para la SPA, robots tags y metadata Schema.org
         const injectionScript = `
     <!-- Inyectado por el generador JAMstack -->
+    <meta name="robots" content="max-image-preview:large">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": ${JSON.stringify(titleEs)},
+      "description": ${JSON.stringify(subtitleEs)},
+      "image": [
+        "${imageUrl}"
+      ],
+      "datePublished": "${article.created_at}T08:00:00+02:00",
+      "dateModified": "${article.updated_at || article.created_at}T08:00:00+02:00",
+      "author": [{
+        "@type": "Organization",
+        "name": "Comisión de Fiestas de Ares del Maestrat",
+        "url": "https://www.comiares.es/es/"
+      }],
+      "publisher": {
+        "@type": "Organization",
+        "name": "Comisión de Fiestas de Ares del Maestrat",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://www.comiares.es/img/logo.svg"
+        }
+      }
+    }
+    </script>
     <script>
       window.staticArticleSlug = "${slugEs}";
     </script>
@@ -196,6 +250,62 @@ async function main() {
     }
     fs.writeFileSync(path.join(listDirCast, 'index.html'), templateCast, 'utf-8');
     console.log("  [OK] Creado listado: es/noticies/index.html");
+
+    // --- ACTUALIZAR SITEMAP.XML ---
+    const sitemapPath = path.join(__dirname, '..', 'sitemap.xml');
+    if (fs.existsSync(sitemapPath)) {
+      let sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
+      let dynamicXml = '\n';
+      
+      for (const article of news) {
+        if (article.slug) {
+          const date = article.updated_at || article.created_at || new Date().toISOString().split('T')[0];
+          const valUrl = `https://www.comiares.es/noticies/${article.slug}/`;
+          const castUrl = article.slug_es ? `https://www.comiares.es/es/noticies/${article.slug_es}/` : valUrl;
+          
+          // Valencian article entry
+          dynamicXml += `    <url>
+        <loc>${valUrl}</loc>
+        <lastmod>${date}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="${valUrl}"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="${valUrl}"/>
+        <xhtml:link rel="alternate" hreflang="es" href="${castUrl}"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="${castUrl}"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="${valUrl}"/>
+    </url>\n`;
+
+          // Castellano article entry if it has a Spanish slug
+          if (article.slug_es) {
+            dynamicXml += `    <url>
+        <loc>${castUrl}</loc>
+        <lastmod>${date}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="${valUrl}"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="${valUrl}"/>
+        <xhtml:link rel="alternate" hreflang="es" href="${castUrl}"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="${castUrl}"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="${valUrl}"/>
+    </url>\n`;
+          }
+        }
+      }
+      
+      const startIndex = sitemapContent.indexOf('<!-- DYNAMIC NEWS START -->');
+      const endIndex = sitemapContent.indexOf('<!-- DYNAMIC NEWS END -->');
+      
+      if (startIndex !== -1 && endIndex !== -1) {
+        sitemapContent = sitemapContent.substring(0, startIndex + '<!-- DYNAMIC NEWS START -->'.length) +
+                         dynamicXml + '    ' +
+                         sitemapContent.substring(endIndex);
+        fs.writeFileSync(sitemapPath, sitemapContent, 'utf-8');
+        console.log("  [OK] sitemap.xml actualizado con las URLs dinámicas de noticias.");
+      } else {
+        console.warn("  [WARN] No se encontraron los marcadores <!-- DYNAMIC NEWS START --> y <!-- DYNAMIC NEWS END --> en sitemap.xml");
+      }
+    }
 
     console.log("Generación completada exitosamente.");
   } catch (error) {
