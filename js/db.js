@@ -511,11 +511,17 @@ class AppDatabase {
         const configItem = {
             id: 'event-config-category-colors',
             title: 'Category Colors Config',
+            title_es: 'Category Colors Config',
+            description: 'System Configuration - Do not delete',
+            description_es: 'Configuración del Sistema - No borrar',
             long_description: JSON.stringify(colors),
+            long_description_es: JSON.stringify(colors),
             date: '2099-12-31',
             time: '00:00',
             location: 'System Config',
-            category: 'populars'
+            location_es: 'System Config',
+            category: 'populars',
+            image_url: ''
         };
 
         if (this.isSupabaseConfigured()) {
@@ -638,11 +644,17 @@ class AppDatabase {
         const configItem = {
             id: 'event-config-faqs',
             title: 'FAQs Configuration',
+            title_es: 'FAQs Configuration',
+            description: 'System Configuration - Do not delete',
+            description_es: 'Configuración del Sistema - No borrar',
             long_description: JSON.stringify(faqs),
+            long_description_es: JSON.stringify(faqs),
             date: '2099-12-31',
             time: '00:00',
             location: 'System Config',
-            category: 'populars'
+            location_es: 'System Config',
+            category: 'populars',
+            image_url: ''
         };
 
         if (this.isSupabaseConfigured()) {
