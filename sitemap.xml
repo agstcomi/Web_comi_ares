@@ -171,4 +171,77 @@
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/contacte"/>
     </url>
 
+    <!-- LEGAL PAGES -->
+    <!-- AVÍS LEGAL / AVISO LEGAL -->
+    <url>
+        <loc>https://www.comiares.es/avis-legal</loc>
+        <lastmod>2026-06-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/avis-legal"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/avis-legal"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/avis-legal"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/avis-legal"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/avis-legal"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/avis-legal</loc>
+        <lastmod>2026-06-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/avis-legal"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/avis-legal"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/avis-legal"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/avis-legal"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/avis-legal"/>
+    </url>
+
+    <!-- POLÍTICA DE COOKIES -->
+    <url>
+        <loc>https://www.comiares.es/cookies</loc>
+        <lastmod>2026-06-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/cookies"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/cookies"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/cookies"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/cookies"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/cookies"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/cookies</loc>
+        <lastmod>2026-06-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/cookies"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/cookies"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/cookies"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/cookies"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/cookies"/>
+    </url>
+
+    <!-- POLÍTICA DE PRIVACITAT / PRIVACIDAD -->
+    <url>
+        <loc>https://www.comiares.es/privacitat</loc>
+        <lastmod>2026-06-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/privacitat"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/privacitat"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/privacitat"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/privacitat"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/privacitat"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/privacitat</loc>
+        <lastmod>2026-06-15</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.3</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/privacitat"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/privacitat"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/privacitat"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/privacitat"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/privacitat"/>
+    </url>
+
 </urlset>

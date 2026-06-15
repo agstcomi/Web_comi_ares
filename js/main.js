@@ -358,6 +358,23 @@ function renderFooter() {
         ? `&copy; ${new Date().getFullYear()} Comisión de Fiestas de Ares del Maestrat. Todos los derechos reservados.`
         : `&copy; ${new Date().getFullYear()} Comissió de Festes d'Ares del Maestrat. Tots els drets reservats.`;
 
+    const legalItems = isEs ? [
+        { name: 'Aviso Legal', file: 'avis-legal' },
+        { name: 'Política de Privacidad', file: 'privacitat' },
+        { name: 'Política de Cookies', file: 'cookies' }
+    ] : [
+        { name: 'Avís Legal', file: 'avis-legal' },
+        { name: 'Política de Privacitat', file: 'privacitat' },
+        { name: 'Política de Cookies', file: 'cookies' }
+    ];
+
+    let legalHTML = '<ul class="footer-legal-links">';
+    legalItems.forEach(item => {
+        const href = isEs ? `/es/${item.file}` : `/${item.file}`;
+        legalHTML += `<li><a href="${href}">${item.name}</a></li>`;
+    });
+    legalHTML += '</ul>';
+
     footerPlaceholder.innerHTML = `
         <footer class="main-footer">
             <div class="container">
@@ -395,6 +412,7 @@ function renderFooter() {
                     <div class="footer-copyright">
                         ${copyrightText}
                     </div>
+                    ${legalHTML}
                 </div>
             </div>
         </footer>

@@ -2777,5 +2777,44 @@ pre,
     user-select: none;
 }
 
+/* Footer Legal Links styling */
+.footer-bottom-row {
+    justify-content: space-between !important;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.footer-legal-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-legal-links a {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.footer-legal-links a:hover {
+    color: #ffffff;
+}
+
+@media (max-width: 768px) {
+    .footer-bottom-row {
+        flex-direction: column;
+        justify-content: center !important;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    .footer-legal-links {
+        justify-content: center;
+        width: 100%;
+    }
+}
+
 
 
