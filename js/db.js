@@ -310,14 +310,32 @@ class AppDatabase {
 
     init() {
         // 1. Check if we have Supabase configuration stored in localStorage (allows override)
-        const storedConfig = localStorage.getItem('supabase_config');
+        let storedConfig = localStorage.getItem('supabase_config');
         if (storedConfig) {
             try {
                 this.config = JSON.parse(storedConfig);
-                if (this.config.url && this.config.key && window.supabase) {
-                    this.supabase = window.supabase.createClient(this.config.url, this.config.key);
-                    console.log("Supabase client initialized successfully from localStorage.");
-                    return;
+                if (this.config.url && this.config.key) {
+                    let url = this.config.url.trim();
+                    const dashboardRegex = /supabase\.com\/dashboard\/project\/([a-z0-9]+)/i;
+                    const match = url.match(dashboardRegex);
+                    if (match && match[1]) {
+                        url = `https://${match[1]}.supabase.co`;
+                    } else if (/^[a-z0-9]{20}$/i.test(url)) {
+                        url = `https://${url}.supabase.co`;
+                    } else if (!/^https?:\/\//i.test(url)) {
+                        url = `https://${url}`;
+                    }
+                    const newUrl = url.replace(/\/+$/, "");
+                    if (newUrl !== this.config.url) {
+                        this.config.url = newUrl;
+                        localStorage.setItem('supabase_config', JSON.stringify(this.config));
+                    }
+
+                    if (window.supabase) {
+                        this.supabase = window.supabase.createClient(newUrl, this.config.key);
+                        console.log("Supabase client initialized successfully from localStorage (normalized).");
+                        return;
+                    }
                 }
             } catch (e) {
                 console.error("Error parsing stored Supabase config:", e);
@@ -349,7 +367,19 @@ class AppDatabase {
     // Set configuration dynamically (from the gestio dashboard)
     setConfig(url, key) {
         if (url && key) {
-            const config = { url, key };
+            let normalizedUrl = url.trim();
+            const dashboardRegex = /supabase\.com\/dashboard\/project\/([a-z0-9]+)/i;
+            const match = normalizedUrl.match(dashboardRegex);
+            if (match && match[1]) {
+                normalizedUrl = `https://${match[1]}.supabase.co`;
+            } else if (/^[a-z0-9]{20}$/i.test(normalizedUrl)) {
+                normalizedUrl = `https://${normalizedUrl}.supabase.co`;
+            } else if (!/^https?:\/\//i.test(normalizedUrl)) {
+                normalizedUrl = `https://${normalizedUrl}`;
+            }
+            normalizedUrl = normalizedUrl.replace(/\/+$/, "");
+
+            const config = { url: normalizedUrl, key: key.trim() };
             localStorage.setItem('supabase_config', JSON.stringify(config));
             this.init();
             return true;

@@ -791,12 +791,17 @@ document.addEventListener('DOMContentLoaded', () => {
     if (configForm) {
         configForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            const url = document.getElementById('config-url').value.trim();
-            const key = document.getElementById('config-key').value.trim();
+            const urlInput = document.getElementById('config-url');
+            const keyInput = document.getElementById('config-key');
+            const url = urlInput.value.trim();
+            const key = keyInput.value.trim();
 
             if (url && key) {
                 const connected = window.db.setConfig(url, key);
                 if (connected) {
+                    if (window.db.config && window.db.config.url) {
+                        urlInput.value = window.db.config.url;
+                    }
                     alert('Base de dades Supabase configurada correctament. Intentant carregar dades del núvol...');
                     // Reload everything in current view context
                     checkAuthState();

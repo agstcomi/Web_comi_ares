@@ -124,13 +124,15 @@ Completado y subido en el commit `25a06d0`. Se realizó una auditoría completa 
 * **F9 — Validación de backup**: La importación de JSON en `admin/gestio.js` ahora valida la estructura, tipos y longitudes de cada ítem antes de importarlo.
 * **F10 — Versiones CDN ancladas**: Lucide (`@0.469.0`) y Supabase JS (`@2.49.4`) con versiones fijas en todos los HTML en lugar de `@latest`.
 * **F11 — Email admin**: Eliminado el valor prefijado `admin@ares.com` del campo de email del login.
+* **F12 — Normalització Automàtica de URLs de Supabase (PRO)**: S'ha implementat un corrector automàtic en `js/db.js` i `admin/gestio.js`. Si l'usuari copia directament la URL del panell de control de Supabase (`https://supabase.com/dashboard/project/...`) en lloc de la URL de la API del projecte (`https://xxxx.supabase.co`), el sistema la normalitza al vol al format correcte. També s'aplica retroactivament en carregar la pàgina si ja estava mal guardada en `localStorage`.
+* **Cache-Busting (v1.7)**: S'ha incrementat la consulta de tots els scripts a `?v=1.7` en els 22 fitxers HTML del projecte per a forçar als navegadors a recarregar els fitxers JS modificats immediatament.
 
 ### ⚠️ Acciones Manuales Pendientes (el usuario debe ejecutarlas)
 1. **Rotar la Supabase anon key**: La clave anterior está en el historial de git. Ir a Supabase → Settings → API → Roll anon key.
 2. **Configurar GitHub Secrets**: Añadir `SUPABASE_URL` y `SUPABASE_ANON_KEY` (nueva clave rotada) en GitHub → Settings → Secrets → Actions. El deploy fallará hasta entonces.
 3. **Configurar WEBHOOK_SECRET en Supabase Secrets**: Generar un token aleatorio (`openssl rand -hex 32`), añadirlo como secret `WEBHOOK_SECRET` en Supabase Edge Functions, y configurar ese mismo valor en la cabecera `Authorization` del Database Webhook.
 4. **Redesplegar la Edge Function**: `supabase functions deploy trigger-deploy`.
-5. **Actualizar la anon key en el panel admin**: Después de rotar la clave, actualizar la configuración en el tab "Configuració" del panel `/admin/`.
+5. **Actualizar la anon key en el panel admin**: Después de rotar la clave, actualizar la configuración en el tab "Configuració" del panel `/admin/`. Gràcies a la normalització automàtica (F12), ara és totalment vàlid tant utilitzar la URL del panell de control de Supabase com la URL directa de la API.
 
 ---
 
