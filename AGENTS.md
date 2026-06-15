@@ -103,7 +103,13 @@ Completado y subido en el commit `10ada9a` (y el de documentación `AGENTS.md` s
 * **Cabeceras de Caché de Imágenes**: Las imágenes subidas a través de `uploadImage` a Supabase Storage ahora incluyen la opción `{ cacheControl: '31536000' }` (1 año) para que el navegador y los CDNs las almacenen permanentemente, ahorrando egreso.
 * **Servidor Local Node**: Creado `serve.js` como alternativa multiplataforma basada en Node.js que replica el comportamiento de enrutamiento limpio de `serve.py`.
 
+## 7. Indexación en Google Noticias y Google Discover (PRO)
+Completado y subido en el commit `834609b` (y el de documentación `AGENTS.md` subsiguiente):
+* **Sitemap Dinámico**: Modificado `sitemap.xml` (añadiendo comentarios de marcador) y `scripts/generate-news.js` para regenerar y añadir automáticamente en el sitemap todas las URLs físicas de noticias publicadas (tanto en valenciano como en castellano, enlazando correctamente las traducciones con etiquetas `alternate` y `hreflang`).
+* **Meta robots Discover**: Se inyecta la etiqueta `<meta name="robots" content="max-image-preview:large">` en la cabecera de todas las páginas de noticias para habilitar previsualizaciones de imágenes grandes en Google Discover.
+* **Marcación de Datos Estructurados (JSON-LD)**: Inyección dinámica en el `<head>` de cada noticia de un script tipo `NewsArticle` (`schema.org`), facilitando que el algoritmo de Google entienda el titular, descripción, fecha de publicación y autoría, requisitos indispensables para Google Noticias.
+
 ---
 
-## 7. Próximo Paso
+## 8. Próximo Paso
 * Esperar a nuevas instrucciones del usuario.
