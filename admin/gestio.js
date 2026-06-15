@@ -119,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadPhotosTable();
         loadCategorySelects();
         loadCategoryColorsForm();
+        await loadFaqsAdmin();
     }
 
     function updateDbStatusBadge() {
@@ -1199,6 +1200,232 @@ document.addEventListener('DOMContentLoaded', () => {
             result += await translateNode(node);
         }
         return result;
+    }
+
+    // FAQs Management
+    let faqsList = [];
+
+    async function loadFaqsAdmin() {
+        try {
+            faqsList = await window.db.getFAQs();
+            renderFaqsTable();
+        } catch (err) {
+            console.error("Error loading FAQs in admin:", err);
+        }
+    }
+
+    function renderFaqsTable() {
+        const container = document.getElementById('faqs-list-container');
+        if (!container) return;
+
+        if (faqsList.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 2rem; color: var(--text-muted); background-color: var(--bg-secondary); border-radius: 8px; border: 1px dashed var(--border-color);">
+                    No hi ha preguntes freqüents configurades.
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = faqsList.map((faq, idx) => {
+            const escQuestion = window.db.escapeHTML(faq.question);
+            const escQuestionEs = window.db.escapeHTML(faq.question_es || faq.question);
+            const escAnswer = window.db.escapeHTML(faq.answer);
+            const escAnswerEs = window.db.escapeHTML(faq.answer_es || faq.answer);
+            const escId = window.db.escapeHTML(faq.id);
+
+            return `
+                <div class="faq-admin-card" data-id="${escId}" style="border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary); padding: 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; position: relative;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem;">
+                        <div style="flex-grow: 1; min-width: 0;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.25rem;">
+                                <span style="font-size: 0.65rem; background-color: var(--text-primary); color: var(--bg-primary); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700; text-transform: uppercase;">VAL</span>
+                                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escQuestion}</h4>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span style="font-size: 0.65rem; background-color: var(--text-muted); color: var(--bg-primary); padding: 0.15rem 0.4rem; border-radius: 4px; font-weight: 700; text-transform: uppercase;">ESP</span>
+                                <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escQuestionEs}</h4>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.35rem; flex-shrink: 0;">
+                            <button type="button" class="btn-move-faq-up" data-index="${idx}" ${idx === 0 ? 'disabled' : ''} style="background: none; border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; padding: 0.35rem; border-radius: 4px; opacity: ${idx === 0 ? '0.3' : '1'};" title="Pujar">
+                                <i data-lucide="arrow-up" style="width: 14px; height: 14px;"></i>
+                            </button>
+                            <button type="button" class="btn-move-faq-down" data-index="${idx}" ${idx === faqsList.length - 1 ? 'disabled' : ''} style="background: none; border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; padding: 0.35rem; border-radius: 4px; opacity: ${idx === faqsList.length - 1 ? '0.3' : '1'};" title="Baixar">
+                                <i data-lucide="arrow-down" style="width: 14px; height: 14px;"></i>
+                            </button>
+                            <button type="button" class="btn-edit-faq" data-id="${escId}" style="background: none; border: 1px solid var(--border-color); color: var(--text-primary); cursor: pointer; padding: 0.35rem; border-radius: 4px;" title="Editar">
+                                <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                            </button>
+                            <button type="button" class="btn-delete-faq" data-id="${escId}" style="background: none; border: 1px solid #ef4444; color: #ef4444; cursor: pointer; padding: 0.35rem; border-radius: 4px;" title="Eliminar">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div style="font-size: 0.8rem; line-height: 1.4; color: var(--text-secondary); border-top: 1px solid var(--border-color); padding-top: 0.5rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        ${escAnswer}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Bind delete buttons
+        container.querySelectorAll('.btn-delete-faq').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                if (confirm('Vols esborrar aquesta pregunta freqüent?')) {
+                    faqsList = faqsList.filter(f => f.id !== id);
+                    renderFaqsTable();
+                }
+            });
+        });
+
+        // Bind edit buttons
+        container.querySelectorAll('.btn-edit-faq').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const faq = faqsList.find(f => f.id === id);
+                if (faq) {
+                    openFaqModal(faq);
+                }
+            });
+        });
+
+        // Bind move buttons
+        container.querySelectorAll('.btn-move-faq-up').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const index = parseInt(btn.getAttribute('data-index'), 10);
+                if (index > 0) {
+                    const temp = faqsList[index];
+                    faqsList[index] = faqsList[index - 1];
+                    faqsList[index - 1] = temp;
+                    renderFaqsTable();
+                }
+            });
+        });
+
+        container.querySelectorAll('.btn-move-faq-down').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const index = parseInt(btn.getAttribute('data-index'), 10);
+                if (index < faqsList.length - 1) {
+                    const temp = faqsList[index];
+                    faqsList[index] = faqsList[index + 1];
+                    faqsList[index + 1] = temp;
+                    renderFaqsTable();
+                }
+            });
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+    }
+
+    function openFaqModal(faq = null) {
+        const modal = document.getElementById('modal-faq');
+        const form = document.getElementById('form-faq');
+        const modalTitle = document.getElementById('faq-modal-title');
+        
+        if (!modal || !form) return;
+
+        form.reset();
+        
+        if (faq) {
+            modalTitle.textContent = "Editar FAQ";
+            document.getElementById('faq-id').value = faq.id;
+            document.getElementById('faq-question').value = faq.question;
+            document.getElementById('faq-question-es').value = faq.question_es || faq.question;
+            document.getElementById('faq-answer').value = faq.answer;
+            document.getElementById('faq-answer-es').value = faq.answer_es || faq.answer;
+        } else {
+            modalTitle.textContent = "Nova FAQ";
+            document.getElementById('faq-id').value = '';
+        }
+
+        modal.classList.add('active');
+        if (window.lucide) window.lucide.createIcons();
+    }
+
+    // Setup FAQ management form and action buttons
+    const btnNewFaq = document.getElementById('btn-new-faq');
+    if (btnNewFaq) {
+        btnNewFaq.addEventListener('click', () => {
+            openFaqModal();
+        });
+    }
+
+    const formFaq = document.getElementById('form-faq');
+    if (formFaq) {
+        formFaq.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('faq-id').value;
+            const question = document.getElementById('faq-question').value.trim();
+            const question_es = document.getElementById('faq-question-es').value.trim();
+            const answer = document.getElementById('faq-answer').value.trim();
+            const answer_es = document.getElementById('faq-answer-es').value.trim();
+
+            if (id) {
+                // Edit existing
+                const index = faqsList.findIndex(f => f.id === id);
+                if (index !== -1) {
+                    faqsList[index] = { id, question, question_es, answer, answer_es };
+                }
+            } else {
+                // Add new
+                faqsList.push({
+                    id: 'faq-' + Date.now(),
+                    question,
+                    question_es,
+                    answer,
+                    answer_es
+                });
+            }
+
+            closeModal('modal-faq');
+            renderFaqsTable();
+        });
+    }
+
+    const btnSaveFaqs = document.getElementById('btn-save-faqs');
+    if (btnSaveFaqs) {
+        btnSaveFaqs.addEventListener('click', async () => {
+            try {
+                btnSaveFaqs.disabled = true;
+                const originalText = btnSaveFaqs.innerHTML;
+                btnSaveFaqs.innerHTML = '<i data-lucide="loader-2" class="animate-spin" style="width: 16px; height: 16px; margin-right: 0.5rem;"></i> Guardant...';
+                if (window.lucide) window.lucide.createIcons();
+
+                await window.db.saveFAQs(faqsList);
+                alert('Preguntes freqüents (FAQs) guardades correctament.');
+
+                btnSaveFaqs.innerHTML = originalText;
+                btnSaveFaqs.disabled = false;
+                if (window.lucide) window.lucide.createIcons();
+            } catch (err) {
+                console.error("Error saving FAQs:", err);
+                alert("Error en guardar les FAQs: " + (err.message || err));
+                btnSaveFaqs.disabled = false;
+            }
+        });
+    }
+
+    const btnResetFaqs = document.getElementById('btn-reset-faqs');
+    if (btnResetFaqs) {
+        btnResetFaqs.addEventListener('click', async () => {
+            if (confirm('Vols restablir les FAQs a la configuració per defecte? Es perdran les modificacions actuals.')) {
+                localStorage.removeItem('ares_faqs');
+                try {
+                    btnResetFaqs.disabled = true;
+                    faqsList = await window.db.getFAQs();
+                    await window.db.saveFAQs(faqsList);
+                    renderFaqsTable();
+                    alert('FAQs restablides correctament.');
+                    btnResetFaqs.disabled = false;
+                } catch (err) {
+                    console.error("Error resetting FAQs:", err);
+                    alert("Error en restablir les FAQs: " + (err.message || err));
+                    btnResetFaqs.disabled = false;
+                }
+            }
+        });
     }
 
 });

@@ -157,6 +157,9 @@
                 </div>
             </div>
 
+            <p style="margin-top: 2.5rem; font-size: 1.15rem; color: var(--text-secondary); font-weight: 300; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                Les Festes Patronals d'Ares del Maestrat 2026 tindran lloc del 16 al 25 d'agost.
+            </p>
         </div>
     </section>
 
@@ -304,6 +307,28 @@
                         <a href="temps" style="font-size: 0.85rem; font-weight: 500; color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: var(--transition);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
                             Veure previsió detallada a 7 dies <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
                         </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQs Section -->
+    <section class="faqs-section">
+        <div class="container">
+            <div class="faqs-grid">
+                <div class="faqs-left">
+                    <div class="faqs-pill">
+                        <span>FAQs</span>
+                    </div>
+                    <h2 class="faqs-title">Preguntes<br><span>Freqüents</span></h2>
+                    <p class="faqs-subtitle">
+                        Tens algun dubte sobre la celebració de les festes o com col·laborar? Ací tens les respostes a les consultes més habituals.
+                    </p>
+                </div>
+                <div class="faqs-right">
+                    <div class="faqs-list" id="faqs-accordion-container">
+                        <!-- Rendered dynamically -->
                     </div>
                 </div>
             </div>
@@ -493,6 +518,9 @@
                     eventsContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No hi ha esdeveniments programats.</div>';
                 }
 
+                // Load FAQs
+                await loadHomeFaqs();
+
                 // Refresh Lucide icons loaded dynamically
                 if (window.lucide) {
                     window.lucide.createIcons();
@@ -500,6 +528,105 @@
             } catch (err) {
                 console.error("Error loading home data:", err);
             }
+        }
+
+        async function loadHomeFaqs() {
+            try {
+                const faqs = await window.db.getFAQs();
+                const container = document.getElementById('faqs-accordion-container');
+                if (!container) return;
+
+                if (!faqs || faqs.length === 0) {
+                    container.innerHTML = '<p style="color: var(--text-muted);">No hi ha preguntes disponibles.</p>';
+                    return;
+                }
+
+                container.innerHTML = faqs.map((faq, idx) => {
+                    const question = faq.question;
+                    const answer = faq.answer;
+                    const escQuestion = window.db.escapeHTML(question);
+                    const escAnswer = window.db.escapeHTML(answer);
+                    const faqId = window.db.escapeHTML(faq.id);
+
+                    return `
+                        <div class="faq-item" id="item-${faqId}">
+                            <button class="faq-trigger" aria-expanded="false" aria-controls="content-${faqId}">
+                                <h3 class="faq-question-text">${escQuestion}</h3>
+                                <div class="faq-toggle-icon">
+                                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                                </div>
+                            </button>
+                            <div class="faq-content" id="content-${faqId}">
+                                <p>${escAnswer}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+                // Bind accordion triggers
+                container.querySelectorAll('.faq-item').forEach(item => {
+                    const trigger = item.querySelector('.faq-trigger');
+                    const content = item.querySelector('.faq-content');
+                    const icon = item.querySelector('.faq-toggle-icon');
+
+                    trigger.addEventListener('click', () => {
+                        const isOpen = item.classList.contains('active');
+                        
+                        // Close all other items
+                        container.querySelectorAll('.faq-item').forEach(otherItem => {
+                            if (otherItem !== item) {
+                                otherItem.classList.remove('active');
+                                otherItem.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
+                                otherItem.querySelector('.faq-toggle-icon').innerHTML = '<i data-lucide="plus" style="width: 14px; height: 14px;"></i>';
+                            }
+                        });
+
+                        if (isOpen) {
+                            item.classList.remove('active');
+                            trigger.setAttribute('aria-expanded', 'false');
+                            icon.innerHTML = '<i data-lucide="plus" style="width: 14px; height: 14px;"></i>';
+                        } else {
+                            item.classList.add('active');
+                            trigger.setAttribute('aria-expanded', 'true');
+                            icon.innerHTML = '<i data-lucide="minus" style="width: 14px; height: 14px;"></i>';
+                        }
+
+                        if (window.lucide) window.lucide.createIcons();
+                    });
+                });
+
+                // Inject FAQ Schema (Structured Data)
+                injectFaqSchema(faqs);
+
+                if (window.lucide) window.lucide.createIcons();
+            } catch (err) {
+                console.error("Error loading FAQs on home:", err);
+            }
+        }
+
+        function injectFaqSchema(faqs) {
+            // Remove existing FAQ schema if present
+            const oldSchema = document.getElementById('faq-schema-jsonld');
+            if (oldSchema) oldSchema.remove();
+
+            const schema = {
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                "mainEntity": faqs.map(faq => ({
+                    "@type": "Question",
+                    "name": faq.question,
+                    "acceptedAnswer": {
+                        "@type": "Answer",
+                        "text": faq.answer
+                    }
+                }))
+            };
+
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.id = 'faq-schema-jsonld';
+            script.textContent = JSON.stringify(schema, null, 2);
+            document.head.appendChild(script);
         }
 
         function formatDate(dateStr) {

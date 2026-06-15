@@ -556,6 +556,112 @@ class AppDatabase {
         return false;
     }
 
+    // FAQs Management Actions
+    async getFAQs() {
+        const defaultFAQs = [
+            {
+                id: "faq-1",
+                question: "Quan se celebren les Festes d'Ares del Maestrat 2026?",
+                question_es: "¿Cuándo se celebran las Fiestas de Ares del Maestrat 2026?",
+                answer: "Les Festes Patronals d'Ares del Maestrat en honor a Sant Bartomeu i Santa Elena són les festes més importants del municipi. Se celebren tots els anys a l'agost i culminen el dia 25 amb el tradicional Ball Pla d'Ares. Enguany 2026, les Festes Patronals tindran lloc del 16 al 25 d'agost, oferint activitats per a tots els públics al Maestrat.",
+                answer_es: "Las Fiestas Patronales de Ares del Maestrat en honor a San Bartolomé y Santa Elena son las celebraciones más importantes del municipio. Se celebran todos los años en agosto y culminan el día 25 con el tradicional Ball Pla de Ares. Este año 2026, las Fiestas Patronales tendrán lugar del 16 al 25 de agosto, ofreciendo actividades para todos los públicos en el Maestrat."
+            },
+            {
+                id: "faq-2",
+                question: "Qui organitza les festes patronals d'Ares del Maestrat?",
+                question_es: "¿Quién organiza las fiestas patronales de Ares del Maestrat?",
+                answer: "La Comissió de Festes d'Ares, en coordinació amb l'Ajuntament d'Ares del Maestrat, s'encarrega d'organitzar la majoria d'activitats del programa de festes d'agost. Així mateix, altres entitats locals com la Penya Taurina, els Quintos i Quintes, i l'associació de les Dones d'Ares col·laboren activament en la dinamització i organització dels actes.",
+                answer_es: "La Comisión de Fiestas de Ares, en coordinación con el Ayuntamiento de Ares del Maestrat, se encarga de organizar la mayoría de actividades del programa de fiestas de agosto. Asimismo, otras entidades locales como la Peña Taurina, los Quintos y Quintas, y la asociación de las Mujeres de Ares colaboran activamente en la dinamización y organización de los actos."
+            },
+            {
+                id: "faq-3",
+                question: "Com arribar a Ares del Maestrat?",
+                question_es: "¿Cómo llegar a Ares del Maestrat?",
+                answer: "Ares del Maestrat es troba a uns 70 km de Castelló de la Plana, a la comarca de l'Alt Maestrat (Castelló). La ruta més habitual i recomanada per arribar-hi és conduir per la carretera CV-15 fins a coronar el Coll d'Ares, i des d'allí agafar la CV-116 que condueix directament al poble.",
+                answer_es: "Ares del Maestrat se encuentra a unos 70 km de Castellón de la Plana, en la comarca del Alt Maestrat (Castellón). La ruta más habitual y recomendada para llegar es conducir por la carretera CV-15 hasta coronar el Coll d'Ares, y desde allí tomar la CV-116 que conduce directamente al pueblo."
+            },
+            {
+                id: "faq-4",
+                question: "Els actes de les Festes d'Ares del Maestrat són gratuïts?",
+                question_es: "¿Los actos de las Fiestas de Ares del Maestrat son gratuitos?",
+                answer: "Sí, la gran majoria d'actes culturals, musicals i taurins inclosos en el programa oficial de les festes d'Ares són d'accés lliure i completament gratuït per a veïns i visitants.",
+                answer_es: "Sí, la gran mayoría de actos culturales, musicales y taurinos incluidos en el programa oficial de las fiestas de Ares son de acceso libre y completamente gratuito para vecinos y visitantes."
+            }
+        ];
+
+        // 1. Try to read from local cache first
+        const stored = localStorage.getItem('ares_faqs');
+        if (stored) {
+            try {
+                return JSON.parse(stored);
+            } catch (e) {
+                console.error("Error parsing FAQs cache:", e);
+            }
+        }
+
+        // 2. Fetch from DB if configured (or fallback to defaults)
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('events')
+                    .select('*')
+                    .eq('id', 'event-config-faqs')
+                    .single();
+                if (data && data.long_description) {
+                    const faqs = JSON.parse(data.long_description);
+                    localStorage.setItem('ares_faqs', JSON.stringify(faqs));
+                    return faqs;
+                }
+            } catch (err) {
+                console.warn("Could not load FAQs from Supabase, using local state/cache:", err);
+            }
+        } else {
+            // Local mode, read config row from local IndexedDB
+            try {
+                const configRow = await this.getIDB('events', 'event-config-faqs');
+                if (configRow && configRow.long_description) {
+                    const faqs = JSON.parse(configRow.long_description);
+                    localStorage.setItem('ares_faqs', JSON.stringify(faqs));
+                    return faqs;
+                }
+            } catch (err) {
+                console.warn("Could not load FAQs from IDB:", err);
+            }
+        }
+
+        return defaultFAQs;
+    }
+
+    async saveFAQs(faqs) {
+        localStorage.setItem('ares_faqs', JSON.stringify(faqs));
+
+        const configItem = {
+            id: 'event-config-faqs',
+            title: 'FAQs Configuration',
+            long_description: JSON.stringify(faqs),
+            date: '2099-12-31',
+            time: '00:00',
+            location: 'System Config',
+            category: 'populars'
+        };
+
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { error } = await this.supabase
+                    .from('events')
+                    .upsert([configItem]);
+                if (error) throw error;
+            } catch (err) {
+                console.error("Error saving FAQs to Supabase:", err);
+                await this.putIDB('events', configItem);
+                throw err;
+            }
+        } else {
+            await this.putIDB('events', configItem);
+        }
+        return true;
+    }
+
     // Events Actions
     async getEvents() {
         let events = [];
@@ -587,8 +693,19 @@ class AppDatabase {
             }
         }
 
-        // Filter out config record from returned list
-        return events.filter(e => e.id !== 'event-config-category-colors');
+        // Process FAQ config record if present
+        const faqConfigEvent = events.find(e => e.id === 'event-config-faqs');
+        if (faqConfigEvent) {
+            try {
+                const faqs = JSON.parse(faqConfigEvent.long_description);
+                localStorage.setItem('ares_faqs', JSON.stringify(faqs));
+            } catch (e) {
+                console.error("Error parsing FAQs from Supabase config event:", e);
+            }
+        }
+
+        // Filter out config records from returned list
+        return events.filter(e => e.id !== 'event-config-category-colors' && e.id !== 'event-config-faqs');
     }
 
     async getLocalEvents() {
