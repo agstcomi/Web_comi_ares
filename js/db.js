@@ -1085,3 +1085,48 @@ class AppDatabase {
 
 // Instantiate globally
 window.db = new AppDatabase();
+
+// Category translator for events and gallery
+window.getCategoryName = function(category) {
+    if (!category) return '';
+    const isEs = window.location.pathname.includes('/es/');
+    const catLower = category.toLowerCase().trim();
+    
+    const translations = {
+        ca: {
+            'musica': 'Música',
+            'cultura': 'Cultura',
+            'menjars': 'Menjars',
+            'populars': 'Populars',
+            'ball pla': 'Ball pla'
+        },
+        es: {
+            'musica': 'Música',
+            'cultura': 'Cultura',
+            'menjars': 'Comidas',
+            'populars': 'Populares',
+            'ball pla': 'Ball pla'
+        }
+    };
+    
+    const lang = isEs ? 'es' : 'ca';
+    if (translations[lang] && translations[lang][catLower]) {
+        return translations[lang][catLower];
+    }
+    
+    // Capitalize first letter as fallback
+    return category.charAt(0).toUpperCase() + category.slice(1);
+};
+
+// Render category badges supporting comma-separated list of tags
+window.renderCategoryBadges = function(categoryString, extraStyles = '') {
+    if (!categoryString) return '';
+    const colors = window.db.getCategoryColors();
+    const categories = categoryString.split(',').map(c => c.trim()).filter(c => c.length > 0);
+    return categories.map(cat => {
+        const catColors = colors[cat] || { bg: '#e4e4e7', text: '#18181b' };
+        const displayName = window.getCategoryName(cat);
+        const escCat = window.db.escapeHTML(displayName);
+        return `<span class="event-tag" style="background-color: ${catColors.bg}; color: ${catColors.text}; flex-shrink: 0; margin-right: 0.25rem; ${extraStyles}">${escCat}</span>`;
+    }).join('');
+};
