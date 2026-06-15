@@ -111,5 +111,29 @@ Completado y subido en el commit `834609b` (y el de documentación `AGENTS.md` s
 
 ---
 
-## 8. Próximo Paso
+## 8. Auditoría de Ciberseguridad y Remediación (PRO)
+Completado y subido en el commit `25a06d0`. Se realizó una auditoría completa OWASP Top 10 y se aplicaron todas las correcciones automáticas posibles:
+
+* **F1 — Credenciales eliminadas**: `SUPABASE_URL` y `SUPABASE_ANON_KEY` eliminadas de `js/db.js` y `scripts/generate-news.js`. El script de build ahora lee de `process.env` (GitHub Secrets). Workflow `.github/workflows/deploy.yml` actualizado para inyectar `SUPABASE_URL` y `SUPABASE_ANON_KEY` desde los Secrets del repositorio.
+* **F2 — Backdoor eliminado**: Contraseña hardcodeada `ares2026` eliminada de `js/db.js`. La única autenticación válida es ahora Supabase Auth real. El modo mock/demo ya no existe.
+* **F3 — Cabeceras HTTP de seguridad**: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` y `Content-Security-Policy` (CSP) añadidas como meta-tags en los 22 archivos HTML del proyecto (20 públicos + `admin/index.html` + `admin/editor.html`).
+* **F4 — Edge Function autenticada**: `supabase/functions/trigger-deploy/index.ts` ahora valida el header `Authorization: Bearer <WEBHOOK_SECRET>` antes de disparar cualquier deploy. Devuelve 401 si falla.
+* **F5 — CORS restringido**: El `Access-Control-Allow-Origin` de la Edge Function cambió de `*` al origen de Supabase.
+* **F6 — postMessage validado**: `admin/gestio.js` ahora verifica `event.origin === window.location.origin` antes de procesar mensajes.
+* **F8 — CSS Injection mitigado**: `sanitizeHTML` en `js/db.js` ya no permite los atributos `style` ni `class`, que se eliminan activamente del DOM.
+* **F9 — Validación de backup**: La importación de JSON en `admin/gestio.js` ahora valida la estructura, tipos y longitudes de cada ítem antes de importarlo.
+* **F10 — Versiones CDN ancladas**: Lucide (`@0.469.0`) y Supabase JS (`@2.49.4`) con versiones fijas en todos los HTML en lugar de `@latest`.
+* **F11 — Email admin**: Eliminado el valor prefijado `admin@ares.com` del campo de email del login.
+
+### ⚠️ Acciones Manuales Pendientes (el usuario debe ejecutarlas)
+1. **Rotar la Supabase anon key**: La clave anterior está en el historial de git. Ir a Supabase → Settings → API → Roll anon key.
+2. **Configurar GitHub Secrets**: Añadir `SUPABASE_URL` y `SUPABASE_ANON_KEY` (nueva clave rotada) en GitHub → Settings → Secrets → Actions. El deploy fallará hasta entonces.
+3. **Configurar WEBHOOK_SECRET en Supabase Secrets**: Generar un token aleatorio (`openssl rand -hex 32`), añadirlo como secret `WEBHOOK_SECRET` en Supabase Edge Functions, y configurar ese mismo valor en la cabecera `Authorization` del Database Webhook.
+4. **Redesplegar la Edge Function**: `supabase functions deploy trigger-deploy`.
+5. **Actualizar la anon key en el panel admin**: Después de rotar la clave, actualizar la configuración en el tab "Configuració" del panel `/admin/`.
+
+---
+
+## 9. Próximo Paso
+* Completar las acciones manuales de seguridad descritas en la sección 8.
 * Esperar a nuevas instrucciones del usuario.
