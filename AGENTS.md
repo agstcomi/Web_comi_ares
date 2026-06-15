@@ -80,10 +80,17 @@ function getLocalDateStr(offsetDays = 0) {
 - En el listener de subida de imagen del perfil, si Supabase está activo pero se devuelve un string Base64 (indicando que falló la subida al Storage), se arroja un error visible que detiene el guardado y vacía el selector.
 - Se mejoraron las alertas del formulario de perfil en la UI para presentar los mensajes de error específicos del servidor y guiar el diagnóstico.
 
+### 5.4 Solución definitiva a la persistencia de categorías y FAQs en Supabase
+**Problema**: Al crear etiquetas/categorías o editar sus colores, el cambio se guardaba localmente pero desaparecía al recargar o al cambiar de equipo. Esto ocurría porque el "hack" de guardar la configuración dentro de la tabla de `events` (bajo el registro `'event-config-category-colors'`) fallaba en Supabase debido a una violación de restricciones `NOT NULL` de PostgreSQL en las columnas obligatorias del esquema (como `description` o `title_es`) que no se enviaban en el objeto de configuración. Al fallar silenciosamente en el servidor, cada carga del listado de eventos descargaba el registro antiguo de Supabase y sobrescribía el `localStorage` del navegador local con la configuración antigua.
+
+**Solución** en `js/db.js`:
+- Se modificaron las funciones `saveCategoryColors(colors)` y `saveFAQs(faqs)` para que los objetos `configItem` de configuración incluyan **todos** los campos del esquema de la tabla `events` (usando strings vacíos o valores por defecto para los que no se utilizan).
+- Esto satisface cualquier restricción `NOT NULL` de la base de datos de Supabase, asegurando que las actualizaciones y el `upsert` tengan éxito en el servidor y sincronizando de forma transparente los colores, etiquetas y FAQs creadas por los usuarios en todos los navegadores.
+
 ---
 
 ## 6. Estado del Código Actual
-* **Árbol de trabajo**: Cambios aplicados localmente en `admin/gestio.js` y documentados en `AGENTS.md`.
+* **Árbol de trabajo**: Cambios aplicados en `admin/gestio.js` y `js/db.js`, y documentados en `AGENTS.md`.
 * **Push a origin**: Pendiente de autenticación HTTPS. Ejecutar en terminal si se desea forzar:
   ```bash
   cd /Users/tsoga00/Web_comi_ares
