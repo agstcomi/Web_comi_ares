@@ -387,7 +387,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td>${escTitle}</td>
                     <td>${escLoc}</td>
                     <td>
-                        <div style="display: flex; gap: 0.25rem;">
+                        <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
                             ${window.renderCategoryBadges(item.category, 'margin-top:0;')}
                         </div>
                     </td>

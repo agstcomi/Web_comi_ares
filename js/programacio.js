@@ -164,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     <div class="event-content-col">
                                         <div class="event-title-row">
                                             <h3>${escTitle}</h3>
-                                            <div style="display: flex; gap: 0.25rem;">
+                                            <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
                                                 ${window.renderCategoryBadges(event.category)}
                                             </div>
                                         </div>
@@ -478,7 +478,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalBody.innerHTML = `
             ${imageHTML}
             <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
-                <div style="display: flex; gap: 0.25rem;">
+                <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
                     ${window.renderCategoryBadges(event.category, 'margin-top: 0;')}
                 </div>
                 <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 700;">${escDate} — ${escTime}h</span>
