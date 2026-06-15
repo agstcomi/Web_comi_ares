@@ -305,7 +305,7 @@
                         return `
                             <article class="news-card animate-fade-in-up" style="cursor: pointer; transition-delay: ${idx * 0.05}s;" onclick="navigateToNews('${escId}', '${escSlug}')">
                                 <div class="news-img-wrapper">
-                                    <img src="${imgSrc}" alt="${escAlt}">
+                                    ${window.getNewsImageHTML(item.image_url, escAlt)}
                                 </div>
                                 <div class="news-info">
                                     <span class="news-date">${formatDate(item.created_at)}</span>
@@ -375,7 +375,7 @@
                                     const escAlt = alt ? window.db.escapeHTML(alt) : `Imagen adicional ${idx + 1}`;
                                     return `
                                         <div class="gallery-item-wrapper" style="overflow: hidden; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;" onclick="openArticleLightbox(${idx})">
-                                            <img src="${url}" alt="${escAlt}" style="width: 100%; height: 160px; display: block; object-fit: cover; transition: var(--transition);" class="gallery-thumb-img">
+                                            ${window.getNewsImageHTML(url, escAlt, 'width: 100%; height: 160px; display: block; object-fit: cover; transition: var(--transition);', 'gallery-thumb-img')}
                                         </div>
                                     `;
                                 }).join('')}
@@ -467,7 +467,7 @@
                         ${tagsHTML}
                         
                         <div style="width: 100%; margin-bottom: 3rem; overflow: hidden; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <img src="${imgSrc}" alt="${escAlt}" style="width: 100%; height: auto; display: block; max-height: 480px; object-fit: cover;">
+                            ${window.getNewsImageHTML(article.image_url, escAlt, 'width: 100%; height: auto; display: block; max-height: 480px; object-fit: cover;')}
                         </div>
                         
                         <div class="news-body-text" style="font-size: 1.1rem; line-height: 1.8; color: var(--text-primary); font-weight: 300;">

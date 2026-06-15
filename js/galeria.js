@@ -115,9 +115,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const escUrl = window.db.escapeHTML(window.getAssetPath(photo.image_url));
             const escTitle = window.db.escapeHTML(title);
             const escCat = window.db.escapeHTML(cat);
+
+            let webpUrl = escUrl;
+            const lastDot = escUrl.lastIndexOf('.');
+            if (lastDot !== -1) {
+                const ext = escUrl.substring(lastDot).toLowerCase();
+                if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
+                    webpUrl = escUrl.substring(0, lastDot) + '.webp';
+                }
+            }
+
             return `
                 <div class="gallery-item ${sizeClass} animate-fade-in-up" data-index="${index}" style="transition-delay: ${index * 0.04}s;">
-                    <img src="${escUrl}" alt="${escTitle}" loading="lazy">
+                    <picture>
+                        <source srcset="${webpUrl}" type="image/webp">
+                        <img src="${escUrl}" alt="${escTitle}" loading="lazy">
+                    </picture>
                     <div class="gallery-item-overlay">
                         <h4>${escTitle}</h4>
                         <span>${escCat}</span>

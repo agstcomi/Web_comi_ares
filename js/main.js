@@ -416,6 +416,36 @@ window.getAssetPath = function(url) {
     return isEs ? '../' + url : url;
 };
 
+// Helper for WebP news images with JPG/PNG fallback
+window.getNewsImageHTML = function(src, alt, style = '', className = '') {
+    const defaultImg = 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800';
+    let rawSrc = src || defaultImg;
+    const resolvedSrc = window.getAssetPath(rawSrc);
+    const escSrc = window.db.escapeHTML(resolvedSrc);
+    const escAlt = window.db.escapeHTML(alt || '');
+    const styleAttr = style ? ` style="${style}"` : '';
+    const classAttr = className ? ` class="${className}"` : '';
+
+    // If it's a local image (either starts with img/, ../img/, /img/ or does not start with http/data:)
+    const isLocal = rawSrc.startsWith('img/') || rawSrc.startsWith('/img/') || (!rawSrc.startsWith('http') && !rawSrc.startsWith('data:'));
+    
+    if (isLocal && (rawSrc.endsWith('.jpg') || rawSrc.endsWith('.jpeg') || rawSrc.endsWith('.png'))) {
+        const lastDot = resolvedSrc.lastIndexOf('.');
+        if (lastDot !== -1) {
+            const webpSrc = resolvedSrc.substring(0, lastDot) + '.webp';
+            const escWebp = window.db.escapeHTML(webpSrc);
+            return `
+                <picture${classAttr}${styleAttr}>
+                    <source srcset="${escWebp}" type="image/webp">
+                    <img src="${escSrc}" alt="${escAlt}"${classAttr}${styleAttr}>
+                </picture>
+            `;
+        }
+    }
+    
+    return `<img src="${escSrc}" alt="${escAlt}"${classAttr}${styleAttr}>`;
+};
+
 // Category translator for events and gallery
 window.getCategoryName = function(category) {
     if (!category) return '';
