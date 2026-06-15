@@ -1,0 +1,17 @@
+# ===== CABECERAS DE SEGURIDAD HTTP (Para servidores Apache / OVH) =====
+<IfModule mod_headers.c>
+    # Evita que la web sea cargada en iframes de otros sitios (Anti-Clickjacking)
+    Header set X-Frame-Options "DENY"
+
+    # Evita el MIME Sniffing
+    Header set X-Content-Type-Options "nosniff"
+
+    # Define la política de Referrer
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+
+    # Deshabilita el acceso a APIs de hardware que no usamos
+    Header set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+    # Fuerza la conexión por HTTPS (HSTS)
+    Header set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+</IfModule>

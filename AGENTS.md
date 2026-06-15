@@ -116,7 +116,7 @@ Completado y subido en el commit `25a06d0`. Se realizó una auditoría completa 
 
 * **F1 — Credenciales eliminadas**: `SUPABASE_URL` y `SUPABASE_ANON_KEY` eliminadas de `js/db.js` y `scripts/generate-news.js`. El script de build ahora lee de `process.env` (GitHub Secrets). Workflow `.github/workflows/deploy.yml` actualizado para inyectar `SUPABASE_URL` y `SUPABASE_ANON_KEY` desde los Secrets del repositorio.
 * **F2 — Backdoor eliminado**: Contraseña hardcodeada `ares2026` eliminada de `js/db.js`. La única autenticación válida es ahora Supabase Auth real. El modo mock/demo ya no existe.
-* **F3 — Cabeceras HTTP de seguridad**: `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` y `Content-Security-Policy` (CSP) añadidas como meta-tags en los 22 archivos HTML del proyecto (20 públicos + `admin/index.html` + `admin/editor.html`).
+* **F3 — Cabeceras HTTP de seguridad**: X-Frame-Options, X-Content-Type-Options, Referrer-Policy, Permissions-Policy y Content-Security-Policy (CSP) añadidas como meta-tags en los 22 archivos HTML del proyecto. Adicionalmente, se ha creado el archivo `.htaccess` en la raíz para servir estas cabeceras HTTP de forma real y nativa en servidores web basados en Apache (como el alojamiento compartido de **OVH**).
 * **F4 — Edge Function autenticada**: `supabase/functions/trigger-deploy/index.ts` ahora valida el header `Authorization: Bearer <WEBHOOK_SECRET>` antes de disparar cualquier deploy. Devuelve 401 si falla.
 * **F5 — CORS restringido**: El `Access-Control-Allow-Origin` de la Edge Function cambió de `*` al origen de Supabase.
 * **F6 — postMessage validado**: `admin/gestio.js` ahora verifica `event.origin === window.location.origin` antes de procesar mensajes.
