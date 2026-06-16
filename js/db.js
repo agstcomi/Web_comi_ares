@@ -414,8 +414,7 @@ class AppDatabase {
         } else {
             // Public or Local Mode - fetch static JSON file first
             try {
-                const isEs = window.location.pathname.includes('/es/');
-                const dataUrl = isEs ? '../data/news.json?v=1.6' : 'data/news.json?v=1.6';
+                const dataUrl = '/data/news.json?v=1.7';
                 const res = await fetch(dataUrl);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
@@ -681,8 +680,7 @@ class AppDatabase {
         } else {
             // Try fetching static events.json
             try {
-                const isEs = window.location.pathname.includes('/es/');
-                const dataUrl = isEs ? '../data/events.json?v=1.6' : 'data/events.json?v=1.6';
+                const dataUrl = '/data/events.json?v=1.7';
                 const res = await fetch(dataUrl);
                 if (res.ok) {
                     const events = await res.json();
@@ -769,8 +767,7 @@ class AppDatabase {
         } else {
             // Public or Local Mode - fetch static JSON file first
             try {
-                const isEs = window.location.pathname.includes('/es/');
-                const dataUrl = isEs ? '../data/events.json?v=1.6' : 'data/events.json?v=1.6';
+                const dataUrl = '/data/events.json?v=1.7';
                 const res = await fetch(dataUrl);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 events = await res.json();
@@ -939,8 +936,7 @@ class AppDatabase {
         } else {
             // Public or Local Mode - fetch static JSON file first
             try {
-                const isEs = window.location.pathname.includes('/es/');
-                const dataUrl = isEs ? '../data/photos.json?v=1.6' : 'data/photos.json?v=1.6';
+                const dataUrl = '/data/photos.json?v=1.7';
                 const res = await fetch(dataUrl);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
