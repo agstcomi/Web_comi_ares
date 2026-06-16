@@ -50,6 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function showLogin() {
         loginContainer.style.display = 'block';
         dashboardContainer.style.display = 'none';
+        loadDbConfigFields();
+        if (window.lucide) window.lucide.createIcons();
     }
 
     let currentUser = null;
@@ -182,9 +184,23 @@ document.addEventListener('DOMContentLoaded', () => {
     function loadDbConfigFields() {
         const config = localStorage.getItem('supabase_config');
         if (config) {
-            const parsed = JSON.parse(config);
-            document.getElementById('config-url').value = parsed.url || '';
-            document.getElementById('config-key').value = parsed.key || '';
+            try {
+                const parsed = JSON.parse(config);
+                const url = parsed.url || '';
+                const key = parsed.key || '';
+                
+                const dashUrl = document.getElementById('config-url');
+                const dashKey = document.getElementById('config-key');
+                if (dashUrl) dashUrl.value = url;
+                if (dashKey) dashKey.value = key;
+                
+                const loginUrl = document.getElementById('login-config-url');
+                const loginKey = document.getElementById('login-config-key');
+                if (loginUrl) loginUrl.value = url;
+                if (loginKey) loginKey.value = key;
+            } catch (e) {
+                console.error("Error parsing stored Supabase config:", e);
+            }
         }
     }
 
@@ -202,6 +218,32 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 loginError.textContent = result.error || "Error de connexió.";
                 loginError.style.display = 'block';
+            }
+        });
+    }
+
+    const loginConfigForm = document.getElementById('login-config-form');
+    if (loginConfigForm) {
+        loginConfigForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const urlInput = document.getElementById('login-config-url');
+            const keyInput = document.getElementById('login-config-key');
+            const url = urlInput.value.trim();
+            const key = keyInput.value.trim();
+
+            if (url && key) {
+                const connected = window.db.setConfig(url, key);
+                if (connected) {
+                    loadDbConfigFields();
+                    alert('Base de dades Supabase configurada correctament. Ja pots iniciar sessió.');
+                    
+                    const detailsEl = document.getElementById('login-config-details');
+                    if (detailsEl) detailsEl.removeAttribute('open');
+                    
+                    if (loginError) loginError.style.display = 'none';
+                } else {
+                    alert('Error en configurar la base de dades.');
+                }
             }
         });
     }
