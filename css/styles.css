@@ -86,6 +86,7 @@ button, .btn {
     position: relative;
     overflow: hidden;
     gap: 0.5rem;
+    border-radius: 100px;
 }
 
 button:hover, .btn:hover {
@@ -659,7 +660,7 @@ nav.nav-menu ul li a::after {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border-radius: 8px;
+    border-radius: 100px;
     cursor: pointer;
     transition: var(--transition);
 }
@@ -2032,11 +2033,6 @@ header.main-header:has(nav.nav-menu.active) .nav-toggle {
 input,
 select,
 textarea,
-button,
-.btn,
-.social-btn,
-.filter-btn,
-.admin-tab-btn,
 .admin-modal-content,
 .db-config-box,
 pre,
@@ -2045,6 +2041,14 @@ pre,
 .search-box,
 .db-status-badge {
     border-radius: 8px !important;
+}
+
+button,
+.btn,
+.social-btn,
+.filter-btn,
+.admin-tab-btn {
+    border-radius: 100px !important;
 }
 
 /* Ensure images inside rounded cards/tables clip correctly */
@@ -2393,6 +2397,7 @@ pre,
 
 /* Share buttons styling */
 .share-btn {
+    border-radius: 50% !important;
     transition: var(--transition);
 }
 .share-btn:hover {
