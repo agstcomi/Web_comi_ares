@@ -414,7 +414,8 @@ class AppDatabase {
         } else {
             // Public or Local Mode - fetch static JSON file first
             try {
-                const dataUrl = '/data/news.json?v=1.7';
+                const cacheBuster = Math.floor(Date.now() / 300000); // 5 min cache
+                const dataUrl = `/data/news.json?v=${cacheBuster}`;
                 const res = await fetch(dataUrl);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
@@ -680,7 +681,8 @@ class AppDatabase {
         } else {
             // Try fetching static events.json
             try {
-                const dataUrl = '/data/events.json?v=1.7';
+                const cacheBuster = Math.floor(Date.now() / 300000); // 5 min cache
+                const dataUrl = `/data/events.json?v=${cacheBuster}`;
                 const res = await fetch(dataUrl);
                 if (res.ok) {
                     const events = await res.json();
@@ -767,7 +769,8 @@ class AppDatabase {
         } else {
             // Public or Local Mode - fetch static JSON file first
             try {
-                const dataUrl = '/data/events.json?v=1.7';
+                const cacheBuster = Math.floor(Date.now() / 300000); // 5 min cache
+                const dataUrl = `/data/events.json?v=${cacheBuster}`;
                 const res = await fetch(dataUrl);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 events = await res.json();
@@ -936,7 +939,8 @@ class AppDatabase {
         } else {
             // Public or Local Mode - fetch static JSON file first
             try {
-                const dataUrl = '/data/photos.json?v=1.7';
+                const cacheBuster = Math.floor(Date.now() / 300000); // 5 min cache
+                const dataUrl = `/data/photos.json?v=${cacheBuster}`;
                 const res = await fetch(dataUrl);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
