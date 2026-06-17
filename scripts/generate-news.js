@@ -316,6 +316,97 @@ async function main() {
       }
     }
 
+    // --- ACTUALIZAR DATOS ESTRUCTURADOS ESTÁTICOS DE PROGRAMACIÓN ---
+    console.log("Generando datos estructurados de eventos estáticos para programacio.html...");
+    const filteredEvents = events.filter(e => e.id !== 'event-config-faqs' && e.id !== 'event-config-category-colors');
+    
+    const generateEventSchemas = (lang) => {
+      const isEs = lang === 'es';
+      return filteredEvents.map(event => {
+        const title = isEs && event.title_es ? event.title_es : event.title;
+        const desc = isEs && event.description_es ? event.description_es : event.description;
+        const loc = isEs && event.location_es ? event.location_es : event.location;
+
+        const startIso = `${event.date}T${event.time}:00+02:00`;
+        
+        let endHour = parseInt(event.time.split(':')[0]) + 2;
+        let endDateStr = event.date;
+        if (endHour >= 24) {
+          endHour = endHour - 24;
+          const dateObj = new Date(event.date);
+          dateObj.setDate(dateObj.getDate() + 1);
+          endDateStr = dateObj.toISOString().split('T')[0];
+        }
+        const endHourStr = String(endHour).padStart(2, '0');
+        const endMinuteStr = event.time.split(':')[1] || '00';
+        const endIso = `${endDateStr}T${endHourStr}:${endMinuteStr}:00+02:00`;
+
+        return {
+          "@context": "https://schema.org",
+          "@type": "Event",
+          "name": title,
+          "description": desc || title,
+          "startDate": startIso,
+          "endDate": endIso,
+          "eventStatus": "https://schema.org/EventScheduled",
+          "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+          "location": {
+            "@type": "Place",
+            "name": loc || "Ares del Maestrat",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": loc || "Ares del Maestrat",
+              "addressLocality": "Ares del Maestrat",
+              "addressRegion": "Castellón",
+              "addressCountry": "ES",
+              "postalCode": "12165"
+            }
+          },
+          "organizer": {
+            "@type": "Organization",
+            "name": isEs ? "Comisión de Fiestas de Ares del Maestrat" : "Comissió de Festes d'Ares del Maestrat",
+            "url": "https://www.comiares.es/"
+          }
+        };
+      });
+    };
+
+    // Actualizar programacio.html (Valenciano)
+    const progPathVal = path.join(__dirname, '..', 'programacio.html');
+    if (fs.existsSync(progPathVal)) {
+      let htmlContent = fs.readFileSync(progPathVal, 'utf-8');
+      const startIdx = htmlContent.indexOf('<!-- DYNAMIC EVENTS SCHEMA START -->');
+      const endIdx = htmlContent.indexOf('<!-- DYNAMIC EVENTS SCHEMA END -->');
+      
+      if (startIdx !== -1 && endIdx !== -1) {
+        const schemas = generateEventSchemas('ca');
+        const injectScript = `\n    <script type="application/ld+json">\n${JSON.stringify(schemas, null, 2)}\n    </script>\n    `;
+        htmlContent = htmlContent.substring(0, startIdx + '<!-- DYNAMIC EVENTS SCHEMA START -->'.length) +
+                      injectScript +
+                      htmlContent.substring(endIdx);
+        fs.writeFileSync(progPathVal, htmlContent, 'utf-8');
+        console.log("  [OK] programacio.html actualizada con datos estructurados de eventos estáticos.");
+      }
+    }
+
+    // Actualizar es/programacio.html (Castellano)
+    const progPathCast = path.join(__dirname, '..', 'es', 'programacio.html');
+    if (fs.existsSync(progPathCast)) {
+      let htmlContent = fs.readFileSync(progPathCast, 'utf-8');
+      const startIdx = htmlContent.indexOf('<!-- DYNAMIC EVENTS SCHEMA START -->');
+      const endIdx = htmlContent.indexOf('<!-- DYNAMIC EVENTS SCHEMA END -->');
+      
+      if (startIdx !== -1 && endIdx !== -1) {
+        const schemas = generateEventSchemas('es');
+        const injectScript = `\n    <script type="application/ld+json">\n${JSON.stringify(schemas, null, 2)}\n    </script>\n    `;
+        htmlContent = htmlContent.substring(0, startIdx + '<!-- DYNAMIC EVENTS SCHEMA START -->'.length) +
+                      injectScript +
+                      htmlContent.substring(endIdx);
+        fs.writeFileSync(progPathCast, htmlContent, 'utf-8');
+        console.log("  [OK] es/programacio.html actualizada con datos estructurados de eventos estáticos.");
+      }
+    }
+
     console.log("Generación completada exitosamente.");
   } catch (error) {
     console.error("Error crítico durante la generación de noticias:", error);
