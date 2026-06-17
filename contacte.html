@@ -7,7 +7,7 @@
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://opendata.aemet.es; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://tracker.metricool.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://opendata.aemet.es https://*.metricool.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://openstreetmap.org; frame-ancestors 'self'; form-action 'self';">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacte amb la Comissió d'Ares del Maestrat | Voluntariat i Dubtes</title>
@@ -187,7 +187,7 @@
                             scrolling="no" 
                             marginheight="0" 
                             marginwidth="0" 
-                            src="https://www.openstreetmap.org/export/embed.html?bbox=-0.1345181465148926%2C40.452668580226466%2C-0.12563467025756839%2C40.46274026859556&amp;layer=mapnik&amp;marker=40.457704870505164%2C-0.13007640838623047" 
+                            src="https://www.openstreetmap.org/export/embed.html?bbox=-0.136447%2C40.451341%2C-0.127563%2C40.461413&amp;layer=mapnik&amp;marker=40.456377%2C-0.132005" 
                             style="filter: grayscale(1) invert(0.05); border: 0;"
                             title="Mapa d'Ares del Maestrat"
                         ></iframe>
@@ -309,5 +309,7 @@
             }
         });
     </script>
+    <!-- Metricool Tracking Script -->
+    <script>function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"6c919b9c88213af948db1b24d716642e"})});</script>
 </body>
 </html>
