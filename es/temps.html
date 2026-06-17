@@ -1366,6 +1366,10 @@
             for (let i = 0; i < 7; i++) {
                 d += ` C ${xCoords[i] + dx} ${yCoords[i]}, ${xCoords[i+1] - dx} ${yCoords[i+1]}, ${xCoords[i+1]} ${yCoords[i+1]}`;
             }
+
+            // Generate Shadow path
+            const dShadow = `M ${xCoords[0]} 135 L ${xCoords[0]} ${yCoords[0]} ` + d.substring(2) + ` L ${xCoords[7]} 135 Z`;
+
             // Apply progressive draw animation using stroke-dashoffset
             const curvePath = document.getElementById('svg-curve');
             const shadowPath = document.getElementById('svg-curve-shadow');
