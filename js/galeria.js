@@ -116,27 +116,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const escTitle = window.db.escapeHTML(title);
             const escCat = window.db.escapeHTML(cat);
 
-            let webpUrl = escUrl;
-            const lastDot = escUrl.lastIndexOf('.');
-            if (lastDot !== -1) {
-                const ext = escUrl.substring(lastDot).toLowerCase();
-                if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
-                    webpUrl = escUrl.substring(0, lastDot) + '.webp';
+            const isLocal = photo.image_url.startsWith('img/') || photo.image_url.startsWith('/img/') || (!photo.image_url.startsWith('http') && !photo.image_url.startsWith('data:'));
+            
+            if (isLocal) {
+                let webpUrl = escUrl;
+                const lastDot = escUrl.lastIndexOf('.');
+                if (lastDot !== -1) {
+                    const ext = escUrl.substring(lastDot).toLowerCase();
+                    if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
+                        webpUrl = escUrl.substring(0, lastDot) + '.webp';
+                    }
                 }
-            }
-
-            return `
-                <div class="gallery-item ${sizeClass} animate-fade-in-up" data-index="${index}" style="transition-delay: ${index * 0.04}s;">
-                    <picture>
-                        <source srcset="${webpUrl}" type="image/webp">
-                        <img src="${escUrl}" alt="${escTitle}" loading="lazy">
-                    </picture>
-                    <div class="gallery-item-overlay">
-                        <h4>${escTitle}</h4>
-                        <span>${escCat}</span>
+                return `
+                    <div class="gallery-item ${sizeClass} animate-fade-in-up" data-index="${index}" style="transition-delay: ${index * 0.04}s;">
+                        <picture>
+                            <source srcset="${webpUrl}" type="image/webp">
+                            <img src="${escUrl}" alt="${escTitle}" loading="lazy">
+                        </picture>
+                        <div class="gallery-item-overlay">
+                            <h4>${escTitle}</h4>
+                            <span>${escCat}</span>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                return `
+                    <div class="gallery-item ${sizeClass} animate-fade-in-up" data-index="${index}" style="transition-delay: ${index * 0.04}s;">
+                        <img src="${escUrl}" alt="${escTitle}" loading="lazy">
+                        <div class="gallery-item-overlay">
+                            <h4>${escTitle}</h4>
+                            <span>${escCat}</span>
+                        </div>
+                    </div>
+                `;
+            }
         }).join('');
 
         // Add click events to grid items

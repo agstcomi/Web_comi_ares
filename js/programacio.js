@@ -457,22 +457,32 @@ document.addEventListener('DOMContentLoaded', () => {
         let imageHTML = '';
         if (event.image_url) {
             const escImg = window.db.escapeHTML(window.getAssetPath(event.image_url));
-            let webpImg = escImg;
-            const lastDot = escImg.lastIndexOf('.');
-            if (lastDot !== -1) {
-                const ext = escImg.substring(lastDot).toLowerCase();
-                if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
-                    webpImg = escImg.substring(0, lastDot) + '.webp';
+            const isLocal = event.image_url.startsWith('img/') || event.image_url.startsWith('/img/') || (!event.image_url.startsWith('http') && !event.image_url.startsWith('data:'));
+            
+            if (isLocal) {
+                let webpImg = escImg;
+                const lastDot = escImg.lastIndexOf('.');
+                if (lastDot !== -1) {
+                    const ext = escImg.substring(lastDot).toLowerCase();
+                    if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
+                        webpImg = escImg.substring(0, lastDot) + '.webp';
+                    }
                 }
-            }
-            imageHTML = `
-                <div class="event-modal-img-wrapper">
-                    <picture>
-                        <source srcset="${webpImg}" type="image/webp">
+                imageHTML = `
+                    <div class="event-modal-img-wrapper">
+                        <picture>
+                            <source srcset="${webpImg}" type="image/webp">
+                            <img src="${escImg}" alt="${escTitle}" style="width: 100%; height: auto; display: block; max-height: 320px; object-fit: cover;">
+                        </picture>
+                    </div>
+                `;
+            } else {
+                imageHTML = `
+                    <div class="event-modal-img-wrapper">
                         <img src="${escImg}" alt="${escTitle}" style="width: 100%; height: auto; display: block; max-height: 320px; object-fit: cover;">
-                    </picture>
-                </div>
-            `;
+                    </div>
+                `;
+            }
         }
 
         modalBody.innerHTML = `
