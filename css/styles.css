@@ -3076,3 +3076,258 @@ button,
         -webkit-line-clamp: 1;
     }
 }
+
+/* ==========================================================================
+   Horizontal Weather Widget (Modern Mecca-inspired Skyline Card)
+   ========================================================================== */
+.weather-card-horizontal {
+    background: linear-gradient(to right, rgba(250, 250, 250, 0.95) 35%, rgba(250, 250, 250, 0.55) 100%), url('../img/temps_bg.jpg') no-repeat center;
+    background-size: cover;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 2.5rem 3rem;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    gap: 3rem;
+    align-items: center;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.02);
+    transition: var(--transition);
+}
+
+.weather-skyline {
+    position: absolute;
+    right: 0;
+    bottom: -5px; /* Alinado a la base */
+    height: 100%;
+    width: 50%;
+    z-index: 1;
+    pointer-events: none;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+}
+
+.weather-skyline svg {
+    height: 95%;
+    width: auto;
+    display: block;
+}
+
+.weather-info-left {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    min-width: 200px;
+    flex-shrink: 0;
+}
+
+.weather-location-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.weather-location-title {
+    font-size: 1.6rem;
+    font-weight: 900;
+    font-family: var(--font-heading);
+    text-transform: uppercase;
+    color: var(--text-primary); /* Negro principal de la web */
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+}
+
+.weather-location-sub {
+    font-size: 0.85rem;
+    color: var(--text-secondary); /* Gris secundario */
+    font-weight: 500;
+}
+
+.weather-temp-huge-wrapper {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+.weather-temp-huge {
+    font-size: 4.5rem;
+    font-weight: 300;
+    font-family: var(--font-heading);
+    color: var(--text-primary);
+    line-height: 1;
+}
+
+.weather-temp-range-sub {
+    display: flex;
+    gap: 0.4rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+}
+
+.weather-forecast-column {
+    position: relative;
+    z-index: 2;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    align-items: flex-end;
+}
+
+.weather-forecast-grid-horizontal {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+    width: 100%;
+    max-width: 550px;
+}
+
+.weather-day-temp-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Reutilizar estilos de items pero adaptados a transparencia */
+.weather-card-horizontal .weather-day-item {
+    background-color: rgba(255, 255, 255, 0.85); /* Translúcido pero muy legible */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1.25rem 0.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: var(--transition);
+    text-align: center;
+}
+
+.weather-card-horizontal .weather-day-item:hover {
+    background-color: var(--bg-primary);
+    border-color: var(--text-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.04);
+}
+
+.weather-card-horizontal .weather-day-label {
+    font-size: 0.725rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    letter-spacing: 0.05em;
+}
+
+.weather-card-horizontal .weather-day-item i,
+.weather-card-horizontal .weather-day-item svg {
+    color: var(--text-primary) !important; /* Negro de la web */
+    margin-bottom: 0.5rem;
+}
+
+.weather-detail-link-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+    max-width: 550px;
+}
+
+.weather-detail-link {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    transition: var(--transition);
+}
+
+.weather-detail-link:hover {
+    color: var(--text-secondary);
+}
+
+@media (max-width: 992px) {
+    .weather-skyline {
+        width: 40%;
+    }
+}
+
+@media (max-width: 768px) {
+    .weather-card-horizontal {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 2rem 1.5rem;
+        align-items: stretch;
+        background: linear-gradient(to bottom, rgba(250, 250, 250, 0.95) 50%, rgba(250, 250, 250, 0.75) 100%), url('../img/temps_bg.jpg') no-repeat center;
+        background-size: cover;
+    }
+
+    .weather-info-left {
+        align-items: center;
+        text-align: center;
+        min-width: 0;
+    }
+
+    .weather-forecast-column {
+        align-items: center;
+    }
+
+    .weather-forecast-grid-horizontal {
+        max-width: 100%;
+    }
+
+    .weather-detail-link-wrapper {
+        justify-content: center;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .weather-forecast-grid-horizontal {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    .weather-card-horizontal .weather-day-item {
+        flex-direction: row !important;
+        justify-content: space-between;
+        padding: 0.75rem 1rem;
+        text-align: left;
+        gap: 0.5rem;
+    }
+    .weather-card-horizontal .weather-day-label {
+        margin-bottom: 0;
+        width: 65px;
+        text-align: left;
+        flex-shrink: 0;
+    }
+    .weather-card-horizontal .weather-day-item i,
+    .weather-card-horizontal .weather-day-item svg {
+        margin-bottom: 0 !important;
+        flex-shrink: 0;
+    }
+    .weather-card-horizontal .weather-day-item span[style*="capitalize"] {
+        margin-bottom: 0 !important;
+        height: auto !important;
+        width: 80px;
+        text-align: center;
+        font-size: 0.725rem !important;
+        flex-shrink: 0;
+    }
+    .weather-card-horizontal .weather-day-temp-wrapper {
+        margin-left: auto;
+        align-items: flex-end;
+        flex-shrink: 0;
+    }
+    .weather-card-horizontal .weather-day-temp {
+        font-size: 0.8rem !important;
+    }
+}
+

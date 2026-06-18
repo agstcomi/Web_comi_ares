@@ -44,7 +44,7 @@
     <meta name="theme-color" content="#ffffff">
     <link rel="apple-touch-icon" href="/img/icon-512.svg">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="/css/styles.css?v=1.8">
+    <link rel="stylesheet" href="/css/styles.css?v=1.10">
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
@@ -287,40 +287,50 @@
     <section id="oratge" style="background-color: var(--bg-primary);">
         <div class="container">
             <div id="weather-widget" class="weather-widget-container" style="margin-top: 0;">
-                <div class="weather-card animate-fade-in-up" style="margin: 0 auto; transition-delay: 0.1s;">
-                    <div class="weather-card-header">
-                        <h3>
-                            <i data-lucide="cloud-sun"></i> El Tiempo en Ares del Maestrat
-                        </h3>
-                        <span style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; font-weight: 500;">Previsión AEMET</span>
-                    </div>
+                <div class="weather-card-horizontal animate-fade-in-up" style="transition-delay: 0.1s;">
+
                     
-                    <div id="weather-forecast-container" class="weather-forecast-grid">
-                        <!-- Skeletons shown during load -->
-                        <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
-                            <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                            <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                    <div class="weather-info-left">
+                        <div class="weather-location-container">
+                            <span class="weather-location-title">Ares del Maestrat</span>
+                            <span class="weather-location-sub">Castellón, España</span>
                         </div>
-                        <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
-                            <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                            <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
-                        </div>
-                        <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
-                            <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                            <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                        <div class="weather-temp-huge-wrapper">
+                            <span id="weather-temp-huge" class="weather-temp-huge">--°</span>
+                            <div class="weather-temp-range-sub" id="weather-temp-range-sub">
+                                <span class="temp-max">--°</span> <span class="temp-divider">/</span> <span class="temp-min">--°</span>
+                            </div>
                         </div>
                     </div>
                     
-                    <div style="text-align: center; margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1rem;">
-                        <a href="temps" style="font-size: 0.85rem; font-weight: 500; color: var(--text-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 0.25rem; transition: var(--transition);" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
-                            Ver previsión detallada a 7 días <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
-                        </a>
+                    <div class="weather-forecast-column">
+                        <div id="weather-forecast-container" class="weather-forecast-grid-horizontal">
+                            <!-- Skeletons shown during load -->
+                            <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                                <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                            </div>
+                            <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                                <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                            </div>
+                            <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                                <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="weather-detail-link-wrapper">
+                            <a href="temps" class="weather-detail-link">
+                                Ver previsión detallada a 7 días <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -708,10 +718,32 @@
 
         function renderWeather(forecast) {
             const container = document.getElementById('weather-forecast-container');
-            if (!container || !forecast) return;
+            if (!container || !forecast || forecast.length === 0) return;
 
             const isEs = window.location.pathname.includes('/es/');
             
+            // Actualizar panel izquierdo con los datos de hoy
+            const today = forecast[0];
+            const todayMaxVal = today.tempMax !== null ? `${today.tempMax}°` : '--°';
+            const todayMinVal = today.tempMin !== null ? `${today.tempMin}°` : '--°';
+            
+            const maxTitle = isEs ? 'Temperatura máxima' : 'Temperatura màxima';
+            const minTitle = isEs ? 'Temperatura mínima' : 'Temperatura mínima';
+            
+            const tempHuge = document.getElementById('weather-temp-huge');
+            if (tempHuge) {
+                tempHuge.textContent = today.tempMax !== null ? `${today.tempMax}°` : '--°';
+            }
+            
+            const tempRangeSub = document.getElementById('weather-temp-range-sub');
+            if (tempRangeSub) {
+                tempRangeSub.innerHTML = `
+                    <span style="color: #ef4444;" title="${maxTitle}">${todayMaxVal}</span>
+                    <span style="color: var(--text-secondary); font-weight: 300; margin: 0 0.25rem;">/</span>
+                    <span style="color: #3b82f6;" title="${minTitle}">${todayMinVal}</span>
+                `;
+            }
+
             container.innerHTML = forecast.map((day, idx) => {
                 const dateObj = new Date(day.date);
                 const dayLabel = idx === 0 
@@ -733,8 +765,6 @@
 
                 const maxTemp = day.tempMax !== null ? `${day.tempMax}°C` : '--';
                 const minTemp = day.tempMin !== null ? `${day.tempMin}°C` : '--';
-                const maxTitle = isEs ? 'Temperatura máxima' : 'Temperatura màxima';
-                const minTitle = isEs ? 'Temperatura mínima' : 'Temperatura mínima';
                 
                 return `
                     <div class="weather-day-item">
@@ -743,16 +773,18 @@
                         <span style="font-size: 0.8rem; font-weight: 300; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: capitalize; height: 2.4em; display: flex; align-items: center; justify-content: center; line-height: 1.2;">
                             ${descText}
                         </span>
-                        <div class="weather-day-temp">
-                            <span style="color: #ef4444;" title="${maxTitle}">${maxTemp}</span>
-                            <span style="color: var(--text-muted); font-weight: 300;">/</span>
-                            <span style="color: #3b82f6;" title="${minTitle}">${minTemp}</span>
-                        </div>
-                        ${day.precipProb > 0 ? `
-                            <div style="margin-top: 0.5rem; font-size: 0.7rem; color: #3b82f6; display: flex; align-items: center; gap: 0.25rem; font-weight: 500;">
-                                <i data-lucide="droplet" style="width: 10px; height: 10px;"></i> ${day.precipProb}%
+                        <div class="weather-day-temp-wrapper">
+                            <div class="weather-day-temp">
+                                <span style="color: #ef4444;" title="${maxTitle}">${maxTemp}</span>
+                                <span style="color: var(--text-muted); font-weight: 300;">/</span>
+                                <span style="color: #3b82f6;" title="${minTitle}">${minTemp}</span>
                             </div>
-                        ` : ''}
+                            ${day.precipProb > 0 ? `
+                                <div class="weather-day-precip" style="margin-top: 0.25rem; font-size: 0.7rem; color: #3b82f6; display: flex; align-items: center; gap: 0.15rem; font-weight: 500;">
+                                    <i data-lucide="droplet" style="width: 10px; height: 10px;"></i> ${day.precipProb}%
+                                </div>
+                            ` : ''}
+                        </div>
                     </div>
                 `;
             }).join('');
