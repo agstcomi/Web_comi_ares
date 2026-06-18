@@ -136,6 +136,17 @@ Completado y subido en el commit `25a06d0`. Se realizó una auditoría completa 
 
 ---
 
-## 9. Próximo Paso
+## 9. Rediseño del Widget del Tiempo y Ajustes Estéticos (PRO)
+Completado y subido en el commit `f246d9e`:
+* **Enlace de Últimas Noticias**: Se corrigió el enlace "Saber més de nosaltres" / "Saber más de nosotros" de la cabecera de noticias en [index.html](file:///Users/tsoga00/Web_comi_ares/index.html) y [es/index.html](file:///Users/tsoga00/Web_comi_ares/es/index.html) para que apunte correctamente a la sección de todas las noticias (`noticies.html` / `noticies`) en vez de quiénes somos, y se tradujo como "Veure més notícies →" y "Ver más noticias →".
+* **Widget de Tiempo Horizontal**: Rediseño completo del widget del clima en la home para abarcar el 100% de la sección en desktop, inspirado en el diseño del widget de Mecca. Se añadió de fondo una fotografía real del pueblo de Ares del Maestrat (`img/temps_bg.jpg`) con gradientes adaptativos claros (`rgba(250, 250, 250, ...)`) para asegurar el contraste de las fuentes en negro/gris de la web.
+* **Desenfoque de Cristal Esmerilado (Glassmorphism)**: Las celdas de pronóstico diario ahora tienen `backdrop-filter: blur(8px)`, logrando que el fondo fotográfico se difumine de forma estética detrás de ellas.
+* **Solución de Desborde Móvil**: Se solucionó el desbordamiento lateral de la probabilidad de lluvia en móviles. Se envolvieron la temperatura y la gota de agua en el subcontenedor `.weather-day-temp-wrapper` y se les aplicó `margin-left: auto` y `flex-shrink: 0` en responsive, alineando todo limpiamente a la derecha y previniendo cortes en pantallas estrechas.
+* **Cache-Busting (v1.10)**: Se bumpó la importación del archivo CSS a `?v=1.10` en los 22 archivos HTML del proyecto para obligar a los navegadores a descargar los nuevos estilos.
+
+---
+
+## 10. Próximo Paso
 * Completar las acciones manuales de seguridad descritas en la sección 8.
 * Esperar a nuevas instrucciones del usuario.
+
