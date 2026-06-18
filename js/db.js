@@ -46,7 +46,7 @@ const MOCK_NEWS = [
         subtitle_es: "La Comisión de Fiestas pone en marcha la segunda edición de este certamen literario en valenciano, donde los cuentos participantes deben ambientarse en el municipio.",
         content: "La Comissió de Festes llança la segona edició d'aquest certamen literari en valencià, on les històries participants hauran d'estar ambientades al municipi. Les bases del concurs inclouen un primer premi en metàl·lic i la publicació de les obres seleccionades. Consulta tota la informació en el web de l'Ajuntament.",
         content_es: "La Comisión de Fiestas pone en marcha la segunda edición de este certamen literario en valenciano, donde los cuentos participantes deben ambientarse en el municipio. Las bases del concurso incluyen un primer premio en metálico y la publicación de las obras seleccionadas. Consulta toda la información en la web del Ayuntamiento.",
-        image_url: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=800",
+        image_url: "https://wqelwzlnxhbhiedmxona.supabase.co/functions/v1/share?image-for-slug=concurs-relat-breu-terme-dares",
         created_at: "2026-06-02",
         author: "Comissió de Festes",
         slug: "concurs-relat-breu-terme-dares",
