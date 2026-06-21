@@ -354,6 +354,10 @@ function renderFooter() {
     const addressValue = 'Pl. Major, 9, 12165 Ares del Maestrat, Castelló';
     const contactHref = isEs ? '/es/contacte' : '/contacte';
     
+    const supportLabel = isEs ? 'Con el apoyo de:' : 'Amb el suport de:';
+    const supportUrl = isEs ? 'https://www.aresdelmaestrat.es/es/node' : 'https://www.aresdelmaestrat.es/ca/node';
+    const escutPath = '/img/escut_ares_blanc.png?v=1.1';
+
     const copyrightText = isEs 
         ? `&copy; ${new Date().getFullYear()} Comisión de Fiestas de Ares del Maestrat. Todos los derechos reservados.`
         : `&copy; ${new Date().getFullYear()} Comissió de Festes d'Ares del Maestrat. Tots els drets reservats.`;
@@ -406,6 +410,12 @@ function renderFooter() {
                             <div><strong>${addressLabel}</strong> ${addressValue}</div>
                         </div>
                     </div>
+                    <div class="footer-support-col">
+                        <span class="footer-support-label">${supportLabel}</span>
+                        <a href="${supportUrl}" target="_blank" class="footer-support-link">
+                            <img src="${escutPath}" alt="Escut de l'Ajuntament d'Ares del Maestrat" class="footer-support-logo">
+                        </a>
+                    </div>
                 </div>
                 
                 <div class="footer-bottom-row">
@@ -417,6 +427,29 @@ function renderFooter() {
             </div>
         </footer>
     `;
+
+    // Inline the SVG shield if it is an SVG file to allow browser access to system/local fonts (like Zurich)
+    const supportLink = footerPlaceholder.querySelector('.footer-support-link');
+    if (supportLink && escutPath.includes('.svg')) {
+        fetch(escutPath)
+            .then(res => {
+                if (!res.ok) throw new Error('Network response was not ok');
+                return res.text();
+            })
+            .then(svgText => {
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(svgText, 'image/svg+xml');
+                const svgEl = doc.querySelector('svg');
+                if (svgEl) {
+                    svgEl.setAttribute('class', 'footer-support-logo');
+                    svgEl.removeAttribute('width');
+                    svgEl.removeAttribute('height');
+                    supportLink.innerHTML = '';
+                    supportLink.appendChild(svgEl);
+                }
+            })
+            .catch(err => console.warn('Could not inline support SVG, falling back to img:', err));
+    }
 
     // Initialize Lucide icons if available
     if (window.lucide) {

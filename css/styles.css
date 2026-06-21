@@ -1882,6 +1882,38 @@ footer.main-footer {
     color: #ffffff;
 }
 
+.footer-support-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    margin-top: 2.5rem;
+}
+
+.footer-support-label {
+    font-size: 0.75rem;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 600;
+    font-family: var(--font-heading);
+}
+
+.footer-support-link {
+    display: block;
+    transition: var(--transition);
+}
+
+.footer-support-link:hover {
+    opacity: 0.8;
+}
+
+.footer-support-logo {
+    height: 60px;
+    width: auto;
+    display: block;
+}
+
 .footer-bottom-row {
     padding-top: 2rem;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
