@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="/sitemap-style.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+        xmlns:xhtml="http://www.w3.org/1999/xhtml"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
     <!-- HOME -->
     <url>
@@ -123,29 +124,8 @@
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/quisom"/>
     </url>
 
-    <!-- GALERIA / GALERÍA -->
-    <url>
-        <loc>https://www.comiares.es/galeria</loc>
-        <lastmod>2026-06-15</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
-        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
-        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/galeria"/>
-        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/galeria"/>
-        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/galeria"/>
-    </url>
-    <url>
-        <loc>https://www.comiares.es/es/galeria</loc>
-        <lastmod>2026-06-15</lastmod>
-        <changefreq>monthly</changefreq>
-        <priority>0.7</priority>
-        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
-        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
-        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/galeria"/>
-        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/galeria"/>
-        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/galeria"/>
-    </url>
+    <!-- DYNAMIC GALLERY START -->
+    <!-- DYNAMIC GALLERY END -->
 
     <!-- CONTACTE / CONTACTO -->
     <url>

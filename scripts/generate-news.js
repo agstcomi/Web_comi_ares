@@ -23,6 +23,32 @@ function escapeHtml(text) {
     .replace(/'/g, "&#039;");
 }
 
+function getAbsoluteImageUrl(url) {
+  if (!url) return "";
+  if (url.startsWith("data:image")) return "";
+  
+  let resolvedUrl = url;
+  if (url.startsWith("http://") || url.startsWith("https://")) {
+    resolvedUrl = url;
+  } else {
+    const cleanUrl = url.startsWith("/") ? url.slice(1) : url;
+    resolvedUrl = `https://www.comiares.es/${cleanUrl}`;
+  }
+
+  // Convert to WebP if local image format
+  const isLocal = resolvedUrl.startsWith("https://www.comiares.es/");
+  if (isLocal) {
+    const lastDot = resolvedUrl.lastIndexOf('.');
+    if (lastDot !== -1) {
+      const ext = resolvedUrl.substring(lastDot).toLowerCase();
+      if (ext === '.jpg' || ext === '.jpeg' || ext === '.png') {
+        resolvedUrl = resolvedUrl.substring(0, lastDot) + '.webp';
+      }
+    }
+  }
+  return resolvedUrl;
+}
+
 async function main() {
   console.log("Iniciando generación de páginas estáticas de noticias...");
 
@@ -264,8 +290,9 @@ async function main() {
     const sitemapPath = path.join(__dirname, '..', 'sitemap.xml');
     if (fs.existsSync(sitemapPath)) {
       let sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
-      let dynamicXml = '\n';
       
+      // Update News
+      let dynamicXml = '\n';
       for (const article of news) {
         if (article.slug) {
           const date = article.updated_at || article.created_at || new Date().toISOString().split('T')[0];
@@ -309,11 +336,95 @@ async function main() {
         sitemapContent = sitemapContent.substring(0, startIndex + '<!-- DYNAMIC NEWS START -->'.length) +
                          dynamicXml + '    ' +
                          sitemapContent.substring(endIndex);
-        fs.writeFileSync(sitemapPath, sitemapContent, 'utf-8');
-        console.log("  [OK] sitemap.xml actualizado con las URLs dinámicas de noticias.");
+        console.log("  [OK] sitemap.xml preparado con las URLs dinámicas de noticias.");
       } else {
         console.warn("  [WARN] No se encontraron los marcadores <!-- DYNAMIC NEWS START --> y <!-- DYNAMIC NEWS END --> en sitemap.xml");
       }
+
+      // Update Gallery
+      let latestPhotoDate = '2026-06-15';
+      if (photos.length > 0) {
+        const dates = photos.map(p => p.created_at).filter(Boolean);
+        if (dates.length > 0) {
+          latestPhotoDate = dates[0].split('T')[0];
+        }
+      }
+
+      let galleryXml = '\n';
+
+      // Valencian gallery entry
+      galleryXml += `    <url>
+        <loc>https://www.comiares.es/galeria</loc>
+        <lastmod>${latestPhotoDate}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/galeria"/>\n`;
+
+      for (const photo of photos) {
+        const imgUrl = getAbsoluteImageUrl(photo.image_url);
+        if (imgUrl) {
+          const title = photo.title || '';
+          const caption = photo.category || '';
+          galleryXml += `        <image:image>
+            <image:loc>${escapeHtml(imgUrl)}</image:loc>\n`;
+          if (title) {
+            galleryXml += `            <image:title>${escapeHtml(title)}</image:title>\n`;
+          }
+          if (caption) {
+            galleryXml += `            <image:caption>${escapeHtml(caption)}</image:caption>\n`;
+          }
+          galleryXml += `        </image:image>\n`;
+        }
+      }
+      galleryXml += `    </url>\n`;
+
+      // Castellano gallery entry
+      galleryXml += `    <url>
+        <loc>https://www.comiares.es/es/galeria</loc>
+        <lastmod>${latestPhotoDate}</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/galeria"/>\n`;
+
+      for (const photo of photos) {
+        const imgUrl = getAbsoluteImageUrl(photo.image_url);
+        if (imgUrl) {
+          const titleEs = photo.title_es || photo.title || '';
+          const captionEs = photo.category_es || photo.category || '';
+          galleryXml += `        <image:image>
+            <image:loc>${escapeHtml(imgUrl)}</image:loc>\n`;
+          if (titleEs) {
+            galleryXml += `            <image:title>${escapeHtml(titleEs)}</image:title>\n`;
+          }
+          if (captionEs) {
+            galleryXml += `            <image:caption>${escapeHtml(captionEs)}</image:caption>\n`;
+          }
+          galleryXml += `        </image:image>\n`;
+        }
+      }
+      galleryXml += `    </url>\n`;
+
+      const startGal = sitemapContent.indexOf('<!-- DYNAMIC GALLERY START -->');
+      const endGal = sitemapContent.indexOf('<!-- DYNAMIC GALLERY END -->');
+
+      if (startGal !== -1 && endGal !== -1) {
+        sitemapContent = sitemapContent.substring(0, startGal + '<!-- DYNAMIC GALLERY START -->'.length) +
+                         galleryXml + '    ' +
+                         sitemapContent.substring(endGal);
+        console.log("  [OK] sitemap.xml actualizado con las URLs de la galeria e Imagenes.");
+      } else {
+        console.warn("  [WARN] No se encontraron los marcadores <!-- DYNAMIC GALLERY START --> y <!-- DYNAMIC GALLERY END --> en sitemap.xml");
+      }
+
+      fs.writeFileSync(sitemapPath, sitemapContent, 'utf-8');
     }
 
     // --- ACTUALIZAR DATOS ESTRUCTURADOS ESTÁTICOS DE PROGRAMACIÓN ---
