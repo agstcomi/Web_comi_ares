@@ -420,7 +420,10 @@ function renderFooter() {
                 
                 <div class="footer-bottom-row">
                     <div class="footer-copyright">
-                        ${copyrightText}
+                        <div>${copyrightText}</div>
+                        <div class="developed-by" style="margin-top: 0.35rem; font-size: 0.7rem; color: rgba(255, 255, 255, 0.35);">
+                            ${isEs ? 'Desarrollado por' : 'Desenvolupat per'} <a href="https://www.instagram.com/carr.asca/" target="_blank" style="text-decoration: underline; color: inherit; transition: color 0.2s ease;">@carr.asca</a>
+                        </div>
                     </div>
                     ${legalHTML}
                 </div>
