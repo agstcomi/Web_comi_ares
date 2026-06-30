@@ -222,7 +222,7 @@ nav.nav-menu ul {
     gap: 0.5rem;
 }
 
-nav.nav-menu ul li a {
+nav.nav-menu ul li > a {
     display: inline-block;
     font-family: var(--font-heading);
     font-weight: 700;
@@ -237,18 +237,18 @@ nav.nav-menu ul li a {
     border: 1px solid transparent;
 }
 
-nav.nav-menu ul li a:hover {
+nav.nav-menu ul li > a:hover {
     color: var(--text-primary);
     background-color: rgba(0, 0, 0, 0.05);
 }
 
-nav.nav-menu ul li a.active {
+nav.nav-menu ul li > a.active {
     background-color: #000000 !important;
     color: #ffffff !important;
     border-color: #000000;
 }
 
-nav.nav-menu ul li a::after {
+nav.nav-menu ul li > a::after {
     display: none !important;
 }
 
@@ -302,7 +302,7 @@ nav.nav-menu ul li a::after {
         left: 1.25rem;
         top: 50%;
         transform: translateY(-50%);
-        z-index: 1002;
+        z-index: 1003;
         color: var(--text-primary);
     }
     
@@ -315,7 +315,7 @@ nav.nav-menu ul li a::after {
         background-color: rgba(0, 0, 0, 0);
         backdrop-filter: none;
         border-radius: 0;
-        z-index: 1000;
+        z-index: 1002;
         display: flex;
         justify-content: flex-start;
         align-items: stretch;
@@ -356,14 +356,14 @@ nav.nav-menu ul li a::after {
         text-align: center;
     }
     
-    nav.nav-menu ul li a {
+    nav.nav-menu ul li > a {
         font-size: 1.3rem;
         padding: 0.8rem 2rem;
         display: inline-block;
         width: auto;
     }
 
-    nav.nav-menu ul li a.active {
+    nav.nav-menu ul li > a.active {
         background-color: #000000 !important;
         color: #ffffff !important;
         border-radius: 100px;
@@ -2005,13 +2005,13 @@ header.main-header.on-hero .nav-toggle {
 
 /* On desktop, make menu links white when on hero */
 @media (min-width: 769px) {
-    header.main-header.on-hero nav.nav-menu ul li a {
+    header.main-header.on-hero nav.nav-menu ul li > a {
         color: #ffffff;
     }
-    header.main-header.on-hero nav.nav-menu ul li a:hover {
+    header.main-header.on-hero nav.nav-menu ul li > a:hover {
         background-color: rgba(255, 255, 255, 0.15);
     }
-    header.main-header.on-hero nav.nav-menu ul li a.active {
+    header.main-header.on-hero nav.nav-menu ul li > a.active {
         background-color: #ffffff !important;
         color: #000000 !important;
         border-color: #ffffff;
@@ -2579,10 +2579,12 @@ button,
     }
 
     .mobile-lang-switch .lang-dropdown-content {
+        top: auto;
+        bottom: calc(100% + 8px);
         right: auto;
         left: 50%;
-        transform: translateX(-50%) translateY(-8px);
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        transform: translateX(-50%) translateY(8px);
+        box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
     }
 
     .mobile-lang-switch .lang-dropdown-content.show {

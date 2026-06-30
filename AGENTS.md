@@ -146,7 +146,17 @@ Completado y subido en el commit `f246d9e`:
 
 ---
 
-## 10. Próximo Paso
+## 10. Corrección de Solapamientos en Cabecera Móvil y Selector de Idiomas (Local)
+Completado localmente:
+* **Colisión de Selectores de Enlace**: Se corrigió el conflicto en el menú móvil modificando los selectores del menú de navegación principal en [css/styles.css](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/css/styles.css) (ej. cambiando `nav.nav-menu ul li a` por `nav.nav-menu ul li > a`). Esto aísla por completo las opciones del selector de idiomas de los estilos de los enlaces del menú principal, previniendo que la opción activa se dibuje como un botón negro gigante.
+* **Desplegable de Idioma en Móvil (Dropup)**: Se reubicó la posición del contenedor `.mobile-lang-switch .lang-dropdown-content` para que se abra de abajo hacia arriba (`top: auto; bottom: calc(100% + 8px)`), previniendo que se desborde y se corte por el límite inferior de la pantalla o del drawer.
+* **Solapamiento del Logo**: Se ajustaron los z-indices dentro de la media query móvil en [css/styles.css](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/css/styles.css) (`nav.nav-menu` a `1002`, `.nav-toggle` a `1003` y `.logo` a `1001`) para forzar que el logo se oculte tras el panel blanco/difuminado del menú al abrirse, manteniendo el botón del menú de hamburguesa visible por encima de todo.
+* **Cache-Busting (v1.13)**: Se incrementó la consulta de la hoja de estilos a `?v=1.13` en los 22 archivos HTML del proyecto para forzar la recarga inmediata de la caché de CSS en los navegadores.
+
+---
+
+## 11. Próximo Paso
 * Completar las acciones manuales de seguridad descritas en la sección 8.
+* Probar los cambios en el servidor local y validar que tanto el dropdown como el logo se comporten correctamente en móvil.
 * Esperar a nuevas instrucciones del usuario.
 
