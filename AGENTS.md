@@ -155,8 +155,24 @@ Completado localmente:
 
 ---
 
-## 11. Próximo Paso
-* Completar las acciones manuales de seguridad descritas en la sección 8.
-* Probar los cambios en el servidor local y validar que tanto el dropdown como el logo se comporten correctamente en móvil.
+## 11. Rediseño de Programación con Calendario Interactivo (PRO)
+Completado localmente y subido a producción:
+* **Estructura Rejilla Desktop:** Dos columnas en escritorio (`min-width: 992px`) con sidebar de `340px` a la izquierda (buscador, calendario y tarjeta de exportación) y listado flexible a la derecha.
+* **Componente Calendario con Doble Vista:**
+  - **Vista Mensual:** Cuadrícula de 6 semanas con puntos negros de eventos en base a los filtros activos en tiempo real.
+  - **Vista Semanal (Móvil):** Fila comprimida de 7 días (número de día arriba, nombre de día abajo) que permite la navegación por semanas. Conmutador de vista en cabecera.
+  - **Desplazamiento horizontal (Swipe) en móvil:** Gestos táctiles de deslizamiento horizontal sobre el widget de calendario para cambiar de mes/semana de forma intuitiva, con prevención de falsos positivos en scroll vertical.
+* **Buscador y Unificación de Bordes:** Buscador movido al sidebar encima del calendario con un radio de borde unificado de `20px` (calendario, buscador y tarjeta de exportación).
+* **Filtros por Categoría Multi-select Desplegables:** Reemplazo de los botones de categorías individuales por un botón de dropdown ("Categories") con selección de múltiples casillas, indicador dinámico del conteo de filtros activos, botón de limpieza rápida y prevención de cierre automático en clics internos.
+* **Alineación de Cabecera:** Título y botón de categorías alineados horizontalmente en la misma línea superior que el buscador. El botón de categorías se sitúa al borde derecho alineado con el margen derecho de las tarjetas de actos diarios (`.timeline-day-group`).
+* **Tarjeta de Exportación Calendario (SEO):** Botón transformado en tarjeta grande con descripción en valenciano/castellano optimizada para motores de búsqueda, con botón de sincronización de eventos `.ics`.
+* **Corrección de Scroll en Móvil:** Movido el posicionamiento `position: sticky;` del sidebar a la media query de escritorio, permitiendo el scroll vertical continuo sin bloqueos en dispositivos móviles.
+* **Optimización de Espaciados:** Eliminado el gap en blanco excesivo superior encima del buscador (separación fijada en 40px homogénea).
+* **Cache-Busting (v1.19 / v1.14):** Bumped en los HTML del proyecto.
+
+---
+
+## 12. Próximo Paso
+* Completar las acciones manuales de seguridad descritas en la sección 8 si no se han realizado.
 * Esperar a nuevas instrucciones del usuario.
 

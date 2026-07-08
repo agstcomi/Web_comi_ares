@@ -44,7 +44,7 @@
     <meta name="theme-color" content="#ffffff">
     <link rel="apple-touch-icon" href="/img/icon-512.svg">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="/css/styles.css?v=1.14">
+    <link rel="stylesheet" href="/css/styles.css?v=1.19">
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
@@ -65,85 +65,111 @@
         </p>
     </div>
 
-    <!-- Filter and Search Bar -->
-    <!-- Filter and Search Bar -->
-    <section style="border-bottom: none;">
-        <div class="container" style="padding-top: 1rem; padding-bottom: 5rem;">
-            <div class="filter-bar">
-                <div class="filter-categories" id="categories-container">
-                    <button class="filter-btn active" data-category="all">Tots els actes</button>
-                    <button class="filter-btn" data-category="musica">Música</button>
-                    <button class="filter-btn" data-category="cultura">Cultura</button>
-                    <button class="filter-btn" data-category="menjars">Menjars</button>
-                    <button class="filter-btn" data-category="populars">Populars</button>
-                </div>
-                
-                <div class="filter-search-row">
-                    <div class="search-box">
+    <section style="border-bottom: none; padding-top: 0;">
+        <div class="container" style="padding-top: 0; padding-bottom: 5rem;">
+
+            <div class="programacio-layout" style="margin-top: 0.5rem;">
+                <!-- Left Sidebar: Search + Calendar + Export Card -->
+                <div class="programacio-sidebar">
+                    <!-- Search Box -->
+                    <div class="search-box sidebar-search">
                         <i data-lucide="search" style="width: 16px; height: 16px;"></i>
                         <input type="text" id="search-input" placeholder="Buscar acte, lloc...">
                     </div>
 
-                    <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 0.35rem;">
-                        <button class="btn btn-sm btn-secondary" id="btn-download-full-calendar" style="padding: 0.5rem 1rem; font-size: 0.75rem; display: flex; align-items: center; gap: 0.5rem; height: 38px;" title="Exporta el calendari en format .ics compatible amb Google, Apple i Outlook">
-                            <i data-lucide="calendar-plus" style="width: 14px; height: 14px;"></i>
-                            <span>Exportar Calendari</span>
-                        </button>
-                        <span style="font-size: 0.65rem; color: var(--text-muted); text-align: right; display: block; max-width: 180px;">
-                            Afegir al teu calendari (Google, Apple, Outlook)
-                        </span>
+                    <!-- Calendar Container -->
+                    <div class="calendar-container" id="calendar-widget" style="margin-bottom: 1.25rem;">
+                        <!-- Dynamic Calendar rendering -->
                     </div>
-                </div>
-            </div>
 
-            <!-- Timeline for Events -->
-            <div class="events-timeline" id="events-timeline">
-                <!-- Dynamic events loaded by programacio.js (Skeletons shown during load) -->
-                <div class="timeline-day-group skeleton-card">
-                    <div class="timeline-date-container">
-                        <div class="skeleton skeleton-title" style="width: 40%; height: 1.75rem; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 20%; height: 0.875rem;"></div>
-                    </div>
-                    <div class="timeline-events-list">
-                        <div class="event-row">
-                            <div class="event-content-col" style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
-                                <div class="event-time-category" style="display: flex; gap: 1rem; align-items: center;">
-                                    <div class="skeleton skeleton-text" style="width: 80px; height: 1rem; margin-bottom: 0;"></div>
-                                    <div class="skeleton skeleton-text" style="width: 60px; height: 1rem; border-radius: 9999px; margin-bottom: 0;"></div>
-                                </div>
-                                <div class="skeleton skeleton-title" style="width: 60%; height: 1.25rem; margin-bottom: 0.25rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.25rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0;"></div>
-                            </div>
-                        </div>
-                        <div class="event-row">
-                            <div class="event-content-col" style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
-                                <div class="event-time-category" style="display: flex; gap: 1rem; align-items: center;">
-                                    <div class="skeleton skeleton-text" style="width: 80px; height: 1rem; margin-bottom: 0;"></div>
-                                    <div class="skeleton skeleton-text" style="width: 60px; height: 1rem; border-radius: 9999px; margin-bottom: 0;"></div>
-                                </div>
-                                <div class="skeleton skeleton-title" style="width: 50%; height: 1.25rem; margin-bottom: 0.25rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.25rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 0;"></div>
-                            </div>
-                        </div>
+                    <!-- Export Calendar Card -->
+                    <div class="calendar-export-card">
+                        <h3>Afegeix al teu calendari</h3>
+                        <p>
+                            Consulta el programa oficial d'actes de les Festes d'Ares del Maestrat 2026. Afegeix tots els actes (concerts, balls, dinars i cercaviles) al teu calendari personal de Google Calendar, Apple i Outlook en format .ics.
+                        </p>
+                        <button class="btn btn-primary btn-export-sidebar" id="btn-download-full-calendar" title="Exporta el calendari en format .ics compatible amb Google, Apple i Outlook">
+                            <i data-lucide="calendar-plus" style="width: 16px; height: 16px;"></i>
+                            <span>Sincronitzar actes</span>
+                        </button>
                     </div>
                 </div>
-                <div class="timeline-day-group skeleton-card">
-                    <div class="timeline-date-container">
-                        <div class="skeleton skeleton-title" style="width: 35%; height: 1.75rem; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 15%; height: 0.875rem;"></div>
+
+                <!-- Right Main Panel: Events List -->
+                <div class="programacio-main">
+                    <!-- Events View Header (Title + Categories + Clear Filter) -->
+                    <div class="events-view-header">
+                        <div class="events-view-title-row">
+                            <h2 id="events-view-title">Pròxims actes</h2>
+                            
+                            <button id="btn-clear-day-filter" class="btn-clear-day-filter" style="display: none;">
+                                <i data-lucide="calendar" style="width: 14px; height: 14px;"></i>
+                                <span>Veure pròxims actes</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Categories Dropdown container -->
+                        <div class="category-dropdown-container" id="category-dropdown-container">
+                            <button class="filter-dropdown-btn" id="filter-dropdown-btn">
+                                <span id="filter-dropdown-label">Categories</span>
+                                <i data-lucide="chevron-down" style="width: 14px; height: 14px; transition: transform 0.2s;" class="dropdown-chevron"></i>
+                            </button>
+                            <div class="filter-dropdown-content" id="filter-dropdown-content">
+                                <!-- Dynamic checkboxes rendered by programacio.js -->
+                            </div>
+                        </div>
                     </div>
-                    <div class="timeline-events-list">
-                        <div class="event-row">
-                            <div class="event-content-col" style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
-                                <div class="event-time-category" style="display: flex; gap: 1rem; align-items: center;">
-                                    <div class="skeleton skeleton-text" style="width: 80px; height: 1rem; margin-bottom: 0;"></div>
-                                    <div class="skeleton skeleton-text" style="width: 60px; height: 1rem; border-radius: 9999px; margin-bottom: 0;"></div>
+
+                    <!-- Timeline for Events -->
+                    <div class="events-timeline" id="events-timeline">
+                        <!-- Dynamic events loaded by programacio.js (Skeletons shown during load) -->
+                        <div class="timeline-day-group skeleton-card">
+                            <div class="timeline-date-container">
+                                <div class="skeleton skeleton-title" style="width: 40%; height: 1.75rem; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 20%; height: 0.875rem;"></div>
+                            </div>
+                            <div class="timeline-events-list">
+                                <div class="event-row">
+                                    <div class="event-content-col" style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <div class="event-time-category" style="display: flex; gap: 1rem; align-items: center;">
+                                            <div class="skeleton skeleton-text" style="width: 80px; height: 1rem; margin-bottom: 0;"></div>
+                                            <div class="skeleton skeleton-text" style="width: 60px; height: 1rem; border-radius: 9999px; margin-bottom: 0;"></div>
+                                        </div>
+                                        <div class="skeleton skeleton-title" style="width: 60%; height: 1.25rem; margin-bottom: 0.25rem;"></div>
+                                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.25rem;"></div>
+                                        <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0;"></div>
+                                    </div>
                                 </div>
-                                <div class="skeleton skeleton-title" style="width: 55%; height: 1.25rem; margin-bottom: 0.25rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.25rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 0;"></div>
+                                <div class="event-row">
+                                    <div class="event-content-col" style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <div class="event-time-category" style="display: flex; gap: 1rem; align-items: center;">
+                                            <div class="skeleton skeleton-text" style="width: 80px; height: 1rem; margin-bottom: 0;"></div>
+                                            <div class="skeleton skeleton-text" style="width: 60px; height: 1rem; border-radius: 9999px; margin-bottom: 0;"></div>
+                                        </div>
+                                        <div class="skeleton skeleton-title" style="width: 50%; height: 1.25rem; margin-bottom: 0.25rem;"></div>
+                                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.25rem;"></div>
+                                        <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 0;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-day-group skeleton-card">
+                            <div class="timeline-date-container">
+                                <div class="skeleton skeleton-title" style="width: 35%; height: 1.75rem; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 15%; height: 0.875rem;"></div>
+                            </div>
+                            <div class="timeline-events-list">
+                                <div class="event-row">
+                                    <div class="event-content-col" style="flex-grow: 1; display: flex; flex-direction: column; gap: 0.5rem;">
+                                        <div class="event-time-category" style="display: flex; gap: 1rem; align-items: center;">
+                                            <div class="skeleton skeleton-text" style="width: 80px; height: 1rem; margin-bottom: 0;"></div>
+                                            <div class="skeleton skeleton-text" style="width: 60px; height: 1rem; border-radius: 9999px; margin-bottom: 0;"></div>
+                                        </div>
+                                        <div class="skeleton skeleton-title" style="width: 55%; height: 1.25rem; margin-bottom: 0.25rem;"></div>
+                                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.25rem;"></div>
+                                        <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 0;"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -168,7 +194,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
     <script src="/js/db.js?v=1.8" defer></script>
     <script src="/js/main.js?v=1.13" defer></script>
-    <script src="js/programacio.js?v=1.7" defer></script>
+    <script src="/js/programacio.js?v=1.14" defer></script>
     <!-- Metricool Tracking Script -->
     <script>function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"6c919b9c88213af948db1b24d716642e"})});</script>
 </body>
