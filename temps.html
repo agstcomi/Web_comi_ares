@@ -1172,6 +1172,12 @@
                 // Load first day immediately without delay animation
                 updateSelectedDay(0, true);
 
+                // Force entrance animations to show on weather page (fixing mobile Safari bugs)
+                setTimeout(() => {
+                    const anims = document.querySelectorAll('.animate-fade-in-up');
+                    anims.forEach(el => el.classList.add('visible'));
+                }, 150);
+
             } catch (err) {
                 console.error("Critical error loading weather page:", err);
                 document.getElementById('weather-page-loader').innerHTML = `
