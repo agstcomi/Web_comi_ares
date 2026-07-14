@@ -12,6 +12,38 @@ let memoryCache: any = null;
 let memoryCacheTime = 0;
 const CACHE_DURATION_MS = 60 * 60 * 1000; // 1 hour in milliseconds
 
+async function fetchAemetJson(endpoint: string, apiKey: string) {
+  const url = `https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/${endpoint}?api_key=${apiKey}`;
+  console.log(`Fetching ${endpoint} info redirect from AEMET...`);
+  const aemetRes = await fetch(url, {
+    headers: {
+      "accept": "application/json"
+    }
+  });
+
+  if (!aemetRes.ok) {
+    throw new Error(`AEMET API error for ${endpoint}: HTTP ${aemetRes.status}`);
+  }
+
+  const redirectData = await aemetRes.json();
+  if (redirectData.estado !== 200) {
+    throw new Error(`AEMET redirect error for ${endpoint}: ${redirectData.descripcion || redirectData.estado}`);
+  }
+
+  const dataUrl = redirectData.datos;
+  if (!dataUrl) {
+    throw new Error(`No data URL returned by AEMET redirect for ${endpoint}`);
+  }
+
+  console.log(`Fetching actual JSON from temporary URL for ${endpoint}...`);
+  const dataRes = await fetch(dataUrl);
+  if (!dataRes.ok) {
+    throw new Error(`AEMET data fetch error for ${endpoint}: HTTP ${dataRes.status}`);
+  }
+
+  return await dataRes.json();
+}
+
 serve(async (req) => {
   // Handle CORS preflight
   if (req.method === "OPTIONS") {
@@ -72,45 +104,67 @@ serve(async (req) => {
     // 3. Fetch from AEMET if no fresh cache was available
     if (!forecastData) {
       const municipio = "12014"; // Ares del Maestrat
-      const url = `https://opendata.aemet.es/opendata/api/prediccion/especifica/municipio/diaria/${municipio}?api_key=${apiKey}`;
 
       try {
         console.log("Fetching fresh weather from AEMET...");
-        // Step 1: Call AEMET to get the temporary data URL
-        const aemetRes = await fetch(url, {
-          headers: {
-            "accept": "application/json"
-          }
+        
+        // Fetch daily and hourly in parallel (hourly is non-critical, so we wrap it in its own try/catch)
+        const dailyPromise = fetchAemetJson(`diaria/${municipio}`, apiKey);
+        const hourlyPromise = fetchAemetJson(`horaria/${municipio}`, apiKey).catch((err) => {
+          console.warn("Failed fetching hourly forecast from AEMET:", err);
+          return null;
         });
 
-        if (!aemetRes.ok) {
-          throw new Error(`AEMET API error: HTTP ${aemetRes.status}`);
+        const [dailyData, hourlyData] = await Promise.all([dailyPromise, hourlyPromise]);
+
+        if (!dailyData || dailyData.length === 0) {
+          throw new Error("Empty daily forecast data returned by AEMET");
         }
 
-        const redirectData = await aemetRes.json();
-        if (redirectData.estado !== 200) {
-          throw new Error(`AEMET redirect error: ${redirectData.descripcion || redirectData.estado}`);
+        // Extract current Spain date and hour dynamically
+        let currentDateStr = "";
+        let currentHourStr = "";
+        try {
+          const parts = new Intl.DateTimeFormat("en-US", {
+            timeZone: "Europe/Madrid",
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+            hour: "2-digit",
+            hour12: false
+          }).formatToParts(new Date());
+
+          const year = parts.find(p => p.type === "year")?.value;
+          const month = parts.find(p => p.type === "month")?.value;
+          const day = parts.find(p => p.type === "day")?.value;
+          const hour = parts.find(p => p.type === "hour")?.value;
+
+          currentDateStr = `${year}-${month}-${day}`;
+          currentHourStr = hour === "24" ? "00" : hour || "";
+        } catch (e) {
+          console.error("Error computing Spain time parts:", e);
         }
 
-        const dataUrl = redirectData.datos;
-        if (!dataUrl) {
-          throw new Error("No data URL returned by AEMET redirect");
+        // Try to extract the temperature for the current hour
+        let currentTemp: number | null = null;
+        if (hourlyData && hourlyData[0] && currentDateStr && currentHourStr) {
+          const daysHoraria = hourlyData[0]?.prediccion?.dia || [];
+          const todayHoraria = daysHoraria.find((d: any) => d.fecha && d.fecha.startsWith(currentDateStr)) || daysHoraria[0];
+          if (todayHoraria && todayHoraria.temperatura) {
+            const tempObj = todayHoraria.temperatura.find((t: any) => t.periodo === currentHourStr);
+            if (tempObj && tempObj.value !== undefined) {
+              currentTemp = parseInt(String(tempObj.value), 10);
+              console.log(`Found hourly temperature for Spain current hour (${currentHourStr}): ${currentTemp}°C`);
+            }
+          }
         }
 
-        // Step 2: Fetch the actual weather forecast JSON from the temporary URL
-        const dataRes = await fetch(dataUrl);
-        if (!dataRes.ok) {
-          throw new Error(`AEMET data fetch error: HTTP ${dataRes.status}`);
-        }
-
-        const rawData = await dataRes.json();
-        
-        // Step 3: Extract and simplify the forecast data
-        const municipioData = rawData[0];
+        // Extract and simplify the forecast data
+        const municipioData = dailyData[0];
         const days = municipioData?.prediccion?.dia || [];
 
         // Parse the 7 days of forecast
-        const forecast = days.map((day: any) => {
+        const forecast = days.map((day: any, index: number) => {
           // Find the most representative sky state (often '00-24' period or the first one)
           const skyStateObj = day.estadoCielo?.find((state: any) => state.periodo === "00-24") || day.estadoCielo?.[0] || {};
           
@@ -140,10 +194,13 @@ serve(async (req) => {
           const sunrise = sunTimes.sunrise.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Madrid" });
           const sunset = sunTimes.sunset.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit", timeZone: "Europe/Madrid" });
 
+          const isToday = currentDateStr ? dateStr === currentDateStr : (index === 0);
+
           return {
             date: dateStr,
             tempMax,
             tempMin,
+            currentTemp: isToday ? currentTemp : null,
             skyDescription: skyStateObj.descripcion || "Despejado",
             skyValue: skyStateObj.valor || "11",
             precipProb: precipValue,

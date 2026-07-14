@@ -719,7 +719,9 @@
             
             const tempHuge = document.getElementById('weather-temp-huge');
             if (tempHuge) {
-                tempHuge.textContent = today.tempMax !== null ? `${today.tempMax}°` : '--°';
+                tempHuge.textContent = today.currentTemp !== undefined && today.currentTemp !== null 
+                    ? `${today.currentTemp}°` 
+                    : (today.tempMax !== null ? `${today.tempMax}°` : '--°');
             }
             
             const tempRangeSub = document.getElementById('weather-temp-range-sub');

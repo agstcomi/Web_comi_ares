@@ -666,6 +666,10 @@
                         <i data-lucide="droplet" style="width: 16px; height: 16px;"></i>
                         <span>Lluvia: <strong id="sidebar-rain">0%</strong></span>
                     </div>
+                    <div class="weather-sidebar-info-row organic-fade" id="sidebar-max-row" style="display: none;">
+                        <i data-lucide="thermometer" style="width: 16px; height: 16px;"></i>
+                        <span>Máxima: <strong id="sidebar-max" style="color: #ef4444;">--°C</strong></span>
+                    </div>
                     <div class="weather-sidebar-info-row organic-fade">
                         <i data-lucide="thermometer" style="width: 16px; height: 16px;"></i>
                         <span>Mínima: <strong id="sidebar-min" style="color: #3b82f6;">--°C</strong></span>
@@ -1265,7 +1269,19 @@
             }
 
             // Update text elements directly
-            document.getElementById('sidebar-temp').textContent = tempMax;
+            const maxRow = document.getElementById('sidebar-max-row');
+            if (day.currentTemp !== undefined && day.currentTemp !== null) {
+                document.getElementById('sidebar-temp').textContent = `${day.currentTemp}°C`;
+                if (maxRow) {
+                    maxRow.style.display = 'flex';
+                    document.getElementById('sidebar-max').textContent = tempMax;
+                }
+            } else {
+                document.getElementById('sidebar-temp').textContent = tempMax;
+                if (maxRow) {
+                    maxRow.style.display = 'none';
+                }
+            }
             document.getElementById('sidebar-desc').textContent = descText;
             document.getElementById('sidebar-datetime').textContent = `${dayName}, ${dateStr}`;
             document.getElementById('sidebar-rain').textContent = `${day.precipProb}%`;
