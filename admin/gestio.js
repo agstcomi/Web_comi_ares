@@ -1270,17 +1270,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!email) {
                 email = 'comissio@aresdelmaestrat.com';
             }
-            const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es&de=${encodeURIComponent(email)}`;
-            const res = await fetch(url);
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            if (data && data.responseStatus && data.responseStatus !== 200) {
-                throw new Error(data.responseDetails || `API status ${data.responseStatus}`);
+            if (window.db && window.db.supabase) {
+                const { data, error } = await window.db.supabase.functions.invoke('translate-text', {
+                    body: { text: text, email: email }
+                });
+                if (error) throw error;
+                return data.translatedText;
+            } else {
+                const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=ca|es&de=${encodeURIComponent(email)}`;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (data && data.responseStatus && data.responseStatus !== 200) {
+                    throw new Error(data.responseDetails || `API status ${data.responseStatus}`);
+                }
+                if (data && data.responseData && data.responseData.translatedText) {
+                    return data.responseData.translatedText;
+                }
+                throw new Error('Invalid response format');
             }
-            if (data && data.responseData && data.responseData.translatedText) {
-                return data.responseData.translatedText;
-            }
-            throw new Error('Invalid response format');
         } catch (err) {
             console.error('Translation API call error:', err);
             throw err;
