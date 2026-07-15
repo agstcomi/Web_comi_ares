@@ -142,6 +142,7 @@ Completado y subido en el commit `f246d9e`:
 * **Widget de Tiempo Horizontal**: Rediseño completo del widget del clima en la home para abarcar el 100% de la sección en desktop, inspirado en el diseño del widget de Mecca. Se añadió de fondo una fotografía real del pueblo de Ares del Maestrat (`img/temps_bg.jpg`) con gradientes adaptativos claros (`rgba(250, 250, 250, ...)`) para asegurar el contraste de las fuentes en negro/gris de la web.
 * **Desenfoque de Cristal Esmerilado (Glassmorphism)**: Las celdas de pronóstico diario ahora tienen `backdrop-filter: blur(8px)`, logrando que el fondo fotográfico se difumine de forma estética detrás de ellas.
 * **Solución de Desborde Móvil**: Se solucionó el desbordamiento lateral de la probabilidad de lluvia en móviles. Se envolvieron la temperatura y la gota de agua en el subcontenedor `.weather-day-temp-wrapper` y se les aplicó `margin-left: auto` y `flex-shrink: 0` en responsive, alineando todo limpiamente a la derecha y previniendo cortes en pantallas estrechas.
+* **Gráfico de Temperatura Horizontal en Móvil**: Se encapsularon las cabeceras de los períodos del día y el gráfico de temperatura SVG dentro de un contenedor `.weather-scroll-container` con desplazamiento horizontal (`overflow-x: auto`) y un ancho mínimo de `640px` en `temps.html` y `es/temps.html`. Esto permite que el gráfico no se comprima en pantallas de móvil, garantizando que el gráfico y sus textos sean completamente legibles y que ambos elementos se desplacen en sincronía.
 * **Cache-Busting (v1.10)**: Se bumpó la importación del archivo CSS a `?v=1.10` en los 22 archivos HTML del proyecto para obligar a los navegadores a descargar los nuevos estilos.
 
 ---
@@ -170,9 +171,15 @@ Completado localmente y subido a producción:
 * **Optimización de Espaciados:** Eliminado el gap en blanco excesivo superior encima del buscador (separación fijada en 40px homogénea).
 * **Cache-Busting (v1.19 / v1.14):** Bumped en los HTML del proyecto.
 
+## 12. Sincronización y Configuración Completa de Supabase (PRO/Local)
+Completado en la última sesión:
+* **Despliegue de Edge Functions**: Se instaló el CLI de Supabase globalmente en el sistema y se desplegaron con éxito las Edge Functions `aemet-weather`, `translate-text`, `trigger-deploy` y `share`.
+* **Configuración del Webhook de Base de Datos**: Se configuró y guardó la clave de seguridad `WEBHOOK_SECRET` (`417dd2322e472432b0832969f63ae234ee71706f8ccfcb30ad895930c559b75e`) en los secrets de Supabase.
+* **Trigger SQL de Despliegue**: Ante la falta de acceso directo al panel visual de Webhooks en la consola de Supabase, se implementó de forma nativa mediante SQL la extensión `pg_net` y el disparador de base de datos `tr_news_deploy` en la tabla `news`, el cual realiza llamadas asíncronas seguras a `trigger-deploy` para disparar automáticamente el flujo de compilación e indexación en cada cambio de noticias.
+
 ---
 
-## 12. Próximo Paso
-* Completar las acciones manuales de seguridad descritas en la sección 8 si no se han realizado.
+## 13. Próximo Paso
+* Rotar la Supabase `anon` key si aún no se ha hecho, y actualizar la configuración en los secrets de GitHub y el panel de administración de la web `/admin/`.
 * Esperar a nuevas instrucciones del usuario.
 

@@ -243,6 +243,7 @@
             min-height: 180px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.005);
             transition: var(--transition);
+            min-width: 0;
         }
 
         .weather-highlight-card:hover {
@@ -626,6 +627,27 @@
             50% { transform: scale(1.15); opacity: 1; }
             100% { transform: scale(0.95); opacity: 0.8; }
         }
+
+        .weather-scroll-container {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 0.5rem;
+        }
+        .weather-scroll-container::-webkit-scrollbar {
+            height: 6px;
+        }
+        .weather-scroll-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .weather-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 3px;
+        }
+        .weather-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
     </style>
 </head>
 <body>
@@ -720,64 +742,69 @@
                                     <span class="weather-highlight-title" id="hourly-chart-title">Evolució per hores</span>
                                 </div>
                                 
-                                <!-- Periods header (Morning, Afternoon, Evening, Overnight) -->
-                                <div class="hourly-periods-header" style="display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; font-size: 0.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">
-                                    <div style="border-right: 1px solid var(--border-color);">
-                                        <div id="period-1-label">Matí</div>
-                                        <div style="font-size: 0.75rem; font-weight: 500; text-transform: none; display: flex; align-items: center; justify-content: center; gap: 0.2rem; margin-top: 0.2rem; color: var(--text-secondary);">
-                                            <i data-lucide="droplet" style="width: 12px; height: 12px;"></i> <span id="period-1-precip">0%</span>
+                                <!-- Scrollable Container for Periods & SVG Chart -->
+                                <div class="weather-scroll-container">
+                                    <div style="min-width: 640px; width: 100%; position: relative;">
+                                        <!-- Periods header (Morning, Afternoon, Evening, Overnight) -->
+                                        <div class="hourly-periods-header" style="display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; font-size: 0.8rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.75rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">
+                                            <div style="border-right: 1px solid var(--border-color);">
+                                                <div id="period-1-label">Matí</div>
+                                                <div style="font-size: 0.75rem; font-weight: 500; text-transform: none; display: flex; align-items: center; justify-content: center; gap: 0.2rem; margin-top: 0.2rem; color: var(--text-secondary);">
+                                                    <i data-lucide="droplet" style="width: 12px; height: 12px;"></i> <span id="period-1-precip">0%</span>
+                                                </div>
+                                            </div>
+                                            <div style="border-right: 1px solid var(--border-color);">
+                                                <div id="period-2-label">Vesprada</div>
+                                                <div style="font-size: 0.75rem; font-weight: 500; text-transform: none; display: flex; align-items: center; justify-content: center; gap: 0.2rem; margin-top: 0.2rem; color: var(--text-secondary);">
+                                                    <i data-lucide="droplet" style="width: 12px; height: 12px;"></i> <span id="period-2-precip">0%</span>
+                                                </div>
+                                            </div>
+                                            <div style="border-right: 1px solid var(--border-color);">
+                                                <div id="period-3-label">Vespre</div>
+                                                <div style="font-size: 0.75rem; font-weight: 500; text-transform: none; display: flex; align-items: center; justify-content: center; gap: 0.2rem; margin-top: 0.2rem; color: var(--text-secondary);">
+                                                    <i data-lucide="droplet" style="width: 12px; height: 12px;"></i> <span id="period-3-precip">0%</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div id="period-4-label">Nit</div>
+                                                <div style="font-size: 0.75rem; font-weight: 500; text-transform: none; display: flex; align-items: center; justify-content: center; gap: 0.2rem; margin-top: 0.2rem; color: var(--text-secondary);">
+                                                    <i data-lucide="droplet" style="width: 12px; height: 12px;"></i> <span id="period-4-precip">0%</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- SVG Container for the Chart -->
+                                        <div style="position: relative; width: 100%; height: 160px; margin-top: 1rem;">
+                                            <svg id="hourly-temp-svg" viewBox="0 0 640 160" width="100%" height="100%" style="overflow: visible;">
+                                                <!-- Grid lines / dividers will be rendered dynamically -->
+                                                <g id="svg-grid-lines"></g>
+                                                
+                                                <!-- Shadow under the curve -->
+                                                <path id="svg-curve-shadow" fill="url(#svg-shadow-gradient)" stroke="none" d=""></path>
+                                                
+                                                <!-- Temperature curve path -->
+                                                <path id="svg-curve" fill="none" stroke="var(--text-primary)" stroke-width="3" d=""></path>
+                                                
+                                                <!-- Timeline elements (dots, values, icons, labels) will be drawn dynamically -->
+                                                <g id="svg-timeline-elements"></g>
+                                                
+                                                <!-- Now indicator line -->
+                                                <g id="svg-now-indicator" style="display: none;">
+                                                    <line id="svg-now-line" x1="0" y1="10" x2="0" y2="135" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,3"></line>
+                                                    <circle id="svg-now-dot" cx="0" cy="0" r="4" fill="#ef4444"></circle>
+                                                    <text id="svg-now-text" x="0" y="152" fill="#ef4444" font-size="9" font-weight="700" text-anchor="middle">ARA</text>
+                                                </g>
+                                                
+                                                <!-- Definitions for Gradients -->
+                                                <defs>
+                                                    <linearGradient id="svg-shadow-gradient" x1="0" y1="0" x2="0" y2="1">
+                                                        <stop offset="0%" stop-color="var(--text-primary)" stop-opacity="0.15"></stop>
+                                                        <stop offset="100%" stop-color="var(--text-primary)" stop-opacity="0.00"></stop>
+                                                    </linearGradient>
+                                                </defs>
+                                            </svg>
                                         </div>
                                     </div>
-                                    <div style="border-right: 1px solid var(--border-color);">
-                                        <div id="period-2-label">Vesprada</div>
-                                        <div style="font-size: 0.75rem; font-weight: 500; text-transform: none; display: flex; align-items: center; justify-content: center; gap: 0.2rem; margin-top: 0.2rem; color: var(--text-secondary);">
-                                            <i data-lucide="droplet" style="width: 12px; height: 12px;"></i> <span id="period-2-precip">0%</span>
-                                        </div>
-                                    </div>
-                                    <div style="border-right: 1px solid var(--border-color);">
-                                        <div id="period-3-label">Vespre</div>
-                                        <div style="font-size: 0.75rem; font-weight: 500; text-transform: none; display: flex; align-items: center; justify-content: center; gap: 0.2rem; margin-top: 0.2rem; color: var(--text-secondary);">
-                                            <i data-lucide="droplet" style="width: 12px; height: 12px;"></i> <span id="period-3-precip">0%</span>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div id="period-4-label">Nit</div>
-                                        <div style="font-size: 0.75rem; font-weight: 500; text-transform: none; display: flex; align-items: center; justify-content: center; gap: 0.2rem; margin-top: 0.2rem; color: var(--text-secondary);">
-                                            <i data-lucide="droplet" style="width: 12px; height: 12px;"></i> <span id="period-4-precip">0%</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                <!-- SVG Container for the Chart -->
-                                <div style="position: relative; width: 100%; height: 160px; margin-top: 1rem;">
-                                    <svg id="hourly-temp-svg" viewBox="0 0 640 160" width="100%" height="100%" style="overflow: visible;">
-                                        <!-- Grid lines / dividers will be rendered dynamically -->
-                                        <g id="svg-grid-lines"></g>
-                                        
-                                        <!-- Shadow under the curve -->
-                                        <path id="svg-curve-shadow" fill="url(#svg-shadow-gradient)" stroke="none" d=""></path>
-                                        
-                                        <!-- Temperature curve path -->
-                                        <path id="svg-curve" fill="none" stroke="var(--text-primary)" stroke-width="3" d=""></path>
-                                        
-                                        <!-- Timeline elements (dots, values, icons, labels) will be drawn dynamically -->
-                                        <g id="svg-timeline-elements"></g>
-                                        
-                                        <!-- Now indicator line -->
-                                        <g id="svg-now-indicator" style="display: none;">
-                                            <line id="svg-now-line" x1="0" y1="10" x2="0" y2="135" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,3"></line>
-                                            <circle id="svg-now-dot" cx="0" cy="0" r="4" fill="#ef4444"></circle>
-                                            <text id="svg-now-text" x="0" y="152" fill="#ef4444" font-size="9" font-weight="700" text-anchor="middle">ARA</text>
-                                        </g>
-                                        
-                                        <!-- Definitions for Gradients -->
-                                        <defs>
-                                            <linearGradient id="svg-shadow-gradient" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stop-color="var(--text-primary)" stop-opacity="0.15"></stop>
-                                                <stop offset="100%" stop-color="var(--text-primary)" stop-opacity="0.00"></stop>
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
                                 </div>
                                 
                                 <!-- Legend at the bottom -->
