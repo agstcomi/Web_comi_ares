@@ -125,6 +125,7 @@ async function main() {
         const title = article.title;
         const subtitle = article.subtitle || "";
         const redirectUrl = `https://www.comiares.es/noticies/${slug}/`;
+        const castUrl = article.slug_es ? `https://www.comiares.es/es/noticies/${article.slug_es}/` : redirectUrl;
 
         let html = templateVal;
 
@@ -144,8 +145,13 @@ async function main() {
         html = html.replace(/<meta property="twitter:description" content="[^"]*">/i, `<meta property="twitter:description" content="${escapeHtml(subtitle)}">`);
         html = html.replace(/<meta property="twitter:image" content="[^"]*">/i, `<meta property="twitter:image" content="${imageUrl}">`);
 
-        // Canonical
+        // Canonical & Alternates (hreflang)
         html = html.replace(/<link rel="canonical" href="[^"]*">/i, `<link rel="canonical" href="${redirectUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="ca" href="[^"]*">/i, `<link rel="alternate" hreflang="ca" href="${redirectUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="ca-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="ca-ES" href="${redirectUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="es" href="[^"]*">/i, `<link rel="alternate" hreflang="es" href="${castUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="es-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="es-ES" href="${castUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="x-default" href="[^"]*">/i, `<link rel="alternate" hreflang="x-default" href="${redirectUrl}">`);
 
         // Rutas absolutas a la raíz / se usan por defecto, no es necesario ajustar profundidades
 
@@ -201,6 +207,7 @@ async function main() {
         const titleEs = article.title_es || article.title;
         const subtitleEs = article.subtitle_es || article.subtitle || "";
         const redirectUrl = `https://www.comiares.es/es/noticies/${slugEs}/`;
+        const valUrl = article.slug ? `https://www.comiares.es/noticies/${article.slug}/` : redirectUrl;
 
         let html = templateCast;
 
@@ -220,8 +227,13 @@ async function main() {
         html = html.replace(/<meta property="twitter:description" content="[^"]*">/i, `<meta property="twitter:description" content="${escapeHtml(subtitleEs)}">`);
         html = html.replace(/<meta property="twitter:image" content="[^"]*">/i, `<meta property="twitter:image" content="${imageUrl}">`);
 
-        // Canonical
+        // Canonical & Alternates (hreflang)
         html = html.replace(/<link rel="canonical" href="[^"]*">/i, `<link rel="canonical" href="${redirectUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="ca" href="[^"]*">/i, `<link rel="alternate" hreflang="ca" href="${valUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="ca-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="ca-ES" href="${valUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="es" href="[^"]*">/i, `<link rel="alternate" hreflang="es" href="${redirectUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="es-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="es-ES" href="${redirectUrl}">`);
+        html = html.replace(/<link rel="alternate" hreflang="x-default" href="[^"]*">/i, `<link rel="alternate" hreflang="x-default" href="${valUrl}">`);
 
         // Rutas absolutas a la raíz / se usan por defecto, no es necesario ajustar profundidades
 
