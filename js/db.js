@@ -1339,6 +1339,50 @@ class AppDatabase {
         }
         return { success: true };
     }
+
+    async savePushSubscription(subscription) {
+        if (!subscription || !subscription.endpoint) return null;
+        const rawKey = subscription.getKey ? subscription.getKey('p256dh') : null;
+        const rawAuth = subscription.getKey ? subscription.getKey('auth') : null;
+        const p256dh = rawKey ? btoa(String.fromCharCode(...new Uint8Array(rawKey))) : '';
+        const auth = rawAuth ? btoa(String.fromCharCode(...new Uint8Array(rawAuth))) : '';
+
+        const subData = {
+            endpoint: subscription.endpoint,
+            p256dh: p256dh,
+            auth: auth,
+            user_agent: navigator.userAgent || ''
+        };
+
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('push_subscriptions')
+                    .upsert([subData], { onConflict: 'endpoint' })
+                    .select();
+                if (error) throw error;
+                return data ? data[0] : subData;
+            } catch (err) {
+                console.warn("Could not save push subscription to Supabase:", err);
+            }
+        }
+        return subData;
+    }
+
+    async deletePushSubscription(endpoint) {
+        if (!endpoint) return;
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { error } = await this.supabase
+                    .from('push_subscriptions')
+                    .delete()
+                    .eq('endpoint', endpoint);
+                if (error) throw error;
+            } catch (err) {
+                console.warn("Could not delete push subscription from Supabase:", err);
+            }
+        }
+    }
 }
 
 // Instantiate globally

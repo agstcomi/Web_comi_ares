@@ -3937,3 +3937,83 @@ button,
     }
 }
 
+/* ==========================================================================
+   Push Notifications Bell Floating Widget
+   ========================================================================== */
+.push-bell-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.push-bell-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    color: #18181b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+}
+
+.push-bell-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.2);
+    background: #ffffff;
+}
+
+.push-bell-btn .bell-icon {
+    transition: transform 0.3s ease;
+}
+
+.push-bell-btn:hover .bell-icon {
+    transform: rotate(15deg);
+}
+
+.push-bell-dot {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #a1a1aa;
+    border: 2px solid #ffffff;
+    transition: background-color 0.3s ease;
+}
+
+.push-bell-btn.active {
+    background: #18181b;
+    color: #ffffff;
+    border-color: #18181b;
+}
+
+.push-bell-btn.active .push-bell-dot {
+    background-color: #22c55e; /* Green active dot */
+}
+
+@media (max-width: 768px) {
+    .push-bell-container {
+        bottom: 16px;
+        right: 16px;
+    }
+    .push-bell-btn {
+        width: 44px;
+        height: 44px;
+    }
+}
+
+

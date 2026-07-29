@@ -179,7 +179,23 @@ Completado en la última sesión:
 
 ---
 
-## 13. Próximo Paso
+## 14. Sistema de Notificaciones Push Web para Noticias (Local)
+Completado en la sesión actual:
+* **Service Worker (`sw.js`)**: Creado en la raíz del proyecto para la escucha en segundo plano de eventos `push` y la gestión del clic `notificationclick` para enfocar o redirigir automáticamente a la noticia publicada (`/noticies/[slug]`).
+* **Generación y Claves VAPID**: Generadas claves VAPID estándar P-256 (`VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY`) configuradas para la firma criptográfica de paquetes Web Push RFC 8292.
+* **Cliente JavaScript (`js/push-notifications.js`)**: Módulo responsable del registro del Service Worker, la solicitud de permisos al usuario (`Notification.requestPermission`), la conversión de claves VAPID a Uint8Array, la gestión de subscripciones y la renderización de un widget flotante en forma de campana (🔔) con indicador de estado y compatibilidad bilingüe (valenciano/castellano).
+* **Persistencia en Supabase (`js/db.js`)**: Añadidas las funciones `savePushSubscription(subscription)` y `deletePushSubscription(endpoint)` para registrar o eliminar suscripciones en la tabla `push_subscriptions` de Supabase.
+* **Edge Function `send-push-notification`**: Creada la Edge Function en `supabase/functions/send-push-notification/index.ts` usando Deno + la librería `web-push`. Consulta la tabla `push_subscriptions`, envía payloads encriptados a los servicios Push (Google, Mozilla, Apple) y elimina automáticamente los endpoints caducados (404/410 Gone).
+* **Integración en Panel de Administración (`admin/editor.html`)**: Inserción del campo `[x] 🔔 Enviar notificació Push als lectors en guardar`. Al guardar una noticia con estado `'published'` y esta opción marcada, se invoca automáticamente la Edge Function `send-push-notification`.
+* **Estilos CSS (`css/styles.css`)**: Estilizado del botón flotante `.push-bell-btn` con efecto cristal (backdrop blur), animación al pasar el cursor y punto verde dinámico para indicar el estado activo.
+* **Inclusión en HTMLs (v1.20)**: Añadido `<script src="/js/push-notifications.js?v=1.20" defer></script>` en todas las páginas públicas del sitio web.
+
+---
+
+## 15. Próximo Paso
+* Ejecutar la consulta SQL de creación de la tabla `push_subscriptions` en el editor SQL de Supabase (si no se ha ejecutado aún).
+* Desplegar la Edge Function con el CLI: `supabase functions deploy send-push-notification`.
 * Rotar la Supabase `anon` key si aún no se ha hecho, y actualizar la configuración en los secrets de GitHub y el panel de administración de la web `/admin/`.
 * Esperar a nuevas instrucciones del usuario.
+
 
