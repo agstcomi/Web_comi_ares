@@ -25,6 +25,62 @@ document.addEventListener('DOMContentLoaded', () => {
         await initProgramacio();
     }, 100);
 
+    // === SEO: Schema.org Event structured data injection ===
+    function injectEventSchema(events) {
+        // Remove existing schema if already injected
+        const old = document.getElementById('events-schema-jsonld');
+        if (old) old.remove();
+
+        if (!events || events.length === 0) return;
+
+        const isEs = window.location.pathname.includes('/es/');
+        const baseUrl = 'https://www.comiares.es';
+
+        // Filter only future events (or all if none upcoming)
+        const today = new Date().toISOString().split('T')[0];
+        const futureEvents = events.filter(e => e.date >= today);
+        const eventsToSchema = (futureEvents.length > 0 ? futureEvents : events).slice(0, 20);
+
+        const schemaEvents = eventsToSchema.map(ev => {
+            const title = isEs ? (ev.title_es || ev.title) : ev.title;
+            const desc = isEs ? (ev.description_es || ev.description) : ev.description;
+            const startDateTime = ev.time ? `${ev.date}T${ev.time}:00` : ev.date;
+            return {
+                "@type": "Event",
+                "name": title,
+                "description": desc || '',
+                "startDate": startDateTime,
+                "location": {
+                    "@type": "Place",
+                    "name": ev.location || "Ares del Maestrat",
+                    "address": {
+                        "@type": "PostalAddress",
+                        "addressLocality": "Ares del Maestrat",
+                        "addressRegion": "Castellón",
+                        "addressCountry": "ES"
+                    }
+                },
+                "organizer": {
+                    "@type": "Organization",
+                    "name": "Comissió de Festes d'Ares del Maestrat",
+                    "url": baseUrl
+                },
+                "eventStatus": "https://schema.org/EventScheduled",
+                "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+                "url": `${baseUrl}${isEs ? '/es' : ''}/programacio`
+            };
+        });
+
+        const script = document.createElement('script');
+        script.type = 'application/ld+json';
+        script.id = 'events-schema-jsonld';
+        script.textContent = JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": schemaEvents
+        }, null, 2);
+        document.head.appendChild(script);
+    }
+
     async function initProgramacio() {
         try {
             allEvents = await window.db.getEvents();
@@ -36,6 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
             initCalendar();
 
             renderEvents();
+
+            // Inject Event structured data for SEO (Google rich results)
+            injectEventSchema(allEvents);
 
             // Set up search box input
             const searchInput = document.getElementById('search-input');

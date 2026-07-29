@@ -27,13 +27,18 @@ document.addEventListener('DOMContentLoaded', () => {
     if (navToggle && navMenu) {
         navToggle.addEventListener('click', () => {
             navMenu.classList.toggle('active');
+            const isActive = navMenu.classList.contains('active');
+            // Update aria-expanded
+            navToggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
             // Toggle icon between menu and close
             const icon = navToggle.querySelector('i');
             if (icon) {
-                if (navMenu.classList.contains('active')) {
+                if (isActive) {
                     icon.setAttribute('data-lucide', 'x');
+                    navToggle.setAttribute('aria-label', 'Tancar menú de navegació');
                 } else {
                     icon.setAttribute('data-lucide', 'menu');
+                    navToggle.setAttribute('aria-label', 'Obrir menú de navegació');
                 }
                 if (window.lucide) window.lucide.createIcons();
             }
@@ -43,6 +48,8 @@ document.addEventListener('DOMContentLoaded', () => {
         navMenu.addEventListener('click', (e) => {
             if (e.target === navMenu) {
                 navMenu.classList.remove('active');
+                navToggle.setAttribute('aria-expanded', 'false');
+                navToggle.setAttribute('aria-label', 'Obrir menú de navegació');
                 const icon = navToggle.querySelector('i');
                 if (icon) {
                     icon.setAttribute('data-lucide', 'menu');
@@ -253,8 +260,8 @@ function renderHeader() {
                 <a href="${logoHref}" class="logo" style="display: flex; align-items: center; height: 100%;">
                     <img src="${logoPath}" alt="Logo Comissió Ares" style="height: 40px; width: auto;">
                 </a>
-                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle Menu">
-                    <i data-lucide="menu"></i>
+                <button class="nav-toggle" id="nav-toggle" aria-label="Obrir menú de navegació" aria-expanded="false" aria-controls="nav-menu">
+                    <i data-lucide="menu" aria-hidden="true"></i>
                 </button>
                 <nav class="nav-menu" id="nav-menu">
                     <ul>

@@ -245,8 +245,36 @@ Tot el treball de la sessió s'ha verificat i pujat amb èxit a la branca princi
 
 ---
 
-## 21. Pròxim Pas
-* Esperar a que el flux de GitHub Actions finalitze la publicació en GitHub Pages.
+## 21. Auditoría Técnica i Millores Aplicades (Local)
+Completat en la sessió actual. Es va realitzar una auditoria completa de la web (rendiment, SEO tècnic, accessibilitat, UX/UI i codi) i es van aplicar totes les millores identificades:
+
+* **Rendiment**:
+  - Vídeo hero amb `preload="none"` i `poster="/img/portada.webp"` per evitar descarregar 8,5 MB de vídeo en la càrrega inicial.
+  - Afegits `<link rel="preconnect">` per a fonts.googleapis.com i fonts.gstatic.com en **tots** els 20 fitxers HTML del projecte.
+  - Afegit `font-display=swap` a l'`@import` de Google Fonts en `css/styles.css` per evitar text invisible durant la càrrega.
+  - El script inline de 600 línies de `index.html` i `es/index.html` s'ha extret a `js/home.js` (fitxer nou, 24 KB) per a permetre el caché del navegador entre visites.
+
+* **SEO Tècnic**:
+  - Afegit `<link rel="icon" href="/img/logo.svg" type="image/svg+xml">` i fallback PNG en tots els HTML. Resol el 404 de `/favicon.ico`.
+  - Generat `img/apple-touch-icon.png` (PNG 180×180 del logo SVG via `sharp`) i actualitzat l'`apple-touch-icon` en tots els HTML.
+  - Schema.org **`Event[]` dinàmic** injectat al `<head>` de `programacio.html` (i `es/`) via `js/programacio.js`, amb tots els actes futurs en format JSON-LD. Habilita els "rich results" d'events a Google.
+  - URL del Service Worker (`sw.js`) corregida de `/noticies.html` a `/noticies` (URL neta).
+
+* **Accessibilitat (a11y)**:
+  - `aria-label="Entorn i Ball Pla d'Ares del Maestrat"` afegit al `<video>` del hero.
+  - Botó hamburguesa amb `aria-expanded` dinàmic (s'actualitza en obrir/tancar) i `aria-label` descriptiu en valencianà (`Obrir/Tancar menú de navegació`) i `aria-controls="nav-menu"`.
+  - Ícons decoratius de Lucide amb `aria-hidden="true"` als panells on es renderitzen dinàmicament.
+  - Estilos `:focus-visible` afegits a `css/styles.css`: outline visible (2px solid) per a navegació per teclat, sense afectar usuaris de ratolí.
+  - FAQ accordion ja tenia `aria-expanded` correcte. S'ha afegit `role="region"` al contingut dels panells FAQ a `home.js`.
+  - Skip link (`.skip-link`) definit en CSS, a punt per afegir als HTML.
+
+* **Codi i Mantenibilitat**:
+  - Versió de CSS unificada a `?v=1.20` en tots els 20 fitxers HTML (estava inconsistent: `?v=1.14` i `?v=1.19` barrejats).
+  - Script de build `scripts/update-html.js` creat per facilitar futurs canvis massius als HTML.
+  - Instal·lat `sharp` com devDependency per a generació d'imatges PNG en scripts de build.
+
+---
+
+## 22. Pròxim Pas
+* Pujar tots els canvis a PRO (`git add -A && git commit && git push`).
 * Esperar noves instruccions de l'usuari.
-
-

@@ -18,7 +18,7 @@ self.addEventListener('push', (event) => {
         icon: "/img/logo.png",
         badge: "/img/logo.png",
         image: null,
-        url: "/noticies.html"
+        url: "/noticies"
     };
 
     if (event.data) {
@@ -58,7 +58,7 @@ self.addEventListener('notificationclick', (event) => {
 
     const targetUrl = (event.notification.data && event.notification.data.url) 
         ? event.notification.data.url 
-        : '/noticies.html';
+        : '/noticies';
 
     event.waitUntil(
         self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
