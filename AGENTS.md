@@ -192,10 +192,54 @@ Completado en la sesión actual:
 
 ---
 
-## 15. Próximo Paso
-* Ejecutar la consulta SQL de creación de la tabla `push_subscriptions` en el editor SQL de Supabase (si no se ha ejecutado aún).
-* Desplegar la Edge Function con el CLI: `supabase functions deploy send-push-notification`.
-* Rotar la Supabase `anon` key si aún no se ha hecho, y actualizar la configuración en los secrets de GitHub y el panel de administración de la web `/admin/`.
-* Esperar a nuevas instrucciones del usuario.
+---
+
+## 16. Mòdul de Gestió de la Home i Compte Enrere Editable (Local)
+Completat en la sessió actual:
+* **Autenticació Local Fallback**: Modificat `js/db.js` (`login`, `getCurrentUser`, `logout`) per incloure suport de sessió local (`ares_local_session`) quan Supabase no està configurat, permetent l'accés immediat a `/admin/` en entorn de desenvolupament local.
+* **Persistencia de Configuracions del Sistema**:
+  - `getCountdown()`, `saveCountdown()`: Gestionen el temporitzador de la compte enrere sota la clau `'event-config-countdown'` a la taula `events` (o `localStorage` / `IndexedDB`), complint totes les restriccions `NOT NULL` del esquema de PostgreSQL.
+  - `getHomeConfig()`, `saveHomeConfig()`: Gestionen l'ordre dels blocs i el missatge de benvinguda sota la clau `'event-config-home'`.
+* **Filtre de Consultes Públices**: Actualitzades les consultes en `js/db.js` i `scripts/generate-news.js` per a filtrar automàticament qualsevol ID amb prefix `event-config-*` (`event-config-faqs`, `event-config-category-colors`, `event-config-countdown`, `event-config-home`), de manera que mai apareguin com a esdeveniments al calendari ni als esquemes Schema.org.
+* **Panell Únic d'Administració de la Home (`admin/index.html` i `admin/gestio.js`)**:
+  - **Unificació en la Pestanya "Gestió de la Home" (`#tab-home`)**: Eliminades totes les pestanyes i formularis duplicats o redundants. Ara la secció "Gestió de la Home" és el punt únic i centralitzat per administrar tots els mòduls de la portada.
+  - **Llistat de Mòduls Reordenables amb Drag & Drop**: Implementat suport de **arrossegar i soltar (Drag and Drop)** HTML5. Es pot mantindre clicat qualsevol mòdul (o la seua icona d'adherència `grip-vertical`) i arrossegar-lo directament per canviar-ne l'ordre visualment. També es mantenen els botons d'ascens/descens (↑ / ↓) com a alternativa.
+  - **Modals d'Edició en Pop-up (`#modal-edit-welcome` i `#modal-edit-countdown`)**: En fer clic a **Editar** en la fila corresponent, s'obre el pop-up per modificar el missatge de benvinguda bilingüe o la configuració completa del compte enrere (estat activat/desactivat, data/hora objectiu, títols i descripcions).
+  - **Correcció d'Error en Guardar (`admin/gestio.js`)**: Solucionada l'excepció `Cannot read properties of null (reading 'value')` en enviar el formulari de la home, afegint comprovacions de nuls per als camps de text que ara s'editen exclusivament des de les finestres emergents pop-up.
+* **Renderitzat Dinàmic en Frontend (`index.html` i `es/index.html`)**:
+  - Els blocs de la portada estan envoltat en el contenidor `<main id="home-sections-container">`.
+  - La funció `initHomeLayout()` reordena els nodes DOM en el navegador segons la configuració desada, oculta els blocs desactivats i inyecta el missatge de benvinguda segons l'idioma actiu.
+  - La funció `initCountdown()` llegeix la configuració en temps real, actualitza els títols i descripcions i amaga la secció completament si està desactivada (`enabled: false`).
+* **Cache-Busting (v1.25)**: S'ha incrementat la versió dels scripts JS a `?v=1.25` als fitxers HTML pertinents per a forçar la recàrrega de la memòria cau als navegadors.
+
+---
+
+## 17. Formulari de Contacte Integrat a "Qui Som" (`quisom.html` i `es/quisom.html`)
+Completat en la sessió actual:
+* **Formulari de Contacte Integrat**: S'ha integrat directament abans del footer un formulari de contacte idèntic al de la pàgina principal de contacte (`contacte.html`), tant en valencià com en castellà.
+* **Camps de Formulari**: Inclou Nom Complet, Correu Electrònic, Desplegable d'Assumpte (Voluntariat/Col·laboració, Consulta General, Suggeriments i Altres), Àrea de Missatge i Casella de Verificació de Política de Privacitat.
+* **Espaiat i Respiració Visual**: Ajustat el tancament de la secció de la galeria de fotografies i ampliat el farcit inferior i superior a `7rem` (`padding-bottom: 7rem; padding-top: 7rem;`), atorgant un marge visual ampli i elegant entre la graella de fotos i el bloc de contacte.
+
+---
+
+## 18. Eliminació de la Imatge Estàtica de Portada de la Home (`index.html` i `es/index.html`)
+Completat en la sessió actual:
+* **Només Vídeo en la Portada**: S'ha eliminat la regla CSS `background-image` de la classe `.hero`, la imatge de suport `.hero-video-placeholder` (`portada.jpg`) i l'atribut `poster="portada.webp"` del tag `<video>`.
+* **Fons Negre de Carregament**: S'ha assignat fons negre pur (`#000000`) al contenidor del banner perquè únicament es reproduïsca el vídeo en bucle (`portada.mp4`).
+
+---
+
+## 19. Desactivació Automàtica del Compte Enrere al Arribar a Zero (`index.html` i `es/index.html`)
+Completat en la sessió actual:
+* **Comprovació al Carregar**: Si la data/hora objectiu (`target_date`) ja ha passat en el moment d'obrir la web, la secció `#countdown-section` s'amaga directament (`display: none`) i s'actualitza l'estat a `enabled: false` en Supabase/LocalStorage.
+* **Desactivació en Temps Real**: Si el temporitzador arriba a 0 segons mentre un usuari està navegant a la pàgina, es neteja l'interval (`clearInterval`), s'amaga la secció immediatament i es guarda la desactivació a la base de dades backend de forma autònoma.
+
+---
+
+## 20. Pròxim Pas
+* Executar la consulta SQL de creació de la taula `push_subscriptions` en l'editor SQL de Supabase (si no s'ha executat encara).
+* Desplegar la Edge Function amb el CLI: `supabase functions deploy send-push-notification`.
+* Provar i verificar la desactivació automàtica establint una data objectiu passada des de `/admin/`.
+* Esperar a noves instruccions de l'usuari.
 
 

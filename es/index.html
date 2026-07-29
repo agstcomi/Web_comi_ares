@@ -85,15 +85,6 @@
       }
     }
     </script>
-    <style>
-        .hero {
-            background-image: url('../img/portada.jpg');
-            background-image: url('../img/portada.webp');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-    </style>
 </head>
 <body>
 
@@ -101,11 +92,10 @@
     <div id="header-placeholder"></div>
 
     <!-- Fullscreen Cover Hero Banner -->
-    <section class="hero" id="hero">
+    <section class="hero" id="hero" style="background-color: #000000;">
         <!-- Video Background Container -->
-        <div class="hero-video-container">
-            <img src="../img/portada.jpg" alt="Portada Fiestas de Ares del Maestrat" class="hero-video-placeholder">
-            <video autoplay muted loop playsinline poster="../img/portada.webp">
+        <div class="hero-video-container" style="background-color: #000000;">
+            <video autoplay muted loop playsinline>
                 <source src="../img/portada.mp4" type="video/mp4">
             </video>
         </div>
@@ -124,253 +114,256 @@
         </a>
     </section>
 
-    <!-- Welcome Section -->
-    <section id="welcome-section" style="padding: 5rem 0 3rem 0; text-align: center; border-bottom: none;">
-        <div class="container" style="max-width: 800px; padding: 0 2rem;">
-            <p style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); line-height: 1.8; color: var(--text-primary); font-weight: 300; margin-bottom: 0; font-family: var(--font-body);">
-                Bienvenidos a la web oficial de la Comisión de Fiestas de Ares. Aquí podrás encontrar toda la información sobre las actividades y eventos que la asociación realiza en el pueblo: programación, concursos y mucho más.
-            </p>
-        </div>
-    </section>
-
-    <!-- Countdown Section -->
-    <section id="countdown-section" style="padding: 1.5rem 0 3.5rem 0; border-bottom: 1px solid var(--border-color); text-align: center;">
-        <div class="container">
-            <h1 style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-family: var(--font-heading); font-weight: 900; line-height: 1.1;">
-                FIESTAS DE ARES 2026
-            </h1>
-            
-            <div class="countdown-wrapper">
-                <div class="countdown-box">
-                    <span id="countdown-months">00</span>
-                    <span>Meses</span>
-                </div>
-                <div class="countdown-divider">:</div>
-                
-                <div class="countdown-box">
-                    <span id="countdown-days">00</span>
-                    <span>Días</span>
-                </div>
-                <div class="countdown-divider">:</div>
-
-                <div class="countdown-box">
-                    <span id="countdown-hours">00</span>
-                    <span>Horas</span>
-                </div>
-                <div class="countdown-divider">:</div>
-                
-                <div class="countdown-box">
-                    <span id="countdown-minutes">00</span>
-                    <span>Minutos</span>
-                </div>
-                <div class="countdown-divider">:</div>
-                
-                <div class="countdown-box">
-                    <span id="countdown-seconds">00</span>
-                    <span>Segundos</span>
-                </div>
+    <!-- Main Home Sections Container -->
+    <main id="home-sections-container">
+        <!-- Welcome Section -->
+        <section id="welcome-section" style="padding: 5rem 0 3rem 0; text-align: center; border-bottom: none;">
+            <div class="container" style="max-width: 800px; padding: 0 2rem;">
+                <p id="welcome-text-p" style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); line-height: 1.8; color: var(--text-primary); font-weight: 300; margin-bottom: 0; font-family: var(--font-body);">
+                    Bienvenidos a la web oficial de la Comisión de Fiestas de Ares. Aquí podrás encontrar toda la información sobre las actividades y eventos que la asociación realiza en el pueblo: programación, concursos y mucho más.
+                </p>
             </div>
+        </section>
 
-            <p style="margin-top: 2.5rem; font-size: 1.15rem; color: var(--text-secondary); font-weight: 300; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
-                Las Fiestas Patronales de Ares del Maestrat 2026 tendrán lugar del 16 al 25 de agosto.
-            </p>
-        </div>
-    </section>
+        <!-- Countdown Section -->
+        <section id="countdown-section" style="padding: 1.5rem 0 3.5rem 0; border-bottom: 1px solid var(--border-color); text-align: center;">
+            <div class="container">
+                <h1 id="countdown-title-heading" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-family: var(--font-heading); font-weight: 900; line-height: 1.1;">
+                    FIESTAS DE ARES 2026
+                </h1>
+                
+                <div class="countdown-wrapper">
+                    <div class="countdown-box">
+                        <span id="countdown-months">00</span>
+                        <span>Meses</span>
+                    </div>
+                    <div class="countdown-divider">:</div>
+                    
+                    <div class="countdown-box">
+                        <span id="countdown-days">00</span>
+                        <span>Días</span>
+                    </div>
+                    <div class="countdown-divider">:</div>
 
-    <!-- News & Announcements Section -->
-    <section id="noticies">
-        <div class="container">
-            <div class="section-header-flex">
-                <h2>Últimas Noticias</h2>
-                <p style="margin-bottom: 0;"><a href="noticies" style="text-decoration: underline;">Ver más noticias &rarr;</a></p>
-            </div>
-            
-            <div class="news-grid" id="news-container">
-                <!-- Populated dynamically via JS (Skeletons shown during load) -->
-                <div class="news-card skeleton-card">
-                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
-                    <div class="news-info">
-                        <div class="skeleton skeleton-text" style="width: 30%; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-title" style="width: 85%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 70%; margin-bottom: 1.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    <div class="countdown-box">
+                        <span id="countdown-hours">00</span>
+                        <span>Horas</span>
+                    </div>
+                    <div class="countdown-divider">:</div>
+                    
+                    <div class="countdown-box">
+                        <span id="countdown-minutes">00</span>
+                        <span>Minutos</span>
+                    </div>
+                    <div class="countdown-divider">:</div>
+                    
+                    <div class="countdown-box">
+                        <span id="countdown-seconds">00</span>
+                        <span>Segundos</span>
                     </div>
                 </div>
-                <div class="news-card skeleton-card">
-                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
-                    <div class="news-info">
-                        <div class="skeleton skeleton-text" style="width: 25%; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-title" style="width: 80%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 65%; margin-bottom: 1.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+
+                <p id="countdown-desc-text" style="margin-top: 2.5rem; font-size: 1.15rem; color: var(--text-secondary); font-weight: 300; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                    Las Fiestas Patronales de Ares del Maestrat 2026 tendrán lugar del 16 al 25 de agosto.
+                </p>
+            </div>
+        </section>
+
+        <!-- News & Announcements Section -->
+        <section id="noticies">
+            <div class="container">
+                <div class="section-header-flex">
+                    <h2>Últimas Noticias</h2>
+                    <p style="margin-bottom: 0;"><a href="noticies" style="text-decoration: underline;">Ver más noticias &rarr;</a></p>
+                </div>
+                
+                <div class="news-grid" id="news-container">
+                    <!-- Populated dynamically via JS (Skeletons shown during load) -->
+                    <div class="news-card skeleton-card">
+                        <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                        <div class="news-info">
+                            <div class="skeleton skeleton-text" style="width: 30%; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-title" style="width: 85%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 70%; margin-bottom: 1.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                        </div>
+                    </div>
+                    <div class="news-card skeleton-card">
+                        <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                        <div class="news-info">
+                            <div class="skeleton skeleton-text" style="width: 25%; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-title" style="width: 80%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 65%; margin-bottom: 1.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                        </div>
+                    </div>
+                    <div class="news-card skeleton-card">
+                        <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                        <div class="news-info">
+                            <div class="skeleton skeleton-text" style="width: 35%; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-title" style="width: 90%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 1.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="news-card skeleton-card">
-                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
-                    <div class="news-info">
-                        <div class="skeleton skeleton-text" style="width: 35%; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-title" style="width: 90%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+            </div>
+        </section>
+
+        <!-- Highlighted Events Section -->
+        <section id="events-highlight-section" style="background-color: var(--bg-secondary);">
+            <div class="container">
+                <div class="section-header-flex">
+                    <h2>Próximos Actos Destacados</h2>
+                    <p style="margin-bottom: 0;"><a href="programacio" style="text-decoration: underline;">Ver programa completo &rarr;</a></p>
+                </div>
+                
+                <div class="home-events-grid" id="events-highlight-container">
+                    <!-- Events loaded dynamically via JS (Skeletons shown during load) -->
+                    <div class="home-event-card skeleton-card">
+                        <div class="event-title-row">
+                            <div class="skeleton skeleton-title" style="width: 70%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 20%; height: 1.25rem; border-radius: 9999px;"></div>
+                        </div>
+                        <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
                         <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 1.5rem;"></div>
+                        <div class="event-footer">
+                            <div class="event-meta" style="width: 100%;">
+                                <div class="skeleton skeleton-text" style="width: 50%; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-event-card skeleton-card">
+                        <div class="event-title-row">
+                            <div class="skeleton skeleton-title" style="width: 60%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 25%; height: 1.25rem; border-radius: 9999px;"></div>
+                        </div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
                         <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 1.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Highlighted Events Section -->
-    <section style="background-color: var(--bg-secondary);">
-        <div class="container">
-            <div class="section-header-flex">
-                <h2>Próximos Actos Destacados</h2>
-                <p style="margin-bottom: 0;"><a href="programacio" style="text-decoration: underline;">Ver programa completo &rarr;</a></p>
-            </div>
-            
-            <div class="home-events-grid" id="events-highlight-container">
-                <!-- Events loaded dynamically via JS (Skeletons shown during load) -->
-                <div class="home-event-card skeleton-card">
-                    <div class="event-title-row">
-                        <div class="skeleton skeleton-title" style="width: 70%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 20%; height: 1.25rem; border-radius: 9999px;"></div>
-                    </div>
-                    <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 1.5rem;"></div>
-                    <div class="event-footer">
-                        <div class="event-meta" style="width: 100%;">
-                            <div class="skeleton skeleton-text" style="width: 50%; margin-bottom: 0.5rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                        <div class="event-footer">
+                            <div class="event-meta" style="width: 100%;">
+                                <div class="skeleton skeleton-text" style="width: 45%; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 35%;"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="home-event-card skeleton-card">
-                    <div class="event-title-row">
-                        <div class="skeleton skeleton-title" style="width: 60%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 25%; height: 1.25rem; border-radius: 9999px;"></div>
-                    </div>
-                    <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 1.5rem;"></div>
-                    <div class="event-footer">
-                        <div class="event-meta" style="width: 100%;">
-                            <div class="skeleton skeleton-text" style="width: 45%; margin-bottom: 0.5rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 35%;"></div>
+                    <div class="home-event-card skeleton-card">
+                        <div class="event-title-row">
+                            <div class="skeleton skeleton-title" style="width: 80%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 15%; height: 1.25rem; border-radius: 9999px;"></div>
                         </div>
-                    </div>
-                </div>
-                <div class="home-event-card skeleton-card">
-                    <div class="event-title-row">
-                        <div class="skeleton skeleton-title" style="width: 80%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 15%; height: 1.25rem; border-radius: 9999px;"></div>
-                    </div>
-                    <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 1.5rem;"></div>
-                    <div class="event-footer">
-                        <div class="event-meta" style="width: 100%;">
-                            <div class="skeleton skeleton-text" style="width: 55%; margin-bottom: 0.5rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 45%;"></div>
+                        <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 1.5rem;"></div>
+                        <div class="event-footer">
+                            <div class="event-meta" style="width: 100%;">
+                                <div class="skeleton skeleton-text" style="width: 55%; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 45%;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Weather Forecast Section -->
-    <section id="oratge" style="background-color: var(--bg-primary);">
-        <div class="container">
-            <div id="weather-widget" class="weather-widget-container" style="margin-top: 0;">
-                <div class="weather-card-horizontal animate-fade-in-up" style="transition-delay: 0.1s;">
+        <!-- Weather Forecast Section -->
+        <section id="oratge" style="background-color: var(--bg-primary);">
+            <div class="container">
+                <div id="weather-widget" class="weather-widget-container" style="margin-top: 0;">
+                    <div class="weather-card-horizontal animate-fade-in-up" style="transition-delay: 0.1s;">
 
-                    
-                    <div class="weather-info-left">
-                        <div class="weather-location-container">
-                            <span class="weather-location-title">Ares del Maestrat</span>
-                            <span class="weather-location-sub">Castellón, España</span>
-                        </div>
-                        <div class="weather-temp-huge-wrapper">
-                            <span id="weather-temp-huge" class="weather-temp-huge">--°</span>
-                            <div class="weather-temp-range-sub" id="weather-temp-range-sub">
-                                <span class="temp-max">--°</span> <span class="temp-divider">/</span> <span class="temp-min">--°</span>
+                        
+                        <div class="weather-info-left">
+                            <div class="weather-location-container">
+                                <span class="weather-location-title">Ares del Maestrat</span>
+                                <span class="weather-location-sub">Castellón, España</span>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div class="weather-forecast-column">
-                        <div id="weather-forecast-container" class="weather-forecast-grid-horizontal">
-                            <!-- Skeletons shown during load -->
-                            <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
-                                <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
-                            </div>
-                            <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
-                                <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
-                            </div>
-                            <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
-                                <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                            <div class="weather-temp-huge-wrapper">
+                                <span id="weather-temp-huge" class="weather-temp-huge">--°</span>
+                                <div class="weather-temp-range-sub" id="weather-temp-range-sub">
+                                    <span class="temp-max">--°</span> <span class="temp-divider">/</span> <span class="temp-min">--°</span>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="weather-detail-link-wrapper">
-                            <a href="temps" class="weather-detail-link">
-                                Ver previsión detallada a 7 días <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
-                            </a>
+                        <div class="weather-forecast-column">
+                            <div id="weather-forecast-container" class="weather-forecast-grid-horizontal">
+                                <!-- Skeletons shown during load -->
+                                <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                                    <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                                </div>
+                                <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                                    <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                                </div>
+                                <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                                    <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="weather-detail-link-wrapper">
+                                <a href="temps" class="weather-detail-link">
+                                    Ver previsión detallada a 7 días <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- FAQs Section -->
-    <section class="faqs-section">
-        <div class="container">
-            <div class="faqs-grid">
-                <div class="faqs-left">
-                    <div class="faqs-pill">
-                        <span>FAQs</span>
+        <!-- FAQs Section -->
+        <section id="faqs-section" class="faqs-section">
+            <div class="container">
+                <div class="faqs-grid">
+                    <div class="faqs-left">
+                        <div class="faqs-pill">
+                            <span>FAQs</span>
+                        </div>
+                        <h2 class="faqs-title">Preguntas<br><span>Frecuentes</span></h2>
+                        <p class="faqs-subtitle">
+                            ¿Tienes alguna duda sobre la celebración de las fiestas o cómo colaborar? Aquí tienes las respuestas a las consultas más habituales.
+                        </p>
                     </div>
-                    <h2 class="faqs-title">Preguntas<br><span>Frecuentes</span></h2>
-                    <p class="faqs-subtitle">
-                        ¿Tienes alguna duda sobre la celebración de las fiestas o cómo colaborar? Aquí tienes las respuestas a las consultas más habituales.
-                    </p>
-                </div>
-                <div class="faqs-right">
-                    <div class="faqs-list" id="faqs-accordion-container">
-                        <!-- Rendered dynamically -->
+                    <div class="faqs-right">
+                        <div class="faqs-list" id="faqs-accordion-container">
+                            <!-- Rendered dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Call to action block -->
-    <section style="border-bottom: none; text-align: center; padding: 5rem 0;">
-        <div class="container" style="max-width: 800px; padding: 0 2rem;">
-            <h2 style="font-size: clamp(2rem, 5vw, 3.5rem); margin: 0 auto 2rem auto;">
-                ¿QUIERES SABER QUÉ HACEMOS EN EL PUEBLO?
-            </h2>
-            <p style="max-width: 600px; margin: 0 auto 3rem auto; font-size: 1.1rem;">
-                Tradición, música, hermandad y cultura en el corazón del Maestrat. Estate al día de todos los actos organizados por la Comisión.
-            </p>
-            <a href="programacio" class="btn">CONSULTA LA PROGRAMACIÓN</a>
-        </div>
-    </section>
+        <!-- Call to action block -->
+        <section id="cta-section" style="border-bottom: none; text-align: center; padding: 5rem 0;">
+            <div class="container" style="max-width: 800px; padding: 0 2rem;">
+                <h2 style="font-size: clamp(2rem, 5vw, 3.5rem); margin: 0 auto 2rem auto;">
+                    ¿QUIERES SABER QUÉ HACEMOS EN EL PUEBLO?
+                </h2>
+                <p style="max-width: 600px; margin: 0 auto 3rem auto; font-size: 1.1rem;">
+                    Tradición, música, hermandad y cultura en el corazón del Maestrat. Estate al día de todos los actos organizados por la Comisión.
+                </p>
+                <a href="programacio" class="btn">CONSULTA LA PROGRAMACIÓN</a>
+            </div>
+        </section>
+    </main>
 
     <!-- Dynamic Footer Placeholder -->
     <div id="footer-placeholder"></div>
@@ -378,13 +371,14 @@
     <!-- Scripts -->
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
-    <script src="/js/db.js?v=1.8" defer></script>
+    <script src="/js/db.js?v=1.21" defer></script>
     <script src="/js/main.js?v=1.13" defer></script>
-    <script src="/js/push-notifications.js?v=1.20" defer></script>
+    <script src="/js/push-notifications.js?v=1.21" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', async () => {
             // Wait for DB to be initialized
             setTimeout(async () => {
+                await initHomeLayout();
                 await loadHomeData();
                 await loadWeather();
             }, 100);
@@ -399,8 +393,109 @@
             initCountdown();
         });
 
-        function initCountdown() {
-            const targetDate = new Date("2026-08-16T00:00:00");
+        async function initHomeLayout() {
+            const container = document.getElementById('home-sections-container');
+            if (!container) return;
+
+            let config = null;
+            if (window.db && typeof window.db.getHomeConfig === 'function') {
+                config = await window.db.getHomeConfig();
+            } else {
+                const stored = localStorage.getItem('ares_home_config');
+                if (stored) {
+                    try { config = JSON.parse(stored); } catch (e) {}
+                }
+            }
+
+            if (!config) return;
+
+            // 1. Update Welcome text
+            const welcomeP = document.getElementById('welcome-text-p');
+            const isEs = window.location.pathname.startsWith('/es/');
+            const welcomeText = isEs ? (config.welcome_text_es || config.welcome_text) : (config.welcome_text || config.welcome_text_es);
+            if (welcomeP && welcomeText) {
+                welcomeP.textContent = welcomeText;
+            }
+
+            // 2. Reorder blocks DOM nodes
+            const blockOrder = config.block_order || [];
+            const hiddenBlocks = config.hidden_blocks || [];
+
+            blockOrder.forEach(blockId => {
+                const sec = document.getElementById(blockId);
+                if (sec) {
+                    container.appendChild(sec);
+                    if (hiddenBlocks.includes(blockId)) {
+                        sec.style.display = 'none';
+                    } else if (blockId !== 'countdown-section') {
+                        sec.style.display = '';
+                    }
+                }
+            });
+
+            hiddenBlocks.forEach(blockId => {
+                const sec = document.getElementById(blockId);
+                if (sec) {
+                    sec.style.display = 'none';
+                }
+            });
+        }
+
+        async function initCountdown() {
+            const section = document.getElementById('countdown-section');
+            if (!section) return;
+
+            let config = null;
+            if (window.db && typeof window.db.getCountdown === 'function') {
+                config = await window.db.getCountdown();
+            } else {
+                const stored = localStorage.getItem('ares_countdown');
+                if (stored) {
+                    try { config = JSON.parse(stored); } catch (e) {}
+                }
+            }
+
+            if (!config) {
+                config = {
+                    enabled: true,
+                    title_es: "FIESTAS DE ARES 2026",
+                    target_date: "2026-08-16T00:00:00",
+                    description_es: "Las Fiestas Patronales de Ares del Maestrat 2026 tendrán lugar del 16 al 25 de agosto."
+                };
+            }
+
+            if (config.enabled === false) {
+                section.style.display = 'none';
+                return;
+            } else {
+                section.style.display = 'block';
+            }
+
+            const titleHeading = document.getElementById('countdown-title-heading');
+            const displayTitle = config.title_es || config.title;
+            if (titleHeading && displayTitle) {
+                titleHeading.textContent = displayTitle;
+            }
+
+            const descText = document.getElementById('countdown-desc-text');
+            const displayDesc = config.description_es || config.description;
+            if (descText && displayDesc) {
+                descText.textContent = displayDesc;
+            }
+
+            const targetDate = new Date(config.target_date || "2026-08-16T00:00:00");
+
+            // Rule: Auto-disable if target date has already passed
+            if (targetDate - new Date() <= 0) {
+                section.style.display = 'none';
+                if (config.enabled !== false) {
+                    config.enabled = false;
+                    if (window.db && typeof window.db.saveCountdown === 'function') {
+                        window.db.saveCountdown(config).catch(() => {});
+                    }
+                }
+                return;
+            }
 
             function updateValue(id, newValue) {
                 const el = document.getElementById(id);
@@ -413,16 +508,21 @@
                 }
             }
 
+            let countdownTimer = null;
+
             function update() {
                 const currentDate = new Date();
                 let diffMs = targetDate - currentDate;
 
                 if (diffMs <= 0) {
-                    updateValue('countdown-months', "00");
-                    updateValue('countdown-days', "00");
-                    updateValue('countdown-hours', "00");
-                    updateValue('countdown-minutes', "00");
-                    updateValue('countdown-seconds', "00");
+                    if (countdownTimer) clearInterval(countdownTimer);
+                    section.style.display = 'none';
+                    if (config.enabled !== false) {
+                        config.enabled = false;
+                        if (window.db && typeof window.db.saveCountdown === 'function') {
+                            window.db.saveCountdown(config).catch(() => {});
+                        }
+                    }
                     return;
                 }
 
@@ -459,7 +559,7 @@
                 updateValue('countdown-seconds', String(seconds).padStart(2, '0'));
             }
 
-            setInterval(update, 1000);
+            countdownTimer = setInterval(update, 1000);
             update();
         }
 

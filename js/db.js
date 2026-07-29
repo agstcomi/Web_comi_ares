@@ -749,6 +749,246 @@ class AppDatabase {
         return true;
     }
 
+    // Countdown Management Actions
+    getDefaultCountdown() {
+        return {
+            enabled: true,
+            title: "FESTES D'ARES 2026",
+            title_es: "FIESTAS DE ARES 2026",
+            target_date: "2026-08-16T00:00:00",
+            description: "Les Festes Patronals d'Ares del Maestrat 2026 tindran lloc del 16 al 25 d'agost.",
+            description_es: "Las Fiestas Patronales de Ares del Maestrat 2026 tendrán lugar del 16 al 25 de agosto."
+        };
+    }
+
+    async getCountdown() {
+        const defaultCountdown = this.getDefaultCountdown();
+
+        // 1. Try local storage cache first
+        const stored = localStorage.getItem('ares_countdown');
+        if (stored) {
+            try {
+                return { ...defaultCountdown, ...JSON.parse(stored) };
+            } catch (e) {
+                console.error("Error parsing countdown cache:", e);
+            }
+        }
+
+        // 2. Fetch from DB or static json
+        const isAdmin = window.location.pathname.includes('/admin/');
+        if (this.isSupabaseConfigured() && isAdmin) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('events')
+                    .select('*')
+                    .eq('id', 'event-config-countdown')
+                    .single();
+                if (data && data.long_description) {
+                    const countdown = JSON.parse(data.long_description);
+                    const merged = { ...defaultCountdown, ...countdown };
+                    localStorage.setItem('ares_countdown', JSON.stringify(merged));
+                    return merged;
+                }
+            } catch (err) {
+                console.warn("Could not load countdown config from Supabase:", err);
+            }
+        } else {
+            try {
+                const cacheBuster = Math.floor(Date.now() / 300000);
+                const dataUrl = `/data/events.json?v=${cacheBuster}`;
+                const res = await fetch(dataUrl);
+                if (res.ok) {
+                    const events = await res.json();
+                    const configEvent = events.find(e => e.id === 'event-config-countdown');
+                    if (configEvent && configEvent.long_description) {
+                        const countdown = JSON.parse(configEvent.long_description);
+                        const merged = { ...defaultCountdown, ...countdown };
+                        localStorage.setItem('ares_countdown', JSON.stringify(merged));
+                        return merged;
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not load countdown config from static events:", err);
+            }
+        }
+
+        // Local IDB Fallback
+        try {
+            const configRow = await this.getIDB('events', 'event-config-countdown');
+            if (configRow && configRow.long_description) {
+                const countdown = JSON.parse(configRow.long_description);
+                const merged = { ...defaultCountdown, ...countdown };
+                localStorage.setItem('ares_countdown', JSON.stringify(merged));
+                return merged;
+            }
+        } catch (err) {
+            console.warn("Could not load countdown config from IDB:", err);
+        }
+
+        return defaultCountdown;
+    }
+
+    async saveCountdown(countdownConfig) {
+        const defaultCountdown = this.getDefaultCountdown();
+        const merged = { ...defaultCountdown, ...countdownConfig };
+        localStorage.setItem('ares_countdown', JSON.stringify(merged));
+
+        const configItem = {
+            id: 'event-config-countdown',
+            title: 'Countdown Configuration',
+            title_es: 'Countdown Configuration',
+            description: 'System Configuration - Do not delete',
+            description_es: 'Configuración del Sistema - No borrar',
+            long_description: JSON.stringify(merged),
+            long_description_es: JSON.stringify(merged),
+            date: '2099-12-31',
+            time: '00:00',
+            location: 'System Config',
+            location_es: 'System Config',
+            category: 'populars',
+            image_url: ''
+        };
+
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { error } = await this.supabase
+                    .from('events')
+                    .upsert([configItem]);
+                if (error) throw error;
+            } catch (err) {
+                console.error("Error saving countdown config to Supabase:", err);
+                await this.putIDB('events', configItem);
+                throw err;
+            }
+        } else {
+            await this.putIDB('events', configItem);
+        }
+        return true;
+    }
+
+    // Home Layout & Module Management Actions
+    getDefaultHomeConfig() {
+        return {
+            block_order: [
+                'welcome-section',
+                'countdown-section',
+                'noticies',
+                'events-highlight-section',
+                'oratge',
+                'faqs-section',
+                'cta-section'
+            ],
+            hidden_blocks: [],
+            welcome_text: "Benvinguts a la web oficial de la Comissió de Festes d'Ares. Ací podràs trobar tota la informació sobre les activitats i esdeveniments que l'associació realitza al poble: programació, concursos i molt més.",
+            welcome_text_es: "Bienvenidos a la web oficial de la Comisión de Fiestas de Ares. Aquí podrás encontrar toda la información sobre las actividades y eventos que la asociación realiza en el pueblo: programación, concursos y mucho más."
+        };
+    }
+
+    async getHomeConfig() {
+        const defaultConfig = this.getDefaultHomeConfig();
+
+        // 1. Local storage cache first
+        const stored = localStorage.getItem('ares_home_config');
+        if (stored) {
+            try {
+                return { ...defaultConfig, ...JSON.parse(stored) };
+            } catch (e) {
+                console.error("Error parsing home_config cache:", e);
+            }
+        }
+
+        // 2. Fetch from DB or static json
+        const isAdmin = window.location.pathname.includes('/admin/');
+        if (this.isSupabaseConfigured() && isAdmin) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('events')
+                    .select('*')
+                    .eq('id', 'event-config-home')
+                    .single();
+                if (data && data.long_description) {
+                    const homeConf = JSON.parse(data.long_description);
+                    const merged = { ...defaultConfig, ...homeConf };
+                    localStorage.setItem('ares_home_config', JSON.stringify(merged));
+                    return merged;
+                }
+            } catch (err) {
+                console.warn("Could not load home config from Supabase:", err);
+            }
+        } else {
+            try {
+                const cacheBuster = Math.floor(Date.now() / 300000);
+                const dataUrl = `/data/events.json?v=${cacheBuster}`;
+                const res = await fetch(dataUrl);
+                if (res.ok) {
+                    const events = await res.json();
+                    const configEvent = events.find(e => e.id === 'event-config-home');
+                    if (configEvent && configEvent.long_description) {
+                        const homeConf = JSON.parse(configEvent.long_description);
+                        const merged = { ...defaultConfig, ...homeConf };
+                        localStorage.setItem('ares_home_config', JSON.stringify(merged));
+                        return merged;
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not load home config from static events:", err);
+            }
+        }
+
+        // Local IDB Fallback
+        try {
+            const configRow = await this.getIDB('events', 'event-config-home');
+            if (configRow && configRow.long_description) {
+                const homeConf = JSON.parse(configRow.long_description);
+                const merged = { ...defaultConfig, ...homeConf };
+                localStorage.setItem('ares_home_config', JSON.stringify(merged));
+                return merged;
+            }
+        } catch (err) {
+            console.warn("Could not load home config from IDB:", err);
+        }
+
+        return defaultConfig;
+    }
+
+    async saveHomeConfig(homeConfig) {
+        const defaultConfig = this.getDefaultHomeConfig();
+        const merged = { ...defaultConfig, ...homeConfig };
+        localStorage.setItem('ares_home_config', JSON.stringify(merged));
+
+        const configItem = {
+            id: 'event-config-home',
+            title: 'Home Layout Configuration',
+            title_es: 'Home Layout Configuration',
+            description: 'System Configuration - Do not delete',
+            description_es: 'Configuración del Sistema - No borrar',
+            long_description: JSON.stringify(merged),
+            long_description_es: JSON.stringify(merged),
+            date: '2099-12-31',
+            time: '00:00',
+            location: 'System Config',
+            location_es: 'System Config',
+            category: 'populars',
+            image_url: ''
+        };
+
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { error } = await this.supabase
+                    .from('events')
+                    .upsert([configItem]);
+                if (error) throw error;
+            } catch (err) {
+                console.error("Error saving home config to Supabase:", err);
+                await this.putIDB('events', configItem);
+                throw err;
+            }
+        } else {
+            await this.putIDB('events', configItem);
+        }
+        return true;
+    }
+
     // Events Actions
     async getEvents() {
         let events = [];
@@ -816,8 +1056,30 @@ class AppDatabase {
             }
         }
 
+        // Process countdown config record if present
+        const countdownConfigEvent = events.find(e => e.id === 'event-config-countdown');
+        if (countdownConfigEvent) {
+            try {
+                const countdown = JSON.parse(countdownConfigEvent.long_description);
+                localStorage.setItem('ares_countdown', JSON.stringify(countdown));
+            } catch (e) {
+                console.error("Error parsing countdown from Supabase config event:", e);
+            }
+        }
+
+        // Process home config record if present
+        const homeConfigEvent = events.find(e => e.id === 'event-config-home');
+        if (homeConfigEvent) {
+            try {
+                const homeConf = JSON.parse(homeConfigEvent.long_description);
+                localStorage.setItem('ares_home_config', JSON.stringify(homeConf));
+            } catch (e) {
+                console.error("Error parsing home config from Supabase event:", e);
+            }
+        }
+
         // Filter out config records from returned list
-        return events.filter(e => e.id !== 'event-config-category-colors' && e.id !== 'event-config-faqs');
+        return events.filter(e => e.id !== 'event-config-category-colors' && e.id !== 'event-config-faqs' && e.id !== 'event-config-countdown' && e.id !== 'event-config-home');
     }
 
     async getLocalEvents() {
@@ -1026,36 +1288,40 @@ class AppDatabase {
     }
 
     async login(email, password) {
-        // Netejar qualsevol sessió anterior
-        localStorage.removeItem('ares_mock_session');
+        localStorage.removeItem('ares_local_session');
 
-        // L'única autenticació vàlida és Supabase Auth.
-        // No hi ha contrasenyes hardcodeades ni mode demo.
-        if (!this.isSupabaseConfigured()) {
-            return {
-                success: false,
-                error: "El panell d'administració requereix connexió a Supabase. Configura les credencials primer."
-            };
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                if (error) throw error;
+                return { success: true, user: data.user };
+            } catch (err) {
+                console.error("Login failed on Supabase:", err);
+                return { success: false, error: err.message };
+            }
         }
 
-        try {
-            const { data, error } = await this.supabase.auth.signInWithPassword({
-                email: email,
-                password: password
-            });
-            if (error) throw error;
-            return { success: true, user: data.user };
-        } catch (err) {
-            console.error("Login failed on Supabase:", err);
-            return { success: false, error: err.message };
-        }
+        // Mode Local (desenvolupament local): permet accés de gestió local
+        const localUser = {
+            id: 'local-admin',
+            email: email || 'admin@ares.com',
+            user_metadata: {
+                display_name: 'Admin Local',
+                avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100'
+            }
+        };
+        localStorage.setItem('ares_local_session', JSON.stringify(localUser));
+        return { success: true, user: localUser };
     }
 
     async logout() {
         if (this.isSupabaseConfigured()) {
-            await this.supabase.auth.signOut();
+            try { await this.supabase.auth.signOut(); } catch (e) {}
         }
-        localStorage.removeItem('ares_mock_session');
+        localStorage.removeItem('ares_local_session');
         return true;
     }
 
@@ -1063,12 +1329,19 @@ class AppDatabase {
         if (this.isSupabaseConfigured()) {
             try {
                 const { data: { user } } = await this.supabase.auth.getUser();
-                return user;
+                if (user) return user;
             } catch (e) {
-                return null;
+                // Ignore and check local session
             }
         }
-        // Sense Supabase configurat, no hi ha sessió vàlida possible.
+        const localSession = localStorage.getItem('ares_local_session');
+        if (localSession) {
+            try {
+                return JSON.parse(localSession);
+            } catch (e) {
+                localStorage.removeItem('ares_local_session');
+            }
+        }
         return null;
     }
 
@@ -1267,7 +1540,9 @@ class AppDatabase {
         const events = await this.getAllIDB('events');
         const photos = await this.getAllIDB('photos');
         const categoryColors = this.getCategoryColors();
-        return { news, events, photos, categoryColors };
+        const countdown = await this.getCountdown();
+        const homeConfig = await this.getHomeConfig();
+        return { news, events, photos, categoryColors, countdown, homeConfig };
     }
 
     async importBackup(data) {
@@ -1276,6 +1551,16 @@ class AppDatabase {
         // Import category colors if present
         if (data.categoryColors) {
             await this.saveCategoryColors(data.categoryColors);
+        }
+
+        // Import countdown config if present
+        if (data.countdown) {
+            await this.saveCountdown(data.countdown);
+        }
+
+        // Import home config if present
+        if (data.homeConfig) {
+            await this.saveHomeConfig(data.homeConfig);
         }
         
         const errors = [];
