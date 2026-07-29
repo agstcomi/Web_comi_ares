@@ -236,10 +236,17 @@ Completat en la sessió actual:
 
 ---
 
-## 20. Pròxim Pas
-* Executar la consulta SQL de creació de la taula `push_subscriptions` en l'editor SQL de Supabase (si no s'ha executat encara).
-* Desplegar la Edge Function amb el CLI: `supabase functions deploy send-push-notification`.
-* Provar i verificar la desactivació automàtica establint una data objectiu passada des de `/admin/`.
-* Esperar a noves instruccions de l'usuari.
+## 20. Desplegament a Producció (PRO) - Commit `512c6c2`
+Tot el treball de la sessió s'ha verificat i pujat amb èxit a la branca principal (`main`) en el commit `512c6c2`:
+* **Gestió Centralitzada de la Home**: Panell únic `#tab-home` amb Drag & Drop per a reordenar mòduls i modals d'edició emergents (pop-up).
+* **Compte Enrere Auto-desactivable**: Regla automàtica de desactivació en passar la data/hora objectiu.
+* **Formulari de Contacte Integrat**: Formulari AJAX directament a la secció inferior de Qui Som (`quisom.html` i `es/quisom.html`).
+* **Portada Només Vídeo**: Eliminada la imatge de suport per a reproduir únicament el vídeo de fons.
+
+---
+
+## 21. Pròxim Pas
+* Esperar a que el flux de GitHub Actions finalitze la publicació en GitHub Pages.
+* Esperar noves instruccions de l'usuari.
 
 
