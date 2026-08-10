@@ -816,19 +816,57 @@ class AppDatabase {
             }
         }
 
+        const getSortTime = (t) => {
+            if (!t) return '99:99';
+            const m = t.match(/^(\d{2}):(\d{2})$/);
+            if (m) {
+                let hh = parseInt(m[1], 10);
+                if (hh < 6) {
+                    return `${hh + 24}:${m[2]}`;
+                }
+            }
+            if (t.toLowerCase().includes('acabar') || t.toLowerCase().includes('després')) {
+                return '23:59';
+            }
+            return t;
+        };
+
+        // Sort events chronologically (date ascending, time ascending)
+        events.sort((a, b) => {
+            const dateDiff = a.date.localeCompare(b.date);
+            if (dateDiff !== 0) return dateDiff;
+            return getSortTime(a.time).localeCompare(getSortTime(b.time));
+        });
+
         // Filter out config records from returned list
         return events.filter(e => e.id !== 'event-config-category-colors' && e.id !== 'event-config-faqs');
     }
 
+
     async getLocalEvents() {
         await this.dbPromise;
         const events = await this.getAllIDB('events');
+        const getSortTime = (t) => {
+            if (!t) return '99:99';
+            const m = t.match(/^(\d{2}):(\d{2})$/);
+            if (m) {
+                let hh = parseInt(m[1], 10);
+                if (hh < 6) {
+                    return `${hh + 24}:${m[2]}`;
+                }
+            }
+            if (t.toLowerCase().includes('acabar') || t.toLowerCase().includes('després')) {
+                return '23:59';
+            }
+            return t;
+        };
         return events.sort((a, b) => {
-            const dateDiff = new Date(a.date) - new Date(b.date);
+            const dateDiff = a.date.localeCompare(b.date);
             if (dateDiff !== 0) return dateDiff;
-            return a.time.localeCompare(b.time);
+            return getSortTime(a.time).localeCompare(getSortTime(b.time));
         });
     }
+
 
     async addEvent(item) {
         const newItem = {
