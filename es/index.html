@@ -2,6 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <!-- Preconnect per a Google Fonts (millora rendiment) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- ===== CAPCALERES DE SEGURETAT HTTP ===== -->
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
@@ -42,9 +45,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Fiestas Ares">
     <meta name="theme-color" content="#ffffff">
-    <link rel="apple-touch-icon" href="/img/icon-512.svg">
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.png" type="image/png">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="/css/styles.css?v=1.14">
+    <link rel="stylesheet" href="/css/styles.css?v=1.20">
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
@@ -85,15 +90,6 @@
       }
     }
     </script>
-    <style>
-        .hero {
-            background-image: url('../img/portada.jpg');
-            background-image: url('../img/portada.webp');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-    </style>
 </head>
 <body>
 
@@ -101,11 +97,10 @@
     <div id="header-placeholder"></div>
 
     <!-- Fullscreen Cover Hero Banner -->
-    <section class="hero" id="hero">
+    <section class="hero" id="hero" style="background-color: #000000;">
         <!-- Video Background Container -->
-        <div class="hero-video-container">
-            <img src="../img/portada.jpg" alt="Portada Fiestas de Ares del Maestrat" class="hero-video-placeholder">
-            <video autoplay muted loop playsinline poster="../img/portada.webp">
+        <div class="hero-video-container" style="background-color: #000000;">
+            <video autoplay muted loop playsinline preload="none" poster="/img/portada.webp" aria-label="Entorn i Ball Pla d'Ares del Maestrat">
                 <source src="../img/portada.mp4" type="video/mp4">
             </video>
         </div>
@@ -124,253 +119,256 @@
         </a>
     </section>
 
-    <!-- Welcome Section -->
-    <section id="welcome-section" style="padding: 5rem 0 3rem 0; text-align: center; border-bottom: none;">
-        <div class="container" style="max-width: 800px; padding: 0 2rem;">
-            <p style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); line-height: 1.8; color: var(--text-primary); font-weight: 300; margin-bottom: 0; font-family: var(--font-body);">
-                Bienvenidos a la web oficial de la Comisión de Fiestas de Ares. Aquí podrás encontrar toda la información sobre las actividades y eventos que la asociación realiza en el pueblo: programación, concursos y mucho más.
-            </p>
-        </div>
-    </section>
-
-    <!-- Countdown Section -->
-    <section id="countdown-section" style="padding: 1.5rem 0 3.5rem 0; border-bottom: 1px solid var(--border-color); text-align: center;">
-        <div class="container">
-            <h1 style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-family: var(--font-heading); font-weight: 900; line-height: 1.1;">
-                FIESTAS DE ARES 2026
-            </h1>
-            
-            <div class="countdown-wrapper">
-                <div class="countdown-box">
-                    <span id="countdown-months">00</span>
-                    <span>Meses</span>
-                </div>
-                <div class="countdown-divider">:</div>
-                
-                <div class="countdown-box">
-                    <span id="countdown-days">00</span>
-                    <span>Días</span>
-                </div>
-                <div class="countdown-divider">:</div>
-
-                <div class="countdown-box">
-                    <span id="countdown-hours">00</span>
-                    <span>Horas</span>
-                </div>
-                <div class="countdown-divider">:</div>
-                
-                <div class="countdown-box">
-                    <span id="countdown-minutes">00</span>
-                    <span>Minutos</span>
-                </div>
-                <div class="countdown-divider">:</div>
-                
-                <div class="countdown-box">
-                    <span id="countdown-seconds">00</span>
-                    <span>Segundos</span>
-                </div>
+    <!-- Main Home Sections Container -->
+    <main id="home-sections-container">
+        <!-- Welcome Section -->
+        <section id="welcome-section" style="padding: 5rem 0 3rem 0; text-align: center; border-bottom: none;">
+            <div class="container" style="max-width: 800px; padding: 0 2rem;">
+                <p id="welcome-text-p" style="font-size: clamp(1.1rem, 2.5vw, 1.4rem); line-height: 1.8; color: var(--text-primary); font-weight: 300; margin-bottom: 0; font-family: var(--font-body);">
+                    Bienvenidos a la web oficial de la Comisión de Fiestas de Ares. Aquí podrás encontrar toda la información sobre las actividades y eventos que la asociación realiza en el pueblo: programación, concursos y mucho más.
+                </p>
             </div>
+        </section>
 
-            <p style="margin-top: 2.5rem; font-size: 1.15rem; color: var(--text-secondary); font-weight: 300; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
-                Las Fiestas Patronales de Ares del Maestrat 2026 tendrán lugar del 16 al 25 de agosto.
-            </p>
-        </div>
-    </section>
+        <!-- Countdown Section -->
+        <section id="countdown-section" style="padding: 1.5rem 0 3.5rem 0; border-bottom: 1px solid var(--border-color); text-align: center;">
+            <div class="container">
+                <h1 id="countdown-title-heading" style="font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2.5rem; letter-spacing: 0.05em; text-transform: uppercase; font-family: var(--font-heading); font-weight: 900; line-height: 1.1;">
+                    FIESTAS DE ARES 2026
+                </h1>
+                
+                <div class="countdown-wrapper">
+                    <div class="countdown-box">
+                        <span id="countdown-months">00</span>
+                        <span>Meses</span>
+                    </div>
+                    <div class="countdown-divider">:</div>
+                    
+                    <div class="countdown-box">
+                        <span id="countdown-days">00</span>
+                        <span>Días</span>
+                    </div>
+                    <div class="countdown-divider">:</div>
 
-    <!-- News & Announcements Section -->
-    <section id="noticies">
-        <div class="container">
-            <div class="section-header-flex">
-                <h2>Últimas Noticias</h2>
-                <p style="margin-bottom: 0;"><a href="noticies" style="text-decoration: underline;">Ver más noticias &rarr;</a></p>
-            </div>
-            
-            <div class="news-grid" id="news-container">
-                <!-- Populated dynamically via JS (Skeletons shown during load) -->
-                <div class="news-card skeleton-card">
-                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
-                    <div class="news-info">
-                        <div class="skeleton skeleton-text" style="width: 30%; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-title" style="width: 85%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 70%; margin-bottom: 1.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                    <div class="countdown-box">
+                        <span id="countdown-hours">00</span>
+                        <span>Horas</span>
+                    </div>
+                    <div class="countdown-divider">:</div>
+                    
+                    <div class="countdown-box">
+                        <span id="countdown-minutes">00</span>
+                        <span>Minutos</span>
+                    </div>
+                    <div class="countdown-divider">:</div>
+                    
+                    <div class="countdown-box">
+                        <span id="countdown-seconds">00</span>
+                        <span>Segundos</span>
                     </div>
                 </div>
-                <div class="news-card skeleton-card">
-                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
-                    <div class="news-info">
-                        <div class="skeleton skeleton-text" style="width: 25%; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-title" style="width: 80%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 65%; margin-bottom: 1.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+
+                <p id="countdown-desc-text" style="margin-top: 2.5rem; font-size: 1.15rem; color: var(--text-secondary); font-weight: 300; max-width: 800px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                    Las Fiestas Patronales de Ares del Maestrat 2026 tendrán lugar del 16 al 25 de agosto.
+                </p>
+            </div>
+        </section>
+
+        <!-- News & Announcements Section -->
+        <section id="noticies">
+            <div class="container">
+                <div class="section-header-flex">
+                    <h2>Últimas Noticias</h2>
+                    <p style="margin-bottom: 0;"><a href="noticies" style="text-decoration: underline;">Ver más noticias &rarr;</a></p>
+                </div>
+                
+                <div class="news-grid" id="news-container">
+                    <!-- Populated dynamically via JS (Skeletons shown during load) -->
+                    <div class="news-card skeleton-card">
+                        <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                        <div class="news-info">
+                            <div class="skeleton skeleton-text" style="width: 30%; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-title" style="width: 85%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 70%; margin-bottom: 1.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                        </div>
+                    </div>
+                    <div class="news-card skeleton-card">
+                        <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                        <div class="news-info">
+                            <div class="skeleton skeleton-text" style="width: 25%; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-title" style="width: 80%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 65%; margin-bottom: 1.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                        </div>
+                    </div>
+                    <div class="news-card skeleton-card">
+                        <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
+                        <div class="news-info">
+                            <div class="skeleton skeleton-text" style="width: 35%; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-title" style="width: 90%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 1.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
+                        </div>
                     </div>
                 </div>
-                <div class="news-card skeleton-card">
-                    <div class="news-img-wrapper skeleton" style="aspect-ratio: 16/10;"></div>
-                    <div class="news-info">
-                        <div class="skeleton skeleton-text" style="width: 35%; margin-bottom: 0.75rem;"></div>
-                        <div class="skeleton skeleton-title" style="width: 90%; height: 1.5rem; margin-bottom: 0.75rem;"></div>
+            </div>
+        </section>
+
+        <!-- Highlighted Events Section -->
+        <section id="events-highlight-section" style="background-color: var(--bg-secondary);">
+            <div class="container">
+                <div class="section-header-flex">
+                    <h2>Próximos Actos Destacados</h2>
+                    <p style="margin-bottom: 0;"><a href="programacio" style="text-decoration: underline;">Ver programa completo &rarr;</a></p>
+                </div>
+                
+                <div class="home-events-grid" id="events-highlight-container">
+                    <!-- Events loaded dynamically via JS (Skeletons shown during load) -->
+                    <div class="home-event-card skeleton-card">
+                        <div class="event-title-row">
+                            <div class="skeleton skeleton-title" style="width: 70%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 20%; height: 1.25rem; border-radius: 9999px;"></div>
+                        </div>
+                        <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
                         <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 1.5rem;"></div>
+                        <div class="event-footer">
+                            <div class="event-meta" style="width: 100%;">
+                                <div class="skeleton skeleton-text" style="width: 50%; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-event-card skeleton-card">
+                        <div class="event-title-row">
+                            <div class="skeleton skeleton-title" style="width: 60%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 25%; height: 1.25rem; border-radius: 9999px;"></div>
+                        </div>
+                        <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
                         <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 1.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 40%; margin-top: auto;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Highlighted Events Section -->
-    <section style="background-color: var(--bg-secondary);">
-        <div class="container">
-            <div class="section-header-flex">
-                <h2>Próximos Actos Destacados</h2>
-                <p style="margin-bottom: 0;"><a href="programacio" style="text-decoration: underline;">Ver programa completo &rarr;</a></p>
-            </div>
-            
-            <div class="home-events-grid" id="events-highlight-container">
-                <!-- Events loaded dynamically via JS (Skeletons shown during load) -->
-                <div class="home-event-card skeleton-card">
-                    <div class="event-title-row">
-                        <div class="skeleton skeleton-title" style="width: 70%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 20%; height: 1.25rem; border-radius: 9999px;"></div>
-                    </div>
-                    <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 80%; margin-bottom: 1.5rem;"></div>
-                    <div class="event-footer">
-                        <div class="event-meta" style="width: 100%;">
-                            <div class="skeleton skeleton-text" style="width: 50%; margin-bottom: 0.5rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                        <div class="event-footer">
+                            <div class="event-meta" style="width: 100%;">
+                                <div class="skeleton skeleton-text" style="width: 45%; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 35%;"></div>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="home-event-card skeleton-card">
-                    <div class="event-title-row">
-                        <div class="skeleton skeleton-title" style="width: 60%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 25%; height: 1.25rem; border-radius: 9999px;"></div>
-                    </div>
-                    <div class="skeleton skeleton-text" style="width: 95%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 75%; margin-bottom: 1.5rem;"></div>
-                    <div class="event-footer">
-                        <div class="event-meta" style="width: 100%;">
-                            <div class="skeleton skeleton-text" style="width: 45%; margin-bottom: 0.5rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 35%;"></div>
+                    <div class="home-event-card skeleton-card">
+                        <div class="event-title-row">
+                            <div class="skeleton skeleton-title" style="width: 80%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
+                            <div class="skeleton skeleton-text" style="width: 15%; height: 1.25rem; border-radius: 9999px;"></div>
                         </div>
-                    </div>
-                </div>
-                <div class="home-event-card skeleton-card">
-                    <div class="event-title-row">
-                        <div class="skeleton skeleton-title" style="width: 80%; height: 1.25rem; margin-bottom: 0.5rem;"></div>
-                        <div class="skeleton skeleton-text" style="width: 15%; height: 1.25rem; border-radius: 9999px;"></div>
-                    </div>
-                    <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
-                    <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 1.5rem;"></div>
-                    <div class="event-footer">
-                        <div class="event-meta" style="width: 100%;">
-                            <div class="skeleton skeleton-text" style="width: 55%; margin-bottom: 0.5rem;"></div>
-                            <div class="skeleton skeleton-text" style="width: 45%;"></div>
+                        <div class="skeleton skeleton-text" style="width: 100%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 90%; margin-bottom: 0.5rem;"></div>
+                        <div class="skeleton skeleton-text" style="width: 85%; margin-bottom: 1.5rem;"></div>
+                        <div class="event-footer">
+                            <div class="event-meta" style="width: 100%;">
+                                <div class="skeleton skeleton-text" style="width: 55%; margin-bottom: 0.5rem;"></div>
+                                <div class="skeleton skeleton-text" style="width: 45%;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Weather Forecast Section -->
-    <section id="oratge" style="background-color: var(--bg-primary);">
-        <div class="container">
-            <div id="weather-widget" class="weather-widget-container" style="margin-top: 0;">
-                <div class="weather-card-horizontal animate-fade-in-up" style="transition-delay: 0.1s;">
+        <!-- Weather Forecast Section -->
+        <section id="oratge" style="background-color: var(--bg-primary);">
+            <div class="container">
+                <div id="weather-widget" class="weather-widget-container" style="margin-top: 0;">
+                    <div class="weather-card-horizontal animate-fade-in-up" style="transition-delay: 0.1s;">
 
-                    
-                    <div class="weather-info-left">
-                        <div class="weather-location-container">
-                            <span class="weather-location-title">Ares del Maestrat</span>
-                            <span class="weather-location-sub">Castellón, España</span>
-                        </div>
-                        <div class="weather-temp-huge-wrapper">
-                            <span id="weather-temp-huge" class="weather-temp-huge">--°</span>
-                            <div class="weather-temp-range-sub" id="weather-temp-range-sub">
-                                <span class="temp-max">--°</span> <span class="temp-divider">/</span> <span class="temp-min">--°</span>
+                        
+                        <div class="weather-info-left">
+                            <div class="weather-location-container">
+                                <span class="weather-location-title">Ares del Maestrat</span>
+                                <span class="weather-location-sub">Castellón, España</span>
                             </div>
-                        </div>
-                    </div>
-                    
-                    <div class="weather-forecast-column">
-                        <div id="weather-forecast-container" class="weather-forecast-grid-horizontal">
-                            <!-- Skeletons shown during load -->
-                            <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
-                                <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
-                            </div>
-                            <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
-                                <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
-                            </div>
-                            <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
-                                <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
-                                <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                            <div class="weather-temp-huge-wrapper">
+                                <span id="weather-temp-huge" class="weather-temp-huge">--°</span>
+                                <div class="weather-temp-range-sub" id="weather-temp-range-sub">
+                                    <span class="temp-max">--°</span> <span class="temp-divider">/</span> <span class="temp-min">--°</span>
+                                </div>
                             </div>
                         </div>
                         
-                        <div class="weather-detail-link-wrapper">
-                            <a href="temps" class="weather-detail-link">
-                                Ver previsión detallada a 7 días <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
-                            </a>
+                        <div class="weather-forecast-column">
+                            <div id="weather-forecast-container" class="weather-forecast-grid-horizontal">
+                                <!-- Skeletons shown during load -->
+                                <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                                    <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                                </div>
+                                <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                                    <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                                </div>
+                                <div class="weather-day-item skeleton-card" style="pointer-events: none; user-select: none;">
+                                    <div class="skeleton skeleton-text" style="width: 50%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton" style="width: 28px; height: 28px; border-radius: 50%; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 70%; height: 0.75rem; margin-bottom: 0.75rem;"></div>
+                                    <div class="skeleton skeleton-text" style="width: 40%; height: 0.9rem; margin-bottom: 0;"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="weather-detail-link-wrapper">
+                                <a href="temps" class="weather-detail-link">
+                                    Ver previsión detallada a 7 días <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i>
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- FAQs Section -->
-    <section class="faqs-section">
-        <div class="container">
-            <div class="faqs-grid">
-                <div class="faqs-left">
-                    <div class="faqs-pill">
-                        <span>FAQs</span>
+        <!-- FAQs Section -->
+        <section id="faqs-section" class="faqs-section">
+            <div class="container">
+                <div class="faqs-grid">
+                    <div class="faqs-left">
+                        <div class="faqs-pill">
+                            <span>FAQs</span>
+                        </div>
+                        <h2 class="faqs-title">Preguntas<br><span>Frecuentes</span></h2>
+                        <p class="faqs-subtitle">
+                            ¿Tienes alguna duda sobre la celebración de las fiestas o cómo colaborar? Aquí tienes las respuestas a las consultas más habituales.
+                        </p>
                     </div>
-                    <h2 class="faqs-title">Preguntas<br><span>Frecuentes</span></h2>
-                    <p class="faqs-subtitle">
-                        ¿Tienes alguna duda sobre la celebración de las fiestas o cómo colaborar? Aquí tienes las respuestas a las consultas más habituales.
-                    </p>
-                </div>
-                <div class="faqs-right">
-                    <div class="faqs-list" id="faqs-accordion-container">
-                        <!-- Rendered dynamically -->
+                    <div class="faqs-right">
+                        <div class="faqs-list" id="faqs-accordion-container">
+                            <!-- Rendered dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Call to action block -->
-    <section style="border-bottom: none; text-align: center; padding: 5rem 0;">
-        <div class="container" style="max-width: 800px; padding: 0 2rem;">
-            <h2 style="font-size: clamp(2rem, 5vw, 3.5rem); margin: 0 auto 2rem auto;">
-                ¿QUIERES SABER QUÉ HACEMOS EN EL PUEBLO?
-            </h2>
-            <p style="max-width: 600px; margin: 0 auto 3rem auto; font-size: 1.1rem;">
-                Tradición, música, hermandad y cultura en el corazón del Maestrat. Estate al día de todos los actos organizados por la Comisión.
-            </p>
-            <a href="programacio" class="btn">CONSULTA LA PROGRAMACIÓN</a>
-        </div>
-    </section>
+        <!-- Call to action block -->
+        <section id="cta-section" style="border-bottom: none; text-align: center; padding: 5rem 0;">
+            <div class="container" style="max-width: 800px; padding: 0 2rem;">
+                <h2 style="font-size: clamp(2rem, 5vw, 3.5rem); margin: 0 auto 2rem auto;">
+                    ¿QUIERES SABER QUÉ HACEMOS EN EL PUEBLO?
+                </h2>
+                <p style="max-width: 600px; margin: 0 auto 3rem auto; font-size: 1.1rem;">
+                    Tradición, música, hermandad y cultura en el corazón del Maestrat. Estate al día de todos los actos organizados por la Comisión.
+                </p>
+                <a href="programacio" class="btn">CONSULTA LA PROGRAMACIÓN</a>
+            </div>
+        </section>
+    </main>
 
     <!-- Dynamic Footer Placeholder -->
     <div id="footer-placeholder"></div>
@@ -378,512 +376,10 @@
     <!-- Scripts -->
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
-    <script src="/js/db.js?v=1.8" defer></script>
+    <script src="/js/db.js?v=1.21" defer></script>
     <script src="/js/main.js?v=1.13" defer></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', async () => {
-            // Wait for DB to be initialized
-            setTimeout(async () => {
-                await loadHomeData();
-                await loadWeather();
-            }, 100);
-
-            // Smooth scroll for hero button
-            document.getElementById('scroll-down').addEventListener('click', (e) => {
-                e.preventDefault();
-                document.getElementById('welcome-section').scrollIntoView({ behavior: 'smooth' });
-            });
-
-            // Start countdown
-            initCountdown();
-        });
-
-        function initCountdown() {
-            const targetDate = new Date("2026-08-16T00:00:00");
-
-            function updateValue(id, newValue) {
-                const el = document.getElementById(id);
-                if (!el) return;
-                if (el.textContent !== newValue) {
-                    el.textContent = newValue;
-                    el.classList.remove('animate-roll');
-                    void el.offsetWidth; // Force reflow
-                    el.classList.add('animate-roll');
-                }
-            }
-
-            function update() {
-                const currentDate = new Date();
-                let diffMs = targetDate - currentDate;
-
-                if (diffMs <= 0) {
-                    updateValue('countdown-months', "00");
-                    updateValue('countdown-days', "00");
-                    updateValue('countdown-hours', "00");
-                    updateValue('countdown-minutes', "00");
-                    updateValue('countdown-seconds', "00");
-                    return;
-                }
-
-                // Month calculation
-                let months = (targetDate.getFullYear() - currentDate.getFullYear()) * 12 + (targetDate.getMonth() - currentDate.getMonth());
-                
-                let tempDate = new Date(currentDate.getTime());
-                tempDate.setMonth(tempDate.getMonth() + months);
-                if (tempDate > targetDate) {
-                    months--;
-                    tempDate = new Date(currentDate.getTime());
-                    tempDate.setMonth(tempDate.getMonth() + months);
-                }
-
-                const oneDay = 24 * 60 * 60 * 1000;
-                let diffDaysMs = targetDate - tempDate;
-                const days = Math.floor(diffDaysMs / oneDay);
-
-                tempDate.setTime(tempDate.getTime() + days * oneDay);
-                let remainingMs = targetDate - tempDate;
-
-                const hours = Math.floor(remainingMs / (60 * 60 * 1000));
-                remainingMs %= 60 * 60 * 1000;
-
-                const minutes = Math.floor(remainingMs / (60 * 1000));
-                remainingMs %= 60 * 1000;
-
-                const seconds = Math.floor(remainingMs / 1000);
-
-                updateValue('countdown-months', String(months).padStart(2, '0'));
-                updateValue('countdown-days', String(days).padStart(2, '0'));
-                updateValue('countdown-hours', String(hours).padStart(2, '0'));
-                updateValue('countdown-minutes', String(minutes).padStart(2, '0'));
-                updateValue('countdown-seconds', String(seconds).padStart(2, '0'));
-            }
-
-            setInterval(update, 1000);
-            update();
-        }
-
-        async function loadHomeData() {
-            try {
-                // Load News (Max 3)
-                const newsList = await window.db.getNews();
-                const newsContainer = document.getElementById('news-container');
-                
-                // Filter out drafts
-                const publicNewsList = (newsList || []).filter(item => (item.status || 'published') !== 'draft');
-                
-                if (publicNewsList && publicNewsList.length > 0) {
-                    newsContainer.innerHTML = publicNewsList.slice(0, 3).map((item, idx) => {
-                        const title = item.title_es || item.title;
-                        const subtitle = item.subtitle_es || item.subtitle;
-                        const content = item.content_es || item.content;
-                        const plainContent = stripHTML(content);
-                        const excerpt = subtitle || (plainContent.length > 100 ? plainContent.substring(0, 100) + '...' : plainContent);
-                        
-                        const escTitle = window.db.escapeHTML(title);
-                        const escExcerpt = window.db.escapeHTML(excerpt);
-                        const imageAlt = item.image_alt_es || item.image_alt;
-                        const escAlt = imageAlt ? window.db.escapeHTML(imageAlt) : escTitle;
-                        
-                        // In Spanish version, dynamic news slugs are slug_es or slug
-                        const activeSlug = item.slug_es || item.slug;
-                        const articleUrl = activeSlug ? `noticies?slug=${activeSlug}` : `noticies?id=${item.id}`;
-                        const imgSrc = window.getAssetPath(item.image_url) || 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&q=80&w=800';
-                        
-                        return `
-                            <article class="news-card animate-fade-in-up" style="cursor: pointer; transition-delay: ${idx * 0.05}s;" onclick="window.location.href='${articleUrl}'">
-                                <div class="news-img-wrapper">
-                                    ${window.getNewsImageHTML(item.image_url, escAlt)}
-                                </div>
-                                <div class="news-info">
-                                    <span class="news-date">${formatNewsDate(item.created_at)}</span>
-                                    <h3 class="news-title" style="margin-top: 0.5rem; margin-bottom: 0.5rem;">${escTitle}</h3>
-                                    <p class="news-excerpt" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.4; font-size: 0.9rem;">${escExcerpt}</p>
-                                    <a href="${articleUrl}" class="news-more" style="margin-top: auto;">Leer más <i data-lucide="arrow-right" style="width: 14px; height: 14px;"></i></a>
-                                </div>
-                            </article>
-                        `;
-                    }).join('');
-                } else {
-                    newsContainer.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 2rem; color: var(--text-muted);">No hay noticias publicadas actualmente.</div>';
-                }
-
-                // Load Events (Max 3 upcoming)
-                const eventsList = await window.db.getEvents();
-                const eventsContainer = document.getElementById('events-highlight-container');
-                const colors = window.db.getCategoryColors();
-
-                if (eventsList && eventsList.length > 0) {
-                    const today = new Date().toISOString().split('T')[0];
-                    let upcoming = eventsList.filter(e => e.date >= today);
-                    if (upcoming.length === 0) upcoming = eventsList; // fallback to all if none in future
-
-                    eventsContainer.innerHTML = upcoming.slice(0, 3).map((item, idx) => {
-                        const title = item.title_es || item.title;
-                        const desc = item.description_es || item.description;
-                        const loc = item.location_es || item.location;
-                        
-                        const escTitle = window.db.escapeHTML(title);
-                        const escDesc = window.db.escapeHTML(desc);
-                        const escLoc = window.db.escapeHTML(loc);
-                        const escId = window.db.escapeHTML(item.id);
-                        const formattedDate = formatDate(item.date);
-                        return `
-                            <div class="home-event-card animate-fade-in-up" data-id="${escId}" style="transition-delay: ${idx * 0.05}s;" onclick="window.location.href='programacio'">
-                                <div class="event-title-row">
-                                    <h3>${escTitle}</h3>
-                                    <div style="display: flex; gap: 0.25rem;">
-                                        ${window.renderCategoryBadges(item.category)}
-                                    </div>
-                                </div>
-                                ${escDesc ? `<p class="event-desc">${escDesc}</p>` : ''}
-                                <div class="event-footer">
-                                    <div class="event-meta">
-                                        <span class="event-date-time">${formattedDate} — ${item.time}h</span>
-                                        <div class="event-location">
-                                            <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
-                                            <span>${escLoc}</span>
-                                        </div>
-                                    </div>
-                                    <div class="event-arrow">
-                                        <i data-lucide="chevron-right"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                } else {
-                    eventsContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No hay eventos programados.</div>';
-                }
-
-                // Load FAQs
-                await loadHomeFaqs();
-
-                // Refresh Lucide icons loaded dynamically
-                if (window.lucide) {
-                    window.lucide.createIcons();
-                }
-            } catch (err) {
-                console.error("Error loading home data:", err);
-            }
-        }
-
-        async function loadHomeFaqs() {
-            try {
-                const faqs = await window.db.getFAQs();
-                const container = document.getElementById('faqs-accordion-container');
-                if (!container) return;
-
-                if (!faqs || faqs.length === 0) {
-                    container.innerHTML = '<p style="color: var(--text-muted);">No hay preguntas disponibles.</p>';
-                    return;
-                }
-
-                container.innerHTML = faqs.map((faq, idx) => {
-                    const question = faq.question_es || faq.question;
-                    const answer = faq.answer_es || faq.answer;
-                    const escQuestion = window.db.escapeHTML(question);
-                    const escAnswer = window.db.escapeHTML(answer);
-                    const faqId = window.db.escapeHTML(faq.id);
-
-                    return `
-                        <div class="faq-item" id="item-${faqId}">
-                            <button class="faq-trigger" aria-expanded="false" aria-controls="content-${faqId}">
-                                <h3 class="faq-question-text">${escQuestion}</h3>
-                                <div class="faq-toggle-icon">
-                                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
-                                </div>
-                            </button>
-                            <div class="faq-content" id="content-${faqId}">
-                                <p>${escAnswer}</p>
-                            </div>
-                        </div>
-                    `;
-                }).join('');
-
-                // Bind accordion triggers
-                container.querySelectorAll('.faq-item').forEach(item => {
-                    const trigger = item.querySelector('.faq-trigger');
-                    const content = item.querySelector('.faq-content');
-                    const icon = item.querySelector('.faq-toggle-icon');
-
-                    trigger.addEventListener('click', () => {
-                        const isOpen = item.classList.contains('active');
-                        
-                        // Close all other items
-                        container.querySelectorAll('.faq-item').forEach(otherItem => {
-                            if (otherItem !== item) {
-                                otherItem.classList.remove('active');
-                                otherItem.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
-                                otherItem.querySelector('.faq-toggle-icon').innerHTML = '<i data-lucide="plus" style="width: 14px; height: 14px;"></i>';
-                            }
-                        });
-
-                        if (isOpen) {
-                            item.classList.remove('active');
-                            trigger.setAttribute('aria-expanded', 'false');
-                            icon.innerHTML = '<i data-lucide="plus" style="width: 14px; height: 14px;"></i>';
-                        } else {
-                            item.classList.add('active');
-                            trigger.setAttribute('aria-expanded', 'true');
-                            icon.innerHTML = '<i data-lucide="minus" style="width: 14px; height: 14px;"></i>';
-                        }
-
-                        if (window.lucide) window.lucide.createIcons();
-                    });
-                });
-
-                // Inject FAQ Schema (Structured Data)
-                injectFaqSchema(faqs);
-
-                if (window.lucide) window.lucide.createIcons();
-            } catch (err) {
-                console.error("Error loading FAQs on home:", err);
-            }
-        }
-
-        function injectFaqSchema(faqs) {
-            // Remove existing FAQ schema if present
-            const oldSchema = document.getElementById('faq-schema-jsonld');
-            if (oldSchema) oldSchema.remove();
-
-            const schema = {
-                "@context": "https://schema.org",
-                "@type": "FAQPage",
-                "mainEntity": faqs.map(faq => ({
-                    "@type": "Question",
-                    "name": faq.question_es || faq.question,
-                    "acceptedAnswer": {
-                        "@type": "Answer",
-                        "text": faq.answer_es || faq.answer
-                    }
-                }))
-            };
-
-            const script = document.createElement('script');
-            script.type = 'application/ld+json';
-            script.id = 'faq-schema-jsonld';
-            script.textContent = JSON.stringify(schema, null, 2);
-            document.head.appendChild(script);
-        }
-
-        function formatDate(dateStr) {
-            const options = { day: 'numeric', month: 'short' };
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('es-ES', options).toUpperCase();
-        }
-
-        function formatNewsDate(dateStr) {
-            if (!dateStr) return '';
-            const options = { day: 'numeric', month: 'long', year: 'numeric' };
-            const date = new Date(dateStr);
-            return date.toLocaleDateString('es-ES', options);
-        }
-
-        function stripHTML(html) {
-            if (!html) return '';
-            const doc = new DOMParser().parseFromString(html, 'text/html');
-            return doc.body.textContent || "";
-        }
-
-        function getWeatherIconName(stateValue, description) {
-            const val = String(stateValue);
-            const desc = (description || '').toLowerCase();
-            if (desc.includes('tormenta') || val === '43' || val === '44' || val === '45' || val === '46') return 'cloud-lightning';
-            if (desc.includes('lluvia') || desc.includes('llovinna') || desc.includes('chubasco') || ['16', '17', '23', '24', '25', '26', '33', '34', '35', '36'].includes(val)) return 'cloud-rain';
-            if (desc.includes('nieve') || ['71', '72', '73', '74', '37', '38'].includes(val)) return 'cloud-snow';
-            if (desc.includes('cubierto') || desc.includes('muy nuboso') || ['14', '15'].includes(val)) return 'cloud';
-            if (desc.includes('nuboso') || desc.includes('intervalos') || ['12', '13'].includes(val)) return 'cloud-sun';
-            return 'sun';
-        }
-
-        const descTranslation = {
-            'despejado': 'clar',
-            'poco nuboso': 'poc núvol',
-            'nuboso': 'núvol',
-            'muy nuboso': 'molt núvol',
-            'cubierto': 'cobert',
-            'nubes altas': 'núvols alts',
-            'intervalos nubosos': 'intervals de núvols',
-            'lluvia': 'pluja',
-            'lluvias': 'plujes',
-            'chubasco': 'ruixat',
-            'chubascos': 'ruixats',
-            'tormenta': 'tempesta',
-            'nieve': 'neu',
-            'niebla': 'boira',
-            'intervalos nubosos con lluvia escasa': 'intervals de núvols amb pluja escassa',
-            'nuboso con lluvia': 'núvol amb pluja',
-            'muy nuboso con lluvia': 'molt núvol amb pluja'
-        };
-
-        function renderWeather(forecast) {
-            const container = document.getElementById('weather-forecast-container');
-            if (!container || !forecast || forecast.length === 0) return;
-
-            const isEs = window.location.pathname.includes('/es/');
-            
-            // Actualizar panel izquierdo con los datos de hoy
-            const today = forecast[0];
-            const todayMaxVal = today.tempMax !== null ? `${today.tempMax}°` : '--°';
-            const todayMinVal = today.tempMin !== null ? `${today.tempMin}°` : '--°';
-            
-            const maxTitle = isEs ? 'Temperatura máxima' : 'Temperatura màxima';
-            const minTitle = isEs ? 'Temperatura mínima' : 'Temperatura mínima';
-            
-            const tempHuge = document.getElementById('weather-temp-huge');
-            if (tempHuge) {
-                tempHuge.textContent = today.currentTemp !== undefined && today.currentTemp !== null 
-                    ? `${today.currentTemp}°` 
-                    : (today.tempMax !== null ? `${today.tempMax}°` : '--°');
-            }
-            
-            const tempRangeSub = document.getElementById('weather-temp-range-sub');
-            if (tempRangeSub) {
-                tempRangeSub.innerHTML = `
-                    <span style="color: #ef4444;" title="${maxTitle}">${todayMaxVal}</span>
-                    <span style="color: var(--text-secondary); font-weight: 300; margin: 0 0.25rem;">/</span>
-                    <span style="color: #3b82f6;" title="${minTitle}">${todayMinVal}</span>
-                `;
-            }
-
-            container.innerHTML = forecast.map((day, idx) => {
-                const dateObj = new Date(day.date);
-                const dayLabel = idx === 0 
-                    ? (isEs ? 'HOY' : 'HUI') 
-                    : idx === 1 
-                        ? (isEs ? 'MAÑANA' : 'DEMÀ') 
-                        : (isEs 
-                            ? ['DOMINGO', 'LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO'][dateObj.getDay()]
-                            : ['DIUMENGE', 'DILLUNS', 'DIMARTS', 'DIMECRES', 'DIJOUS', 'DIVENDRES', 'DISSABTE'][dateObj.getDay()]
-                          );
-
-                const iconName = getWeatherIconName(day.skyValue, day.skyDescription);
-                
-                let descText = day.skyDescription;
-                if (!isEs) {
-                    const cleanDesc = descText.toLowerCase().trim();
-                    descText = descTranslation[cleanDesc] || descText;
-                }
-
-                const maxTemp = day.tempMax !== null ? `${day.tempMax}°C` : '--';
-                const minTemp = day.tempMin !== null ? `${day.tempMin}°C` : '--';
-                
-                return `
-                    <div class="weather-day-item">
-                        <span class="weather-day-label">${dayLabel}</span>
-                        <i data-lucide="${iconName}" style="width: 36px; height: 36px; color: var(--text-primary); margin-bottom: 0.75rem;"></i>
-                        <span style="font-size: 0.8rem; font-weight: 300; color: var(--text-secondary); margin-bottom: 0.5rem; text-transform: capitalize; height: 2.4em; display: flex; align-items: center; justify-content: center; line-height: 1.2;">
-                            ${descText}
-                        </span>
-                        <div class="weather-day-temp-wrapper">
-                            <div class="weather-day-temp">
-                                <span style="color: #ef4444;" title="${maxTitle}">${maxTemp}</span>
-                                <span style="color: var(--text-muted); font-weight: 300;">/</span>
-                                <span style="color: #3b82f6;" title="${minTitle}">${minTemp}</span>
-                            </div>
-                            ${day.precipProb > 0 ? `
-                                <div class="weather-day-precip" style="margin-top: 0.25rem; font-size: 0.7rem; color: #3b82f6; display: flex; align-items: center; gap: 0.15rem; font-weight: 500;">
-                                    <i data-lucide="droplet" style="width: 10px; height: 10px;"></i> ${day.precipProb}%
-                                </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                `;
-            }).join('');
-
-            if (window.lucide) {
-                window.lucide.createIcons();
-            }
-        }
-
-        function getLocalDateStr(offsetDays = 0) {
-            const d = new Date();
-            if (offsetDays !== 0) {
-                d.setDate(d.getDate() + offsetDays);
-            }
-            return d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
-        }
-
-        async function loadWeather() {
-            const weatherWidget = document.getElementById('weather-widget');
-            if (!weatherWidget) return;
-            
-            weatherWidget.style.display = 'flex';
-            
-            try {
-                let forecast = null;
-                const dbStatus = window.db ? window.db.getStatus() : 'local';
-                
-                if (dbStatus === 'supabase' && window.db.supabase) {
-                    try {
-                        const { data, error } = await window.db.supabase.functions.invoke('aemet-weather');
-                        if (error) {
-                            console.warn("Error invoking aemet-weather function, falling back to mock data:", error);
-                        } else if (data && data.forecast) {
-                            forecast = data.forecast;
-                        }
-                    } catch (e) {
-                        console.warn("Failed to fetch weather from Supabase function, falling back to mock data:", e);
-                    }
-                }
-                
-                const mockForecast = [
-                    {
-                        date: getLocalDateStr(0),
-                        tempMax: 22,
-                        tempMin: 12,
-                        skyDescription: 'Despejado',
-                        skyValue: '11',
-                        precipProb: 0,
-                        windSpeed: 15,
-                        windDir: 'O'
-                    },
-                    {
-                        date: getLocalDateStr(1),
-                        tempMax: 24,
-                        tempMin: 13,
-                        skyDescription: 'Poco nuboso',
-                        skyValue: '12',
-                        precipProb: 10,
-                        windSpeed: 10,
-                        windDir: 'SO'
-                    },
-                    {
-                        date: getLocalDateStr(2),
-                        tempMax: 21,
-                        tempMin: 14,
-                        skyDescription: 'Intervalos nubosos con lluvia',
-                        skyValue: '23',
-                        precipProb: 65,
-                        windSpeed: 20,
-                        windDir: 'E'
-                    }
-                ];
-
-                if (!forecast) {
-                    forecast = mockForecast;
-                }
-
-                // Filter out past days so that today (current local date in Spain) is the first day
-                const localTodayStr = getLocalDateStr(0);
-                forecast = forecast.filter(day => day.date >= localTodayStr);
-                
-                if (forecast.length === 0) {
-                    forecast = mockForecast;
-                }
-                
-                renderWeather(forecast.slice(0, 3));
-            } catch (err) {
-                console.error("Error loading weather:", err);
-                const container = document.getElementById('weather-forecast-container');
-                const isEs = window.location.pathname.includes('/es/');
-                const errMsg = isEs ? "No se ha podido cargar la previsión del tiempo." : "No s'ha pogut carregar la previsió del temps.";
-                if (container) {
-                    container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: #ef4444; font-size: 0.85rem;">${errMsg}</div>`;
-                }
-            }
-        }
-    </script>
+    <script src="/js/push-notifications.js?v=1.21" defer></script>
+    <script src="/js/home.js?v=1.20" defer></script>
     <!-- Metricool Tracking Script -->
     <script>function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"6c919b9c88213af948db1b24d716642e"})});</script>
 </body>

@@ -179,7 +179,102 @@ Completado en la última sesión:
 
 ---
 
-## 13. Próximo Paso
-* Rotar la Supabase `anon` key si aún no se ha hecho, y actualizar la configuración en los secrets de GitHub y el panel de administración de la web `/admin/`.
-* Esperar a nuevas instrucciones del usuario.
+## 14. Sistema de Notificaciones Push Web para Noticias (Local)
+Completado en la sesión actual:
+* **Service Worker (`sw.js`)**: Creado en la raíz del proyecto para la escucha en segundo plano de eventos `push` y la gestión del clic `notificationclick` para enfocar o redirigir automáticamente a la noticia publicada (`/noticies/[slug]`).
+* **Generación y Claves VAPID**: Generadas claves VAPID estándar P-256 (`VAPID_PUBLIC_KEY` y `VAPID_PRIVATE_KEY`) configuradas para la firma criptográfica de paquetes Web Push RFC 8292.
+* **Cliente JavaScript (`js/push-notifications.js`)**: Módulo responsable del registro del Service Worker, la solicitud de permisos al usuario (`Notification.requestPermission`), la conversión de claves VAPID a Uint8Array, la gestión de subscripciones y la renderización de un widget flotante en forma de campana (🔔) con indicador de estado y compatibilidad bilingüe (valenciano/castellano).
+* **Persistencia en Supabase (`js/db.js`)**: Añadidas las funciones `savePushSubscription(subscription)` y `deletePushSubscription(endpoint)` para registrar o eliminar suscripciones en la tabla `push_subscriptions` de Supabase.
+* **Edge Function `send-push-notification`**: Creada la Edge Function en `supabase/functions/send-push-notification/index.ts` usando Deno + la librería `web-push`. Consulta la tabla `push_subscriptions`, envía payloads encriptados a los servicios Push (Google, Mozilla, Apple) y elimina automáticamente los endpoints caducados (404/410 Gone).
+* **Integración en Panel de Administración (`admin/editor.html`)**: Inserción del campo `[x] 🔔 Enviar notificació Push als lectors en guardar`. Al guardar una noticia con estado `'published'` y esta opción marcada, se invoca automáticamente la Edge Function `send-push-notification`.
+* **Estilos CSS (`css/styles.css`)**: Estilizado del botón flotante `.push-bell-btn` con efecto cristal (backdrop blur), animación al pasar el cursor y punto verde dinámico para indicar el estado activo.
+* **Inclusión en HTMLs (v1.20)**: Añadido `<script src="/js/push-notifications.js?v=1.20" defer></script>` en todas las páginas públicas del sitio web.
 
+---
+
+---
+
+## 16. Mòdul de Gestió de la Home i Compte Enrere Editable (Local)
+Completat en la sessió actual:
+* **Autenticació Local Fallback**: Modificat `js/db.js` (`login`, `getCurrentUser`, `logout`) per incloure suport de sessió local (`ares_local_session`) quan Supabase no està configurat, permetent l'accés immediat a `/admin/` en entorn de desenvolupament local.
+* **Persistencia de Configuracions del Sistema**:
+  - `getCountdown()`, `saveCountdown()`: Gestionen el temporitzador de la compte enrere sota la clau `'event-config-countdown'` a la taula `events` (o `localStorage` / `IndexedDB`), complint totes les restriccions `NOT NULL` del esquema de PostgreSQL.
+  - `getHomeConfig()`, `saveHomeConfig()`: Gestionen l'ordre dels blocs i el missatge de benvinguda sota la clau `'event-config-home'`.
+* **Filtre de Consultes Públices**: Actualitzades les consultes en `js/db.js` i `scripts/generate-news.js` per a filtrar automàticament qualsevol ID amb prefix `event-config-*` (`event-config-faqs`, `event-config-category-colors`, `event-config-countdown`, `event-config-home`), de manera que mai apareguin com a esdeveniments al calendari ni als esquemes Schema.org.
+* **Panell Únic d'Administració de la Home (`admin/index.html` i `admin/gestio.js`)**:
+  - **Unificació en la Pestanya "Gestió de la Home" (`#tab-home`)**: Eliminades totes les pestanyes i formularis duplicats o redundants. Ara la secció "Gestió de la Home" és el punt únic i centralitzat per administrar tots els mòduls de la portada.
+  - **Llistat de Mòduls Reordenables amb Drag & Drop**: Implementat suport de **arrossegar i soltar (Drag and Drop)** HTML5. Es pot mantindre clicat qualsevol mòdul (o la seua icona d'adherència `grip-vertical`) i arrossegar-lo directament per canviar-ne l'ordre visualment. També es mantenen els botons d'ascens/descens (↑ / ↓) com a alternativa.
+  - **Modals d'Edició en Pop-up (`#modal-edit-welcome` i `#modal-edit-countdown`)**: En fer clic a **Editar** en la fila corresponent, s'obre el pop-up per modificar el missatge de benvinguda bilingüe o la configuració completa del compte enrere (estat activat/desactivat, data/hora objectiu, títols i descripcions).
+  - **Correcció d'Error en Guardar (`admin/gestio.js`)**: Solucionada l'excepció `Cannot read properties of null (reading 'value')` en enviar el formulari de la home, afegint comprovacions de nuls per als camps de text que ara s'editen exclusivament des de les finestres emergents pop-up.
+* **Renderitzat Dinàmic en Frontend (`index.html` i `es/index.html`)**:
+  - Els blocs de la portada estan envoltat en el contenidor `<main id="home-sections-container">`.
+  - La funció `initHomeLayout()` reordena els nodes DOM en el navegador segons la configuració desada, oculta els blocs desactivats i inyecta el missatge de benvinguda segons l'idioma actiu.
+  - La funció `initCountdown()` llegeix la configuració en temps real, actualitza els títols i descripcions i amaga la secció completament si està desactivada (`enabled: false`).
+* **Cache-Busting (v1.25)**: S'ha incrementat la versió dels scripts JS a `?v=1.25` als fitxers HTML pertinents per a forçar la recàrrega de la memòria cau als navegadors.
+
+---
+
+## 17. Formulari de Contacte Integrat a "Qui Som" (`quisom.html` i `es/quisom.html`)
+Completat en la sessió actual:
+* **Formulari de Contacte Integrat**: S'ha integrat directament abans del footer un formulari de contacte idèntic al de la pàgina principal de contacte (`contacte.html`), tant en valencià com en castellà.
+* **Camps de Formulari**: Inclou Nom Complet, Correu Electrònic, Desplegable d'Assumpte (Voluntariat/Col·laboració, Consulta General, Suggeriments i Altres), Àrea de Missatge i Casella de Verificació de Política de Privacitat.
+* **Espaiat i Respiració Visual**: Ajustat el tancament de la secció de la galeria de fotografies i ampliat el farcit inferior i superior a `7rem` (`padding-bottom: 7rem; padding-top: 7rem;`), atorgant un marge visual ampli i elegant entre la graella de fotos i el bloc de contacte.
+
+---
+
+## 18. Eliminació de la Imatge Estàtica de Portada de la Home (`index.html` i `es/index.html`)
+Completat en la sessió actual:
+* **Només Vídeo en la Portada**: S'ha eliminat la regla CSS `background-image` de la classe `.hero`, la imatge de suport `.hero-video-placeholder` (`portada.jpg`) i l'atribut `poster="portada.webp"` del tag `<video>`.
+* **Fons Negre de Carregament**: S'ha assignat fons negre pur (`#000000`) al contenidor del banner perquè únicament es reproduïsca el vídeo en bucle (`portada.mp4`).
+
+---
+
+## 19. Desactivació Automàtica del Compte Enrere al Arribar a Zero (`index.html` i `es/index.html`)
+Completat en la sessió actual:
+* **Comprovació al Carregar**: Si la data/hora objectiu (`target_date`) ja ha passat en el moment d'obrir la web, la secció `#countdown-section` s'amaga directament (`display: none`) i s'actualitza l'estat a `enabled: false` en Supabase/LocalStorage.
+* **Desactivació en Temps Real**: Si el temporitzador arriba a 0 segons mentre un usuari està navegant a la pàgina, es neteja l'interval (`clearInterval`), s'amaga la secció immediatament i es guarda la desactivació a la base de dades backend de forma autònoma.
+
+---
+
+## 20. Desplegament a Producció (PRO) - Commit `512c6c2`
+Tot el treball de la sessió s'ha verificat i pujat amb èxit a la branca principal (`main`) en el commit `512c6c2`:
+* **Gestió Centralitzada de la Home**: Panell únic `#tab-home` amb Drag & Drop per a reordenar mòduls i modals d'edició emergents (pop-up).
+* **Compte Enrere Auto-desactivable**: Regla automàtica de desactivació en passar la data/hora objectiu.
+* **Formulari de Contacte Integrat**: Formulari AJAX directament a la secció inferior de Qui Som (`quisom.html` i `es/quisom.html`).
+* **Portada Només Vídeo**: Eliminada la imatge de suport per a reproduir únicament el vídeo de fons.
+
+---
+
+## 21. Auditoría Técnica i Millores Aplicades (Local)
+Completat en la sessió actual. Es va realitzar una auditoria completa de la web (rendiment, SEO tècnic, accessibilitat, UX/UI i codi) i es van aplicar totes les millores identificades:
+
+* **Rendiment**:
+  - Vídeo hero amb `preload="none"` i `poster="/img/portada.webp"` per evitar descarregar 8,5 MB de vídeo en la càrrega inicial.
+  - Afegits `<link rel="preconnect">` per a fonts.googleapis.com i fonts.gstatic.com en **tots** els 20 fitxers HTML del projecte.
+  - Afegit `font-display=swap` a l'`@import` de Google Fonts en `css/styles.css` per evitar text invisible durant la càrrega.
+  - El script inline de 600 línies de `index.html` i `es/index.html` s'ha extret a `js/home.js` (fitxer nou, 24 KB) per a permetre el caché del navegador entre visites.
+
+* **SEO Tècnic**:
+  - Afegit `<link rel="icon" href="/img/logo.svg" type="image/svg+xml">` i fallback PNG en tots els HTML. Resol el 404 de `/favicon.ico`.
+  - Generat `img/apple-touch-icon.png` (PNG 180×180 del logo SVG via `sharp`) i actualitzat l'`apple-touch-icon` en tots els HTML.
+  - Schema.org **`Event[]` dinàmic** injectat al `<head>` de `programacio.html` (i `es/`) via `js/programacio.js`, amb tots els actes futurs en format JSON-LD. Habilita els "rich results" d'events a Google.
+  - URL del Service Worker (`sw.js`) corregida de `/noticies.html` a `/noticies` (URL neta).
+
+* **Accessibilitat (a11y)**:
+  - `aria-label="Entorn i Ball Pla d'Ares del Maestrat"` afegit al `<video>` del hero.
+  - Botó hamburguesa amb `aria-expanded` dinàmic (s'actualitza en obrir/tancar) i `aria-label` descriptiu en valencianà (`Obrir/Tancar menú de navegació`) i `aria-controls="nav-menu"`.
+  - Ícons decoratius de Lucide amb `aria-hidden="true"` als panells on es renderitzen dinàmicament.
+  - Estilos `:focus-visible` afegits a `css/styles.css`: outline visible (2px solid) per a navegació per teclat, sense afectar usuaris de ratolí.
+  - FAQ accordion ja tenia `aria-expanded` correcte. S'ha afegit `role="region"` al contingut dels panells FAQ a `home.js`.
+  - Skip link (`.skip-link`) definit en CSS, a punt per afegir als HTML.
+
+* **Codi i Mantenibilitat**:
+  - Versió de CSS unificada a `?v=1.20` en tots els 20 fitxers HTML (estava inconsistent: `?v=1.14` i `?v=1.19` barrejats).
+  - Script de build `scripts/update-html.js` creat per facilitar futurs canvis massius als HTML.
+  - Instal·lat `sharp` com devDependency per a generació d'imatges PNG en scripts de build.
+
+---
+
+## 22. Pròxim Pas
+* Pujar tots els canvis a PRO (`git add -A && git commit && git push`).
+* Esperar noves instruccions de l'usuari.

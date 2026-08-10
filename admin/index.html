@@ -158,7 +158,11 @@
         <div class="admin-layout">
             <!-- Sidebar Navigation tabs -->
             <aside class="admin-sidebar">
-                <button class="admin-tab-btn active" data-tab="tab-news">
+                <button class="admin-tab-btn active" data-tab="tab-home">
+                    <i data-lucide="layout" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
+                    Gestió de la Home
+                </button>
+                <button class="admin-tab-btn" data-tab="tab-news">
                     <i data-lucide="newspaper" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
                     Notícies
                 </button>
@@ -199,8 +203,45 @@
             <!-- Main Work Panels -->
             <main style="min-width: 0;"> <!-- prevent grid overflow -->
                 
+                <!-- HOME MANAGEMENT PANEL -->
+                <div class="admin-panel active" id="tab-home">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h3>Gestió de la Pàgina Principal (Home)</h3>
+                            <p style="margin-bottom: 0;">Reordena els blocs de la portada, personalitza el missatge de benvinguda i gestiona el temporitzador de la compte enrere.</p>
+                        </div>
+                    </div>
+
+                    <form id="home-form">
+                        <!-- 1. Block Reordering, Visibility & Pop-up Edit Section -->
+                        <div style="border: 1px solid var(--border-color); padding: 1.5rem 2rem; background: var(--bg-secondary); border-radius: 12px; margin-bottom: 2rem;">
+                            <h4 style="margin-bottom: 0.5rem; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="arrow-up-down" style="width: 18px; height: 18px;"></i>
+                                Mòduls de la Home: Ordre, Visibilitat i Edició
+                            </h4>
+                            <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem; font-weight: 300;">
+                                Reordena les seccions amb les fletxes (↑ / ↓), prem el botó d'ull per mostrar o ocultar un bloc, o fes clic a <strong>Editar</strong> per modificar els continguts i configuració de cada mòdul en una finestra emergent (pop-up).
+                            </p>
+
+                            <div id="home-blocks-reorder-container" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                <!-- Blocks reorder items rendered dynamically via JS -->
+                            </div>
+                        </div>
+
+                        <!-- Submit Buttons -->
+                        <div style="display: flex; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                            <button type="submit" id="btn-save-home" class="btn" style="background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Canvis de la Home
+                            </button>
+                            <button type="button" class="btn btn-secondary" id="btn-reset-home" style="display: flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i> Restablir Ordre per Defecte
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
                 <!-- NEWS PANEL -->
-                <div class="admin-panel active" id="tab-news">
+                <div class="admin-panel" id="tab-news">
                     <div class="admin-actions">
                         <h3>Gestionar Notícies</h3>
                         <button class="btn btn-sm" id="btn-new-news">
@@ -467,6 +508,77 @@ CREATE TABLE photos (
                     </div>
                 </div>
 
+                <!-- COUNTDOWN CONFIG PANEL -->
+                <div class="admin-panel" id="tab-countdown">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h3>Configuració del Compte Enrere</h3>
+                            <p style="margin-bottom: 0;">Activa, desactiva o personalitza la data objectiu i els textos del temporitzador de la pàgina principal.</p>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+                        <form id="countdown-form" style="border: 1px solid var(--border-color); padding: 2rem; background: var(--bg-secondary); border-radius: 12px;">
+                            <!-- Active toggle -->
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 1.25rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 2rem;">
+                                <div>
+                                    <strong style="display: block; font-size: 1rem; color: var(--text-primary); margin-bottom: 0.25rem;">Mostrar Compte Enrere a la Home</strong>
+                                    <span style="font-size: 0.85rem; color: var(--text-secondary); font-weight: 300;">Si està desactivat, la secció de la compte enrere s'ocultarà completament a la web pública.</span>
+                                </div>
+                                <label style="display: inline-flex; align-items: center; cursor: pointer; gap: 0.75rem; user-select: none;">
+                                    <input type="checkbox" id="countdown-enabled" style="width: 22px; height: 22px; accent-color: var(--text-primary); cursor: pointer;" checked>
+                                    <span id="countdown-status-text" style="font-weight: 700; font-size: 0.9rem; font-family: var(--font-heading); color: var(--text-primary);">ACTIVAT</span>
+                                </label>
+                            </div>
+
+                            <!-- Title ca & es -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                                <div class="form-group">
+                                    <label for="countdown-title">Títol Principal (Valencià)</label>
+                                    <input type="text" id="countdown-title" required placeholder="FESTES D'ARES 2026">
+                                </div>
+                                <div class="form-group">
+                                    <label for="countdown-title-es">Título Principal (Castellano)</label>
+                                    <input type="text" id="countdown-title-es" required placeholder="FIESTAS DE ARES 2026">
+                                </div>
+                            </div>
+
+                            <!-- Target Date & Time -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem;">
+                                <div class="form-group">
+                                    <label for="countdown-target-date">Data Objectiu</label>
+                                    <input type="date" id="countdown-target-date" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="countdown-target-time">Hora Objectiu</label>
+                                    <input type="time" id="countdown-target-time" required>
+                                </div>
+                            </div>
+
+                            <!-- Description ca & es -->
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+                                <div class="form-group">
+                                    <label for="countdown-description">Descripció Inferior (Valencià)</label>
+                                    <textarea id="countdown-description" rows="3" placeholder="Les Festes Patronals d'Ares del Maestrat 2026 tindran lloc del 16 al 25 d'agost."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="countdown-description-es">Descripción Inferior (Castellano)</label>
+                                    <textarea id="countdown-description-es" rows="3" placeholder="Las Fiestas Patronales de Ares del Maestrat 2026 tendrán lugar del 16 al 25 de agosto."></textarea>
+                                </div>
+                            </div>
+
+                            <div style="display: flex; gap: 1rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                                <button type="submit" id="btn-save-countdown" class="btn" style="background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                                    <i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Canvis
+                                </button>
+                                <button type="button" class="btn btn-secondary" id="btn-reset-countdown" style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <i data-lucide="rotate-ccw" style="width: 16px; height: 16px;"></i> Restablir per Defecte
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
             </main>
         </div>
     </div>
@@ -651,6 +763,90 @@ CREATE TABLE photos (
         </div>
     </div>
 
+    <!-- Welcome Message Modal Pop-up -->
+    <div class="admin-form-modal" id="modal-edit-welcome">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3>Editar Missatge de Benvinguda</h3>
+                <button class="admin-modal-close" onclick="closeModal('modal-edit-welcome')">&times;</button>
+            </div>
+            <form id="form-modal-welcome">
+                <div class="form-group">
+                    <label for="modal-welcome-text">Missatge de Benvinguda (Valencià)</label>
+                    <textarea id="modal-welcome-text" rows="5" required placeholder="Benvinguts a la web oficial de la Comissió de Festes..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="modal-welcome-text-es">Mensaje de Bienvenida (Castellano)</label>
+                    <textarea id="modal-welcome-text-es" rows="5" required placeholder="Bienvenidos a la web oficial de la Comisión de Fiestas..."></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" id="btn-save-modal-welcome" class="btn" style="background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Canvis
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-welcome')">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Countdown Modal Pop-up -->
+    <div class="admin-form-modal" id="modal-edit-countdown">
+        <div class="admin-modal-content">
+            <div class="admin-modal-header">
+                <h3>Editar Compte Enrere</h3>
+                <button class="admin-modal-close" onclick="closeModal('modal-edit-countdown')">&times;</button>
+            </div>
+            <form id="form-modal-countdown">
+                <div class="form-group" style="display: flex; align-items: center; gap: 0.75rem; background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; border: 1px solid var(--border-color);">
+                    <input type="checkbox" id="modal-countdown-enabled" style="width: 20px; height: 20px; cursor: pointer;">
+                    <label for="modal-countdown-enabled" style="margin-bottom: 0; cursor: pointer; font-weight: 600;">
+                        Activar temporitzador de compte enrere a la portada
+                    </label>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                    <div class="form-group">
+                        <label for="modal-countdown-date">Data Objectiu</label>
+                        <input type="date" id="modal-countdown-date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="modal-countdown-time">Hora Objectiu</label>
+                        <input type="time" id="modal-countdown-time" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="modal-countdown-title">Títol de la Compte Enrere (Valencià)</label>
+                    <input type="text" id="modal-countdown-title" required placeholder="FESTES D'ARES 2026">
+                </div>
+                <div class="form-group">
+                    <label for="modal-countdown-title-es">Título de la Cuenta Atrás (Castellano)</label>
+                    <input type="text" id="modal-countdown-title-es" required placeholder="FIESTAS DE ARES 2026">
+                </div>
+
+                <div class="form-group">
+                    <label for="modal-countdown-desc">Descripció o Subtítol (Valencià)</label>
+                    <textarea id="modal-countdown-desc" rows="3" required placeholder="Les Festes Patronals d'Ares del Maestrat 2026..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="modal-countdown-desc-es">Descripción o Subtítulo (Castellano)</label>
+                    <textarea id="modal-countdown-desc-es" rows="3" required placeholder="Las Fiestas Patronales de Ares del Maestrat 2026..."></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" id="btn-save-modal-countdown" class="btn" style="background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary); display: flex; align-items: center; gap: 0.5rem;">
+                        <i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Canvis
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('modal-edit-countdown')">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Standalone Admin Footer -->
     <footer class="main-footer" style="padding: 2.5rem 0; background-color: #000000; border-radius: 20px 20px 0 0; text-align: center; margin-top: 5rem; border-top: none;">
         <div class="container" style="display: flex; justify-content: center; align-items: center; font-size: 0.8rem; color: rgba(255, 255, 255, 0.5);">
@@ -662,11 +858,16 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="../js/db.js?v=1.8" defer></script>
-    <script src="gestio.js?v=1.7"></script>
+    <script src="../js/db.js?v=1.21" defer></script>
+    <script src="gestio.js?v=1.25"></script>
     <script>
+        function openModal(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.add('active');
+        }
         function closeModal(id) {
-            document.getElementById(id).classList.remove('active');
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
         }
     </script>
 </body>

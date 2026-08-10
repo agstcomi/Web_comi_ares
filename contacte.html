@@ -2,12 +2,15 @@
 <html lang="ca">
 <head>
     <meta charset="UTF-8">
+    <!-- Preconnect per a Google Fonts (millora rendiment) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <!-- ===== CAPCALERES DE SEGURETAT HTTP ===== -->
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta name="referrer" content="strict-origin-when-cross-origin">
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://tracker.metricool.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://opendata.aemet.es https://*.metricool.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://openstreetmap.org; frame-ancestors 'self'; form-action 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://tracker.metricool.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://opendata.aemet.es https://*.metricool.com https://formsubmit.co; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https://www.openstreetmap.org https://openstreetmap.org; frame-ancestors 'self'; form-action 'self' https://formsubmit.co;">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contacte amb la Comissió d'Ares del Maestrat | Voluntariat i Dubtes</title>
@@ -42,9 +45,11 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Festes Ares">
     <meta name="theme-color" content="#ffffff">
-    <link rel="apple-touch-icon" href="/img/icon-512.svg">
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.png" type="image/png">
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="/css/styles.css?v=1.14">
+    <link rel="stylesheet" href="/css/styles.css?v=1.20">
     
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
@@ -291,12 +296,22 @@
                             _subject: `Nou missatge web [${subject.toUpperCase()}]: ${name}`
                         })
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`HTTP error: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
-                        form.style.display = 'none';
-                        feedback.style.display = 'block';
-                        if (window.lucide) {
-                            window.lucide.createIcons();
+                        // FormSubmit retorna { success: "true" } quan funciona
+                        if (data.success === 'true' || data.success === true) {
+                            form.style.display = 'none';
+                            feedback.style.display = 'block';
+                            if (window.lucide) {
+                                window.lucide.createIcons();
+                            }
+                        } else {
+                            throw new Error(data.message || 'Resposta inesperada del servidor');
                         }
                     })
                     .catch(error => {

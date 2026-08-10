@@ -3,9 +3,16 @@
 Thumbs.db
 desktop.ini
 
+# Node.js dependencies (only needed locally for build scripts)
+node_modules/
+package-lock.json
+
 # Generated news subdirectories
 noticies/
 es/noticies/
 
 # Generated database data files
 data/
+
+# Build artifacts
+favicon-32.png

@@ -167,6 +167,8 @@ document.addEventListener('DOMContentLoaded', () => {
         loadCategorySelects();
         loadCategoryColorsForm();
         await loadFaqsAdmin();
+        await loadCountdownAdmin();
+        await loadHomeAdmin();
     }
 
     function updateDbStatusBadge() {
@@ -1589,6 +1591,488 @@ document.addEventListener('DOMContentLoaded', () => {
                     console.error("Error resetting FAQs:", err);
                     alert("Error en restablir les FAQs: " + (err.message || err));
                     btnResetFaqs.disabled = false;
+                }
+            }
+        });
+    }
+
+    // Countdown Config Management
+    async function loadCountdownAdmin() {
+        try {
+            const config = await window.db.getCountdown();
+            const enabledInput = document.getElementById('countdown-enabled');
+            const statusText = document.getElementById('countdown-status-text');
+            const titleInput = document.getElementById('countdown-title');
+            const titleEsInput = document.getElementById('countdown-title-es');
+            const targetDateInput = document.getElementById('countdown-target-date');
+            const targetTimeInput = document.getElementById('countdown-target-time');
+            const descInput = document.getElementById('countdown-description');
+            const descEsInput = document.getElementById('countdown-description-es');
+
+            if (enabledInput) {
+                enabledInput.checked = config.enabled !== false;
+                if (statusText) statusText.textContent = enabledInput.checked ? 'ACTIVAT' : 'DESACTIVAT';
+            }
+            if (titleInput) titleInput.value = config.title || '';
+            if (titleEsInput) titleEsInput.value = config.title_es || '';
+            if (descInput) descInput.value = config.description || '';
+            if (descEsInput) descEsInput.value = config.description_es || '';
+
+            if (config.target_date) {
+                const parts = config.target_date.split('T');
+                if (targetDateInput) targetDateInput.value = parts[0] || '2026-08-16';
+                if (targetTimeInput && parts[1]) {
+                    targetTimeInput.value = parts[1].substring(0, 5) || '00:00';
+                } else if (targetTimeInput) {
+                    targetTimeInput.value = '00:00';
+                }
+            }
+        } catch (err) {
+            console.error("Error loading countdown config in admin:", err);
+        }
+    }
+
+    const countdownEnabledCheckbox = document.getElementById('countdown-enabled');
+    if (countdownEnabledCheckbox) {
+        countdownEnabledCheckbox.addEventListener('change', () => {
+            const statusText = document.getElementById('countdown-status-text');
+            if (statusText) {
+                statusText.textContent = countdownEnabledCheckbox.checked ? 'ACTIVAT' : 'DESACTIVAT';
+            }
+        });
+    }
+
+    const countdownForm = document.getElementById('countdown-form');
+    if (countdownForm) {
+        countdownForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSave = document.getElementById('btn-save-countdown');
+            try {
+                if (btnSave) {
+                    btnSave.disabled = true;
+                    btnSave.innerHTML = '<i data-lucide="loader-2" class="animate-spin" style="width: 16px; height: 16px;"></i> Guardant...';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+
+                const enabled = document.getElementById('countdown-enabled').checked;
+                const title = document.getElementById('countdown-title').value.trim();
+                const title_es = document.getElementById('countdown-title-es').value.trim();
+                const dateVal = document.getElementById('countdown-target-date').value;
+                const timeVal = document.getElementById('countdown-target-time').value || '00:00';
+                const description = document.getElementById('countdown-description').value.trim();
+                const description_es = document.getElementById('countdown-description-es').value.trim();
+
+                const target_date = `${dateVal}T${timeVal}:00`;
+
+                const configData = {
+                    enabled,
+                    title,
+                    title_es,
+                    target_date,
+                    description,
+                    description_es
+                };
+
+                await window.db.saveCountdown(configData);
+                alert('Configuració del compte enrere guardada correctament.');
+
+            } catch (err) {
+                console.error("Error saving countdown config:", err);
+                alert("Error en guardar la configuració del compte enrere: " + (err.message || err));
+            } finally {
+                if (btnSave) {
+                    btnSave.disabled = false;
+                    btnSave.innerHTML = '<i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Canvis';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            }
+        });
+    }
+
+    const btnResetCountdown = document.getElementById('btn-reset-countdown');
+    if (btnResetCountdown) {
+        btnResetCountdown.addEventListener('click', async () => {
+            if (confirm('Vols restablir el compte enrere a la configuració per defecte?')) {
+                localStorage.removeItem('ares_countdown');
+                try {
+                    const defaults = window.db.getDefaultCountdown();
+                    await window.db.saveCountdown(defaults);
+                    await loadCountdownAdmin();
+                    alert('Compte enrere restablit correctament.');
+                } catch (err) {
+                    console.error("Error resetting countdown:", err);
+                    alert("Error en restablir el compte enrere: " + (err.message || err));
+                }
+            }
+        });
+    }
+
+    // Home Layout & Module Management
+    const HOME_BLOCK_NAMES = {
+        'welcome-section': { name: '📝 Missatge de Benvinguda (Capçalera)', desc: 'Mòdul de text inicial de la portada' },
+        'countdown-section': { name: '⏱️ Compte Enrere', desc: 'Temporitzador d\'inici de les festes' },
+        'noticies': { name: '📰 Últimes Notícies', desc: 'Carrusel / Llistat de les 3 últimes notícies' },
+        'events-highlight-section': { name: '📅 Pròxims Actes Destacats', desc: 'Tarjetes de pròxims actes del programa' },
+        'oratge': { name: '☀️ Previsió del Temps', desc: 'Widget del clima a Ares del Maestrat' },
+        'faqs-section': { name: '❓ Preguntes Freqüents (FAQs)', desc: 'Acordeó de dubtes habituals' },
+        'cta-section': { name: '📣 Banner Final (Crida a l\'Acció)', desc: 'Banner inferior d\'enllaç a la programació' }
+    };
+
+    let currentHomeConfig = null;
+
+    async function loadHomeAdmin() {
+        try {
+            currentHomeConfig = await window.db.getHomeConfig();
+
+            const welcomeInput = document.getElementById('home-welcome-text');
+            const welcomeEsInput = document.getElementById('home-welcome-text-es');
+
+            if (welcomeInput) welcomeInput.value = currentHomeConfig.welcome_text || '';
+            if (welcomeEsInput) welcomeEsInput.value = currentHomeConfig.welcome_text_es || '';
+
+            renderHomeBlocksList();
+        } catch (err) {
+            console.error("Error loading home config in admin:", err);
+        }
+    }
+
+    function renderHomeBlocksList() {
+        const container = document.getElementById('home-blocks-reorder-container');
+        if (!container || !currentHomeConfig) return;
+
+        const allBlockKeys = Object.keys(HOME_BLOCK_NAMES);
+        let blockOrder = currentHomeConfig.block_order || [];
+        
+        allBlockKeys.forEach(key => {
+            if (!blockOrder.includes(key)) {
+                blockOrder.push(key);
+            }
+        });
+        currentHomeConfig.block_order = blockOrder;
+
+        const hiddenBlocks = currentHomeConfig.hidden_blocks || [];
+
+        container.innerHTML = blockOrder.map((blockKey, index) => {
+            const blockInfo = HOME_BLOCK_NAMES[blockKey] || { name: blockKey, desc: '' };
+            const isHidden = hiddenBlocks.includes(blockKey);
+            const isFirst = index === 0;
+            const isLast = index === blockOrder.length - 1;
+
+            let editBtnHtml = '';
+            if (blockKey === 'welcome-section') {
+                editBtnHtml = `
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="openWelcomeModal()" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.35rem;" title="Editar missatge de benvinguda en pop-up">
+                        <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                        <span>Editar</span>
+                    </button>
+                `;
+            } else if (blockKey === 'countdown-section') {
+                editBtnHtml = `
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="openCountdownModal()" style="padding: 0.35rem 0.65rem; font-size: 0.75rem; display: inline-flex; align-items: center; gap: 0.35rem;" title="Editar compte enrere en pop-up">
+                        <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                        <span>Editar</span>
+                    </button>
+                `;
+            }
+
+            return `
+                <div class="home-block-item ${isHidden ? 'is-hidden-block' : ''}" draggable="true" data-block-key="${blockKey}" style="display: flex; align-items: center; justify-content: space-between; padding: 0.85rem 1.25rem; background: var(--bg-tertiary); border: 1px solid var(--border-color); border-radius: 8px; flex-wrap: wrap; gap: 0.75rem; opacity: ${isHidden ? '0.5' : '1'}; transition: all 0.2s ease; cursor: grab;">
+                    <div style="display: flex; align-items: center; gap: 0.75rem; min-width: 250px; user-select: none;">
+                        <i data-lucide="grip-vertical" style="width: 18px; height: 18px; color: var(--text-muted); flex-shrink: 0;"></i>
+                        <span style="font-size: 0.8rem; font-weight: 700; font-family: var(--font-heading); color: var(--text-muted); width: 24px;">#${index + 1}</span>
+                        <div>
+                            <strong style="display: block; font-size: 0.95rem; color: var(--text-primary);">${blockInfo.name}</strong>
+                            <span style="font-size: 0.8rem; color: var(--text-secondary); font-weight: 300;">${blockInfo.desc}</span>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        ${editBtnHtml}
+
+                        <button type="button" class="btn btn-sm ${isHidden ? 'btn-secondary' : ''}" onclick="toggleHomeBlockVisibility('${blockKey}')" style="padding: 0.35rem 0.65rem; font-size: 0.75rem;" title="${isHidden ? 'Mostrar bloc' : 'Ocultar bloc'}">
+                            <i data-lucide="${isHidden ? 'eye-off' : 'eye'}" style="width: 14px; height: 14px;"></i>
+                            <span>${isHidden ? 'Ocult' : 'Visible'}</span>
+                        </button>
+
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="moveHomeBlock('${blockKey}', -1)" ${isFirst ? 'disabled style="opacity:0.4;"' : ''} title="Pujar posició">
+                            <i data-lucide="chevron-up" style="width: 14px; height: 14px;"></i>
+                        </button>
+
+                        <button type="button" class="btn btn-sm btn-secondary" onclick="moveHomeBlock('${blockKey}', 1)" ${isLast ? 'disabled style="opacity:0.4;"' : ''} title="Baixar posició">
+                            <i data-lucide="chevron-down" style="width: 14px; height: 14px;"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        if (window.lucide) window.lucide.createIcons();
+        initHomeDragAndDrop();
+    }
+
+    function initHomeDragAndDrop() {
+        const container = document.getElementById('home-blocks-reorder-container');
+        if (!container) return;
+
+        let draggedKey = null;
+
+        const items = container.querySelectorAll('.home-block-item');
+        items.forEach(item => {
+            item.addEventListener('dragstart', (e) => {
+                draggedKey = item.getAttribute('data-block-key');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', draggedKey);
+                item.style.opacity = '0.4';
+                item.style.transform = 'scale(0.98)';
+            });
+
+            item.addEventListener('dragend', () => {
+                item.style.opacity = item.classList.contains('is-hidden-block') ? '0.5' : '1';
+                item.style.transform = 'none';
+                items.forEach(el => el.style.border = '1px solid var(--border-color)');
+            });
+
+            item.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                item.style.border = '2px dashed var(--text-primary)';
+            });
+
+            item.addEventListener('dragleave', () => {
+                item.style.border = '1px solid var(--border-color)';
+            });
+
+            item.addEventListener('drop', (e) => {
+                e.preventDefault();
+                item.style.border = '1px solid var(--border-color)';
+                const targetKey = item.getAttribute('data-block-key');
+
+                if (draggedKey && targetKey && draggedKey !== targetKey) {
+                    const order = currentHomeConfig.block_order;
+                    const fromIdx = order.indexOf(draggedKey);
+                    const toIdx = order.indexOf(targetKey);
+
+                    if (fromIdx !== -1 && toIdx !== -1) {
+                        order.splice(fromIdx, 1);
+                        order.splice(toIdx, 0, draggedKey);
+                        renderHomeBlocksList();
+                    }
+                }
+            });
+        });
+    }
+
+    window.openWelcomeModal = async function() {
+        if (!currentHomeConfig) {
+            currentHomeConfig = await window.db.getHomeConfig();
+        }
+        const wIn = document.getElementById('modal-welcome-text');
+        const wEsIn = document.getElementById('modal-welcome-text-es');
+        if (wIn) wIn.value = currentHomeConfig.welcome_text || '';
+        if (wEsIn) wEsIn.value = currentHomeConfig.welcome_text_es || '';
+        if (typeof window.openModal === 'function') {
+            window.openModal('modal-edit-welcome');
+        } else {
+            const el = document.getElementById('modal-edit-welcome');
+            if (el) el.classList.add('active');
+        }
+    };
+
+    window.openCountdownModal = async function() {
+        const config = await window.db.getCountdown();
+        const enabledCb = document.getElementById('modal-countdown-enabled');
+        const dateIn = document.getElementById('modal-countdown-date');
+        const timeIn = document.getElementById('modal-countdown-time');
+        const titleIn = document.getElementById('modal-countdown-title');
+        const titleEsIn = document.getElementById('modal-countdown-title-es');
+        const descIn = document.getElementById('modal-countdown-desc');
+        const descEsIn = document.getElementById('modal-countdown-desc-es');
+
+        if (enabledCb) enabledCb.checked = config.enabled !== false;
+        if (dateIn) dateIn.value = config.target_date || '2026-08-16';
+        if (timeIn) timeIn.value = config.target_time || '12:00';
+        if (titleIn) titleIn.value = config.title || 'FESTES D\'ARES 2026';
+        if (titleEsIn) titleEsIn.value = config.title_es || 'FIESTAS DE ARES 2026';
+        if (descIn) descIn.value = config.description || '';
+        if (descEsIn) descEsIn.value = config.description_es || '';
+
+        if (typeof window.openModal === 'function') {
+            window.openModal('modal-edit-countdown');
+        } else {
+            const el = document.getElementById('modal-edit-countdown');
+            if (el) el.classList.add('active');
+        }
+    };
+
+    window.moveHomeBlock = function(blockKey, direction) {
+        if (!currentHomeConfig || !currentHomeConfig.block_order) return;
+        const index = currentHomeConfig.block_order.indexOf(blockKey);
+        if (index === -1) return;
+        const targetIndex = index + direction;
+        if (targetIndex < 0 || targetIndex >= currentHomeConfig.block_order.length) return;
+
+        const temp = currentHomeConfig.block_order[index];
+        currentHomeConfig.block_order[index] = currentHomeConfig.block_order[targetIndex];
+        currentHomeConfig.block_order[targetIndex] = temp;
+
+        renderHomeBlocksList();
+    };
+
+    window.toggleHomeBlockVisibility = function(blockKey) {
+        if (!currentHomeConfig) return;
+        if (!currentHomeConfig.hidden_blocks) currentHomeConfig.hidden_blocks = [];
+        const idx = currentHomeConfig.hidden_blocks.indexOf(blockKey);
+        if (idx === -1) {
+            currentHomeConfig.hidden_blocks.push(blockKey);
+        } else {
+            currentHomeConfig.hidden_blocks.splice(idx, 1);
+        }
+        renderHomeBlocksList();
+    };
+
+    const btnGoToCountdown = document.getElementById('btn-go-to-countdown');
+    if (btnGoToCountdown) {
+        btnGoToCountdown.addEventListener('click', () => {
+            window.openCountdownModal();
+        });
+    }
+
+    const formModalWelcome = document.getElementById('form-modal-welcome');
+    if (formModalWelcome) {
+        formModalWelcome.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-modal-welcome');
+            try {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin" style="width: 16px; height: 16px;"></i> Guardant...';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+
+                if (!currentHomeConfig) currentHomeConfig = await window.db.getHomeConfig();
+
+                const welcomeVal = document.getElementById('modal-welcome-text').value.trim();
+                const welcomeEsVal = document.getElementById('modal-welcome-text-es').value.trim();
+
+                currentHomeConfig.welcome_text = welcomeVal;
+                currentHomeConfig.welcome_text_es = welcomeEsVal;
+
+                await window.db.saveHomeConfig(currentHomeConfig);
+
+                const wIn = document.getElementById('home-welcome-text');
+                const wEsIn = document.getElementById('home-welcome-text-es');
+                if (wIn) wIn.value = welcomeVal;
+                if (wEsIn) wEsIn.value = welcomeEsVal;
+
+                const modal = document.getElementById('modal-edit-welcome');
+                if (modal) modal.classList.remove('active');
+
+                alert('Missatge de benvinguda actualitzat correctament.');
+
+            } catch (err) {
+                console.error("Error saving welcome text from modal:", err);
+                alert("Error en guardar el missatge de benvinguda: " + (err.message || err));
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Canvis';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            }
+        });
+    }
+
+    const formModalCountdown = document.getElementById('form-modal-countdown');
+    if (formModalCountdown) {
+        formModalCountdown.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-modal-countdown');
+            try {
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i data-lucide="loader-2" class="animate-spin" style="width: 16px; height: 16px;"></i> Guardant...';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+
+                const updatedConfig = {
+                    enabled: document.getElementById('modal-countdown-enabled').checked,
+                    target_date: document.getElementById('modal-countdown-date').value,
+                    target_time: document.getElementById('modal-countdown-time').value,
+                    title: document.getElementById('modal-countdown-title').value.trim(),
+                    title_es: document.getElementById('modal-countdown-title-es').value.trim(),
+                    description: document.getElementById('modal-countdown-desc').value.trim(),
+                    description_es: document.getElementById('modal-countdown-desc-es').value.trim()
+                };
+
+                await window.db.saveCountdown(updatedConfig);
+                await loadCountdownAdmin();
+
+                const modal = document.getElementById('modal-edit-countdown');
+                if (modal) modal.classList.remove('active');
+
+                alert('Compte enrere actualitzat correctament.');
+
+            } catch (err) {
+                console.error("Error saving countdown from modal:", err);
+                alert("Error en guardar el compte enrere: " + (err.message || err));
+            } finally {
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = '<i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Canvis';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            }
+        });
+    }
+
+    const homeForm = document.getElementById('home-form');
+    if (homeForm) {
+        homeForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSave = document.getElementById('btn-save-home');
+            try {
+                if (btnSave) {
+                    btnSave.disabled = true;
+                    btnSave.innerHTML = '<i data-lucide="loader-2" class="animate-spin" style="width: 16px; height: 16px;"></i> Guardant...';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+
+                if (!currentHomeConfig) currentHomeConfig = await window.db.getHomeConfig();
+
+                const welcomeInput = document.getElementById('home-welcome-text');
+                const welcomeEsInput = document.getElementById('home-welcome-text-es');
+                if (welcomeInput) currentHomeConfig.welcome_text = welcomeInput.value.trim();
+                if (welcomeEsInput) currentHomeConfig.welcome_text_es = welcomeEsInput.value.trim();
+
+                await window.db.saveHomeConfig(currentHomeConfig);
+                alert('Configuració de la Home guardada correctament.');
+
+            } catch (err) {
+                console.error("Error saving home config:", err);
+                alert("Error en guardar la configuració de la home: " + (err.message || err));
+            } finally {
+                if (btnSave) {
+                    btnSave.disabled = false;
+                    btnSave.innerHTML = '<i data-lucide="save" style="width: 16px; height: 16px;"></i> Guardar Canvis de la Home';
+                    if (window.lucide) window.lucide.createIcons();
+                }
+            }
+        });
+    }
+
+    const btnResetHome = document.getElementById('btn-reset-home');
+    if (btnResetHome) {
+        btnResetHome.addEventListener('click', async () => {
+            if (confirm('Vols restablir l\'ordre i els textos de la home per defecte?')) {
+                localStorage.removeItem('ares_home_config');
+                try {
+                    const defaults = window.db.getDefaultHomeConfig();
+                    await window.db.saveHomeConfig(defaults);
+                    await loadHomeAdmin();
+                    alert('Home restablida per defecte correctament.');
+                } catch (err) {
+                    console.error("Error resetting home config:", err);
+                    alert("Error en restablir la home: " + (err.message || err));
                 }
             }
         });
