@@ -36,11 +36,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const formPhoto = document.getElementById('form-photo');
     const configForm = document.getElementById('config-form');
     const btnResetDb = document.getElementById('btn-reset-db');
-    const filterEventDate = document.getElementById('filter-event-date');
-
-    if (filterEventDate) {
-        filterEventDate.addEventListener('change', () => {
-            loadEventsTable(true);
+    // Calendar State for Admin
+    let selectedDate = null;
+    let currentCalendarYear = null;
+    let currentCalendarMonth = null; // 0-indexed
+    let calendarAnimationClass = '';
+    let calendarViewMode = 'month'; // 'month' or 'week'
+    let weekAnchorDate = new Date();
+    
+    const btnClearDateFilter = document.getElementById('btn-clear-date-filter');
+    if (btnClearDateFilter) {
+        btnClearDateFilter.addEventListener('click', () => {
+            selectedDate = null;
+            loadEventsTable();
         });
     }
 
@@ -415,9 +423,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 4. Populate and Manage Events Table
-    async function loadEventsTable(skipRepopulate = false) {
+    async function loadEventsTable() {
         const tbody = document.getElementById('table-events-body');
-        const filterSelect = document.getElementById('filter-event-date');
         if (!tbody) return;
 
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Carregant dades...</td></tr>';
@@ -426,48 +433,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (events.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hi ha actes registrats.</td></tr>';
-            if (filterSelect && !skipRepopulate) {
-                filterSelect.innerHTML = '<option value="all">Tots els dies</option>';
-            }
+            renderCalendarAdmin([]);
             return;
         }
 
-        // Repopular el selector de dates si no s'ha demanat ometre-ho
-        if (filterSelect && !skipRepopulate) {
-            const currentSelected = filterSelect.value || 'all';
-            
-            // Obtenir dates úniques reals i ordenar-les
-            const uniqueDates = [...new Set(events.map(item => item.date))].sort();
-
-            const formatDateFriendly = (dateStr) => {
-                const parts = dateStr.split('-').map(Number);
-                if (parts.length < 3) return dateStr;
-                const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
-                const daysCa = ['Diumenge', 'Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte'];
-                const monthsCa = ['de Gener', 'de Febrer', 'de Març', 'd\'Abril', 'de Maig', 'de Juny', 'de Juliol', 'd\'Agost', 'de Setembre', 'd\'Octubre', 'de Novembre', 'de Desembre'];
-                const dayOfWeek = daysCa[dateObj.getDay()];
-                const dayOfMonth = dateObj.getDate();
-                const monthName = monthsCa[dateObj.getMonth()];
-                return `${dayOfWeek}, ${dayOfMonth} ${monthName}`;
-            };
-
-            let optionsHTML = '<option value="all">Tots els dies</option>';
-            uniqueDates.forEach(dateStr => {
-                optionsHTML += `<option value="${dateStr}">${formatDateFriendly(dateStr)}</option>`;
-            });
-            filterSelect.innerHTML = optionsHTML;
-            
-            // Intentar restaurar el valor seleccionat
-            filterSelect.value = currentSelected;
-            if (filterSelect.value !== currentSelected) {
-                filterSelect.value = 'all';
-            }
+        // Inicialitzar dates del calendari per defecte si estan buides
+        if (currentCalendarYear === null || currentCalendarMonth === null) {
+            const today = new Date();
+            currentCalendarYear = today.getFullYear();
+            currentCalendarMonth = today.getMonth();
         }
 
-        const filterValue = filterSelect ? filterSelect.value : 'all';
-        const eventsToShow = filterValue === 'all' 
-            ? events 
-            : events.filter(e => e.date === filterValue);
+        // Control de visibilitat del botó per a netejar el filtre
+        const clearBtn = document.getElementById('btn-clear-date-filter');
+        if (clearBtn) {
+            clearBtn.style.display = selectedDate ? 'block' : 'none';
+        }
+
+        // Filtrar els actes segons el dia seleccionat al calendari
+        const eventsToShow = selectedDate 
+            ? events.filter(e => e.date === selectedDate)
+            : events;
+
+        // Renderitzar el calendari passant tots els actes per dibuixar els punts negres
+        renderCalendarAdmin(events);
 
         if (eventsToShow.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hi ha actes registrats per a aquest dia.</td></tr>';
@@ -545,6 +534,142 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (window.lucide) window.lucide.createIcons();
+    }
+
+    // Funció per a renderitzar el widget de calendari al panell d'admin
+    function renderCalendarAdmin(allEvents) {
+        const widgetContainer = document.getElementById('admin-calendar-widget');
+        if (!widgetContainer) return;
+
+        const todayStr = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
+        const monthsCa = ['Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny', 'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre'];
+        const monthName = monthsCa[currentCalendarMonth];
+
+        // Conjunt de dates que tenen actes en el sistema
+        const eventDatesSet = new Set(allEvents.map(e => e.date));
+
+        // Estructura de capçalera del calendari
+        let headerHtml = `
+            <div class="calendar-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                <button class="calendar-nav-btn" id="admin-calendar-prev-btn" style="background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary);" title="Anterior">
+                    <i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i>
+                </button>
+                <h3 class="calendar-month-year" style="font-size: 0.95rem; font-family: var(--font-heading); margin: 0; color: var(--text-primary); font-weight: 600;">${monthName} ${currentCalendarYear}</h3>
+                <button class="calendar-nav-btn" id="admin-calendar-next-btn" style="background: none; border: 1px solid var(--border-color); border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-primary);" title="Següent">
+                    <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i>
+                </button>
+            </div>
+        `;
+
+        let weekdaysCa = ['Dl', 'Dm', 'Dx', 'Dj', 'Dv', 'Ds', 'Dg'];
+        let bodyHtml = `
+            <div class="calendar-weekdays">
+                ${weekdaysCa.map(d => `<div>${d}</div>`).join('')}
+            </div>
+            <div class="calendar-days ${calendarAnimationClass}">
+        `;
+
+        // Calcular dies
+        const daysInMonth = new Date(currentCalendarYear, currentCalendarMonth + 1, 0).getDate();
+        const prevMonthDays = new Date(currentCalendarYear, currentCalendarMonth, 0).getDate();
+        
+        let firstDayIndex = new Date(currentCalendarYear, currentCalendarMonth, 1).getDay(); // 0 = Dg, 1 = Dl...
+        let startOffset = firstDayIndex === 0 ? 6 : firstDayIndex - 1;
+
+        // Dies del mes anterior
+        for (let i = startOffset - 1; i >= 0; i--) {
+            const dayNum = prevMonthDays - i;
+            let prevMonthIndex = currentCalendarMonth - 1;
+            let prevYear = currentCalendarYear;
+            if (prevMonthIndex < 0) {
+                prevMonthIndex = 11;
+                prevYear--;
+            }
+            const dateStr = `${prevYear}-${String(prevMonthIndex + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+            const hasEvent = eventDatesSet.has(dateStr);
+            const isToday = dateStr === todayStr;
+            const isSelected = dateStr === selectedDate;
+            bodyHtml += `<div class="calendar-day other-month ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${hasEvent ? 'has-event' : ''}" data-date="${dateStr}">${dayNum}</div>`;
+        }
+
+        // Dies del mes actual
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateStr = `${currentCalendarYear}-${String(currentCalendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const hasEvent = eventDatesSet.has(dateStr);
+            const isToday = dateStr === todayStr;
+            const isSelected = dateStr === selectedDate;
+            
+            bodyHtml += `<div class="calendar-day ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${hasEvent ? 'has-event' : ''}" data-date="${dateStr}">${day}</div>`;
+        }
+
+        // Dies del mes següent
+        const totalRenderedDays = startOffset + daysInMonth;
+        const nextMonthDaysNeeded = 42 - totalRenderedDays;
+        for (let day = 1; day <= nextMonthDaysNeeded; day++) {
+            let nextMonthIndex = currentCalendarMonth + 1;
+            let nextYear = currentCalendarYear;
+            if (nextMonthIndex > 11) {
+                nextMonthIndex = 0;
+                nextYear++;
+            }
+            const dateStr = `${nextYear}-${String(nextMonthIndex + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            const hasEvent = eventDatesSet.has(dateStr);
+            const isToday = dateStr === todayStr;
+            const isSelected = dateStr === selectedDate;
+            bodyHtml += `<div class="calendar-day other-month ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''} ${hasEvent ? 'has-event' : ''}" data-date="${dateStr}">${day}</div>`;
+        }
+
+        bodyHtml += `</div>`;
+        widgetContainer.innerHTML = headerHtml + bodyHtml;
+        calendarAnimationClass = '';
+
+        if (window.lucide) {
+            window.lucide.createIcons();
+        }
+
+        // Navegació de mesos
+        document.getElementById('admin-calendar-prev-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            calendarAnimationClass = 'slide-from-left';
+            currentCalendarMonth--;
+            if (currentCalendarMonth < 0) {
+                currentCalendarMonth = 11;
+                currentCalendarYear--;
+            }
+            renderCalendarAdmin(allEvents);
+        });
+
+        document.getElementById('admin-calendar-next-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            calendarAnimationClass = 'slide-from-right';
+            currentCalendarMonth++;
+            if (currentCalendarMonth > 11) {
+                currentCalendarMonth = 0;
+                currentCalendarYear++;
+            }
+            renderCalendarAdmin(allEvents);
+        });
+
+        // Click en els dies per a filtrar
+        widgetContainer.querySelectorAll('.calendar-day').forEach(cell => {
+            cell.addEventListener('click', () => {
+                const clickedDateStr = cell.getAttribute('data-date');
+                
+                if (selectedDate === clickedDateStr) {
+                    selectedDate = null;
+                } else {
+                    selectedDate = clickedDateStr;
+                    
+                    const [cYear, cMonth, cDay] = clickedDateStr.split('-').map(Number);
+                    if (cYear !== currentCalendarYear || (cMonth - 1) !== currentCalendarMonth) {
+                        currentCalendarYear = cYear;
+                        currentCalendarMonth = cMonth - 1;
+                    }
+                }
+                
+                loadEventsTable(); // recarregar la taula amb el filtre de data
+            });
+        });
     }
 
     // 5. Populate and Manage Photos Table

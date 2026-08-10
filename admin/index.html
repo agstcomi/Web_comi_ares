@@ -275,31 +275,38 @@
                         </button>
                     </div>
 
-                    <!-- Date Filter for Events -->
-                    <div class="admin-filters" style="display: flex; gap: 1rem; margin-bottom: 1.5rem; align-items: center; background-color: var(--bg-secondary); padding: 1rem; border-radius: 12px; border: 1px solid var(--border-color);">
-                        <div style="display: flex; flex-direction: column; gap: 0.25rem; min-width: 200px;">
-                            <label for="filter-event-date" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); text-transform: uppercase;">Filtrar per dia</label>
-                            <select id="filter-event-date" style="padding: 0.5rem; border-radius: 8px; border: 1px solid var(--border-color); background-color: var(--bg-primary); color: var(--text-primary); font-family: inherit; font-size: 0.9rem;">
-                                <option value="all">Tots els dies</option>
-                            </select>
+                    <!-- Layout con Calendari i Taula -->
+                    <div class="admin-events-layout" style="display: flex; gap: 2rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                        <!-- Sidebar de Filtres (Calendari) -->
+                        <div class="admin-events-sidebar" style="flex: 0 0 340px; width: 340px; max-width: 100%;">
+                            <div class="calendar-widget-card" style="background-color: var(--bg-secondary); padding: 1.5rem; border-radius: 20px; border: 1px solid var(--border-color);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+                                    <h4 style="text-transform: uppercase; font-family: var(--font-heading); font-size: 0.85rem; letter-spacing: 0.05em; color: var(--text-secondary); margin: 0; font-weight: 600;">Calendari de Filtres</h4>
+                                    <button class="btn btn-sm btn-secondary" id="btn-clear-date-filter" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; display: none; height: auto; font-weight: 500;">Tots els actes</button>
+                                </div>
+                                <div id="admin-calendar-widget" class="calendar-widget"></div>
+                            </div>
                         </div>
-                    </div>
-                    
-                    <div style="overflow-x: auto;">
-                        <table class="admin-table">
-                            <thead>
-                                <tr>
-                                    <th>Data i Hora</th>
-                                    <th>Acte</th>
-                                    <th>Localització</th>
-                                    <th>Categoria</th>
-                                    <th>Accions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="table-events-body">
-                                <!-- Loaded dynamically -->
-                            </tbody>
-                        </table>
+                        
+                        <!-- Contingut Principal (Taula) -->
+                        <div class="admin-events-content" style="flex: 1; min-width: 320px; max-width: 100%;">
+                            <div style="overflow-x: auto;">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Data i Hora</th>
+                                            <th>Acte</th>
+                                            <th>Localització</th>
+                                            <th>Categoria</th>
+                                            <th>Accions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="table-events-body">
+                                        <!-- Loaded dynamically -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                     
                     <!-- Category Colors Customization Form -->
