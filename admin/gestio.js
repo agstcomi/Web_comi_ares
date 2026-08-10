@@ -36,6 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const formPhoto = document.getElementById('form-photo');
     const configForm = document.getElementById('config-form');
     const btnResetDb = document.getElementById('btn-reset-db');
+    const filterEventDate = document.getElementById('filter-event-date');
+
+    if (filterEventDate) {
+        filterEventDate.addEventListener('change', () => {
+            loadEventsTable(true);
+        });
+    }
 
     // 1. Authentication Check & Login Flow
     async function checkAuthState() {
@@ -408,8 +415,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // 4. Populate and Manage Events Table
-    async function loadEventsTable() {
+    async function loadEventsTable(skipRepopulate = false) {
         const tbody = document.getElementById('table-events-body');
+        const filterSelect = document.getElementById('filter-event-date');
         if (!tbody) return;
 
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Carregant dades...</td></tr>';
@@ -418,10 +426,55 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (events.length === 0) {
             tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hi ha actes registrats.</td></tr>';
+            if (filterSelect && !skipRepopulate) {
+                filterSelect.innerHTML = '<option value="all">Tots els dies</option>';
+            }
             return;
         }
 
-        tbody.innerHTML = events.map(item => {
+        // Repopular el selector de dates si no s'ha demanat ometre-ho
+        if (filterSelect && !skipRepopulate) {
+            const currentSelected = filterSelect.value || 'all';
+            
+            // Obtenir dates úniques reals i ordenar-les
+            const uniqueDates = [...new Set(events.map(item => item.date))].sort();
+
+            const formatDateFriendly = (dateStr) => {
+                const parts = dateStr.split('-').map(Number);
+                if (parts.length < 3) return dateStr;
+                const dateObj = new Date(parts[0], parts[1] - 1, parts[2]);
+                const daysCa = ['Diumenge', 'Dilluns', 'Dimarts', 'Dimecres', 'Dijous', 'Divendres', 'Dissabte'];
+                const monthsCa = ['de Gener', 'de Febrer', 'de Març', 'd\'Abril', 'de Maig', 'de Juny', 'de Juliol', 'd\'Agost', 'de Setembre', 'd\'Octubre', 'de Novembre', 'de Desembre'];
+                const dayOfWeek = daysCa[dateObj.getDay()];
+                const dayOfMonth = dateObj.getDate();
+                const monthName = monthsCa[dateObj.getMonth()];
+                return `${dayOfWeek}, ${dayOfMonth} ${monthName}`;
+            };
+
+            let optionsHTML = '<option value="all">Tots els dies</option>';
+            uniqueDates.forEach(dateStr => {
+                optionsHTML += `<option value="${dateStr}">${formatDateFriendly(dateStr)}</option>`;
+            });
+            filterSelect.innerHTML = optionsHTML;
+            
+            // Intentar restaurar el valor seleccionat
+            filterSelect.value = currentSelected;
+            if (filterSelect.value !== currentSelected) {
+                filterSelect.value = 'all';
+            }
+        }
+
+        const filterValue = filterSelect ? filterSelect.value : 'all';
+        const eventsToShow = filterValue === 'all' 
+            ? events 
+            : events.filter(e => e.date === filterValue);
+
+        if (eventsToShow.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No hi ha actes registrats per a aquest dia.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = eventsToShow.map(item => {
             const escDate = window.db.escapeHTML(item.date);
             const escTime = window.db.escapeHTML(item.time);
             const escTitle = window.db.escapeHTML(item.title);
@@ -452,7 +505,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tbody.querySelectorAll('.btn-edit-event').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
-                const item = events.find(e => e.id === id);
+                const item = events.find(e => e.id === id); // buscar en la llista completa
                 if (item) {
                     formEvent.reset();
                     document.getElementById('event-id').value = item.id;
@@ -486,7 +539,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (confirm('Estàs segur que vols esborrar aquest acte del programa?')) {
                     const id = btn.getAttribute('data-id');
                     await window.db.deleteEvent(id);
-                    loadEventsTable();
+                    loadEventsTable(); // recarregar i repopular
                 }
             });
         });
