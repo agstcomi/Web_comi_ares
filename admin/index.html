@@ -519,22 +519,20 @@ CREATE TABLE photos (
                     <div id="reservations-status-banner" style="display: none; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.85rem; font-weight: 600;"></div>
 
                     <!-- Reservations Table -->
-                    <div style="overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin-bottom: 2rem;">
-                        <table class="admin-events-table" style="width: 100%; min-width: 980px; border-collapse: collapse;">
+                    <div style="border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin-bottom: 2rem; overflow: hidden;">
+                        <table class="admin-events-table" style="width: 100%; border-collapse: collapse;">
                             <thead>
                                 <tr>
-                                    <th style="width: 18%; padding: 1rem;">Nom i Cognoms</th>
-                                    <th style="width: 20%; padding: 1rem;">Email</th>
-                                    <th style="width: 8%; padding: 1rem; text-align: center;">Talla</th>
-                                    <th style="width: 6%; padding: 1rem; text-align: center;">Qty</th>
-                                    <th style="width: 10%; padding: 1rem;">Import</th>
-                                    <th style="width: 16%; padding: 1rem;">Estat</th>
-                                    <th style="width: 12%; padding: 1rem;">Data</th>
-                                    <th style="width: 10%; padding: 1rem; text-align: right;">Accions</th>
+                                    <th style="padding: 0.85rem 1rem;">Client</th>
+                                    <th style="padding: 0.85rem 0.75rem; text-align: center;">Talla & Qty</th>
+                                    <th style="padding: 0.85rem 0.75rem;">Import</th>
+                                    <th style="padding: 0.85rem 0.75rem;">Estat</th>
+                                    <th style="padding: 0.85rem 0.75rem;">Data</th>
+                                    <th style="padding: 0.85rem 1rem; text-align: right;">Accions</th>
                                 </tr>
                             </thead>
                             <tbody id="reservations-tbody">
-                                <tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">Carregant reserves...</td></tr>
+                                <tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Carregant reserves...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -1077,8 +1075,8 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="/js/db.js?v=1.45" defer></script>
-    <script src="/admin/gestio.js?v=1.45"></script>
+    <script src="/js/db.js?v=1.48" defer></script>
+    <script src="/admin/gestio.js?v=1.48"></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);

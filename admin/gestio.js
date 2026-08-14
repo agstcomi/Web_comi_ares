@@ -2365,13 +2365,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Stats
-            const totalUnits = allReservations.reduce((a, r) => a + (r.quantity || 1), 0);
-            const totalRevenue = allReservations.filter(r => r.status === 'paid').reduce((a, r) => a + (r.amount_cents || 0), 0);
+            const activeReservations = allReservations.filter(r => r.status !== 'cancelled');
+            const totalUnits = activeReservations.reduce((a, r) => a + (r.quantity || 1), 0);
+            const totalRevenue = activeReservations.filter(r => r.status === 'paid').reduce((a, r) => a + (r.amount_cents || 0), 0);
             const paidCount = allReservations.filter(r => r.status === 'paid').length;
-            const pendingCount = allReservations.filter(r => r.status === 'pending').length;
+            const pendingCount = allReservations.filter(r => r.status === 'pending' || r.status === 'pending_transfer').length;
+            const cancelledCount = allReservations.filter(r => r.status === 'cancelled').length;
 
             const sizeCounts = {};
-            allReservations.forEach(r => {
+            activeReservations.forEach(r => {
                 sizeCounts[r.size] = (sizeCounts[r.size] || 0) + (r.quantity || 1);
             });
             const topSize = Object.entries(sizeCounts).sort((a, b) => b[1] - a[1])[0];
@@ -2382,48 +2384,84 @@ document.addEventListener('DOMContentLoaded', () => {
                     { icon: 'package', val: totalUnits, label: 'Camisetes' },
                     { icon: 'check-circle', val: paidCount, label: 'Pagades' },
                     { icon: 'clock', val: pendingCount, label: 'Pendents' },
+                    { icon: 'x-circle', val: cancelledCount, label: 'Cancel·lades' },
                     { icon: 'euro', val: (totalRevenue / 100).toFixed(2) + '€', label: 'Recaptat' },
                     { icon: 'tag', val: topSize ? topSize[0] : '-', label: 'Talla + venuda' },
                 ].map(s => `
-                    <div style="border:1px solid var(--border-color);border-radius:8px;padding:1rem;background:var(--bg-secondary);text-align:center;">
-                        <div style="font-size:1.5rem;font-weight:800;font-family:var(--font-heading);">${s.val}</div>
-                        <div style="font-size:0.7rem;text-transform:uppercase;color:var(--text-muted);margin-top:0.25rem;">${s.label}</div>
+                    <div style="border:1px solid var(--border-color);border-radius:8px;padding:0.75rem 1rem;background:var(--bg-secondary);text-align:center;">
+                        <div style="font-size:1.35rem;font-weight:800;font-family:var(--font-heading);">${s.val}</div>
+                        <div style="font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);margin-top:0.2rem;">${s.label}</div>
                     </div>
                 `).join('');
             }
 
-            // Table rows
+            // Table rows (No horizontal scroll needed)
             tbody.innerHTML = allReservations.map(r => {
                 const isPaid = r.status === 'paid';
-                const statusBadge = isPaid
-                    ? '<span style="font-size:0.75rem;font-weight:700;padding:0.3rem 0.6rem;background:#dcfce7;color:#15803d;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.35rem;"><i data-lucide="check-circle-2" style="width:13px;height:13px;"></i> Pagat</span>'
-                    : '<span style="font-size:0.75rem;font-weight:700;padding:0.3rem 0.6rem;background:#fef9c3;color:#854d0e;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.35rem;"><i data-lucide="clock" style="width:13px;height:13px;"></i> Pendent</span>';
+                const isCancelled = r.status === 'cancelled';
 
-                const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('ca-ES', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
+                let statusBadge = '';
+                if (isPaid) {
+                    statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#dcfce7;color:#15803d;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="check-circle-2" style="width:12px;height:12px;"></i> Pagat</span>';
+                } else if (isCancelled) {
+                    statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fee2e2;color:#b91c1c;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="x-circle" style="width:12px;height:12px;"></i> Cancel·lada</span>';
+                } else {
+                    statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fef9c3;color:#854d0e;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="clock" style="width:12px;height:12px;"></i> Pendent</span>';
+                }
+
+                const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('ca-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '-';
                 const amount = r.amount_cents ? (r.amount_cents / 100).toFixed(2) + '€' : '-';
                 const escId = window.db.escapeHTML ? window.db.escapeHTML(String(r.id || '')) : String(r.id || '');
+                const escName = window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname);
+                const escEmail = window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '');
+                const escSize = window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '');
 
-                const toggleBtn = isPaid
-                    ? `<button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.35rem 0.7rem;font-size:0.75rem;white-space:nowrap;margin-right:0.4rem;" title="Marcar com a Pendent">
-                        <i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Pendent
-                       </button>`
-                    : `<button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.35rem 0.7rem;font-size:0.75rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;margin-right:0.4rem;" title="Confirmar transferència rebuda">
-                        <i data-lucide="check" style="width:12px;height:12px;"></i> Validar Pagament
-                       </button>`;
-
-                return `<tr>
-                    <td style="font-weight:600;padding:0.9rem 1rem;">${window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname)}</td>
-                    <td style="font-size:0.85rem;padding:0.9rem 1rem;">${window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '')}</td>
-                    <td style="font-weight:700;text-align:center;padding:0.9rem 1rem;">${window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '')}</td>
-                    <td style="text-align:center;padding:0.9rem 1rem;">${r.quantity || 1}</td>
-                    <td style="font-weight:700;padding:0.9rem 1rem;">${amount}</td>
-                    <td style="padding:0.9rem 1rem;white-space:nowrap;">${statusBadge}</td>
-                    <td style="font-size:0.8rem;color:var(--text-secondary);padding:0.9rem 1rem;white-space:nowrap;">${dateStr}</td>
-                    <td style="white-space:nowrap;text-align:right;padding:0.9rem 1rem;">
-                        ${toggleBtn}
-                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;vertical-align:middle;">
-                            <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
+                let actionsHtml = '';
+                if (isPaid) {
+                    actionsHtml = `
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.5rem;font-size:0.7rem;white-space:nowrap;" title="Tornar a pendent">
+                            <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Pendent
                         </button>
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.5rem;font-size:0.7rem;color:#ef4444;white-space:nowrap;" title="Cancel·lar reserva">
+                            <i data-lucide="x" style="width:11px;height:11px;"></i> Cancel·lar
+                        </button>
+                    `;
+                } else if (isCancelled) {
+                    actionsHtml = `
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.5rem;font-size:0.7rem;white-space:nowrap;" title="Reactivar reserva">
+                            <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Reactivar
+                        </button>
+                    `;
+                } else {
+                    actionsHtml = `
+                        <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.25rem 0.55rem;font-size:0.7rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;" title="Validar transferència rebuda">
+                            <i data-lucide="check" style="width:11px;height:11px;"></i> Validar
+                        </button>
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.5rem;font-size:0.7rem;color:#ef4444;white-space:nowrap;" title="Cancel·lar reserva">
+                            <i data-lucide="x" style="width:11px;height:11px;"></i> Cancel·lar
+                        </button>
+                    `;
+                }
+
+                return `<tr style="${isCancelled ? 'opacity: 0.6; background: rgba(0,0,0,0.02);' : ''}">
+                    <td style="padding:0.75rem 1rem;">
+                        <div style="font-weight:700;font-size:0.9rem;line-height:1.2;">${escName}</div>
+                        <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.15rem;">${escEmail}</div>
+                    </td>
+                    <td style="text-align:center;padding:0.75rem 0.75rem;white-space:nowrap;">
+                        <span style="font-weight:800;font-size:0.95rem;">${escSize}</span>
+                        <span style="font-size:0.75rem;color:var(--text-secondary);"> × ${r.quantity || 1}</span>
+                    </td>
+                    <td style="font-weight:700;font-size:0.9rem;padding:0.75rem 0.75rem;white-space:nowrap;">${amount}</td>
+                    <td style="padding:0.75rem 0.75rem;white-space:nowrap;">${statusBadge}</td>
+                    <td style="font-size:0.75rem;color:var(--text-secondary);padding:0.75rem 0.75rem;white-space:nowrap;">${dateStr}</td>
+                    <td style="white-space:nowrap;text-align:right;padding:0.75rem 1rem;">
+                        <div style="display:inline-flex;gap:0.35rem;align-items:center;">
+                            ${actionsHtml}
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre" style="width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;">
+                                <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>`;
             }).join('');
