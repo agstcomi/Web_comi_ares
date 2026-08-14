@@ -59,12 +59,24 @@ async function main() {
       "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
     };
 
-    const newsResponse = await fetch(`${SUPABASE_URL}/rest/v1/news?status=eq.published&select=*&order=created_at.desc`, { headers });
+    const newsResponse = await fetch(`${SUPABASE_URL}/rest/v1/news?status=in.(published,scheduled)&select=*&order=created_at.desc`, { headers });
     if (!newsResponse.ok) {
       throw new Error(`Error al consultar noticias en Supabase: ${newsResponse.status} ${newsResponse.statusText}`);
     }
-    const news = await newsResponse.json();
-    console.log(`Se encontraron ${news.length} noticias publicadas.`);
+    const allFetchedNews = await newsResponse.json();
+    const now = new Date();
+    const news = allFetchedNews.filter(item => {
+      if (item.status === 'draft') return false;
+      const pubDateStr = item.published_at || item.created_at;
+      if (pubDateStr) {
+        const pubDate = new Date(pubDateStr);
+        if (!isNaN(pubDate.getTime()) && pubDate > now) {
+          return false; // Scheduled for future date/time -> skip until exact moment
+        }
+      }
+      return true;
+    });
+    console.log(`Se encontraron ${news.length} noticias publicadas accesibles en el front.`);
 
     const eventsResponse = await fetch(`${SUPABASE_URL}/rest/v1/events?select=*&order=date.asc,time.asc`, { headers });
     if (!eventsResponse.ok) {

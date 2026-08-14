@@ -275,6 +275,24 @@ Completat en la sessió actual. Es va realitzar una auditoria completa de la web
 
 ---
 
-## 22. Pròxim Pas
-* Pujar tots els canvis a PRO (`git add -A && git commit && git push`).
+## 23. Optimització de la Gestió d'Actes (Zero Scroll), Disseny Mòbil i Notícies Programades (v1.24)
+Completat en la sessió actual:
+* **Rediseñ de la Taula d'Actes de l'Admin (`/admin/`)**:
+  - Aplicat `table-layout: fixed` i reduït l'amplada del sidebar del calendari de `340px` a `260px` amb `gap: 1rem`, aconseguint que la taula s'ajuste al 100% de l'amplada en ordinadors sense cap mena de scroll horitzontal.
+  - Data i hora d'actes estructurades en dues línies visuals.
+  - Botons d'acció de la taula transformats en botons icona quadrats i compactes (`30px × 30px`) amb icones de Lucide (`edit-3` i `trash-2`), atorgant un aspecte net i modern.
+* **Transformació Mòbil en Targetes (Card Layout) i Reordenació (`@media (max-width: 768px)`)**:
+  - En pantalles mòbils, la taula es transforma automàticament en un llistat de targetes mòbils independents (`display: block`). Cada acte es mostra com una targeta arrodonida amb tots els camps i botons d'acció directament visibles a la dreta sense cap desbordament horitzontal.
+  - Reordenació mòbil: El calendari de filtres es posiciona primer (`order: 1`) i el llistat d'actes apareix a sota (`order: 2`).
+* **Sistema de Publicació Programada de Notícies (`published_at`)**:
+  - Selector de data i hora de publicació tipus `datetime-local` a `admin/editor.html` i opció d'estat `⏰ Programat`.
+  - Etiquetes distintives blaves `⏰ Programat` al llistat de notícies de l'administració.
+  - Filtre automàtic al frontend (`js/db.js` i `scripts/generate-news.js`): Les notícies amb data/hora futura romanen ocultes al web públic fins al moment exacte en què es compleix la data/hora de publicació, moment en què s'activen de manera transparent.
+  - Notificacions Push encobertes fins a la data efectiva de publicació.
+* **Cache-Busting (v1.24)**: Actualitzat als HTML de l'administració.
+
+---
+
+## 24. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
+

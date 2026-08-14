@@ -2228,6 +2228,227 @@ nav.nav-menu ul li > a::after {
     border: 1px solid var(--border-color);
 }
 
+/* Layout compact per al programa d'actes de l'admin (sense scroll horizontal) */
+.admin-events-layout {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+    align-items: flex-start;
+}
+
+.admin-events-sidebar {
+    flex: 0 0 260px;
+    width: 260px;
+    max-width: 100%;
+    order: 1;
+}
+
+.admin-events-sidebar .calendar-widget-card {
+    background-color: var(--bg-secondary);
+    padding: 1rem;
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
+}
+
+.admin-events-content {
+    flex: 1;
+    min-width: 0;
+    max-width: 100%;
+    order: 2;
+}
+
+.admin-events-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin-top: 0;
+    text-align: left;
+}
+
+.admin-events-table th {
+    padding: 0.6rem 0.4rem;
+    font-size: 0.7rem;
+    white-space: nowrap;
+    background-color: var(--bg-secondary);
+    font-family: var(--font-heading);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.admin-events-table td {
+    padding: 0.6rem 0.4rem;
+    font-size: 0.82rem;
+    border-bottom: 1px solid var(--border-color);
+    vertical-align: middle;
+    overflow: hidden;
+}
+
+.admin-events-table td .event-date-cell {
+    display: flex;
+    flex-direction: column;
+    white-space: nowrap;
+    line-height: 1.25;
+}
+
+.admin-events-table td .event-date-val {
+    font-weight: 600;
+    font-size: 0.82rem;
+    color: var(--text-primary);
+}
+
+.admin-events-table td .event-time-val {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.admin-events-table td .event-actions {
+    display: inline-flex;
+    gap: 0.25rem;
+    align-items: center;
+    justify-content: flex-end;
+    white-space: nowrap;
+    width: 100%;
+}
+
+.admin-events-table .btn-action {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.admin-events-table .btn-action-edit {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+    border: 1px solid var(--text-primary);
+}
+
+.admin-events-table .btn-action-edit:hover {
+    background-color: transparent;
+    color: var(--text-primary);
+    transform: translateY(-1px);
+}
+
+.admin-events-table .btn-action-delete {
+    background-color: #ef4444;
+    color: #ffffff;
+    border: 1px solid #ef4444;
+}
+
+.admin-events-table .btn-action-delete:hover {
+    background-color: transparent;
+    color: #ef4444;
+    transform: translateY(-1px);
+}
+
+/* En dispositius mòbils/tauletes: Calendari PRIMER (order 1), Llista de dades SEGONA (order 2) */
+@media (max-width: 992px) {
+    .admin-events-layout {
+        flex-direction: column;
+        gap: 1.25rem;
+    }
+
+    .admin-events-sidebar {
+        flex: 0 0 auto;
+        width: 100%;
+        order: 1;
+    }
+
+    .admin-events-content {
+        width: 100%;
+        order: 2;
+    }
+}
+
+/* Transformació de la taula d'actes en Targetes Mòbils (Card Layout) per eliminar 100% el scroll lateral en mòbil */
+@media (max-width: 768px) {
+    .admin-events-table-wrapper {
+        overflow-x: visible !important;
+    }
+
+    .admin-events-table,
+    .admin-events-table tbody,
+    .admin-events-table tr,
+    .admin-events-table td {
+        display: block !important;
+        width: 100% !important;
+        box-sizing: border-box;
+    }
+
+    .admin-events-table thead {
+        display: none !important;
+    }
+
+    .admin-events-table tr {
+        margin-bottom: 0.85rem;
+        padding: 0.85rem 1rem;
+        background-color: var(--bg-secondary);
+        border: 1px solid var(--border-color);
+        border-radius: 14px;
+        position: relative;
+    }
+
+    .admin-events-table tr:hover {
+        background-color: var(--bg-secondary);
+    }
+
+    .admin-events-table td {
+        padding: 0.2rem 0 !important;
+        border-bottom: none !important;
+    }
+
+    .admin-events-table td:nth-child(1) { /* Data i Hora */
+        margin-bottom: 0.3rem;
+    }
+
+    .admin-events-table td:nth-child(2) { /* Acte */
+        font-size: 0.95rem !important;
+        font-weight: 700 !important;
+        color: var(--text-primary);
+        margin-bottom: 0.15rem;
+    }
+
+    .admin-events-table td:nth-child(3) { /* Localització */
+        font-size: 0.82rem !important;
+        color: var(--text-secondary);
+        margin-bottom: 0.4rem;
+    }
+
+    .admin-events-table td:nth-child(4) { /* Categoria */
+        margin-bottom: 0.5rem;
+    }
+
+    .admin-events-table td:nth-child(5) { /* Accions */
+        margin-top: 0.4rem;
+        padding-top: 0.5rem !important;
+        border-top: 1px dashed var(--border-color) !important;
+        display: flex !important;
+        justify-content: flex-end;
+    }
+
+    .admin-events-table td .event-actions {
+        justify-content: flex-end;
+        gap: 0.4rem;
+        width: auto !important;
+    }
+
+    .admin-events-table .btn-action {
+        padding: 0.35rem 0.75rem;
+        font-size: 0.75rem;
+    }
+}
+
 .admin-form-modal {
     position: fixed;
     top: 0;

@@ -370,11 +370,36 @@ document.addEventListener('DOMContentLoaded', () => {
             const escUpdatedAt = item.updated_at ? window.db.escapeHTML(item.updated_at) : '';
             const escId = window.db.escapeHTML(item.id);
             
+            const now = new Date();
             const status = item.status || 'published';
+            const pubDateStr = item.published_at || item.created_at;
+            const isFuturePub = pubDateStr && !isNaN(new Date(pubDateStr).getTime()) && new Date(pubDateStr) > now;
+            const isScheduled = status === 'scheduled' || isFuturePub;
             const isDraft = status === 'draft';
-            const badgeBg = isDraft ? '#e2e8f0' : '#dcfce7';
-            const badgeTextColors = isDraft ? '#475569' : '#15803d';
-            const badgeText = isDraft ? 'Esborrany' : 'Publicat';
+
+            let badgeBg = '#dcfce7';
+            let badgeTextColors = '#15803d';
+            let badgeText = 'Publicat';
+
+            if (isDraft) {
+                badgeBg = '#e2e8f0';
+                badgeTextColors = '#475569';
+                badgeText = 'Esborrany';
+            } else if (isScheduled) {
+                badgeBg = '#dbeafe';
+                badgeTextColors = '#1e40af';
+                badgeText = '⏰ Programat';
+            }
+
+            let displayDate = escCreatedAt;
+            if (pubDateStr) {
+                try {
+                    const d = new Date(pubDateStr);
+                    if (!isNaN(d.getTime())) {
+                        displayDate = d.toLocaleString('ca-ES', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+                    }
+                } catch (e) {}
+            }
             
             return `
                 <tr>
@@ -386,7 +411,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </td>
                     <td>
-                        <div>Pub: ${escCreatedAt}</div>
+                        <div>Pub: ${displayDate}</div>
                         ${escUpdatedAt ? `<div style="font-size:0.75rem; color:var(--text-muted); margin-top:0.25rem;">Ed: ${escUpdatedAt}</div>` : ''}
                     </td>
                     <td>
@@ -471,21 +496,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const escId = window.db.escapeHTML(item.id);
             return `
                 <tr>
-                    <td style="font-weight: 600;">${escDate} <span style="font-weight: 300;">(${escTime})</span></td>
-                    <td>${escTitle}</td>
-                    <td>${escLoc}</td>
                     <td>
-                        <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-                            ${window.renderCategoryBadges(item.category, 'margin-top:0;')}
+                        <div class="event-date-cell">
+                            <span class="event-date-val">${escDate}</span>
+                            <span class="event-time-val"><i data-lucide="clock" style="width:11px; height:11px; display:inline; vertical-align:-1px; margin-right:2px;"></i>${escTime}</span>
+                        </div>
+                    </td>
+                    <td style="font-weight: 500; word-break: break-word;">${escTitle}</td>
+                    <td style="color: var(--text-secondary); word-break: break-word;">${escLoc}</td>
+                    <td>
+                        <div style="display: flex; gap: 0.2rem; flex-wrap: wrap;">
+                            ${window.renderCategoryBadges(item.category, 'margin-top:0; padding: 2px 6px; font-size: 0.68rem;')}
                         </div>
                     </td>
                     <td>
-                        <button class="btn btn-sm btn-edit-event" data-id="${escId}" style="padding: 0.35rem 0.6rem; margin-right: 0.5rem; background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary);">
-                            <i data-lucide="edit-3" style="width: 12px; height: 12px;"></i> Editar
-                        </button>
-                        <button class="btn btn-sm btn-danger btn-delete-event" data-id="${escId}" style="padding: 0.35rem 0.75rem;">
-                            <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i> Borrar
-                        </button>
+                        <div class="event-actions">
+                            <button class="btn-action btn-action-edit btn-edit-event" data-id="${escId}" title="Editar acte" aria-label="Editar acte">
+                                <i data-lucide="edit-3" style="width: 14px; height: 14px;"></i>
+                            </button>
+                            <button class="btn-action btn-action-delete btn-delete-event" data-id="${escId}" title="Eliminar acte" aria-label="Eliminar acte">
+                                <i data-lucide="trash-2" style="width: 14px; height: 14px;"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
             `;

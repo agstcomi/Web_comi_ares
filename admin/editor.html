@@ -191,17 +191,18 @@
                         <input type="text" id="news-author" placeholder="Ex. Comissió de Festes" value="Comissió de Festes" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; background-color: var(--bg-secondary);">
                     </div>
                     <div class="form-group">
-                        <label for="news-date">Data de publicació</label>
-                        <input type="date" id="news-date" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-heading); background-color: var(--bg-secondary);">
+                        <label for="news-date">Data i hora de publicació / programació</label>
+                        <input type="datetime-local" id="news-date" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-heading); background-color: var(--bg-secondary); color: var(--text-primary); outline: none;">
                     </div>
                     <div class="form-group">
                         <label for="news-edit-date">Data d'edició (Opcional)</label>
                         <input type="date" id="news-edit-date" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-heading); background-color: var(--bg-secondary);">
                     </div>
                     <div class="form-group">
-                        <label for="news-status">Estat</label>
+                        <label for="news-status">Estat de publicació</label>
                         <select id="news-status" style="width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border-color); border-radius: 8px; font-family: var(--font-heading); background-color: var(--bg-secondary); height: 50px; color: var(--text-primary); outline: none;">
                             <option value="published">Publicat</option>
+                            <option value="scheduled">⏰ Programat (Data/Hora futura)</option>
                             <option value="draft">Esborrany</option>
                         </select>
                     </div>
@@ -646,11 +647,32 @@
                     document.getElementById('news-image-alt-es').value = item.image_alt_es || '';
 
                     document.getElementById('news-author').value = item.author || 'Comissió de Festes';
-                    document.getElementById('news-date').value = item.created_at || '';
+                    
+                    const pubDateRaw = item.published_at || item.created_at;
+                    if (pubDateRaw) {
+                        const d = new Date(pubDateRaw);
+                        if (!isNaN(d.getTime())) {
+                            const tzOffset = d.getTimezoneOffset() * 60000;
+                            const localISOTime = (new Date(d.getTime() - tzOffset)).toISOString().slice(0, 16);
+                            document.getElementById('news-date').value = localISOTime;
+                        } else {
+                            document.getElementById('news-date').value = pubDateRaw;
+                        }
+                    } else {
+                        document.getElementById('news-date').value = '';
+                    }
+
                     document.getElementById('news-edit-date').value = item.updated_at || '';
                     document.getElementById('news-image').value = item.image_url || '';
                     document.getElementById('news-image-alt').value = item.image_alt || '';
-                    document.getElementById('news-status').value = item.status || 'published';
+                    
+                    const now = new Date();
+                    const isFuture = pubDateRaw && !isNaN(new Date(pubDateRaw).getTime()) && new Date(pubDateRaw) > now;
+                    let initialStatus = item.status || 'published';
+                    if (isFuture && initialStatus !== 'draft') {
+                        initialStatus = 'scheduled';
+                    }
+                    document.getElementById('news-status').value = initialStatus;
                     document.getElementById('news-tags').value = item.tags ? item.tags.join(', ') : '';
                     
                     document.getElementById('news-content').value = item.content || '';
@@ -682,16 +704,28 @@
             const content_es = document.getElementById('news-content-es').value;
 
             const author = document.getElementById('news-author').value || 'Comissió de Festes';
-            const created_at = document.getElementById('news-date').value || new Date().toISOString().split('T')[0];
+            const newsDateVal = document.getElementById('news-date').value;
+            
+            let published_at = newsDateVal ? new Date(newsDateVal).toISOString() : new Date().toISOString();
+            let created_at = published_at;
             const updated_at = document.getElementById('news-edit-date').value || null;
             const content = document.getElementById('news-content').value;
             
             const fileInput = document.getElementById('news-image-file');
-            
             let image_url = document.getElementById('news-image').value.trim();
             const image_alt = document.getElementById('news-image-alt').value.trim();
-            const status = document.getElementById('news-status').value || 'published';
             
+            let selectedStatus = document.getElementById('news-status').value || 'published';
+            const now = new Date();
+            const isFuture = new Date(published_at) > now;
+
+            if (isFuture && selectedStatus !== 'draft') {
+                selectedStatus = 'scheduled';
+            } else if (!isFuture && selectedStatus === 'scheduled') {
+                selectedStatus = 'published';
+            }
+
+            const status = selectedStatus;
             const tagsVal = document.getElementById('news-tags').value;
             const tags = tagsVal ? tagsVal.split(',').map(t => t.trim()).filter(t => t.length > 0) : [];
 
@@ -723,6 +757,7 @@
                     content_es,
                     author, 
                     created_at, 
+                    published_at,
                     updated_at, 
                     content, 
                     image_url, 
@@ -738,9 +773,9 @@
                     await window.db.addNews(newsData);
                 }
 
-                // Enviar notificació Push si està seleccionat i publicat
+                // Enviar notificació Push si està seleccionat, l'estat és publicat i la data JA ha arribat
                 const sendPush = document.getElementById('news-send-push')?.checked;
-                if (status === 'published' && sendPush && window.db && window.db.isSupabaseConfigured()) {
+                if (status === 'published' && !isFuture && sendPush && window.db && window.db.isSupabaseConfigured()) {
                     try {
                         await window.db.supabase.functions.invoke('send-push-notification', {
                             body: {

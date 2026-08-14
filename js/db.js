@@ -399,6 +399,8 @@ class AppDatabase {
     // News Actions
     async getNews() {
         const isAdmin = window.location.pathname.includes('/admin/');
+        let allNews = [];
+
         if (this.isSupabaseConfigured() && isAdmin) {
             try {
                 const { data, error } = await this.supabase
@@ -406,20 +408,19 @@ class AppDatabase {
                     .select('*')
                     .order('created_at', { ascending: false });
                 if (error) throw error;
-                return data;
+                allNews = data;
             } catch (err) {
                 console.error("Error loading news from Supabase:", err);
-                return await this.getLocalNews();
+                allNews = await this.getLocalNews();
             }
         } else {
             // Public or Local Mode - fetch static JSON file first
             try {
-                const cacheBuster = Math.floor(Date.now() / 300000); // 5 min cache
+                const cacheBuster = Math.floor(Date.now() / 60000); // 1 min cache for scheduling precision
                 const dataUrl = `/data/news.json?v=${cacheBuster}`;
                 const res = await fetch(dataUrl);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const data = await res.json();
-                return data;
+                allNews = await res.json();
             } catch (err) {
                 console.warn("Error loading static news, falling back:", err);
                 if (this.isSupabaseConfigured()) {
@@ -429,15 +430,32 @@ class AppDatabase {
                             .select('*')
                             .order('created_at', { ascending: false });
                         if (error) throw error;
-                        return data;
+                        allNews = data;
                     } catch (e) {
-                        return await this.getLocalNews();
+                        allNews = await this.getLocalNews();
                     }
                 } else {
-                    return await this.getLocalNews();
+                    allNews = await this.getLocalNews();
                 }
             }
         }
+
+        if (isAdmin) {
+            return allNews;
+        }
+
+        const now = new Date();
+        return allNews.filter(item => {
+            if (item.status === 'draft') return false;
+            const pubDateStr = item.published_at || item.created_at;
+            if (pubDateStr) {
+                const pubDate = new Date(pubDateStr);
+                if (!isNaN(pubDate.getTime()) && pubDate > now) {
+                    return false; // Future publication date/time -> hidden on front-end until exact moment
+                }
+            }
+            return true;
+        });
     }
 
     async getLocalNews() {
