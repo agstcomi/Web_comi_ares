@@ -669,7 +669,7 @@
                     const now = new Date();
                     const isFuture = pubDateRaw && !isNaN(new Date(pubDateRaw).getTime()) && new Date(pubDateRaw) > now;
                     let initialStatus = item.status || 'published';
-                    if (isFuture && initialStatus !== 'draft') {
+                    if (initialStatus === 'scheduled' || (isFuture && initialStatus !== 'draft')) {
                         initialStatus = 'scheduled';
                     }
                     document.getElementById('news-status').value = initialStatus;
@@ -688,6 +688,40 @@
                     renderExistingAdditionalImages();
                 }
             }
+        }
+
+        // Attach event listeners for automatic status/date synchronization
+        const newsDateEl = document.getElementById('news-date');
+        const newsStatusEl = document.getElementById('news-status');
+        if (newsDateEl && newsStatusEl) {
+            newsDateEl.addEventListener('change', () => {
+                if (newsDateEl.value) {
+                    const selectedDate = new Date(newsDateEl.value);
+                    const now = new Date();
+                    if (selectedDate > now) {
+                        if (newsStatusEl.value !== 'draft') {
+                            newsStatusEl.value = 'scheduled';
+                        }
+                    } else {
+                        if (newsStatusEl.value === 'scheduled') {
+                            newsStatusEl.value = 'published';
+                        }
+                    }
+                }
+            });
+
+            newsStatusEl.addEventListener('change', () => {
+                if (newsStatusEl.value === 'scheduled') {
+                    const dateVal = newsDateEl.value;
+                    const now = new Date();
+                    if (!dateVal || new Date(dateVal) <= now) {
+                        const tomorrow = new Date(Date.now() + 86400000);
+                        const tzOffset = tomorrow.getTimezoneOffset() * 60000;
+                        const localISOTime = (new Date(tomorrow.getTime() - tzOffset)).toISOString().slice(0, 16);
+                        newsDateEl.value = localISOTime;
+                    }
+                }
+            });
         }
 
         async function saveNews() {
@@ -719,7 +753,7 @@
             const now = new Date();
             const isFuture = new Date(published_at) > now;
 
-            if (isFuture && selectedStatus !== 'draft') {
+            if (selectedStatus === 'scheduled' || (isFuture && selectedStatus !== 'draft')) {
                 selectedStatus = 'scheduled';
             } else if (!isFuture && selectedStatus === 'scheduled') {
                 selectedStatus = 'published';
