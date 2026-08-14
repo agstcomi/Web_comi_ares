@@ -1472,7 +1472,10 @@ class AppDatabase {
         // Compress image client-side first if it's an image file
         try {
             if (file.type && file.type.startsWith('image/')) {
-                file = await this.compressImage(file);
+                file = await Promise.race([
+                    this.compressImage(file),
+                    new Promise(resolve => setTimeout(() => resolve(file), 2000))
+                ]);
             }
         } catch (e) {
             console.warn("Client-side image compression failed, using original file:", e);
@@ -1480,16 +1483,18 @@ class AppDatabase {
 
         if (this.isSupabaseConfigured()) {
             try {
-                const fileExt = file.name.split('.').pop();
+                const fileExt = (file.name || 'image.jpg').split('.').pop();
                 const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
                 
-                const { data, error } = await this.supabase.storage
+                const uploadPromise = this.supabase.storage
                     .from('photos')
                     .upload(fileName, file, {
                         cacheControl: '31536000',
                         upsert: false
                     });
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Storage upload timeout')), 3500));
                 
+                const { data, error } = await Promise.race([uploadPromise, timeoutPromise]);
                 if (error) throw error;
                 
                 const { data: { publicUrl } } = this.supabase.storage
@@ -1498,8 +1503,8 @@ class AppDatabase {
                 
                 return publicUrl;
             } catch (err) {
-                console.error("Error uploading to Supabase Storage:", err);
-                throw new Error(err.message || (err.error && err.error.message) || JSON.stringify(err));
+                console.warn("Supabase Storage fallback to Base64:", err.message || err);
+                return this.readFileAsBase64(file);
             }
         } else {
             return this.readFileAsBase64(file);
@@ -2011,25 +2016,7 @@ class AppDatabase {
             updated_at: new Date().toISOString()
         };
 
-        if (this.isSupabaseConfigured()) {
-            try {
-                const { data, error } = await this.supabase
-                    .from('products')
-                    .upsert([itemToSave])
-                    .select();
-                if (error) {
-                    console.error("Error upserting product to Supabase:", error);
-                } else if (data && data[0]) {
-                    itemToSave.id = data[0].id;
-                }
-            } catch (err) {
-                console.error("Error saving product to Supabase:", err);
-            }
-        }
-
-        await this.dbPromise;
-        await this.putIDB('products', itemToSave).catch(() => {});
-
+        // 1. Instant local persistence in localStorage (0 ms)
         try {
             const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
             const idx = local.findIndex(p => p.id === itemToSave.id);
@@ -2040,6 +2027,30 @@ class AppDatabase {
             }
             localStorage.setItem('ares_products', JSON.stringify(local));
         } catch(e) {}
+
+        // 2. Background save to IndexedDB
+        this.dbPromise.then(() => {
+            this.putIDB('products', itemToSave).catch(() => {});
+        }).catch(() => {});
+
+        // 3. Supabase upsert with 2.5s timeout
+        if (this.isSupabaseConfigured()) {
+            try {
+                const upsertPromise = this.supabase
+                    .from('products')
+                    .upsert([itemToSave])
+                    .select();
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase save timeout')), 2500));
+                const { data, error } = await Promise.race([upsertPromise, timeoutPromise]);
+                if (error) {
+                    console.warn("Supabase upsert product warning:", error.message || error);
+                } else if (data && data[0]) {
+                    itemToSave.id = data[0].id;
+                }
+            } catch (err) {
+                console.warn("Could not upsert product to Supabase:", err.message || err);
+            }
+        }
 
         return itemToSave;
     }
