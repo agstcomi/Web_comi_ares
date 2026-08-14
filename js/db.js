@@ -467,7 +467,7 @@ class AppDatabase {
     async addNews(item) {
         const newItem = {
             id: 'news-' + Date.now(),
-            created_at: item.created_at || new Date().toISOString().split('T')[0],
+            created_at: item.created_at || item.published_at || new Date().toISOString(),
             author: item.author || "Comissió de Festes",
             additional_images: item.additional_images || [],
             ...item
@@ -479,7 +479,18 @@ class AppDatabase {
                     .from('news')
                     .insert([newItem])
                     .select();
-                if (error) throw error;
+                if (error) {
+                    if (error.message && error.message.includes('published_at')) {
+                        const { published_at, ...cleanItem } = newItem;
+                        const { data: data2, error: error2 } = await this.supabase
+                            .from('news')
+                            .insert([cleanItem])
+                            .select();
+                        if (error2) throw error2;
+                        return data2[0];
+                    }
+                    throw error;
+                }
                 return data[0];
             } catch (err) {
                 console.error("Error adding news to Supabase:", err);
@@ -510,7 +521,19 @@ class AppDatabase {
                     .update(updatedItem)
                     .eq('id', id)
                     .select();
-                if (error) throw error;
+                if (error) {
+                    if (error.message && error.message.includes('published_at')) {
+                        const { published_at, ...cleanItem } = updatedItem;
+                        const { data: data2, error: error2 } = await this.supabase
+                            .from('news')
+                            .update(cleanItem)
+                            .eq('id', id)
+                            .select();
+                        if (error2) throw error2;
+                        return data2[0];
+                    }
+                    throw error;
+                }
                 return data[0];
             } catch (err) {
                 console.error("Error editing news on Supabase:", err);

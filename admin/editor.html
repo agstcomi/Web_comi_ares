@@ -620,8 +620,11 @@
             const urlParams = new URLSearchParams(window.location.search);
             const newsId = urlParams.get('id');
 
-            // Default publication date to today
-            document.getElementById('news-date').value = new Date().toISOString().split('T')[0];
+            // Default publication date/time for datetime-local input
+            const defaultDate = new Date();
+            const defaultTzOffset = defaultDate.getTimezoneOffset() * 60000;
+            const defaultLocalISOTime = (new Date(defaultDate.getTime() - defaultTzOffset)).toISOString().slice(0, 16);
+            document.getElementById('news-date').value = defaultLocalISOTime;
 
             if (newsId) {
                 document.getElementById('editor-page-title').textContent = 'Editar Notícia';
@@ -658,8 +661,6 @@
                         } else {
                             document.getElementById('news-date').value = pubDateRaw;
                         }
-                    } else {
-                        document.getElementById('news-date').value = '';
                     }
 
                     document.getElementById('news-edit-date').value = item.updated_at || '';
@@ -740,8 +741,15 @@
             const author = document.getElementById('news-author').value || 'Comissió de Festes';
             const newsDateVal = document.getElementById('news-date').value;
             
-            let published_at = newsDateVal ? new Date(newsDateVal).toISOString() : new Date().toISOString();
-            let created_at = published_at;
+            let pubDateObj = new Date();
+            if (newsDateVal) {
+                const parsed = new Date(newsDateVal);
+                if (!isNaN(parsed.getTime())) {
+                    pubDateObj = parsed;
+                }
+            }
+            const published_at = pubDateObj.toISOString();
+            const created_at = published_at;
             const updated_at = document.getElementById('news-edit-date').value || null;
             const content = document.getElementById('news-content').value;
             
