@@ -782,7 +782,8 @@
                 publicKey: "KJ16ReAN9A8vk7rQg",
             });
         })();
-    <script src="/js/db.js?v=1.40" defer></script>
+    </script>
+    <script src="/js/db.js?v=1.42" defer></script>
     <script src="/js/main.js?v=1.15" defer></script>
     <script src="/js/push-notifications.js?v=1.20" defer></script>
     <script>
@@ -911,16 +912,16 @@
                 localStorage.setItem('ares_reservations', JSON.stringify(stored));
             } catch(e) {}
 
-            // Try DB async save
+            // 1. Save to DB (Supabase + Local)
             try {
                 if (window.db && typeof window.db.addReservation === 'function') {
-                    window.db.addReservation(reservationData).catch(err => console.warn('DB save warning:', err));
+                    await window.db.addReservation(reservationData);
                 }
-            } catch (e) {
-                console.warn('DB call exception:', e);
+            } catch (dbErr) {
+                console.warn('DB save exception:', dbErr);
             }
 
-            // Send automatic confirmation email via EmailJS
+            // 2. Send automatic confirmation email via EmailJS
             if (window.emailjs) {
                 try {
                     await Promise.race([
@@ -933,7 +934,7 @@
                             total: total,
                             notes: notes || 'Cap'
                         }),
-                        new Promise((_, reject) => setTimeout(() => reject(new Error('EmailJS timeout')), 6000))
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('EmailJS timeout')), 4000))
                     ]);
                     console.log('EmailJS: Correu enviat amb èxit');
                 } catch (emailErr) {
