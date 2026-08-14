@@ -561,7 +561,7 @@
                 <i data-lucide="chevron-right"></i>
                 <a href="/tenda">Tenda</a>
                 <i data-lucide="chevron-right"></i>
-                <span>Camiseta Festes Ares SD</span>
+                <span id="breadcrumb-product-name">Camiseta Festes Ares SD</span>
             </nav>
         </div>
     </div>
@@ -976,6 +976,9 @@
 
                 const titleEl = document.getElementById('product-title');
                 if (titleEl) titleEl.textContent = name;
+
+                const breadcrumbNameEl = document.getElementById('breadcrumb-product-name');
+                if (breadcrumbNameEl) breadcrumbNameEl.textContent = name;
 
                 const catEl = document.getElementById('product-breadcrumb-tag');
                 if (catEl) catEl.textContent = 'Tenda · ' + cat;
