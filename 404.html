@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pàgina no trobada · Festes Ares 2026</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="/css/styles.css?v=1.25">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
+    <script src="/js/db.js?v=1.38" defer></script>
+    <script>
+        // Check if the 404 path corresponds to a product slug
+        (async function() {
+            const pathname = window.location.pathname.replace(/^\/|\/$/g, '');
+            const parts = pathname.split('/');
+            const lastPart = parts[parts.length - 1];
+
+            // If it's a known product or possible slug, redirect
+            if (lastPart && lastPart !== '404' && lastPart !== '404.html') {
+                try {
+                    const localProducts = JSON.parse(localStorage.getItem('ares_products') || '[]');
+                    const match = localProducts.find(p => p.slug === lastPart || p.id === lastPart);
+                    if (match) {
+                        window.location.replace('/camisetes.html?slug=' + encodeURIComponent(match.slug || match.id));
+                        return;
+                    }
+                } catch(e) {}
+            }
+        })();
+    </script>
+</head>
+<body style="min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem; background: var(--bg-primary);">
+    <div style="max-width: 480px;">
+        <div style="font-size: 5rem; font-weight: 800; font-family: var(--font-heading); line-height: 1; margin-bottom: 1rem;">404</div>
+        <h1 style="font-size: 1.5rem; margin-bottom: 1rem;">Pàgina no trobada</h1>
+        <p style="color: var(--text-secondary); margin-bottom: 2rem;">Ho sentim, la pàgina que estàs buscant no existeix o ha canviat d'adreça.</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+            <a href="/" class="btn" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #000; color: #fff; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600;">
+                <i data-lucide="home" style="width:16px;height:16px;"></i> Tornar a l'Inici
+            </a>
+            <a href="/tenda.html" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 600; border: 1px solid var(--border-color); color: var(--text-primary);">
+                <i data-lucide="shopping-bag" style="width:16px;height:16px;"></i> Anar a la Tenda
+            </a>
+        </div>
+    </div>
+    <script>
+        if (window.lucide) window.lucide.createIcons();
+    </script>
+</body>
+</html>

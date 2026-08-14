@@ -954,18 +954,79 @@
             window.location.href = targetUrl;
         });
 
-        // ── Check reservations open ──
-        window.addEventListener('load', async () => {
-            if (window.lucide) window.lucide.createIcons();
+        let PRICE = 35.00;
+        let currentProduct = null;
+
+        async function loadProductData() {
+            if (!window.db) return;
+            const params = new URLSearchParams(window.location.search);
+            const slugParam = params.get('slug') || params.get('p') || params.get('id');
             try {
-                if (window.db) {
-                    const config = await window.db.getShopConfig();
-                    if (config.open === false) {
+                let prod = null;
+                if (slugParam) {
+                    prod = await window.db.getProductBySlug(slugParam);
+                }
+                if (!prod) {
+                    const all = await window.db.getProducts();
+                    prod = (all && all.length > 0) ? all[0] : null;
+                }
+                if (prod) {
+                    currentProduct = prod;
+                    PRICE = parseFloat(prod.price) || 35.00;
+                    
+                    const titleEl = document.querySelector('.product-title');
+                    if (titleEl && prod.name) titleEl.textContent = prod.name;
+                    
+                    const catEl = document.querySelector('.product-breadcrumb-tag');
+                    if (catEl && prod.category) catEl.textContent = 'Tenda · ' + prod.category;
+                    
+                    const subEl = document.querySelector('.product-subtitle');
+                    if (subEl && prod.description) subEl.textContent = prod.description;
+                    
+                    const priceEl = document.querySelector('.product-price');
+                    if (priceEl) priceEl.innerHTML = `${Math.floor(PRICE)}<span style="font-size:1.2rem;">€</span>`;
+                    
+                    if (prod.image_url) {
+                        const mainImg = document.getElementById('main-img');
+                        if (mainImg) mainImg.src = prod.image_url;
+                    }
+                    if (prod.images && prod.images.length > 0) {
+                        const galleryStrip = document.querySelector('.product-gallery-strip');
+                        if (galleryStrip) {
+                            galleryStrip.innerHTML = prod.images.map((img, idx) => `
+                                <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${prod.name}">
+                                    <img src="${img}" alt="${prod.name}">
+                                </div>
+                            `).join('');
+                            galleryStrip.querySelectorAll('.gallery-thumb').forEach(thumb => {
+                                thumb.addEventListener('click', () => {
+                                    galleryStrip.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                                    thumb.classList.add('active');
+                                    document.getElementById('main-img').src = thumb.dataset.img;
+                                });
+                            });
+                        }
+                    }
+
+                    if (prod.status === 'closed' || prod.status === 'sold_out') {
                         document.getElementById('closed-overlay').style.display = 'block';
                         document.getElementById('purchase-section').style.display = 'none';
+                    } else {
+                        document.getElementById('closed-overlay').style.display = 'none';
+                        document.getElementById('purchase-section').style.display = 'block';
                     }
+
+                    updateQty(quantity);
                 }
-            } catch(e) {}
+            } catch (err) {
+                console.warn('Error loading dynamic product data:', err);
+            }
+        }
+
+        // ── Check reservations open & load dynamic data ──
+        window.addEventListener('load', async () => {
+            if (window.lucide) window.lucide.createIcons();
+            setTimeout(loadProductData, 100);
         });
     </script>
     <style>

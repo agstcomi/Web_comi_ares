@@ -497,7 +497,7 @@
                     const statusText = isOpen ? 'Reserva oberta' : p.status === 'sold_out' ? 'Esgotat' : 'Reserves tancades';
                     const statusClass = isOpen ? 'product-card-status' : 'product-card-status closed';
                     const priceStr = (typeof p.price === 'number' ? p.price.toFixed(2) : p.price) + '€';
-                    const href = p.slug ? `/${p.slug}` : '/camisetes';
+                    const href = (p.slug === 'camisetes' || !p.slug) ? '/camisetes' : `/camisetes.html?slug=${encodeURIComponent(p.slug)}`;
                     const imgUrl = p.image_url || '/img/camiseta-1.webp';
                     const name = window.db.escapeHTML ? window.db.escapeHTML(p.name) : p.name;
                     const cat = window.db.escapeHTML ? window.db.escapeHTML(p.category || 'Edició Limitada') : (p.category || 'Edició Limitada');
