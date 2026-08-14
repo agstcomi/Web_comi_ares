@@ -12,6 +12,7 @@
     <script>
         // Check if the 404 path corresponds to a product slug
         (async function() {
+            const isEs = window.location.pathname.includes('/es/');
             const pathname = window.location.pathname.replace(/^\/|\/$/g, '');
             const parts = pathname.split('/');
             const lastPart = parts[parts.length - 1];
@@ -22,7 +23,8 @@
                     const localProducts = JSON.parse(localStorage.getItem('ares_products') || '[]');
                     const match = localProducts.find(p => p.slug === lastPart || p.id === lastPart);
                     if (match) {
-                        window.location.replace('/camisetes.html?slug=' + encodeURIComponent(match.slug || match.id));
+                        const target = (isEs ? '/es/camisetes.html?slug=' : '/camisetes.html?slug=') + encodeURIComponent(match.slug || match.id);
+                        window.location.replace(target);
                         return;
                     }
                 } catch(e) {}

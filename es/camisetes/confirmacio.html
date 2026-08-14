@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserva Registrada — Camisetas Fiestas Ares 2026</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/css/styles.css?v=1.28">
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
+    <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-primary);
+        }
+        .confirmation-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5rem 1.25rem;
+        }
+        .confirmation-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 28px;
+            padding: 3.5rem 2.5rem;
+            max-width: 580px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 12px 60px rgba(0,0,0,0.06);
+        }
+        .success-icon {
+            width: 76px;
+            height: 76px;
+            background: #dcfce7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.75rem;
+        }
+        .success-icon svg { width: 38px; height: 38px; color: #15803d; }
+        .confirmation-card h1 {
+            font-size: 2rem;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+        }
+        .confirmation-card .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* Bank Details Box */
+        .bank-box {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1.75rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        .bank-box-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #0f172a;
+            margin-bottom: 1.25rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .bank-field {
+            margin-bottom: 1.1rem;
+        }
+        .bank-field:last-child {
+            margin-bottom: 0;
+        }
+        .bank-field-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        .bank-field-value-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            padding: 0.6rem 0.85rem;
+            border-radius: 8px;
+            gap: 0.5rem;
+        }
+        .bank-field-value {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #0f172a;
+            word-break: break-all;
+        }
+        .btn-copy {
+            background: #f1f5f9;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+            padding: 0.35rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: all 0.15s;
+            white-space: nowrap;
+        }
+        .btn-copy:hover {
+            background: #0f172a;
+            color: #fff;
+            border-color: #0f172a;
+        }
+
+        .reservation-summary {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1.75rem;
+            text-align: left;
+        }
+        .reservation-summary h3 {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.35rem 0;
+            font-size: 0.88rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .summary-row:last-child { border-bottom: none; }
+        .summary-row .label { color: var(--text-muted); }
+        .summary-row .value { font-weight: 600; }
+
+        .info-notice {
+            background: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            text-align: left;
+            font-size: 0.83rem;
+            color: #92400e;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .actions-row {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .btn-action-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: #000;
+            color: #fff;
+            text-decoration: none;
+            padding: 0.85rem 1.75rem;
+            border-radius: 10px;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: opacity 0.2s;
+        }
+        .btn-action-main:hover { opacity: 0.85; }
+        .btn-action-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            text-decoration: none;
+            padding: 0.85rem 1.5rem;
+            border-radius: 10px;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: background 0.2s;
+        }
+        .btn-action-secondary:hover { background: var(--bg-secondary); }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="main-header">
+        <div class="container" style="display:flex;justify-content:center;">
+            <a href="/es/" class="logo">
+                <img src="/img/logo.svg" alt="Logo Comisión de Fiestas de Ares del Maestrat" style="height: 40px; width: auto;">
+            </a>
+        </div>
+    </header>
+
+    <div class="confirmation-wrapper">
+        <div class="confirmation-card">
+            <!-- Success Icon -->
+            <div class="success-icon">
+                <i data-lucide="check" style="width:38px;height:38px;color:#15803d;"></i>
+            </div>
+
+            <h1>¡Reserva<br>Registrada!</h1>
+            <p class="subtitle" id="confirmation-subtitle">
+                ¡Gracias! Hemos registrado correctamente tu solicitud de reserva. Para confirmarla, realiza la siguiente transferencia bancaria:
+            </p>
+
+            <!-- Bank Transfer Details Box -->
+            <div class="bank-box">
+                <div class="bank-box-header">
+                    <i data-lucide="building-2" style="width:16px;height:16px;"></i>
+                    Datos para la transferencia bancaria
+                </div>
+
+                <div class="bank-field">
+                    <div class="bank-field-label">Titular de la cuenta</div>
+                    <div class="bank-field-value-row">
+                        <span class="bank-field-value">ASSOCIACIÓ JOVENTUT D’ARES</span>
+                    </div>
+                </div>
+
+                <div class="bank-field">
+                    <div class="bank-field-label">Cuenta IBAN</div>
+                    <div class="bank-field-value-row">
+                        <span class="bank-field-value" id="iban-text">ES75 0081 0276 0100 0192 3098</span>
+                        <button type="button" class="btn-copy" onclick="copyText('ES7500810276010001923098', this)">
+                            <i data-lucide="copy" style="width:12px;height:12px;"></i>
+                            <span>Copiar</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bank-field">
+                    <div class="bank-field-label">Importe total</div>
+                    <div class="bank-field-value-row">
+                        <span class="bank-field-value" id="transfer-amount" style="color:#15803d;font-size:1.1rem;">35,00 €</span>
+                    </div>
+                </div>
+
+                <div class="bank-field">
+                    <div class="bank-field-label">Concepto obligatorio</div>
+                    <div class="bank-field-value-row">
+                        <span class="bank-field-value" id="transfer-concept">Camiseta - [Nombre y Apellidos]</span>
+                        <button type="button" class="btn-copy" id="btn-copy-concept" onclick="copyConcept(this)">
+                            <i data-lucide="copy" style="width:12px;height:12px;"></i>
+                            <span>Copiar</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reservation summary -->
+            <div class="reservation-summary" id="reservation-summary">
+                <h3>Resumen de tu pedido</h3>
+                <div class="summary-row">
+                    <span class="label">Producto</span>
+                    <span class="value">Camiseta Fiestas Ares SD</span>
+                </div>
+                <div class="summary-row">
+                    <span class="label">Talla</span>
+                    <span class="value" id="sum-size">—</span>
+                </div>
+                <div class="summary-row">
+                    <span class="label">Cantidad</span>
+                    <span class="value" id="sum-qty">1</span>
+                </div>
+                <div class="summary-row">
+                    <span class="label">Importe total</span>
+                    <span class="value" id="sum-amount">35,00 €</span>
+                </div>
+            </div>
+
+            <!-- Info notice -->
+            <div class="info-notice">
+                <strong>📩 Paso final obligatorio:</strong> Te hemos enviado un correo con estos datos. Una vez hecha la transferencia bancaria, <strong>responde directamente a ese mismo correo adjuntando el justificante o comprobante del pago</strong> para validar definitivamente tu reserva.
+            </div>
+
+            <div class="actions-row">
+                <a href="/es/tenda.html" class="btn-action-main">
+                    <i data-lucide="shopping-bag" style="width:16px;height:16px;"></i>
+                    Volver a la Tienda
+                </a>
+                <a href="/es/" class="btn-action-secondary">
+                    <i data-lucide="home" style="width:16px;height:16px;"></i>
+                    Inicio
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-bottom" style="text-align:center;">
+                <p>&copy; <span id="footer-year">2026</span> Comisión de Fiestas de Ares del Maestrat.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+        const params = new URLSearchParams(window.location.search);
+        const name = params.get('name') || '';
+        const surname = params.get('surname') || '';
+        const email = params.get('email') || '';
+        const size = params.get('size') || 'M';
+        const qty = parseInt(params.get('qty') || '1', 10);
+        const total = params.get('total') ? parseFloat(params.get('total')) : (35 * qty);
+
+        const fullName = [name, surname].filter(Boolean).join(' ') || 'Nombre y Apellidos';
+        const conceptText = `Camiseta - ${fullName}`;
+
+        if (name) {
+            document.getElementById('confirmation-subtitle').innerHTML =
+                `¡Gracias, <strong>${escapeHTML(name)}</strong>! Hemos registrado correctamente tu solicitud de reserva. Para confirmarla, realiza la transferencia bancaria:`;
+        }
+
+        document.getElementById('transfer-amount').textContent = total.toFixed(2).replace('.', ',') + ' €';
+        document.getElementById('sum-amount').textContent = total.toFixed(2).replace('.', ',') + ' €';
+        document.getElementById('sum-size').textContent = size;
+        document.getElementById('sum-qty').textContent = qty;
+        document.getElementById('transfer-concept').textContent = conceptText;
+
+        function copyText(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;color:#15803d;"></i> <span style="color:#15803d;">¡Copiado!</span>';
+                if (window.lucide) window.lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    if (window.lucide) window.lucide.createIcons();
+                }, 2000);
+            }).catch(() => {
+                alert('IBAN: ' + text);
+            });
+        }
+
+        function copyConcept(btn) {
+            copyText(conceptText, btn);
+        }
+
+        function escapeHTML(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        window.addEventListener('load', () => {
+            if (window.lucide) window.lucide.createIcons();
+        });
+    </script>
+</body>
+</html>

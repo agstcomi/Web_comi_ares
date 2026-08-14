@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=()">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://tracker.metricool.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.metricool.com https://api.emailjs.com; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'self'; form-action 'self';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camiseta Fiestas Ares SD · Tienda Oficial</title>
+    <meta name="description" content="Reserva la camiseta oficial de las Fiestas Patronales de Ares del Maestrat 2026. Edición limitada de la Comisión de Fiestas.">
+    <link rel="canonical" href="https://www.comiares.es/es/camisetes">
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="https://www.comiares.es/es/camisetes">
+    <meta property="og:title" content="Camiseta Fiestas Ares SD · Tienda Oficial">
+    <meta property="og:image" content="https://www.comiares.es/img/camiseta-1.webp">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/css/styles.css?v=1.25">
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
+    <style>
+        .product-page {
+            padding-top: 5rem;
+            padding-bottom: 5rem;
+        }
+        .product-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            .product-layout {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .product-page {
+                padding-top: 3rem;
+                padding-bottom: 3rem;
+            }
+        }
+        .product-gallery {
+            position: sticky;
+            top: 6rem;
+        }
+        @media (max-width: 900px) {
+            .product-gallery {
+                position: static;
+            }
+        }
+        .product-main-img-wrap {
+            position: relative;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .product-main-img-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 2rem;
+            transition: transform 0.3s ease;
+        }
+        .product-main-img-wrap:hover img {
+            transform: scale(1.03);
+        }
+        .product-badge-edition {
+            position: absolute;
+            top: 16px;
+            left: 16px;
+            background: #000;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            padding: 0.35rem 0.85rem;
+            border-radius: 50px;
+        }
+        .product-gallery-strip {
+            display: flex;
+            gap: 0.75rem;
+        }
+        .gallery-thumb {
+            width: 72px;
+            height: 72px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            background: var(--bg-secondary);
+            transition: border-color 0.2s;
+            padding: 4px;
+        }
+        .gallery-thumb.active, .gallery-thumb:hover {
+            border-color: var(--text-primary);
+        }
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .product-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .product-breadcrumb-tag {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        .product-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 1.05;
+            margin-bottom: 1rem;
+        }
+        .product-subtitle {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .product-price {
+            font-size: 2.4rem;
+            font-weight: 900;
+            font-family: var(--font-heading);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+        }
+        .product-price-note {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+        .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin-bottom: 1.75rem;
+        }
+        .section-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .section-label a {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            text-decoration: underline;
+            text-transform: none;
+            letter-spacing: 0;
+        }
+        .section-label a:hover { color: var(--text-primary); }
+        .size-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 480px) {
+            .size-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+        .size-btn {
+            padding: 0.65rem 0.25rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-weight: 700;
+            font-size: 0.85rem;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.15s ease;
+        }
+        .size-btn:hover {
+            border-color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+        .size-btn.active {
+            border-color: #000;
+            background: #000;
+            color: #fff;
+        }
+        .qty-total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .qty-selector {
+            display: flex;
+            align-items: center;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .qty-btn {
+            width: 38px;
+            height: 38px;
+            background: var(--bg-secondary);
+            border: none;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+        .qty-btn:hover { background: var(--border-color); }
+        .qty-num {
+            width: 44px;
+            text-align: center;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+        .total-label {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            text-align: right;
+        }
+        .total-display {
+            font-size: 1.4rem;
+            font-weight: 900;
+            font-family: var(--font-heading);
+            text-align: right;
+        }
+        .btn-add-cart {
+            width: 100%;
+            padding: 1.1rem 2rem;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 14px;
+            font-size: 1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.2);
+        }
+        .btn-add-cart:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+            background: #1a1a1a;
+        }
+        .info-badges {
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            border-top: 1px solid var(--border-color);
+            padding-top: 1.5rem;
+        }
+        .info-badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+        .info-badge-item i {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+            color: var(--text-primary);
+        }
+        .info-badge-item strong {
+            color: var(--text-primary);
+        }
+        .size-guide-accordion {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .size-guide-toggle {
+            width: 100%;
+            padding: 0.85rem 1.25rem;
+            background: var(--bg-secondary);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-primary);
+        }
+        .size-guide-body {
+            display: none;
+            padding: 1.25rem;
+            background: var(--bg-primary);
+            overflow-x: auto;
+        }
+        .size-guide-accordion.open .size-guide-body { display: block; }
+        .size-guide-accordion.open .size-guide-toggle i { transform: rotate(180deg); }
+        .sg-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            text-align: center;
+            min-width: 480px;
+        }
+        .sg-table th, .sg-table td {
+            padding: 0.45rem 0.5rem;
+            border: 1px solid var(--border-color);
+        }
+        .sg-table th {
+            background: var(--bg-secondary);
+            font-weight: 800;
+        }
+        .sg-note {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            margin-bottom: 0;
+        }
+        #closed-overlay {
+            display: none;
+            background: #fee2e2;
+            border: 1.5px solid #fca5a5;
+            color: #b91c1c;
+            border-radius: 14px;
+            padding: 1.25rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        #closed-overlay strong {
+            display: block;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        #closed-overlay p {
+            font-size: 0.82rem;
+            margin: 0;
+        }
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-backdrop.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-box {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            max-width: 480px;
+            width: 100%;
+            padding: 2rem;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .modal-summary {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.82rem;
+        }
+        .modal-summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.4rem;
+        }
+        .modal-summary-row:last-child { margin-bottom: 0; }
+        .modal-summary-row.total {
+            border-top: 1px solid var(--border-color);
+            padding-top: 0.4rem;
+            font-weight: 800;
+            font-size: 0.95rem;
+        }
+        .modal-summary-row .label { color: var(--text-muted); }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.35rem;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-family: inherit;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: #000;
+        }
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+        .btn-confirm {
+            width: 100%;
+            padding: 0.95rem;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            transition: background 0.15s;
+        }
+        .btn-confirm:hover { background: #222; }
+        .btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main class="product-page">
+        <div class="container">
+            <div class="product-layout">
+                <!-- LEFT: Gallery -->
+                <div class="product-gallery">
+                    <div class="product-main-img-wrap">
+                        <span class="product-badge-edition">Edición Limitada 2026</span>
+                        <img src="/img/camiseta-1.webp" alt="Camiseta Fiestas Ares 2026" id="main-img">
+                    </div>
+                    <div class="product-gallery-strip">
+                        <div class="gallery-thumb active" data-img="/img/camiseta-1.webp" data-alt="Camiseta Fiestas Ares 2026 — Modelo 1">
+                            <img src="/img/camiseta-1.webp" alt="Modelo 1">
+                        </div>
+                        <div class="gallery-thumb" data-img="/img/camiseta-2.webp" data-alt="Camiseta Fiestas Ares 2026 — Modelo 2">
+                            <img src="/img/camiseta-2.webp" alt="Modelo 2">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: Product info -->
+                <div class="product-info">
+                    <p class="product-breadcrumb-tag" id="product-breadcrumb-tag">Tienda · Ropa · Edición Limitada 2026</p>
+                    <h1 class="product-title" id="product-title">Camiseta Fiestas Ares SD</h1>
+                    <p class="product-subtitle" id="product-subtitle">
+                        La camiseta oficial de las Fiestas Patronales de Ares del Maestrat 2026. Confeccionada en algodón de calidad, diseño exclusivo para la temporada de fiestas. Edición limitada — una vez cerrado el periodo de reservas no se aceptarán más pedidos.
+                    </p>
+
+                    <div class="product-price" id="product-price">35<span style="font-size:1.2rem;">€</span></div>
+                    <p class="product-price-note">Por unidad · IVA incluido · Reserva online</p>
+
+                    <div class="divider"></div>
+
+                    <!-- Closed overlay -->
+                    <div id="closed-overlay">
+                        <strong>🔒 Reservas cerradas</strong>
+                        <p>El periodo de reservas ha finalizado. No se aceptan nuevos pedidos.</p>
+                    </div>
+
+                    <!-- Size selector -->
+                    <div id="purchase-section">
+                        <div class="section-label">
+                            <span>Talla <span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;"></span></span>
+                            <a id="size-guide-toggle-link">Guía de tallas →</a>
+                        </div>
+                        <div class="size-grid" id="size-grid">
+                            <button class="size-btn" data-size="S">S</button>
+                            <button class="size-btn" data-size="M">M</button>
+                            <button class="size-btn" data-size="L">L</button>
+                            <button class="size-btn" data-size="XL">XL</button>
+                            <button class="size-btn" data-size="2XL">2XL</button>
+                            <button class="size-btn" data-size="3XL">3XL</button>
+                            <button class="size-btn" data-size="4XL">4XL</button>
+                            <button class="size-btn" data-size="5XL">5XL</button>
+                            <button class="size-btn" data-size="6XL">6XL</button>
+                            <button class="size-btn" data-size="7XL">7XL</button>
+                        </div>
+
+                        <!-- Size guide accordion -->
+                        <div class="size-guide-accordion" id="size-accordion">
+                            <button class="size-guide-toggle" type="button" id="size-accordion-btn">
+                                <span>Guía de Tallas · Medidas en CM</span>
+                                <i data-lucide="chevron-down"></i>
+                            </button>
+                            <div class="size-guide-body">
+                                <table class="sg-table">
+                                    <thead>
+                                        <tr>
+                                            <th></th><th>S</th><th>M</th><th>L</th><th>XL</th>
+                                            <th>2XL</th><th>3XL</th><th>4XL</th><th>5XL</th><th>6XL</th><th>7XL</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td title="Anchura total">A</td>
+                                            <td>71</td><td>73</td><td>75</td><td>77</td>
+                                            <td>79</td><td>81</td><td>83</td><td>85</td><td>87</td><td>89</td>
+                                        </tr>
+                                        <tr>
+                                            <td title="Longitud total">B</td>
+                                            <td>52</td><td>54</td><td>56</td><td>58</td>
+                                            <td>60</td><td>62</td><td>64</td><td>66</td><td>68</td><td>70</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p class="sg-note"><strong>A</strong> = Anchura · <strong>B</strong> = Longitud · Medidas en CM</p>
+                            </div>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <!-- Quantity & Total -->
+                        <div class="section-label">Cantidad</div>
+                        <div class="qty-total-row">
+                            <div class="qty-selector">
+                                <button type="button" class="qty-btn" id="qty-minus" aria-label="Reducir cantidad">−</button>
+                                <span class="qty-num" id="qty-display">1</span>
+                                <button type="button" class="qty-btn" id="qty-plus" aria-label="Aumentar cantidad">+</button>
+                            </div>
+                            <div>
+                                <div class="total-label">Total</div>
+                                <div class="total-display" id="total-display">35.00€</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="res-quantity" value="1">
+
+                        <!-- CTA -->
+                        <button class="btn-add-cart" id="btn-add-cart" type="button">
+                            <i data-lucide="calendar-check" style="width:18px;height:18px;"></i>
+                            <span id="btn-label">Reservar Camiseta</span>
+                        </button>
+                        <div class="btn-secure" style="display:flex;align-items:center;justify-content:center;gap:0.4rem;font-size:0.75rem;color:var(--text-muted);margin-top:0.6rem;">
+                            <i data-lucide="receipt" style="width:14px;height:14px;"></i>
+                            Pago por transferencia bancaria · Recibirás los datos por correo
+                        </div>
+
+                        <!-- Info badges -->
+                        <div class="info-badges">
+                            <div class="info-badge-item">
+                                <i data-lucide="package"></i>
+                                <div>
+                                    <strong>Envío en lote</strong>
+                                    <br><span>Una vez cerradas las reservas, enviamos a fábrica</span>
+                                </div>
+                            </div>
+                            <div class="info-badge-item">
+                                <i data-lucide="mail"></i>
+                                <div>
+                                    <strong>Instrucciones por email</strong>
+                                    <br><span>Recibirás el número de cuenta e instrucciones</span>
+                                </div>
+                            </div>
+                            <div class="info-badge-item">
+                                <i data-lucide="bell"></i>
+                                <div>
+                                    <strong>Notificación de recogida</strong>
+                                    <br><span>Te avisaremos cuando estén listas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- ── MODAL: Reservation form ── -->
+    <div class="modal-backdrop" id="modal-reservation" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-box">
+            <button class="modal-close" id="modal-close" aria-label="Cerrar">
+                <i data-lucide="x" style="width:14px;height:14px;"></i>
+            </button>
+            <h2 class="modal-title" id="modal-title">Solicitud de Reserva</h2>
+
+            <!-- Summary -->
+            <div class="modal-summary" id="modal-summary">
+                <div class="modal-summary-row">
+                    <span class="label">Producto</span>
+                    <span id="modal-product-name">Camiseta Fiestas Ares SD</span>
+                </div>
+                <div class="modal-summary-row">
+                    <span class="label">Talla</span>
+                    <span id="modal-size">—</span>
+                </div>
+                <div class="modal-summary-row">
+                    <span class="label">Cantidad</span>
+                    <span id="modal-qty">1</span>
+                </div>
+                <div class="modal-summary-row total">
+                    <span class="label">Total a transferir</span>
+                    <span id="modal-total">35.00€</span>
+                </div>
+            </div>
+
+            <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:0.75rem 1rem;font-size:0.8rem;color:#92400e;margin-bottom:1.25rem;line-height:1.4;">
+                💳 <strong>Pago por transferencia:</strong> Al confirmar, te facilitaremos el IBAN y el concepto para hacer la transferencia y recibirás una copia por correo electrónico.
+            </div>
+
+            <form id="reservation-form" novalidate>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label for="res-name">Nombre *</label>
+                        <input type="text" id="res-name" placeholder="Juan" required autocomplete="given-name">
+                    </div>
+                    <div class="form-group">
+                        <label for="res-surname">Apellidos *</label>
+                        <input type="text" id="res-surname" placeholder="García Moliner" required autocomplete="family-name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="res-email">Correo electrónico *</label>
+                    <input type="email" id="res-email" placeholder="juan@ejemplo.com" required autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="res-notes">Observaciones <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+                    <textarea id="res-notes" rows="2" placeholder="Alguna nota o aclaración..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-confirm" id="btn-confirm">
+                    <i data-lucide="check-circle" style="width:16px;height:16px;"></i>
+                    <span id="btn-confirm-label">Confirmar Reserva (35.00€)</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        (function(){
+            emailjs.init({
+                publicKey: "KJ16ReAN9A8vk7rQg",
+            });
+        })();
+    </script>
+    <script src="/js/db.js?v=1.52" defer></script>
+    <script src="/js/main.js?v=1.15" defer></script>
+    <script src="/js/push-notifications.js?v=1.20" defer></script>
+    <script>
+        let PRICE = 35.00;
+        let selectedSize = null;
+        let quantity = 1;
+        let currentProduct = null;
+
+        // ── Gallery ──
+        document.querySelectorAll('.gallery-thumb').forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+                document.getElementById('main-img').src = thumb.dataset.img;
+                document.getElementById('main-img').alt = thumb.dataset.alt;
+            });
+        });
+
+        // ── Size accordion ──
+        const accordion = document.getElementById('size-accordion');
+        document.getElementById('size-accordion-btn').addEventListener('click', () => {
+            accordion.classList.toggle('open');
+        });
+        document.getElementById('size-guide-toggle-link').addEventListener('click', () => {
+            accordion.classList.toggle('open');
+            accordion.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+        // ── Size buttons ──
+        document.querySelectorAll('.size-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedSize = btn.dataset.size;
+                document.getElementById('selected-size-label').textContent = '— ' + selectedSize;
+            });
+        });
+
+        // ── Quantity ──
+        function updateQty(val) {
+            quantity = Math.min(Math.max(val, 1), 10);
+            document.getElementById('qty-display').textContent = quantity;
+            document.getElementById('res-quantity').value = quantity;
+            const total = (PRICE * quantity).toFixed(2);
+            document.getElementById('total-display').textContent = total + '€';
+            document.getElementById('btn-confirm-label').textContent = 'Confirmar Reserva (' + total + '€)';
+            document.getElementById('modal-qty').textContent = quantity;
+            document.getElementById('modal-total').textContent = total + '€';
+        }
+        document.getElementById('qty-minus').addEventListener('click', () => updateQty(quantity - 1));
+        document.getElementById('qty-plus').addEventListener('click', () => updateQty(quantity + 1));
+
+        // ── Open modal ──
+        document.getElementById('btn-add-cart').addEventListener('click', () => {
+            if (!selectedSize) {
+                // Highlight size grid
+                document.getElementById('size-grid').style.animation = 'none';
+                setTimeout(() => {
+                    document.getElementById('size-grid').style.animation = '';
+                    document.getElementById('size-grid').style.outline = '2px solid #ef4444';
+                    document.getElementById('size-grid').style.borderRadius = '8px';
+                    setTimeout(() => { document.getElementById('size-grid').style.outline = ''; }, 1500);
+                }, 10);
+                document.getElementById('size-grid').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                return;
+            }
+            // Update modal summary
+            document.getElementById('modal-size').textContent = selectedSize;
+            updateQty(quantity);
+            document.getElementById('modal-reservation').classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+
+        // ── Close modal ──
+        function closeModal() {
+            document.getElementById('modal-reservation').classList.remove('open');
+            document.body.style.overflow = '';
+        }
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        document.getElementById('modal-reservation').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('modal-reservation')) closeModal();
+        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+        // ── Form submit ──
+        document.getElementById('reservation-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('res-name').value.trim();
+            const surname = document.getElementById('res-surname').value.trim();
+            const email = document.getElementById('res-email').value.trim();
+            const notes = document.getElementById('res-notes').value.trim();
+
+            if (!name || !surname || !email) {
+                alert('Por favor, rellena todos los campos obligatorios (*).');
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                alert('Por favor, introduce un correo electrónico válido.');
+                return;
+            }
+
+            const btn = document.getElementById('btn-confirm');
+            btn.disabled = true;
+            btn.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;">⟳</span>&nbsp; Registrando reserva...';
+
+            const total = (PRICE * quantity).toFixed(2);
+            const totalCents = Math.round(PRICE * quantity * 100);
+
+            const reservationData = {
+                id: 'res-' + Date.now(),
+                created_at: new Date().toISOString(),
+                name,
+                surname,
+                email,
+                size: selectedSize,
+                quantity,
+                amount_cents: totalCents,
+                notes,
+                status: 'pending_transfer'
+            };
+
+            // Direct local fallback storage for 0ms reliability
+            try {
+                const stored = JSON.parse(localStorage.getItem('ares_reservations') || '[]');
+                stored.unshift(reservationData);
+                localStorage.setItem('ares_reservations', JSON.stringify(stored));
+            } catch(e) {}
+
+            // 1. Save to DB (Supabase + Local)
+            try {
+                if (window.db && typeof window.db.addReservation === 'function') {
+                    await window.db.addReservation(reservationData);
+                }
+            } catch (dbErr) {
+                console.warn('DB save exception:', dbErr);
+            }
+
+            // 2. Send automatic confirmation email via EmailJS
+            if (window.emailjs) {
+                try {
+                    await Promise.race([
+                        emailjs.send("service_hu53lep", "template_rrdhind", {
+                            name: name,
+                            surname: surname,
+                            to_name: name + ' ' + surname,
+                            email: email,
+                            to_email: email,
+                            reply_to: email,
+                            user_email: email,
+                            customer_email: email,
+                            size: selectedSize,
+                            qty: quantity,
+                            total: total,
+                            notes: notes || 'Cap'
+                        }),
+                        new Promise((_, reject) => setTimeout(() => reject(new Error('EmailJS timeout')), 4000))
+                    ]);
+                    console.log('EmailJS: Correo enviado con éxito');
+                } catch (emailErr) {
+                    console.warn("EmailJS error:", emailErr);
+                }
+            }
+
+            const targetUrl = '/es/camisetes/confirmacio.html?' + new URLSearchParams({
+                name,
+                surname,
+                email,
+                size: selectedSize,
+                qty: quantity,
+                total
+            }).toString();
+
+            // Redirect to confirmation page
+            window.location.href = targetUrl;
+        });
+
+        async function loadProductData() {
+            const params = new URLSearchParams(window.location.search);
+            const slugParam = params.get('slug') || params.get('p') || params.get('id');
+            const isEs = true;
+
+            function applyProduct(prod) {
+                if (!prod) return;
+                currentProduct = prod;
+                PRICE = parseFloat(prod.price) || 35.00;
+
+                const name = prod.name_es || prod.name || 'Camiseta Fiestas Ares SD';
+                const desc = prod.description_es || prod.description || '';
+                const cat = prod.category_es || prod.category || 'Ropa · Edición Limitada 2026';
+
+                const titleEl = document.getElementById('product-title');
+                if (titleEl) titleEl.textContent = name;
+
+                const modalTitleEl = document.getElementById('modal-product-name');
+                if (modalTitleEl) modalTitleEl.textContent = name;
+
+                const catEl = document.getElementById('product-breadcrumb-tag');
+                if (catEl) catEl.textContent = 'Tienda · ' + cat;
+
+                const subEl = document.getElementById('product-subtitle');
+                if (subEl) subEl.textContent = desc;
+
+                const priceEl = document.getElementById('product-price');
+                if (priceEl) priceEl.innerHTML = `${Math.floor(PRICE)}<span style="font-size:1.2rem;">€</span>`;
+
+                document.title = name + ' · Fiestas Ares 2026';
+
+                if (prod.image_url) {
+                    const mainImg = document.getElementById('main-img');
+                    if (mainImg) mainImg.src = prod.image_url;
+                }
+                if (prod.images && prod.images.length > 0) {
+                    const galleryStrip = document.querySelector('.product-gallery-strip');
+                    if (galleryStrip) {
+                        galleryStrip.innerHTML = prod.images.map((img, idx) => `
+                            <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${name}">
+                                <img src="${img}" alt="${name}">
+                            </div>
+                        `).join('');
+                        galleryStrip.querySelectorAll('.gallery-thumb').forEach(thumb => {
+                            thumb.addEventListener('click', () => {
+                                galleryStrip.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                                thumb.classList.add('active');
+                                document.getElementById('main-img').src = thumb.dataset.img;
+                            });
+                        });
+                    }
+                }
+
+                if (prod.status === 'closed' || prod.status === 'sold_out') {
+                    document.getElementById('closed-overlay').style.display = 'block';
+                    document.getElementById('purchase-section').style.display = 'none';
+                } else {
+                    document.getElementById('closed-overlay').style.display = 'none';
+                    document.getElementById('purchase-section').style.display = 'block';
+                }
+
+                updateQty(quantity);
+            }
+
+            // 1. Instant sync load from localStorage (0 ms)
+            try {
+                const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
+                let match = slugParam ? local.find(p => p.slug === slugParam || p.id === slugParam) : local[0];
+                if (match) applyProduct(match);
+            } catch(e) {}
+
+            // 2. Fetch fresh data from DB / Supabase
+            try {
+                if (window.db) {
+                    let prod = null;
+                    if (slugParam && typeof window.db.getProductBySlug === 'function') {
+                        prod = await window.db.getProductBySlug(slugParam);
+                    }
+                    if (!prod && typeof window.db.getProducts === 'function') {
+                        const all = await window.db.getProducts();
+                        prod = (all && all.length > 0) ? all[0] : null;
+                    }
+                    if (prod) applyProduct(prod);
+                }
+            } catch (err) {
+                console.warn('Error loading fresh product data:', err);
+            }
+        }
+
+        // Run immediately and on page load
+        loadProductData();
+        window.addEventListener('DOMContentLoaded', loadProductData);
+        window.addEventListener('load', () => {
+            if (window.lucide) window.lucide.createIcons();
+            loadProductData();
+        });
+    </script>
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</body>
+</html>
