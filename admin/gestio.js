@@ -2350,155 +2350,174 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadReservationsTable() {
         const tbody = document.getElementById('reservations-tbody');
-        const statsEl = document.getElementById('reservations-stats');
-        if (!tbody) return;
-
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);">Carregant...</td></tr>';
+        if (tbody && (!allReservations || allReservations.length === 0)) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Carregant...</td></tr>';
+        }
 
         try {
             allReservations = await window.db.getReservations();
-
-            if (!allReservations || allReservations.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);">No hi ha reserves encara.</td></tr>';
-                if (statsEl) statsEl.innerHTML = '';
-                return;
-            }
-
-            // Stats
-            const activeReservations = allReservations.filter(r => r.status !== 'cancelled');
-            const totalUnits = activeReservations.reduce((a, r) => a + (r.quantity || 1), 0);
-            const totalRevenue = activeReservations.filter(r => r.status === 'paid').reduce((a, r) => a + (r.amount_cents || 0), 0);
-            const paidCount = allReservations.filter(r => r.status === 'paid').length;
-            const pendingCount = allReservations.filter(r => r.status === 'pending' || r.status === 'pending_transfer').length;
-            const cancelledCount = allReservations.filter(r => r.status === 'cancelled').length;
-
-            const sizeCounts = {};
-            activeReservations.forEach(r => {
-                sizeCounts[r.size] = (sizeCounts[r.size] || 0) + (r.quantity || 1);
-            });
-            const topSize = Object.entries(sizeCounts).sort((a, b) => b[1] - a[1])[0];
-
-            if (statsEl) {
-                statsEl.innerHTML = [
-                    { icon: 'users', val: allReservations.length, label: 'Reserves totals' },
-                    { icon: 'package', val: totalUnits, label: 'Camisetes' },
-                    { icon: 'check-circle', val: paidCount, label: 'Pagades' },
-                    { icon: 'clock', val: pendingCount, label: 'Pendents' },
-                    { icon: 'x-circle', val: cancelledCount, label: 'Cancel·lades' },
-                    { icon: 'euro', val: (totalRevenue / 100).toFixed(2) + '€', label: 'Recaptat' },
-                    { icon: 'tag', val: topSize ? topSize[0] : '-', label: 'Talla + venuda' },
-                ].map(s => `
-                    <div style="border:1px solid var(--border-color);border-radius:8px;padding:0.75rem 1rem;background:var(--bg-secondary);text-align:center;">
-                        <div style="font-size:1.35rem;font-weight:800;font-family:var(--font-heading);">${s.val}</div>
-                        <div style="font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);margin-top:0.2rem;">${s.label}</div>
-                    </div>
-                `).join('');
-            }
-
-            // Table rows (No horizontal scroll needed)
-            tbody.innerHTML = allReservations.map(r => {
-                const isPaid = r.status === 'paid';
-                const isCancelled = r.status === 'cancelled';
-
-                let statusBadge = '';
-                if (isPaid) {
-                    statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#dcfce7;color:#15803d;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="check-circle-2" style="width:12px;height:12px;"></i> Pagat</span>';
-                } else if (isCancelled) {
-                    statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fee2e2;color:#b91c1c;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="x-circle" style="width:12px;height:12px;"></i> Cancel·lada</span>';
-                } else {
-                    statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fef9c3;color:#854d0e;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="clock" style="width:12px;height:12px;"></i> Pendent</span>';
-                }
-
-                const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('ca-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '-';
-                const amount = r.amount_cents ? (r.amount_cents / 100).toFixed(2) + '€' : '-';
-                const escId = window.db.escapeHTML ? window.db.escapeHTML(String(r.id || '')) : String(r.id || '');
-                const escName = window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname);
-                const escEmail = window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '');
-                const escSize = window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '');
-
-                let actionsHtml = '';
-                if (isPaid) {
-                    actionsHtml = `
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.45rem;font-size:0.7rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Tornar a pendent">
-                            <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Pendent
-                        </button>
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;" title="Cancel·lar reserva">
-                            <i data-lucide="x" style="width:11px;height:11px;"></i>
-                        </button>
-                    `;
-                } else if (isCancelled) {
-                    actionsHtml = `
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.45rem;font-size:0.7rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Reactivar reserva">
-                            <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Reactivar
-                        </button>
-                    `;
-                } else {
-                    actionsHtml = `
-                        <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.25rem 0.45rem;font-size:0.7rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Validar transferència">
-                            <i data-lucide="check" style="width:11px;height:11px;"></i> Validar
-                        </button>
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;" title="Cancel·lar reserva">
-                            <i data-lucide="x" style="width:11px;height:11px;"></i>
-                        </button>
-                    `;
-                }
-
-                return `<tr style="${isCancelled ? 'opacity: 0.6; background: rgba(0,0,0,0.02);' : ''}">
-                    <td style="padding:0.65rem 0.85rem;overflow:hidden;text-overflow:ellipsis;">
-                        <div style="font-weight:700;font-size:0.85rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escName}</div>
-                        <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escEmail}</div>
-                    </td>
-                    <td style="text-align:center;padding:0.65rem 0.5rem;white-space:nowrap;">
-                        <span style="font-weight:800;font-size:0.9rem;">${escSize}</span>
-                        <span style="font-size:0.72rem;color:var(--text-secondary);">×${r.quantity || 1}</span>
-                    </td>
-                    <td style="font-weight:700;font-size:0.85rem;padding:0.65rem 0.5rem;white-space:nowrap;">${amount}</td>
-                    <td style="padding:0.65rem 0.5rem;white-space:nowrap;">${statusBadge}</td>
-                    <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.65rem 0.5rem;white-space:nowrap;">${dateStr}</td>
-                    <td style="white-space:nowrap;text-align:right;padding:0.65rem 0.85rem;">
-                        <div style="display:inline-flex;gap:0.3rem;align-items:center;justify-content:flex-end;">
-                            ${actionsHtml}
-                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:5px;cursor:pointer;">
-                                <i data-lucide="trash-2" style="width:11px;height:11px;"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>`;
-            }).join('');
-
-            // Attach toggle status listeners
-            tbody.querySelectorAll('.btn-toggle-status').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const id = btn.dataset.id;
-                    const targetStatus = btn.dataset.target;
-                    try {
-                        await window.db.updateReservationStatus(id, targetStatus);
-                        await loadReservationsTable();
-                    } catch(e) {
-                        alert('Error en actualitzar l\'estat: ' + e.message);
-                    }
-                });
-            });
-
-            // Attach delete listeners
-            tbody.querySelectorAll('.btn-delete-reservation').forEach(btn => {
-                btn.addEventListener('click', async () => {
-                    const id = btn.dataset.id;
-                    if (!confirm('Segur que vols eliminar aquesta reserva?')) return;
-                    try {
-                        await window.db.deleteReservation(id);
-                        await loadReservationsTable();
-                    } catch(e) {
-                        alert('Error en eliminar la reserva: ' + e.message);
-                    }
-                });
-            });
-
-            if (window.lucide) window.lucide.createIcons();
+            renderReservationsUI();
         } catch (err) {
             console.error('Error loading reservations:', err);
-            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#ef4444;">Error: ${err.message}</td></tr>`;
+            if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444;">Error: ${err.message}</td></tr>`;
         }
+    }
+
+    function renderReservationsUI() {
+        const tbody = document.getElementById('reservations-tbody');
+        const statsEl = document.getElementById('reservations-stats');
+        if (!tbody) return;
+
+        if (!allReservations || allReservations.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No hi ha reserves encara.</td></tr>';
+            if (statsEl) statsEl.innerHTML = '';
+            return;
+        }
+
+        // Stats
+        const activeReservations = allReservations.filter(r => r.status !== 'cancelled');
+        const totalUnits = activeReservations.reduce((a, r) => a + (r.quantity || 1), 0);
+        const totalRevenue = activeReservations.filter(r => r.status === 'paid').reduce((a, r) => a + (r.amount_cents || 0), 0);
+        const paidCount = allReservations.filter(r => r.status === 'paid').length;
+        const pendingCount = allReservations.filter(r => r.status === 'pending' || r.status === 'pending_transfer').length;
+        const cancelledCount = allReservations.filter(r => r.status === 'cancelled').length;
+
+        const sizeCounts = {};
+        activeReservations.forEach(r => {
+            sizeCounts[r.size] = (sizeCounts[r.size] || 0) + (r.quantity || 1);
+        });
+        const topSize = Object.entries(sizeCounts).sort((a, b) => b[1] - a[1])[0];
+
+        if (statsEl) {
+            statsEl.innerHTML = [
+                { icon: 'users', val: allReservations.length, label: 'Reserves totals' },
+                { icon: 'package', val: totalUnits, label: 'Camisetes' },
+                { icon: 'check-circle', val: paidCount, label: 'Pagades' },
+                { icon: 'clock', val: pendingCount, label: 'Pendents' },
+                { icon: 'x-circle', val: cancelledCount, label: 'Cancel·lades' },
+                { icon: 'euro', val: (totalRevenue / 100).toFixed(2) + '€', label: 'Recaptat' },
+                { icon: 'tag', val: topSize ? topSize[0] : '-', label: 'Talla + venuda' },
+            ].map(s => `
+                <div style="border:1px solid var(--border-color);border-radius:8px;padding:0.75rem 1rem;background:var(--bg-secondary);text-align:center;">
+                    <div style="font-size:1.35rem;font-weight:800;font-family:var(--font-heading);">${s.val}</div>
+                    <div style="font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);margin-top:0.2rem;">${s.label}</div>
+                </div>
+            `).join('');
+        }
+
+        // Table rows (No horizontal scroll needed)
+        tbody.innerHTML = allReservations.map(r => {
+            const isPaid = r.status === 'paid';
+            const isCancelled = r.status === 'cancelled';
+
+            let statusBadge = '';
+            if (isPaid) {
+                statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#dcfce7;color:#15803d;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="check-circle-2" style="width:12px;height:12px;"></i> Pagat</span>';
+            } else if (isCancelled) {
+                statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fee2e2;color:#b91c1c;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="x-circle" style="width:12px;height:12px;"></i> Cancel·lada</span>';
+            } else {
+                statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fef9c3;color:#854d0e;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="clock" style="width:12px;height:12px;"></i> Pendent</span>';
+            }
+
+            const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('ca-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '-';
+            const amount = r.amount_cents ? (r.amount_cents / 100).toFixed(2) + '€' : '-';
+            const escId = window.db.escapeHTML ? window.db.escapeHTML(String(r.id || '')) : String(r.id || '');
+            const escName = window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname);
+            const escEmail = window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '');
+            const escSize = window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '');
+
+            let actionsHtml = '';
+            if (isPaid) {
+                actionsHtml = `
+                    <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.45rem;font-size:0.7rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Tornar a pendent">
+                        <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Pendent
+                    </button>
+                    <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;" title="Cancel·lar reserva">
+                        <i data-lucide="x" style="width:11px;height:11px;"></i>
+                    </button>
+                `;
+            } else if (isCancelled) {
+                actionsHtml = `
+                    <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.45rem;font-size:0.7rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Reactivar reserva">
+                        <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Reactivar
+                    </button>
+                `;
+            } else {
+                actionsHtml = `
+                    <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.25rem 0.45rem;font-size:0.7rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Validar transferència">
+                        <i data-lucide="check" style="width:11px;height:11px;"></i> Validar
+                    </button>
+                    <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;" title="Cancel·lar reserva">
+                        <i data-lucide="x" style="width:11px;height:11px;"></i>
+                    </button>
+                `;
+            }
+
+            return `<tr style="${isCancelled ? 'opacity: 0.6; background: rgba(0,0,0,0.02);' : ''}">
+                <td style="padding:0.65rem 0.85rem;overflow:hidden;text-overflow:ellipsis;">
+                    <div style="font-weight:700;font-size:0.85rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escName}</div>
+                    <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escEmail}</div>
+                </td>
+                <td style="text-align:center;padding:0.65rem 0.5rem;white-space:nowrap;">
+                    <span style="font-weight:800;font-size:0.9rem;">${escSize}</span>
+                    <span style="font-size:0.72rem;color:var(--text-secondary);">×${r.quantity || 1}</span>
+                </td>
+                <td style="font-weight:700;font-size:0.85rem;padding:0.65rem 0.5rem;white-space:nowrap;">${amount}</td>
+                <td style="padding:0.65rem 0.5rem;white-space:nowrap;">${statusBadge}</td>
+                <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.65rem 0.5rem;white-space:nowrap;">${dateStr}</td>
+                <td style="white-space:nowrap;text-align:right;padding:0.65rem 0.85rem;">
+                    <div style="display:inline-flex;gap:0.3rem;align-items:center;justify-content:flex-end;">
+                        ${actionsHtml}
+                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:5px;cursor:pointer;">
+                            <i data-lucide="trash-2" style="width:11px;height:11px;"></i>
+                        </button>
+                    </div>
+                </td>
+            </tr>`;
+        }).join('');
+
+        // Attach toggle status listeners with instant optimistic UI update
+        tbody.querySelectorAll('.btn-toggle-status').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.dataset.id;
+                const targetStatus = btn.dataset.target;
+                
+                // 1. Instant local state update & UI re-render (0 ms)
+                const target = allReservations.find(r => String(r.id) === String(id));
+                if (target) {
+                    target.status = targetStatus;
+                    renderReservationsUI();
+                }
+
+                // 2. Persist to DB in background
+                try {
+                    await window.db.updateReservationStatus(id, targetStatus);
+                } catch(e) {
+                    console.warn('Background update warning:', e);
+                }
+            });
+        });
+
+        // Attach delete listeners with instant optimistic UI update
+        tbody.querySelectorAll('.btn-delete-reservation').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.dataset.id;
+                if (!confirm('Segur que vols eliminar aquesta reserva?')) return;
+                
+                // 1. Instant local removal & UI re-render (0 ms)
+                allReservations = allReservations.filter(r => String(r.id) !== String(id));
+                renderReservationsUI();
+
+                // 2. Persist delete to DB in background
+                try {
+                    await window.db.deleteReservation(id);
+                } catch(e) {
+                    console.warn('Background delete warning:', e);
+                }
+            });
+        });
+
+        if (window.lucide) window.lucide.createIcons();
     }
 
     function downloadReservationsCSV() {
