@@ -2396,32 +2396,32 @@ document.addEventListener('DOMContentLoaded', () => {
             tbody.innerHTML = allReservations.map(r => {
                 const isPaid = r.status === 'paid';
                 const statusBadge = isPaid
-                    ? '<span style="font-size:0.7rem;font-weight:700;padding:0.25rem 0.5rem;background:#dcfce7;color:#15803d;border-radius:4px;text-transform:uppercase;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="check-circle-2" style="width:12px;height:12px;"></i> Pagat</span>'
-                    : '<span style="font-size:0.7rem;font-weight:700;padding:0.25rem 0.5rem;background:#fef9c3;color:#854d0e;border-radius:4px;text-transform:uppercase;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="clock" style="width:12px;height:12px;"></i> Pendent Transferència</span>';
+                    ? '<span style="font-size:0.75rem;font-weight:700;padding:0.3rem 0.6rem;background:#dcfce7;color:#15803d;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.35rem;"><i data-lucide="check-circle-2" style="width:13px;height:13px;"></i> Pagat</span>'
+                    : '<span style="font-size:0.75rem;font-weight:700;padding:0.3rem 0.6rem;background:#fef9c3;color:#854d0e;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.35rem;"><i data-lucide="clock" style="width:13px;height:13px;"></i> Pendent</span>';
 
                 const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('ca-ES', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
                 const amount = r.amount_cents ? (r.amount_cents / 100).toFixed(2) + '€' : '-';
                 const escId = window.db.escapeHTML ? window.db.escapeHTML(String(r.id || '')) : String(r.id || '');
 
                 const toggleBtn = isPaid
-                    ? `<button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.3rem 0.6rem;font-size:0.75rem;margin-right:0.4rem;" title="Marcar com a Pendent">
+                    ? `<button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.35rem 0.7rem;font-size:0.75rem;white-space:nowrap;margin-right:0.4rem;" title="Marcar com a Pendent">
                         <i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Pendent
                        </button>`
-                    : `<button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.3rem 0.6rem;font-size:0.75rem;background:#15803d;color:#fff;border-color:#15803d;margin-right:0.4rem;" title="Confirmar transferència rebuda">
+                    : `<button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.35rem 0.7rem;font-size:0.75rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;margin-right:0.4rem;" title="Confirmar transferència rebuda">
                         <i data-lucide="check" style="width:12px;height:12px;"></i> Validar Pagament
                        </button>`;
 
                 return `<tr>
-                    <td style="font-weight:600;">${window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname)}</td>
-                    <td style="font-size:0.8rem;">${window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '')}</td>
-                    <td style="font-weight:700;text-align:center;">${window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '')}</td>
-                    <td style="text-align:center;">${r.quantity || 1}</td>
-                    <td style="font-weight:700;">${amount}</td>
-                    <td>${statusBadge}</td>
-                    <td style="font-size:0.75rem;color:var(--text-secondary);">${dateStr}</td>
-                    <td style="white-space:nowrap;">
+                    <td style="font-weight:600;padding:0.9rem 1rem;">${window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname)}</td>
+                    <td style="font-size:0.85rem;padding:0.9rem 1rem;">${window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '')}</td>
+                    <td style="font-weight:700;text-align:center;padding:0.9rem 1rem;">${window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '')}</td>
+                    <td style="text-align:center;padding:0.9rem 1rem;">${r.quantity || 1}</td>
+                    <td style="font-weight:700;padding:0.9rem 1rem;">${amount}</td>
+                    <td style="padding:0.9rem 1rem;white-space:nowrap;">${statusBadge}</td>
+                    <td style="font-size:0.8rem;color:var(--text-secondary);padding:0.9rem 1rem;white-space:nowrap;">${dateStr}</td>
+                    <td style="white-space:nowrap;text-align:right;padding:0.9rem 1rem;">
                         ${toggleBtn}
-                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar" style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;vertical-align:middle;">
+                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar" style="width:30px;height:30px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;vertical-align:middle;">
                             <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
                         </button>
                     </td>

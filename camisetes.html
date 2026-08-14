@@ -928,7 +928,12 @@
                         emailjs.send("service_hu53lep", "template_rrdhind", {
                             name: name,
                             surname: surname,
+                            to_name: name + ' ' + surname,
                             email: email,
+                            to_email: email,
+                            reply_to: email,
+                            user_email: email,
+                            customer_email: email,
                             size: selectedSize,
                             qty: quantity,
                             total: total,
