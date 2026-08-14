@@ -182,6 +182,10 @@
                     <i data-lucide="database" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
                     Configurar Supabase
                 </button>
+                <button class="admin-tab-btn" data-tab="tab-camisetes">
+                    <i data-lucide="shopping-bag" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
+                    Tenda i Productes
+                </button>
                 
                 <!-- Profile Card with Integrated Logout -->
                 <div class="admin-profile-card">
@@ -456,6 +460,121 @@ CREATE TABLE photos (
   category TEXT NOT NULL
 );
                         </pre>
+                    </div>
+                </div>
+
+                <!-- CAMISETES / TENDA PANEL -->
+                <div class="admin-panel" id="tab-camisetes">
+                    <!-- Header -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+                        <div>
+                            <h3>Gestió de la Tenda i Productes</h3>
+                            <p style="margin-bottom: 0;">Gestiona els productes a la venda (alta, edició de preus, imatges i descripcions) i les reserves rebudes.</p>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                            <button class="btn btn-sm" id="btn-toggle-reservations" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="toggle-right" style="width: 14px; height: 14px;"></i>
+                                <span id="toggle-reservations-label">Tancar Reserves</span>
+                            </button>
+                            <button class="btn btn-sm btn-secondary" id="btn-download-reservations-csv" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="download" style="width: 14px; height: 14px;"></i>
+                                Descarregar CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Catàleg de Productes Section -->
+                    <div style="margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid var(--border-color);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                            <h4 style="margin: 0; font-size: 1.1rem; text-transform: uppercase;">Gestió del Catàleg de la Tenda</h4>
+                            <button class="btn btn-sm" id="btn-new-product" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                                + Afegir Nou Producte
+                            </button>
+                        </div>
+
+                        <div style="overflow-x: auto;">
+                            <table class="admin-events-table" style="width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 10%;">Imatge</th>
+                                        <th style="width: 25%;">Nom del Producte</th>
+                                        <th style="width: 15%;">Categoria</th>
+                                        <th style="width: 12%;">Preu</th>
+                                        <th style="width: 15%;">Estat</th>
+                                        <th style="width: 23%;">Accions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-tbody">
+                                    <tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Carregant productes...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Stats Row -->
+                    <div id="reservations-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 2rem;"></div>
+
+                    <!-- Status Banner -->
+                    <div id="reservations-status-banner" style="display: none; padding: 0.75rem 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.85rem; font-weight: 600;"></div>
+
+                    <!-- Reservations Table -->
+                    <div style="overflow-x: auto;">
+                        <table class="admin-events-table" style="width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th style="width: 20%;">Nom i Cognoms</th>
+                                    <th style="width: 22%;">Email</th>
+                                    <th style="width: 8%;">Talla</th>
+                                    <th style="width: 8%;">Qty</th>
+                                    <th style="width: 10%;">Import</th>
+                                    <th style="width: 12%;">Estat</th>
+                                    <th style="width: 14%;">Data</th>
+                                    <th style="width: 6%;">Acc.</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reservations-tbody">
+                                <tr><td colspan="8" style="text-align: center; padding: 2rem; color: var(--text-muted);">Carregant reserves...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- SQL Setup hint -->
+                    <div style="margin-top: 2rem; border: 1px dashed var(--border-color); padding: 1.5rem; border-radius: 8px; background: var(--bg-secondary);">
+                        <h4 style="text-transform: uppercase; font-size: 0.8rem; display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                            <i data-lucide="terminal" style="width: 14px; height: 14px;"></i>
+                            SQL per a les taules de reserves i productes (Supabase)
+                        </h4>
+                        <pre style="font-size: 0.7rem; color: var(--text-secondary); overflow-x: auto; background: var(--bg-tertiary); padding: 1rem; border-radius: 6px; margin-bottom: 1rem;">CREATE TABLE reservations (
+  id            UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  name          TEXT NOT NULL,
+  surname       TEXT NOT NULL,
+  email         TEXT NOT NULL,
+  size          TEXT NOT NULL,
+  quantity      INTEGER NOT NULL DEFAULT 1,
+  amount_cents  INTEGER NOT NULL,
+  stripe_session_id TEXT,
+  stripe_payment_id TEXT,
+  status        TEXT DEFAULT 'pending',
+  notes         TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);</pre>
+                        <pre style="font-size: 0.7rem; color: var(--text-secondary); overflow-x: auto; background: var(--bg-tertiary); padding: 1rem; border-radius: 6px;">CREATE TABLE products (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  name_es TEXT,
+  slug TEXT NOT NULL,
+  category TEXT,
+  category_es TEXT,
+  price NUMERIC NOT NULL,
+  status TEXT DEFAULT 'open',
+  description TEXT,
+  description_es TEXT,
+  image_url TEXT,
+  images TEXT[] DEFAULT '{}'::text[],
+  sizes TEXT[] DEFAULT '{}'::text[],
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);</pre>
                     </div>
                 </div>
 
@@ -780,6 +899,84 @@ CREATE TABLE photos (
         </div>
     </div>
 
+    <!-- Product Modal -->
+    <div class="admin-form-modal" id="modal-product">
+        <div class="admin-modal-content" style="max-width: 650px;">
+            <div class="admin-modal-header">
+                <h3 id="product-modal-title">Nou Producte</h3>
+                <button class="admin-modal-close" onclick="closeModal('modal-product')">&times;</button>
+            </div>
+            <form id="form-product">
+                <input type="hidden" id="product-id">
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="product-name">Nom (Valencià)</label>
+                        <input type="text" id="product-name" required placeholder="Ex. Camiseta Oficial Festes 2026">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-name-es">Nom (Castellà)</label>
+                        <input type="text" id="product-name-es" placeholder="Ej. Camiseta Oficial Fiestas 2026">
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="product-slug">Slug (URL)</label>
+                        <input type="text" id="product-slug" required placeholder="camisetes">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Preu (€)</label>
+                        <input type="number" id="product-price" step="0.01" required placeholder="12.00">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-status">Estat</label>
+                        <select id="product-status" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); background-color: var(--bg-primary); border-radius: 8px; font-family: var(--font-body);">
+                            <option value="open">Reserves Obertes</option>
+                            <option value="closed">Reserves Tancades</option>
+                            <option value="sold_out">Esgotat</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="product-category">Categoria (Valencià)</label>
+                        <input type="text" id="product-category" placeholder="Ex. Roba">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-category-es">Categoria (Castellà)</label>
+                        <input type="text" id="product-category-es" placeholder="Ej. Ropa">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-image-url">URL Imatge Principal</label>
+                    <input type="url" id="product-image-url" placeholder="https://images.unsplash.com/...">
+                </div>
+
+                <div class="form-group">
+                    <label for="product-images">Imatges Addicionals (separades per coma)</label>
+                    <input type="text" id="product-images" placeholder="https://img1.jpg, https://img2.jpg">
+                </div>
+
+                <div class="form-group">
+                    <label for="product-description">Descripció (Valencià)</label>
+                    <textarea id="product-description" rows="3" placeholder="Descripció detallada del producte..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="product-description-es">Descripció (Castellà)</label>
+                    <textarea id="product-description-es" rows="3" placeholder="Descripción detallada del producto..."></textarea>
+                </div>
+
+                <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                    <button type="submit" id="btn-save-product" class="btn btn-sm" style="background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary);">Guardar Producte</button>
+                    <button type="button" class="btn btn-sm btn-secondary" onclick="closeModal('modal-product')">Cancel·lar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Welcome Message Modal Pop-up -->
     <div class="admin-form-modal" id="modal-edit-welcome">
         <div class="admin-modal-content">
@@ -875,8 +1072,8 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="../js/db.js?v=1.21" defer></script>
-    <script src="gestio.js?v=1.25"></script>
+    <script src="../js/db.js?v=1.30" defer></script>
+    <script src="gestio.js?v=1.30"></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);

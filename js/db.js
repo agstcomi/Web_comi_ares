@@ -180,12 +180,31 @@ const MOCK_PHOTOS = [
     }
 ];
 
+const DEFAULT_PRODUCTS = [
+    {
+        id: "prod-camiseta-ares-sd-2026",
+        name: "Camiseta Festes Ares SD",
+        name_es: "Camiseta Fiestas Ares SD",
+        slug: "camisetes",
+        category: "Roba · Edició Limitada 2026",
+        category_es: "Ropa · Edición Limitada 2026",
+        price: 35.00,
+        status: "open",
+        description: "La camiseta oficial de les Festes Patronals d'Ares del Maestrat 2026. Confeccionada en cotó de qualitat, disseny exclusiu per a la temporada de festes. Edició limitada — un cop tancat el periode de reserves no s'acceptaran més comandes.",
+        description_es: "La camiseta oficial de las Fiestas Patronales de Ares del Maestrat 2026. Confeccionada en algodón de calidad, diseño exclusivo.",
+        image_url: "/img/camiseta-1.webp",
+        images: ["/img/camiseta-1.webp", "/img/camiseta-2.webp"],
+        sizes: ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL", "7XL"],
+        created_at: "2026-08-14T10:00:00.000Z"
+    }
+];
+
 class AppDatabase {
     constructor() {
         this.supabase = null;
         this.config = null;
         this.dbName = 'AresLocalDB';
-        this.dbVersion = 1;
+        this.dbVersion = 3;
         this.idb = null;
         this.dbPromise = this.initIDB();
         this.init();
@@ -205,6 +224,12 @@ class AppDatabase {
                 if (!db.objectStoreNames.contains('photos')) {
                     db.createObjectStore('photos', { keyPath: 'id' });
                 }
+                if (!db.objectStoreNames.contains('reservations')) {
+                    db.createObjectStore('reservations', { keyPath: 'id' });
+                }
+                if (!db.objectStoreNames.contains('products')) {
+                    db.createObjectStore('products', { keyPath: 'id' });
+                }
             };
             request.onsuccess = async (e) => {
                 this.idb = e.target.result;
@@ -213,7 +238,7 @@ class AppDatabase {
             };
             request.onerror = (e) => {
                 console.error("IndexedDB initialization error:", e.target.error);
-                reject(e.target.error);
+                resolve(); // resolve anyway so promise doesn't hang
             };
         });
     }
@@ -224,11 +249,6 @@ class AppDatabase {
 
         console.log("Migrating database storage from localStorage to IndexedDB...");
         try {
-            // Read from local storage and filter out old mock data
-            const localNews = (JSON.parse(localStorage.getItem('ares_news') || '[]'))
-                .filter(item => item && item.id !== 'news-1' && item.id !== 'news-2' && item.id !== 'news-3');
-            const newsToMigrate = localNews.length > 0 ? localNews : MOCK_NEWS;
-
             const localEvents = (JSON.parse(localStorage.getItem('ares_events') || '[]'))
                 .filter(item => item && !['event-1', 'event-2', 'event-3', 'event-4', 'event-5', 'event-6'].includes(item.id));
             const eventsToMigrate = localEvents.length > 0 ? localEvents : MOCK_EVENTS;
@@ -276,35 +296,59 @@ class AppDatabase {
     }
 
     getAllIDB(storeName) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             if (!this.idb) return resolve([]);
-            const tx = this.idb.transaction(storeName, 'readonly');
-            const store = tx.objectStore(storeName);
-            const req = store.getAll();
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
+            if (!this.idb.objectStoreNames || !this.idb.objectStoreNames.contains(storeName)) {
+                return resolve([]);
+            }
+            try {
+                const tx = this.idb.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const req = store.getAll();
+                req.onsuccess = () => resolve(req.result || []);
+                req.onerror = () => resolve([]);
+            } catch (err) {
+                console.warn(`Could not read store ${storeName}:`, err);
+                resolve([]);
+            }
         });
     }
 
     putIDB(storeName, item) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             if (!this.idb) return resolve(item);
-            const tx = this.idb.transaction(storeName, 'readwrite');
-            const store = tx.objectStore(storeName);
-            const req = store.put(item);
-            req.onsuccess = () => resolve(item);
-            req.onerror = () => reject(req.error);
+            if (!this.idb.objectStoreNames || !this.idb.objectStoreNames.contains(storeName)) {
+                return resolve(item);
+            }
+            try {
+                const tx = this.idb.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const req = store.put(item);
+                req.onsuccess = () => resolve(item);
+                req.onerror = () => resolve(item);
+            } catch (err) {
+                console.warn(`Could not put to store ${storeName}:`, err);
+                resolve(item);
+            }
         });
     }
 
     deleteIDB(storeName, id) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             if (!this.idb) return resolve(true);
-            const tx = this.idb.transaction(storeName, 'readwrite');
-            const store = tx.objectStore(storeName);
-            const req = store.delete(id);
-            req.onsuccess = () => resolve(true);
-            req.onerror = () => reject(req.error);
+            if (!this.idb.objectStoreNames || !this.idb.objectStoreNames.contains(storeName)) {
+                return resolve(true);
+            }
+            try {
+                const tx = this.idb.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const req = store.delete(id);
+                req.onsuccess = () => resolve(true);
+                req.onerror = () => resolve(true);
+            } catch (err) {
+                console.warn(`Could not delete from store ${storeName}:`, err);
+                resolve(true);
+            }
         });
     }
 
@@ -1746,6 +1790,284 @@ class AppDatabase {
                 console.warn("Could not delete push subscription from Supabase:", err);
             }
         }
+    }
+
+    // =============================================
+    // SHOP / CAMISETES METHODS
+    // =============================================
+
+    async getShopConfig() {
+        const LOCAL_KEY = 'ares_shop_config';
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('events')
+                    .select('*')
+                    .eq('id', 'shop-config-camisetes')
+                    .single();
+                if (error || !data) throw new Error('Not found');
+                try { return JSON.parse(data.title); } catch(e) { return { open: true, price_cents: 3500 }; }
+            } catch {
+                const local = localStorage.getItem(LOCAL_KEY);
+                return local ? JSON.parse(local) : { open: true, price_cents: 3500 };
+            }
+        } else {
+            const local = localStorage.getItem(LOCAL_KEY);
+            return local ? JSON.parse(local) : { open: true, price_cents: 3500 };
+        }
+    }
+
+    async saveShopConfig(config) {
+        const LOCAL_KEY = 'ares_shop_config';
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(config));
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { error } = await this.supabase
+                    .from('events')
+                    .upsert([{ id: 'shop-config-camisetes', title: JSON.stringify(config), description: 'Shop configuration', date: '2099-01-01', time: '00:00', location: 'admin', category: 'config' }]);
+                if (error) throw error;
+            } catch(e) {
+                console.warn('Could not save shop config to Supabase:', e);
+            }
+        }
+        return config;
+    }
+
+    async getReservations() {
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('reservations')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (error) throw error;
+                return data || [];
+            } catch(err) {
+                console.error('Error loading reservations from Supabase:', err);
+                return this.getLocalReservations();
+            }
+        } else {
+            return this.getLocalReservations();
+        }
+    }
+
+    async getLocalReservations() {
+        await this.dbPromise;
+        let items = await this.getAllIDB('reservations').catch(() => []);
+        if (!items || items.length === 0) {
+            try {
+                items = JSON.parse(localStorage.getItem('ares_reservations') || '[]');
+            } catch(e) {
+                items = [];
+            }
+        }
+        return (items || []).sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+    }
+
+    async addReservation(item) {
+        const newItem = {
+            id: 'res-' + Date.now(),
+            created_at: new Date().toISOString(),
+            status: 'pending_transfer',
+            ...item
+        };
+
+        // 1. Instant synchronous write to localStorage for 100% immediate persistence
+        try {
+            const reservations = JSON.parse(localStorage.getItem('ares_reservations') || '[]');
+            const idx = reservations.findIndex(r => r.id === newItem.id);
+            if (idx >= 0) {
+                reservations[idx] = newItem;
+            } else {
+                reservations.unshift(newItem);
+            }
+            localStorage.setItem('ares_reservations', JSON.stringify(reservations));
+        } catch(e) {}
+
+        // 2. Write to IndexedDB in background
+        this.dbPromise.then(() => {
+            this.putIDB('reservations', newItem).catch(() => {});
+        }).catch(() => {});
+
+        // 3. If Supabase is configured, attempt remote insert with 1.5s timeout
+        if (this.isSupabaseConfigured()) {
+            try {
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase timeout')), 1500));
+                const insertPromise = this.supabase
+                    .from('reservations')
+                    .insert([newItem])
+                    .select();
+                const { data, error } = await Promise.race([insertPromise, timeoutPromise]);
+                if (!error && data && data[0]) return data[0];
+            } catch(err) {
+                console.warn('Supabase reservation insert:', err.message || err);
+            }
+        }
+
+        return newItem;
+    }
+
+    async deleteReservation(id) {
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { error } = await this.supabase
+                    .from('reservations')
+                    .delete()
+                    .eq('id', id);
+                if (error) throw error;
+            } catch(err) {
+                console.error('Error deleting reservation from Supabase:', err);
+            }
+        }
+        await this.dbPromise;
+        await this.deleteIDB('reservations', id).catch(() => {});
+        try {
+            const reservations = JSON.parse(localStorage.getItem('ares_reservations') || '[]');
+            const filtered = reservations.filter(r => r.id !== id);
+            localStorage.setItem('ares_reservations', JSON.stringify(filtered));
+        } catch(e) {}
+    }
+
+    async updateReservationStatus(id, newStatus) {
+        if (this.isSupabaseConfigured()) {
+            try {
+                await this.supabase
+                    .from('reservations')
+                    .update({ status: newStatus })
+                    .eq('id', id);
+            } catch(err) {
+                console.error('Error updating reservation status in Supabase:', err);
+            }
+        }
+        await this.dbPromise;
+        const reservations = await this.getLocalReservations();
+        const target = reservations.find(r => String(r.id) === String(id));
+        if (target) {
+            target.status = newStatus;
+            await this.putIDB('reservations', target).catch(() => {});
+        }
+        try {
+            const local = JSON.parse(localStorage.getItem('ares_reservations') || '[]');
+            const idx = local.findIndex(r => String(r.id) === String(id));
+            if (idx >= 0) {
+                local[idx].status = newStatus;
+                localStorage.setItem('ares_reservations', JSON.stringify(local));
+            }
+        } catch(e) {}
+    }
+
+    // Products Actions
+    async getProducts() {
+        let products = [];
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('products')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (!error && data && data.length > 0) {
+                    return data;
+                }
+            } catch (err) {
+                console.error("Error loading products from Supabase:", err);
+            }
+        }
+
+        await this.dbPromise;
+        try {
+            products = await this.getAllIDB('products');
+        } catch (err) {
+            console.error("Error loading products from IDB:", err);
+        }
+        if (!products || products.length === 0) {
+            const stored = localStorage.getItem('ares_products');
+            if (stored) {
+                try {
+                    products = JSON.parse(stored);
+                } catch (e) {}
+            }
+        }
+
+        if (!products || products.length === 0) {
+            products = [...DEFAULT_PRODUCTS];
+            for (const prod of DEFAULT_PRODUCTS) {
+                await this.putIDB('products', prod).catch(() => {});
+            }
+            localStorage.setItem('ares_products', JSON.stringify(DEFAULT_PRODUCTS));
+        }
+
+        return products;
+    }
+
+    async getProductBySlug(slug) {
+        const products = await this.getProducts();
+        return products.find(p => p.slug === slug || p.id === slug) || null;
+    }
+
+    async saveProduct(product) {
+        const itemToSave = {
+            ...product,
+            id: product.id || ('prod-' + Date.now()),
+            updated_at: new Date().toISOString()
+        };
+
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('products')
+                    .upsert([itemToSave])
+                    .select();
+                if (error) {
+                    console.error("Error upserting product to Supabase:", error);
+                } else if (data && data[0]) {
+                    itemToSave.id = data[0].id;
+                }
+            } catch (err) {
+                console.error("Error saving product to Supabase:", err);
+            }
+        }
+
+        await this.dbPromise;
+        await this.putIDB('products', itemToSave).catch(() => {});
+
+        try {
+            const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
+            const idx = local.findIndex(p => p.id === itemToSave.id);
+            if (idx >= 0) {
+                local[idx] = itemToSave;
+            } else {
+                local.unshift(itemToSave);
+            }
+            localStorage.setItem('ares_products', JSON.stringify(local));
+        } catch(e) {}
+
+        return itemToSave;
+    }
+
+    async deleteProduct(id) {
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { error } = await this.supabase
+                    .from('products')
+                    .delete()
+                    .eq('id', id);
+                if (error) {
+                    console.error("Error deleting product from Supabase:", error);
+                }
+            } catch (err) {
+                console.error("Error deleting product from Supabase:", err);
+            }
+        }
+
+        await this.dbPromise;
+        await this.deleteIDB('products', id).catch(() => {});
+
+        try {
+            const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
+            const filtered = local.filter(p => p.id !== id);
+            localStorage.setItem('ares_products', JSON.stringify(filtered));
+        } catch(e) {}
+        return true;
     }
 }
 

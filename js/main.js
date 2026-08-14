@@ -216,14 +216,18 @@ function renderHeader() {
 
     let menuHTML = '';
     menuItems.forEach(item => {
-        const isActive = (page === item.file || (item.file === '.' && page === '')) ? 'class="active"' : '';
+        const isActive = (page === item.file || (item.file === '.' && page === '')) ? 'active' : '';
         let href = '';
         if (item.file === '.') {
             href = isEs ? '/es/' : '/';
         } else {
             href = isEs ? `/es/${item.file}` : `/${item.file}`;
         }
-        menuHTML += `<li><a href="${href}" ${isActive}>${item.name}</a></li>`;
+        if (item.highlight) {
+            menuHTML += `<li><a href="${href}" class="${isActive} nav-tenda-link" style="font-weight:700;">${item.name}</a></li>`;
+        } else {
+            menuHTML += `<li><a href="${href}" ${isActive ? `class="${isActive}"` : ''}>${item.name}</a></li>`;
+        }
     });
 
     // Generate language switcher HTML with dropdown

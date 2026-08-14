@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadFaqsAdmin();
         await loadCountdownAdmin();
         await loadHomeAdmin();
+        await loadReservationsTab();
     }
 
     function updateDbStatusBadge() {
@@ -303,8 +304,13 @@ document.addEventListener('DOMContentLoaded', () => {
             panels.forEach(p => p.classList.remove('active'));
 
             tab.classList.add('active');
-            const targetPanel = document.getElementById(tab.getAttribute('data-tab'));
+            const targetTab = tab.getAttribute('data-tab');
+            const targetPanel = document.getElementById(targetTab);
             if (targetPanel) targetPanel.classList.add('active');
+
+            if (targetTab === 'tab-camisetes') {
+                loadReservationsTab();
+            }
         });
     });
 
@@ -2283,6 +2289,421 @@ document.addEventListener('DOMContentLoaded', () => {
                 } catch (err) {
                     console.error("Error resetting home config:", err);
                     alert("Error en restablir la home: " + (err.message || err));
+                }
+            }
+        });
+    }
+
+    // =============================================
+    // CAMISETES / RESERVATIONS MANAGEMENT
+    // =============================================
+    
+    const SIZES_ORDER = ['S','M','L','XL','2XL','3XL','4XL','5XL','6XL','7XL'];
+    let reservationsOpen = true;
+    let allReservations = [];
+
+    async function loadReservationsTab() {
+        await loadShopConfig();
+        await loadReservationsTable();
+        await loadProductsTable();
+    }
+
+    async function loadShopConfig() {
+        try {
+            const config = await window.db.getShopConfig();
+            reservationsOpen = config.open !== false;
+            updateReservationsToggleUI();
+        } catch (e) {
+            reservationsOpen = true;
+            updateReservationsToggleUI();
+        }
+    }
+
+    function updateReservationsToggleUI() {
+        const btn = document.getElementById('btn-toggle-reservations');
+        const label = document.getElementById('toggle-reservations-label');
+        const banner = document.getElementById('reservations-status-banner');
+        if (!btn || !label || !banner) return;
+
+        if (reservationsOpen) {
+            label.textContent = 'Tancar Reserves';
+            btn.style.backgroundColor = '#ef4444';
+            btn.style.color = '#fff';
+            btn.style.borderColor = '#ef4444';
+            banner.style.display = 'block';
+            banner.style.background = '#dcfce7';
+            banner.style.color = '#15803d';
+            banner.style.border = '1px solid #bbf7d0';
+            banner.textContent = '✅ Les reserves estan OBERTES. Els usuaris poden fer reserves a la web.';
+        } else {
+            label.textContent = 'Obrir Reserves';
+            btn.style.backgroundColor = '';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+            banner.style.display = 'block';
+            banner.style.background = '#fee2e2';
+            banner.style.color = '#b91c1c';
+            banner.style.border = '1px solid #fecaca';
+            banner.textContent = '🔒 Les reserves estan TANCADES. El formulari de reserves no és visible a la web.';
+        }
+    }
+
+    async function loadReservationsTable() {
+        const tbody = document.getElementById('reservations-tbody');
+        const statsEl = document.getElementById('reservations-stats');
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);">Carregant...</td></tr>';
+
+        try {
+            allReservations = await window.db.getReservations();
+
+            if (!allReservations || allReservations.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);">No hi ha reserves encara.</td></tr>';
+                if (statsEl) statsEl.innerHTML = '';
+                return;
+            }
+
+            // Stats
+            const totalUnits = allReservations.reduce((a, r) => a + (r.quantity || 1), 0);
+            const totalRevenue = allReservations.filter(r => r.status === 'paid').reduce((a, r) => a + (r.amount_cents || 0), 0);
+            const paidCount = allReservations.filter(r => r.status === 'paid').length;
+            const pendingCount = allReservations.filter(r => r.status === 'pending').length;
+
+            const sizeCounts = {};
+            allReservations.forEach(r => {
+                sizeCounts[r.size] = (sizeCounts[r.size] || 0) + (r.quantity || 1);
+            });
+            const topSize = Object.entries(sizeCounts).sort((a, b) => b[1] - a[1])[0];
+
+            if (statsEl) {
+                statsEl.innerHTML = [
+                    { icon: 'users', val: allReservations.length, label: 'Reserves totals' },
+                    { icon: 'package', val: totalUnits, label: 'Camisetes' },
+                    { icon: 'check-circle', val: paidCount, label: 'Pagades' },
+                    { icon: 'clock', val: pendingCount, label: 'Pendents' },
+                    { icon: 'euro', val: (totalRevenue / 100).toFixed(2) + '€', label: 'Recaptat' },
+                    { icon: 'tag', val: topSize ? topSize[0] : '-', label: 'Talla + venuda' },
+                ].map(s => `
+                    <div style="border:1px solid var(--border-color);border-radius:8px;padding:1rem;background:var(--bg-secondary);text-align:center;">
+                        <div style="font-size:1.5rem;font-weight:800;font-family:var(--font-heading);">${s.val}</div>
+                        <div style="font-size:0.7rem;text-transform:uppercase;color:var(--text-muted);margin-top:0.25rem;">${s.label}</div>
+                    </div>
+                `).join('');
+            }
+
+            // Table rows
+            tbody.innerHTML = allReservations.map(r => {
+                const isPaid = r.status === 'paid';
+                const statusBadge = isPaid
+                    ? '<span style="font-size:0.7rem;font-weight:700;padding:0.25rem 0.5rem;background:#dcfce7;color:#15803d;border-radius:4px;text-transform:uppercase;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="check-circle-2" style="width:12px;height:12px;"></i> Pagat</span>'
+                    : '<span style="font-size:0.7rem;font-weight:700;padding:0.25rem 0.5rem;background:#fef9c3;color:#854d0e;border-radius:4px;text-transform:uppercase;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="clock" style="width:12px;height:12px;"></i> Pendent Transferència</span>';
+
+                const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('ca-ES', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' }) : '-';
+                const amount = r.amount_cents ? (r.amount_cents / 100).toFixed(2) + '€' : '-';
+                const escId = window.db.escapeHTML ? window.db.escapeHTML(String(r.id || '')) : String(r.id || '');
+
+                const toggleBtn = isPaid
+                    ? `<button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.3rem 0.6rem;font-size:0.75rem;margin-right:0.4rem;" title="Marcar com a Pendent">
+                        <i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Pendent
+                       </button>`
+                    : `<button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.3rem 0.6rem;font-size:0.75rem;background:#15803d;color:#fff;border-color:#15803d;margin-right:0.4rem;" title="Confirmar transferència rebuda">
+                        <i data-lucide="check" style="width:12px;height:12px;"></i> Validar Pagament
+                       </button>`;
+
+                return `<tr>
+                    <td style="font-weight:600;">${window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname)}</td>
+                    <td style="font-size:0.8rem;">${window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '')}</td>
+                    <td style="font-weight:700;text-align:center;">${window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '')}</td>
+                    <td style="text-align:center;">${r.quantity || 1}</td>
+                    <td style="font-weight:700;">${amount}</td>
+                    <td>${statusBadge}</td>
+                    <td style="font-size:0.75rem;color:var(--text-secondary);">${dateStr}</td>
+                    <td style="white-space:nowrap;">
+                        ${toggleBtn}
+                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar" style="width:28px;height:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;vertical-align:middle;">
+                            <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+
+            // Attach toggle status listeners
+            tbody.querySelectorAll('.btn-toggle-status').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.dataset.id;
+                    const targetStatus = btn.dataset.target;
+                    try {
+                        await window.db.updateReservationStatus(id, targetStatus);
+                        await loadReservationsTable();
+                    } catch(e) {
+                        alert('Error en actualitzar l\'estat: ' + e.message);
+                    }
+                });
+            });
+
+            // Attach delete listeners
+            tbody.querySelectorAll('.btn-delete-reservation').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.dataset.id;
+                    if (!confirm('Segur que vols eliminar aquesta reserva?')) return;
+                    try {
+                        await window.db.deleteReservation(id);
+                        await loadReservationsTable();
+                    } catch(e) {
+                        alert('Error en eliminar la reserva: ' + e.message);
+                    }
+                });
+            });
+
+            if (window.lucide) window.lucide.createIcons();
+        } catch (err) {
+            console.error('Error loading reservations:', err);
+            tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:2rem;color:#ef4444;">Error: ${err.message}</td></tr>`;
+        }
+    }
+
+    function downloadReservationsCSV() {
+        if (!allReservations || allReservations.length === 0) {
+            alert('No hi ha reserves per descarregar.');
+            return;
+        }
+        const headers = ['Nom', 'Cognoms', 'Email', 'Talla', 'Quantitat', 'Import (€)', 'Estat', 'Data', 'Observacions'];
+        const rows = allReservations.map(r => [
+            `"${(r.name || '').replace(/"/g, '""')}"`,
+            `"${(r.surname || '').replace(/"/g, '""')}"`,
+            `"${(r.email || '').replace(/"/g, '""')}"`,
+            `"${(r.size || '').replace(/"/g, '""')}"`,
+            r.quantity || 1,
+            r.amount_cents ? (r.amount_cents / 100).toFixed(2) : '0.00',
+            `"${r.status === 'paid' ? 'Pagat' : 'Pendent Transferència'}"`,
+            r.created_at ? new Date(r.created_at).toLocaleString('ca-ES') : '',
+            `"${(r.notes || '').replace(/"/g, '""')}"`
+        ]);
+        const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        const bom = '\uFEFF'; // UTF-8 BOM for Excel
+        const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `reserves-camisetes-${new Date().toISOString().split('T')[0]}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Attach tab-click to load data
+    document.querySelectorAll('.admin-tab-btn').forEach(btn => {
+        if (btn.dataset.tab === 'tab-camisetes') {
+            btn.addEventListener('click', () => {
+                setTimeout(loadReservationsTab, 100);
+            });
+        }
+    });
+
+    // Toggle reservations button
+    const btnToggle = document.getElementById('btn-toggle-reservations');
+    if (btnToggle) {
+        btnToggle.addEventListener('click', async () => {
+            reservationsOpen = !reservationsOpen;
+            try {
+                await window.db.saveShopConfig({ open: reservationsOpen, price_cents: 3500 });
+                updateReservationsToggleUI();
+            } catch(e) {
+                alert('Error en canviar l\'estat de les reserves: ' + e.message);
+                reservationsOpen = !reservationsOpen; // revert
+                updateReservationsToggleUI();
+            }
+        });
+    }
+
+    // Download CSV button
+    const btnDownloadCsv = document.getElementById('btn-download-reservations-csv');
+    if (btnDownloadCsv) {
+        btnDownloadCsv.addEventListener('click', downloadReservationsCSV);
+    }
+
+    // =============================================
+    // PRODUCT CATALOG MANAGEMENT
+    // =============================================
+    async function loadProductsTable() {
+        const tbody = document.getElementById('products-tbody');
+        if (!tbody) return;
+
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Carregant productes...</td></tr>';
+
+        try {
+            const products = await window.db.getProducts();
+
+            if (!products || products.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No hi ha productes al catàleg.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = products.map(p => {
+                const imgUrl = (!p.image_url)
+                    ? 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=400'
+                    : (p.image_url.startsWith('http') || p.image_url.startsWith('data:image') || p.image_url.startsWith('/'))
+                        ? p.image_url
+                        : '../' + p.image_url;
+
+                const escImgUrl = window.db.escapeHTML ? window.db.escapeHTML(imgUrl) : imgUrl;
+                const escName = window.db.escapeHTML ? window.db.escapeHTML(p.name || '') : (p.name || '');
+                const escCat = window.db.escapeHTML ? window.db.escapeHTML(p.category || '-') : (p.category || '-');
+                const priceFormatted = (typeof p.price === 'number') ? p.price.toFixed(2) + ' €' : (p.price ? p.price + ' €' : '0.00 €');
+                const escId = window.db.escapeHTML ? window.db.escapeHTML(String(p.id)) : String(p.id);
+
+                let statusBadge = '';
+                if (p.status === 'open') {
+                    statusBadge = '<span style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.4rem;background:#dcfce7;color:#15803d;border-radius:4px;text-transform:uppercase;">Reserves Obertes</span>';
+                } else if (p.status === 'closed') {
+                    statusBadge = '<span style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.4rem;background:#fee2e2;color:#b91c1c;border-radius:4px;text-transform:uppercase;">Reserves Tancades</span>';
+                } else if (p.status === 'sold_out') {
+                    statusBadge = '<span style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.4rem;background:#fef9c3;color:#854d0e;border-radius:4px;text-transform:uppercase;">Esgotat</span>';
+                } else {
+                    statusBadge = `<span style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.4rem;background:#e2e8f0;color:#475569;border-radius:4px;text-transform:uppercase;">${window.db.escapeHTML ? window.db.escapeHTML(p.status || '') : (p.status || '')}</span>`;
+                }
+
+                return `<tr>
+                    <td><img class="admin-table-img" src="${escImgUrl}" alt="${escName}"></td>
+                    <td style="font-weight:600;">${escName}</td>
+                    <td style="font-size:0.85rem;color:var(--text-secondary);">${escCat}</td>
+                    <td style="font-weight:700;">${priceFormatted}</td>
+                    <td>${statusBadge}</td>
+                    <td>
+                        <button class="btn btn-sm btn-edit-product" data-id="${escId}" style="padding: 0.35rem 0.6rem; margin-right: 0.5rem; background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary);">
+                            <i data-lucide="edit-3" style="width: 12px; height: 12px;"></i> Editar
+                        </button>
+                        <button class="btn btn-sm btn-danger btn-delete-product" data-id="${escId}" style="padding: 0.35rem 0.6rem;">
+                            <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i> Borrar
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+
+            // Attach edit listeners
+            tbody.querySelectorAll('.btn-edit-product').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.getAttribute('data-id');
+                    const productsList = await window.db.getProducts();
+                    const prod = productsList.find(item => String(item.id) === id);
+                    if (prod) {
+                        document.getElementById('product-id').value = prod.id || '';
+                        document.getElementById('product-name').value = prod.name || '';
+                        document.getElementById('product-name-es').value = prod.name_es || '';
+                        document.getElementById('product-slug').value = prod.slug || '';
+                        document.getElementById('product-category').value = prod.category || '';
+                        document.getElementById('product-category-es').value = prod.category_es || '';
+                        document.getElementById('product-price').value = (prod.price !== undefined && prod.price !== null) ? prod.price : '';
+                        document.getElementById('product-status').value = prod.status || 'open';
+                        document.getElementById('product-image-url').value = prod.image_url || '';
+                        document.getElementById('product-images').value = Array.isArray(prod.images) ? prod.images.join(', ') : (prod.images || '');
+                        document.getElementById('product-description').value = prod.description || '';
+                        document.getElementById('product-description-es').value = prod.description_es || '';
+
+                        const titleEl = document.getElementById('product-modal-title');
+                        if (titleEl) titleEl.textContent = 'Editar Producte';
+
+                        const modal = document.getElementById('modal-product');
+                        if (modal) modal.classList.add('active');
+                    }
+                });
+            });
+
+            // Attach delete listeners
+            tbody.querySelectorAll('.btn-delete-product').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.getAttribute('data-id');
+                    if (confirm('Estàs segur que vols eliminar aquest producte del catàleg?')) {
+                        try {
+                            await window.db.deleteProduct(id);
+                            await loadProductsTable();
+                        } catch (e) {
+                            alert('Error en eliminar el producte: ' + e.message);
+                        }
+                    }
+                });
+            });
+
+            if (window.lucide) window.lucide.createIcons();
+
+        } catch (err) {
+            console.error('Error loading products table:', err);
+            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444;">Error: ${err.message}</td></tr>`;
+        }
+    }
+
+    const btnNewProduct = document.getElementById('btn-new-product');
+    if (btnNewProduct) {
+        btnNewProduct.addEventListener('click', () => {
+            const form = document.getElementById('form-product');
+            if (form) form.reset();
+            const idInput = document.getElementById('product-id');
+            if (idInput) idInput.value = '';
+            const titleEl = document.getElementById('product-modal-title');
+            if (titleEl) titleEl.textContent = 'Nou Producte';
+            const modal = document.getElementById('modal-product');
+            if (modal) modal.classList.add('active');
+            if (typeof openModal === 'function') openModal('modal-product');
+        });
+    }
+
+    const formProduct = document.getElementById('form-product');
+    if (formProduct) {
+        formProduct.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnSave = document.getElementById('btn-save-product');
+            try {
+                if (btnSave) {
+                    btnSave.disabled = true;
+                }
+
+                const id = document.getElementById('product-id').value;
+                const name = document.getElementById('product-name').value.trim();
+                const name_es = document.getElementById('product-name-es').value.trim();
+                const slug = document.getElementById('product-slug').value.trim();
+                const category = document.getElementById('product-category').value.trim();
+                const category_es = document.getElementById('product-category-es').value.trim();
+                const price = parseFloat(document.getElementById('product-price').value) || 0;
+                const status = document.getElementById('product-status').value;
+                const image_url = document.getElementById('product-image-url').value.trim();
+                const imagesRaw = document.getElementById('product-images').value.trim();
+                const images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+                const description = document.getElementById('product-description').value.trim();
+                const description_es = document.getElementById('product-description-es').value.trim();
+
+                const productData = {
+                    name,
+                    name_es,
+                    slug,
+                    category,
+                    category_es,
+                    price,
+                    status,
+                    image_url,
+                    images,
+                    description,
+                    description_es
+                };
+
+                if (id) {
+                    productData.id = id;
+                }
+
+                await window.db.saveProduct(productData);
+
+                const modal = document.getElementById('modal-product');
+                if (modal) modal.classList.remove('active');
+
+                await loadProductsTable();
+
+            } catch (err) {
+                console.error("Error saving product:", err);
+                alert("Error en desar el producte: " + (err.message || err));
+            } finally {
+                if (btnSave) {
+                    btnSave.disabled = false;
                 }
             }
         });
