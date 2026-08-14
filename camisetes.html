@@ -782,14 +782,14 @@
                 publicKey: "KJ16ReAN9A8vk7rQg",
             });
         })();
-    </script>
-    <script src="/js/db.js?v=1.32" defer></script>
+    <script src="/js/db.js?v=1.40" defer></script>
     <script src="/js/main.js?v=1.15" defer></script>
     <script src="/js/push-notifications.js?v=1.20" defer></script>
     <script>
-        const PRICE = 35.00;
+        let PRICE = 35.00;
         let selectedSize = null;
         let quantity = 1;
+        let currentProduct = null;
 
         // ── Gallery ──
         document.querySelectorAll('.gallery-thumb').forEach(thumb => {
@@ -953,9 +953,6 @@
             // Redirect to confirmation page
             window.location.href = targetUrl;
         });
-
-        let PRICE = 35.00;
-        let currentProduct = null;
 
         async function loadProductData() {
             if (!window.db) return;
