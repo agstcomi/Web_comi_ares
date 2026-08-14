@@ -951,13 +951,18 @@ CREATE TABLE photos (
                 </div>
 
                 <div class="form-group">
-                    <label for="product-image-url">URL Imatge Principal</label>
-                    <input type="url" id="product-image-url" placeholder="https://images.unsplash.com/...">
+                    <label for="product-file-main">📷 Imatge Principal del Producte</label>
+                    <div style="display: flex; gap: 0.75rem; align-items: center; margin-bottom: 0.5rem;">
+                        <input type="file" id="product-file-main" accept="image/*" style="border: 1px dashed var(--border-color); padding: 0.5rem; border-radius: 8px; flex: 1; background: var(--bg-primary);">
+                        <img id="product-preview-main" src="" alt="" style="width: 48px; height: 48px; object-fit: contain; border-radius: 6px; border: 1px solid var(--border-color); display: none; background: #fff;">
+                    </div>
+                    <input type="text" id="product-image-url" placeholder="O URL d'imatge (/img/... o https://...)">
                 </div>
 
                 <div class="form-group">
-                    <label for="product-images">Imatges Addicionals (separades per coma)</label>
-                    <input type="text" id="product-images" placeholder="https://img1.jpg, https://img2.jpg">
+                    <label for="product-files-extra">🖼️ Imatges Addicionals (Galeria)</label>
+                    <input type="file" id="product-files-extra" accept="image/*" multiple style="border: 1px dashed var(--border-color); padding: 0.5rem; border-radius: 8px; width: 100%; margin-bottom: 0.5rem; background: var(--bg-primary);">
+                    <input type="text" id="product-images" placeholder="O URLs separades per comes (ex: /img/foto1.webp, /img/foto2.webp)">
                 </div>
 
                 <div class="form-group">
@@ -1072,8 +1077,8 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="../js/db.js?v=1.30" defer></script>
-    <script src="gestio.js?v=1.30"></script>
+    <script src="/js/db.js?v=1.36" defer></script>
+    <script src="/admin/gestio.js?v=1.36"></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);

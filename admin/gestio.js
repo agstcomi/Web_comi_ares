@@ -2602,11 +2602,27 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('product-description').value = prod.description || '';
                         document.getElementById('product-description-es').value = prod.description_es || '';
 
+                        const fileMain = document.getElementById('product-file-main');
+                        if (fileMain) fileMain.value = '';
+                        const fileExtra = document.getElementById('product-files-extra');
+                        if (fileExtra) fileExtra.value = '';
+
+                        const preview = document.getElementById('product-preview-main');
+                        if (preview) {
+                            if (prod.image_url) {
+                                preview.src = prod.image_url;
+                                preview.style.display = 'block';
+                            } else {
+                                preview.style.display = 'none';
+                            }
+                        }
+
                         const titleEl = document.getElementById('product-modal-title');
                         if (titleEl) titleEl.textContent = 'Editar Producte';
 
                         const modal = document.getElementById('modal-product');
                         if (modal) modal.classList.add('active');
+                        if (typeof openModal === 'function') openModal('modal-product');
                     }
                 });
             });
@@ -2641,6 +2657,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (form) form.reset();
             const idInput = document.getElementById('product-id');
             if (idInput) idInput.value = '';
+            const preview = document.getElementById('product-preview-main');
+            if (preview) preview.style.display = 'none';
             const titleEl = document.getElementById('product-modal-title');
             if (titleEl) titleEl.textContent = 'Nou Producte';
             const modal = document.getElementById('modal-product');
@@ -2649,14 +2667,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Live preview for main product image file input
+    const fileMainInput = document.getElementById('product-file-main');
+    if (fileMainInput) {
+        fileMainInput.addEventListener('change', (e) => {
+            const file = e.target.files && e.target.files[0];
+            const preview = document.getElementById('product-preview-main');
+            if (file && preview) {
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    preview.src = ev.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
     const formProduct = document.getElementById('form-product');
     if (formProduct) {
         formProduct.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btnSave = document.getElementById('btn-save-product');
+            const originalBtnText = btnSave ? btnSave.innerHTML : 'Guardar Producte';
             try {
                 if (btnSave) {
                     btnSave.disabled = true;
+                    btnSave.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;">⟳</span> Guardant...';
                 }
 
                 const id = document.getElementById('product-id').value;
@@ -2667,11 +2704,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 const category_es = document.getElementById('product-category-es').value.trim();
                 const price = parseFloat(document.getElementById('product-price').value) || 0;
                 const status = document.getElementById('product-status').value;
-                const image_url = document.getElementById('product-image-url').value.trim();
+                let image_url = document.getElementById('product-image-url').value.trim();
                 const imagesRaw = document.getElementById('product-images').value.trim();
-                const images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+                let images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
                 const description = document.getElementById('product-description').value.trim();
                 const description_es = document.getElementById('product-description-es').value.trim();
+
+                // 1. Upload main image file if selected
+                const mainFileInput = document.getElementById('product-file-main');
+                if (mainFileInput && mainFileInput.files && mainFileInput.files[0]) {
+                    try {
+                        image_url = await window.db.uploadImage(mainFileInput.files[0]);
+                    } catch (uploadErr) {
+                        console.warn("Could not upload main image to storage, using fallback:", uploadErr);
+                    }
+                }
+
+                // 2. Upload extra gallery image files if selected
+                const extraFilesInput = document.getElementById('product-files-extra');
+                if (extraFilesInput && extraFilesInput.files && extraFilesInput.files.length > 0) {
+                    for (let i = 0; i < extraFilesInput.files.length; i++) {
+                        try {
+                            const extraUrl = await window.db.uploadImage(extraFilesInput.files[i]);
+                            if (extraUrl) images.push(extraUrl);
+                        } catch (uploadErr) {
+                            console.warn("Could not upload extra image:", uploadErr);
+                        }
+                    }
+                }
+
+                if (!image_url && images.length > 0) {
+                    image_url = images[0];
+                }
 
                 const productData = {
                     name,
@@ -2695,6 +2759,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const modal = document.getElementById('modal-product');
                 if (modal) modal.classList.remove('active');
+                if (typeof closeModal === 'function') closeModal('modal-product');
 
                 await loadProductsTable();
 
@@ -2704,6 +2769,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 if (btnSave) {
                     btnSave.disabled = false;
+                    btnSave.innerHTML = originalBtnText;
                 }
             }
         });
