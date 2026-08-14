@@ -2419,47 +2419,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 let actionsHtml = '';
                 if (isPaid) {
                     actionsHtml = `
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.5rem;font-size:0.7rem;white-space:nowrap;" title="Tornar a pendent">
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.45rem;font-size:0.7rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Tornar a pendent">
                             <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Pendent
                         </button>
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.5rem;font-size:0.7rem;color:#ef4444;white-space:nowrap;" title="Cancel·lar reserva">
-                            <i data-lucide="x" style="width:11px;height:11px;"></i> Cancel·lar
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;" title="Cancel·lar reserva">
+                            <i data-lucide="x" style="width:11px;height:11px;"></i>
                         </button>
                     `;
                 } else if (isCancelled) {
                     actionsHtml = `
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.5rem;font-size:0.7rem;white-space:nowrap;" title="Reactivar reserva">
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.45rem;font-size:0.7rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Reactivar reserva">
                             <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Reactivar
                         </button>
                     `;
                 } else {
                     actionsHtml = `
-                        <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.25rem 0.55rem;font-size:0.7rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;" title="Validar transferència rebuda">
+                        <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.25rem 0.45rem;font-size:0.7rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Validar transferència">
                             <i data-lucide="check" style="width:11px;height:11px;"></i> Validar
                         </button>
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.5rem;font-size:0.7rem;color:#ef4444;white-space:nowrap;" title="Cancel·lar reserva">
-                            <i data-lucide="x" style="width:11px;height:11px;"></i> Cancel·lar
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;" title="Cancel·lar reserva">
+                            <i data-lucide="x" style="width:11px;height:11px;"></i>
                         </button>
                     `;
                 }
 
                 return `<tr style="${isCancelled ? 'opacity: 0.6; background: rgba(0,0,0,0.02);' : ''}">
-                    <td style="padding:0.75rem 1rem;">
-                        <div style="font-weight:700;font-size:0.9rem;line-height:1.2;">${escName}</div>
-                        <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:0.15rem;">${escEmail}</div>
+                    <td style="padding:0.65rem 0.85rem;overflow:hidden;text-overflow:ellipsis;">
+                        <div style="font-weight:700;font-size:0.85rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escName}</div>
+                        <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escEmail}</div>
                     </td>
-                    <td style="text-align:center;padding:0.75rem 0.75rem;white-space:nowrap;">
-                        <span style="font-weight:800;font-size:0.95rem;">${escSize}</span>
-                        <span style="font-size:0.75rem;color:var(--text-secondary);"> × ${r.quantity || 1}</span>
+                    <td style="text-align:center;padding:0.65rem 0.5rem;white-space:nowrap;">
+                        <span style="font-weight:800;font-size:0.9rem;">${escSize}</span>
+                        <span style="font-size:0.72rem;color:var(--text-secondary);">×${r.quantity || 1}</span>
                     </td>
-                    <td style="font-weight:700;font-size:0.9rem;padding:0.75rem 0.75rem;white-space:nowrap;">${amount}</td>
-                    <td style="padding:0.75rem 0.75rem;white-space:nowrap;">${statusBadge}</td>
-                    <td style="font-size:0.75rem;color:var(--text-secondary);padding:0.75rem 0.75rem;white-space:nowrap;">${dateStr}</td>
-                    <td style="white-space:nowrap;text-align:right;padding:0.75rem 1rem;">
-                        <div style="display:inline-flex;gap:0.35rem;align-items:center;">
+                    <td style="font-weight:700;font-size:0.85rem;padding:0.65rem 0.5rem;white-space:nowrap;">${amount}</td>
+                    <td style="padding:0.65rem 0.5rem;white-space:nowrap;">${statusBadge}</td>
+                    <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.65rem 0.5rem;white-space:nowrap;">${dateStr}</td>
+                    <td style="white-space:nowrap;text-align:right;padding:0.65rem 0.85rem;">
+                        <div style="display:inline-flex;gap:0.3rem;align-items:center;justify-content:flex-end;">
                             ${actionsHtml}
-                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre" style="width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;">
-                                <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre" style="width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:5px;cursor:pointer;">
+                                <i data-lucide="trash-2" style="width:11px;height:11px;"></i>
                             </button>
                         </div>
                     </td>
