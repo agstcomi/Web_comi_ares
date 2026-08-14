@@ -588,13 +588,13 @@
 
                 <!-- RIGHT: Product info -->
                 <div class="product-info">
-                    <p class="product-breadcrumb-tag">Tenda · Roba · Edició Limitada 2026</p>
-                    <h1 class="product-title">Camiseta<br>Festes Ares SD</h1>
-                    <p class="product-subtitle">
+                    <p class="product-breadcrumb-tag" id="product-breadcrumb-tag">Tenda · Roba · Edició Limitada 2026</p>
+                    <h1 class="product-title" id="product-title">Camiseta Festes Ares SD</h1>
+                    <p class="product-subtitle" id="product-subtitle">
                         La camiseta oficial de les Festes Patronals d'Ares del Maestrat 2026. Confeccionada en cotó de qualitat, disseny exclusiu per a la temporada de festes. Edició limitada — un cop tancat el periode de reserves no s'acceptaran més comandes.
                     </p>
 
-                    <div class="product-price">35<span style="font-size:1.2rem;">€</span></div>
+                    <div class="product-price" id="product-price">35<span style="font-size:1.2rem;">€</span></div>
                     <p class="product-price-note">Per unitat · IVA inclòs · Reserva online</p>
 
                     <div class="divider"></div>
@@ -955,75 +955,97 @@
         });
 
         async function loadProductData() {
-            if (!window.db) return;
             const params = new URLSearchParams(window.location.search);
             const slugParam = params.get('slug') || params.get('p') || params.get('id');
-            try {
-                let prod = null;
-                if (slugParam) {
-                    prod = await window.db.getProductBySlug(slugParam);
+            const isEs = window.location.pathname.includes('/es/');
+
+            function applyProduct(prod) {
+                if (!prod) return;
+                currentProduct = prod;
+                PRICE = parseFloat(prod.price) || 35.00;
+
+                const name = (isEs && prod.name_es) ? prod.name_es : (prod.name || 'Camiseta Festes Ares SD');
+                const desc = (isEs && prod.description_es) ? prod.description_es : (prod.description || '');
+                const cat = (isEs && prod.category_es) ? prod.category_es : (prod.category || 'Roba · Edició Limitada 2026');
+
+                const titleEl = document.getElementById('product-title');
+                if (titleEl) titleEl.textContent = name;
+
+                const catEl = document.getElementById('product-breadcrumb-tag');
+                if (catEl) catEl.textContent = 'Tenda · ' + cat;
+
+                const subEl = document.getElementById('product-subtitle');
+                if (subEl) subEl.textContent = desc;
+
+                const priceEl = document.getElementById('product-price');
+                if (priceEl) priceEl.innerHTML = `${Math.floor(PRICE)}<span style="font-size:1.2rem;">€</span>`;
+
+                document.title = name + ' · Festes Ares 2026';
+
+                if (prod.image_url) {
+                    const mainImg = document.getElementById('main-img');
+                    if (mainImg) mainImg.src = prod.image_url;
                 }
-                if (!prod) {
-                    const all = await window.db.getProducts();
-                    prod = (all && all.length > 0) ? all[0] : null;
-                }
-                if (prod) {
-                    currentProduct = prod;
-                    PRICE = parseFloat(prod.price) || 35.00;
-                    
-                    const titleEl = document.querySelector('.product-title');
-                    if (titleEl && prod.name) titleEl.textContent = prod.name;
-                    
-                    const catEl = document.querySelector('.product-breadcrumb-tag');
-                    if (catEl && prod.category) catEl.textContent = 'Tenda · ' + prod.category;
-                    
-                    const subEl = document.querySelector('.product-subtitle');
-                    if (subEl && prod.description) subEl.textContent = prod.description;
-                    
-                    const priceEl = document.querySelector('.product-price');
-                    if (priceEl) priceEl.innerHTML = `${Math.floor(PRICE)}<span style="font-size:1.2rem;">€</span>`;
-                    
-                    if (prod.image_url) {
-                        const mainImg = document.getElementById('main-img');
-                        if (mainImg) mainImg.src = prod.image_url;
-                    }
-                    if (prod.images && prod.images.length > 0) {
-                        const galleryStrip = document.querySelector('.product-gallery-strip');
-                        if (galleryStrip) {
-                            galleryStrip.innerHTML = prod.images.map((img, idx) => `
-                                <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${prod.name}">
-                                    <img src="${img}" alt="${prod.name}">
-                                </div>
-                            `).join('');
-                            galleryStrip.querySelectorAll('.gallery-thumb').forEach(thumb => {
-                                thumb.addEventListener('click', () => {
-                                    galleryStrip.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
-                                    thumb.classList.add('active');
-                                    document.getElementById('main-img').src = thumb.dataset.img;
-                                });
+                if (prod.images && prod.images.length > 0) {
+                    const galleryStrip = document.querySelector('.product-gallery-strip');
+                    if (galleryStrip) {
+                        galleryStrip.innerHTML = prod.images.map((img, idx) => `
+                            <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${name}">
+                                <img src="${img}" alt="${name}">
+                            </div>
+                        `).join('');
+                        galleryStrip.querySelectorAll('.gallery-thumb').forEach(thumb => {
+                            thumb.addEventListener('click', () => {
+                                galleryStrip.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                                thumb.classList.add('active');
+                                document.getElementById('main-img').src = thumb.dataset.img;
                             });
-                        }
+                        });
                     }
+                }
 
-                    if (prod.status === 'closed' || prod.status === 'sold_out') {
-                        document.getElementById('closed-overlay').style.display = 'block';
-                        document.getElementById('purchase-section').style.display = 'none';
-                    } else {
-                        document.getElementById('closed-overlay').style.display = 'none';
-                        document.getElementById('purchase-section').style.display = 'block';
+                if (prod.status === 'closed' || prod.status === 'sold_out') {
+                    document.getElementById('closed-overlay').style.display = 'block';
+                    document.getElementById('purchase-section').style.display = 'none';
+                } else {
+                    document.getElementById('closed-overlay').style.display = 'none';
+                    document.getElementById('purchase-section').style.display = 'block';
+                }
+
+                updateQty(quantity);
+            }
+
+            // 1. Instant sync load from localStorage (0 ms)
+            try {
+                const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
+                let match = slugParam ? local.find(p => p.slug === slugParam || p.id === slugParam) : local[0];
+                if (match) applyProduct(match);
+            } catch(e) {}
+
+            // 2. Fetch fresh data from DB / Supabase
+            try {
+                if (window.db) {
+                    let prod = null;
+                    if (slugParam && typeof window.db.getProductBySlug === 'function') {
+                        prod = await window.db.getProductBySlug(slugParam);
                     }
-
-                    updateQty(quantity);
+                    if (!prod && typeof window.db.getProducts === 'function') {
+                        const all = await window.db.getProducts();
+                        prod = (all && all.length > 0) ? all[0] : null;
+                    }
+                    if (prod) applyProduct(prod);
                 }
             } catch (err) {
-                console.warn('Error loading dynamic product data:', err);
+                console.warn('Error loading fresh product data:', err);
             }
         }
 
-        // ── Check reservations open & load dynamic data ──
-        window.addEventListener('load', async () => {
+        // Run immediately and on page load
+        loadProductData();
+        window.addEventListener('DOMContentLoaded', loadProductData);
+        window.addEventListener('load', () => {
             if (window.lucide) window.lucide.createIcons();
-            setTimeout(loadProductData, 100);
+            loadProductData();
         });
     </script>
     <style>
