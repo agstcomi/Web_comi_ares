@@ -16,3 +16,10 @@ data/
 
 # Build artifacts
 favicon-32.png
+
+# Environment files
+.env
+.env.local
+.env.development
+.env.production
+
