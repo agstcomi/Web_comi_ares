@@ -11,6 +11,10 @@ package-lock.json
 noticies/
 es/noticies/
 
+# Generated product subdirectories
+camisetes/*/
+es/camisetes/*/
+
 # Generated database data files
 data/
 

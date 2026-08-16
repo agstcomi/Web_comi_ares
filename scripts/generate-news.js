@@ -92,6 +92,13 @@ async function main() {
     const photos = await photosResponse.json();
     console.log(`Se encontraron ${photos.length} fotos.`);
 
+    const productsResponse = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=created_at.desc`, { headers });
+    if (!productsResponse.ok) {
+      throw new Error(`Error al consultar productos en Supabase: ${productsResponse.status} ${productsResponse.statusText}`);
+    }
+    const products = await productsResponse.json();
+    console.log(`Se encontraron ${products.length} productos.`);
+
     // Crear la carpeta data/ si no existe y guardar los archivos JSON
     const dataDir = path.join(__dirname, '..', 'data');
     if (!fs.existsSync(dataDir)) {
@@ -100,6 +107,7 @@ async function main() {
     fs.writeFileSync(path.join(dataDir, 'news.json'), JSON.stringify(news, null, 2), 'utf-8');
     fs.writeFileSync(path.join(dataDir, 'events.json'), JSON.stringify(events, null, 2), 'utf-8');
     fs.writeFileSync(path.join(dataDir, 'photos.json'), JSON.stringify(photos, null, 2), 'utf-8');
+    fs.writeFileSync(path.join(dataDir, 'products.json'), JSON.stringify(products, null, 2), 'utf-8');
     console.log("  [OK] Archivos de datos estáticos guardados en la carpeta /data/");
 
     // 2. Leer las plantillas base
@@ -310,6 +318,104 @@ async function main() {
     fs.writeFileSync(path.join(listDirCast, 'index.html'), templateCast, 'utf-8');
     console.log("  [OK] Creado listado: es/noticies/index.html");
 
+    // --- GENERAR PÁGINAS ESTÁTICAS DE PRODUCTOS (CAMISETES) ---
+    console.log("Generando páginas estáticas de productos...");
+    const templateProdValPath = path.join(__dirname, '..', 'camisetes.html');
+    const templateProdCastPath = path.join(__dirname, '..', 'es', 'camisetes.html');
+
+    if (fs.existsSync(templateProdValPath) && fs.existsSync(templateProdCastPath)) {
+      const templateProdVal = fs.readFileSync(templateProdValPath, 'utf-8');
+      const templateProdCast = fs.readFileSync(templateProdCastPath, 'utf-8');
+
+      for (const product of products) {
+        if (!product.slug) continue;
+        console.log(`Procesando producto: "${product.name}" (Slug: ${product.slug})`);
+
+        let imageUrl = product.image_url || "https://www.comiares.es/img/camiseta-product.jpg";
+        imageUrl = getAbsoluteImageUrl(imageUrl);
+
+        // --- VALENCIANO ---
+        const outDirVal = path.join(__dirname, '..', 'camisetes', product.slug);
+        if (!fs.existsSync(outDirVal)) {
+          fs.mkdirSync(outDirVal, { recursive: true });
+        }
+
+        const titleVal = product.name || "Camiseta Festes Ares SD";
+        const descVal = product.description || "Reserva la camiseta oficial de les Festes Patronals d'Ares del Maestrat 2026.";
+        const redirectUrlVal = `https://www.comiares.es/camisetes/${product.slug}/`;
+        const redirectUrlCast = `https://www.comiares.es/es/camisetes/${product.slug}/`;
+
+        let htmlVal = templateProdVal;
+        htmlVal = htmlVal.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(titleVal)} | Tenda Oficial Comissió de Festes</title>`);
+        htmlVal = htmlVal.replace(/<meta name="description" content="[^"]*">/i, `<meta name="description" content="${escapeHtml(descVal)}">`);
+        htmlVal = htmlVal.replace(/<meta property="og:url" content="[^"]*">/i, `<meta property="og:url" content="${redirectUrlVal}">`);
+        htmlVal = htmlVal.replace(/<meta property="og:title" content="[^"]*">/i, `<meta property="og:title" content="${escapeHtml(titleVal)}">`);
+        htmlVal = htmlVal.replace(/<meta property="og:description" content="[^"]*">/i, `<meta property="og:description" content="${escapeHtml(descVal)}">`);
+        htmlVal = htmlVal.replace(/<meta property="og:image" content="[^"]*">/i, `<meta property="og:image" content="${imageUrl}">`);
+        htmlVal = htmlVal.replace(/<meta property="twitter:url" content="[^"]*">/i, `<meta property="twitter:url" content="${redirectUrlVal}">`);
+        htmlVal = htmlVal.replace(/<meta property="twitter:title" content="[^"]*">/i, `<meta property="twitter:title" content="${escapeHtml(titleVal)}">`);
+        htmlVal = htmlVal.replace(/<meta property="twitter:description" content="[^"]*">/i, `<meta property="twitter:description" content="${escapeHtml(descVal)}">`);
+        htmlVal = htmlVal.replace(/<meta property="twitter:image" content="[^"]*">/i, `<meta property="twitter:image" content="${imageUrl}">`);
+        htmlVal = htmlVal.replace(/<link rel="canonical" href="[^"]*">/i, `<link rel="canonical" href="${redirectUrlVal}">`);
+        htmlVal = htmlVal.replace(/<link rel="alternate" hreflang="ca" href="[^"]*">/i, `<link rel="alternate" hreflang="ca" href="${redirectUrlVal}">`);
+        htmlVal = htmlVal.replace(/<link rel="alternate" hreflang="ca-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="ca-ES" href="${redirectUrlVal}">`);
+        htmlVal = htmlVal.replace(/<link rel="alternate" hreflang="es" href="[^"]*">/i, `<link rel="alternate" hreflang="es" href="${redirectUrlCast}">`);
+        htmlVal = htmlVal.replace(/<link rel="alternate" hreflang="es-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="es-ES" href="${redirectUrlCast}">`);
+        htmlVal = htmlVal.replace(/<link rel="alternate" hreflang="x-default" href="[^"]*">/i, `<link rel="alternate" hreflang="x-default" href="${redirectUrlVal}">`);
+
+        const injectionVal = `
+    <!-- Inyectado por el generador JAMstack de productos -->
+    <meta name="robots" content="max-image-preview:large">
+    <script>
+      window.staticProductSlug = "${product.slug}";
+    </script>
+  </head>`;
+        htmlVal = htmlVal.replace(/<\/head>/i, injectionVal);
+
+        fs.writeFileSync(path.join(outDirVal, 'index.html'), htmlVal, 'utf-8');
+        console.log(`  [OK] Creado: camisetes/${product.slug}/index.html`);
+
+        // --- CASTELLANO ---
+        const outDirCast = path.join(__dirname, '..', 'es', 'camisetes', product.slug);
+        if (!fs.existsSync(outDirCast)) {
+          fs.mkdirSync(outDirCast, { recursive: true });
+        }
+
+        const titleCast = product.name_es || product.name || "Camiseta Fiestas Ares SD";
+        const descCast = product.description_es || product.description || "Reserva la camiseta oficial de las Fiestas Patronales de Ares del Maestrat 2026.";
+
+        let htmlCast = templateProdCast;
+        htmlCast = htmlCast.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(titleCast)} | Tienda Oficial Comisión de Fiestas</title>`);
+        htmlCast = htmlCast.replace(/<meta name="description" content="[^"]*">/i, `<meta name="description" content="${escapeHtml(descCast)}">`);
+        htmlCast = htmlCast.replace(/<meta property="og:url" content="[^"]*">/i, `<meta property="og:url" content="${redirectUrlCast}">`);
+        htmlCast = htmlCast.replace(/<meta property="og:title" content="[^"]*">/i, `<meta property="og:title" content="${escapeHtml(titleCast)}">`);
+        htmlCast = htmlCast.replace(/<meta property="og:description" content="[^"]*">/i, `<meta property="og:description" content="${escapeHtml(descCast)}">`);
+        htmlCast = htmlCast.replace(/<meta property="og:image" content="[^"]*">/i, `<meta property="og:image" content="${imageUrl}">`);
+        htmlCast = htmlCast.replace(/<meta property="twitter:url" content="[^"]*">/i, `<meta property="twitter:url" content="${redirectUrlCast}">`);
+        htmlCast = htmlCast.replace(/<meta property="twitter:title" content="[^"]*">/i, `<meta property="twitter:title" content="${escapeHtml(titleCast)}">`);
+        htmlCast = htmlCast.replace(/<meta property="twitter:description" content="[^"]*">/i, `<meta property="twitter:description" content="${escapeHtml(descCast)}">`);
+        htmlCast = htmlCast.replace(/<meta property="twitter:image" content="[^"]*">/i, `<meta property="twitter:image" content="${imageUrl}">`);
+        htmlCast = htmlCast.replace(/<link rel="canonical" href="[^"]*">/i, `<link rel="canonical" href="${redirectUrlCast}">`);
+        htmlCast = htmlCast.replace(/<link rel="alternate" hreflang="ca" href="[^"]*">/i, `<link rel="alternate" hreflang="ca" href="${redirectUrlVal}">`);
+        htmlCast = htmlCast.replace(/<link rel="alternate" hreflang="ca-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="ca-ES" href="${redirectUrlVal}">`);
+        htmlCast = htmlCast.replace(/<link rel="alternate" hreflang="es" href="[^"]*">/i, `<link rel="alternate" hreflang="es" href="${redirectUrlCast}">`);
+        htmlCast = htmlCast.replace(/<link rel="alternate" hreflang="es-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="es-ES" href="${redirectUrlCast}">`);
+        htmlCast = htmlCast.replace(/<link rel="alternate" hreflang="x-default" href="[^"]*">/i, `<link rel="alternate" hreflang="x-default" href="${redirectUrlVal}">`);
+
+        const injectionCast = `
+    <!-- Inyectado por el generador JAMstack de productos -->
+    <meta name="robots" content="max-image-preview:large">
+    <script>
+      window.staticProductSlug = "${product.slug}";
+    </script>
+  </head>`;
+        htmlCast = htmlCast.replace(/<\/head>/i, injectionCast);
+
+        fs.writeFileSync(path.join(outDirCast, 'index.html'), htmlCast, 'utf-8');
+        console.log(`  [OK] Creado: es/camisetes/${product.slug}/index.html`);
+      }
+    }
+
     // --- ACTUALIZAR SITEMAP.XML ---
     const sitemapPath = path.join(__dirname, '..', 'sitemap.xml');
     if (fs.existsSync(sitemapPath)) {
@@ -363,6 +469,54 @@ async function main() {
         console.log("  [OK] sitemap.xml preparado con las URLs dinámicas de noticias.");
       } else {
         console.warn("  [WARN] No se encontraron los marcadores <!-- DYNAMIC NEWS START --> y <!-- DYNAMIC NEWS END --> en sitemap.xml");
+      }
+
+      // Update Products
+      let productsXml = '\n';
+      for (const product of products) {
+        if (product.slug) {
+          const date = product.created_at ? product.created_at.split('T')[0] : new Date().toISOString().split('T')[0];
+          const valUrl = `https://www.comiares.es/camisetes/${product.slug}/`;
+          const castUrl = `https://www.comiares.es/es/camisetes/${product.slug}/`;
+          
+          // Valencian product entry
+          productsXml += `    <url>
+        <loc>${valUrl}</loc>
+        <lastmod>${date}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="${valUrl}"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="${valUrl}"/>
+        <xhtml:link rel="alternate" hreflang="es" href="${castUrl}"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="${castUrl}"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="${valUrl}"/>
+    </url>\n`;
+
+          // Castellano product entry
+          productsXml += `    <url>
+        <loc>${castUrl}</loc>
+        <lastmod>${date}</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="${valUrl}"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="${valUrl}"/>
+        <xhtml:link rel="alternate" hreflang="es" href="${castUrl}"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="${castUrl}"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="${valUrl}"/>
+    </url>\n`;
+        }
+      }
+      
+      const startProdIdx = sitemapContent.indexOf('<!-- DYNAMIC PRODUCTS START -->');
+      const endProdIdx = sitemapContent.indexOf('<!-- DYNAMIC PRODUCTS END -->');
+      
+      if (startProdIdx !== -1 && endProdIdx !== -1) {
+        sitemapContent = sitemapContent.substring(0, startProdIdx + '<!-- DYNAMIC PRODUCTS START -->'.length) +
+                         productsXml + '    ' +
+                         sitemapContent.substring(endProdIdx);
+        console.log("  [OK] sitemap.xml preparado con las URLs dinámicas de productos.");
+      } else {
+        console.warn("  [WARN] No se encontraron los marcadores <!-- DYNAMIC PRODUCTS START --> y <!-- DYNAMIC PRODUCTS END --> en sitemap.xml");
       }
 
       // Update Gallery

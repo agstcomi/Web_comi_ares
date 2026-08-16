@@ -485,7 +485,7 @@
     <div id="footer-placeholder"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
-    <script src="/js/db.js?v=1.30" defer></script>
+    <script src="/js/db.js?v=2.0" defer></script>
     <script src="/js/main.js?v=1.16" defer></script>
     <script src="/js/push-notifications.js?v=1.20" defer></script>
     <script>
@@ -510,7 +510,7 @@
                     const statusText = isOpen ? 'Reserva oberta' : p.status === 'sold_out' ? 'Esgotat' : 'Reserves tancades';
                     const statusClass = isOpen ? 'product-card-status' : 'product-card-status closed';
                     const priceStr = (typeof p.price === 'number' ? p.price.toFixed(2) : p.price) + '€';
-                    const href = (p.slug === 'camisetes' || !p.slug) ? '/camisetes' : `/camisetes.html?slug=${encodeURIComponent(p.slug)}`;
+                    const href = (p.slug === 'camisetes' || !p.slug) ? '/camisetes/' : `/camisetes/${p.slug}/`;
                     const imgUrl = p.image_url || '/img/camiseta-1.webp';
                     const name = window.db.escapeHTML ? window.db.escapeHTML(p.name) : p.name;
                     const cat = window.db.escapeHTML ? window.db.escapeHTML(p.category || 'Edició Limitada') : (p.category || 'Edició Limitada');

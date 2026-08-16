@@ -768,7 +768,7 @@
             });
         })();
     </script>
-    <script src="/js/db.js?v=1.52" defer></script>
+    <script src="/js/db.js?v=2.0" defer></script>
     <script src="/js/main.js?v=1.16" defer></script>
     <script src="/js/push-notifications.js?v=1.20" defer></script>
     <script>
@@ -947,7 +947,7 @@
 
         async function loadProductData() {
             const params = new URLSearchParams(window.location.search);
-            const slugParam = params.get('slug') || params.get('p') || params.get('id');
+            const slugParam = window.staticProductSlug || params.get('slug') || params.get('p') || params.get('id');
             const isEs = true;
 
             function applyProduct(prod) {

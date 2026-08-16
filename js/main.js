@@ -218,7 +218,12 @@ function renderHeader() {
 
     let menuHTML = '';
     menuItems.forEach(item => {
-        const isActive = (page === item.file || (item.file === '.' && page === '')) ? 'active' : '';
+        const isActive = (
+            page === item.file || 
+            (item.file === '.' && page === '') ||
+            (item.file === 'noticies' && (path.includes('/noticies/') || path.endsWith('/noticies'))) ||
+            (item.file === 'tenda' && (path.includes('/tenda') || path.includes('/camisetes')))
+        ) ? 'active' : '';
         let href = '';
         if (item.file === '.') {
             href = isEs ? '/es/' : '/';

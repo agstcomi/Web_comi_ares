@@ -1963,8 +1963,10 @@ class AppDatabase {
 
     // Products Actions
     async getProducts() {
+        const isAdmin = window.location.pathname.includes('/admin/');
         let products = [];
-        if (this.isSupabaseConfigured()) {
+
+        if (this.isSupabaseConfigured() && isAdmin) {
             try {
                 const { data, error } = await this.supabase
                     .from('products')
@@ -1975,6 +1977,31 @@ class AppDatabase {
                 }
             } catch (err) {
                 console.error("Error loading products from Supabase:", err);
+            }
+        } else {
+            // Public or Local Mode - fetch static JSON first
+            try {
+                const cacheBuster = Math.floor(Date.now() / 3600000); // 1 hour cache
+                const dataUrl = `/data/products.json?v=${cacheBuster}`;
+                const res = await fetch(dataUrl);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                products = await res.json();
+                if (products && products.length > 0) {
+                    return products;
+                }
+            } catch (err) {
+                console.warn("Error loading static products, falling back:", err);
+                if (this.isSupabaseConfigured()) {
+                    try {
+                        const { data, error } = await this.supabase
+                            .from('products')
+                            .select('*')
+                            .order('created_at', { ascending: false });
+                        if (!error && data && data.length > 0) {
+                            return data;
+                        }
+                    } catch (e) {}
+                }
             }
         }
 

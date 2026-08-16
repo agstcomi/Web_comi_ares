@@ -125,6 +125,128 @@
     </url>
 
     <!-- DYNAMIC GALLERY START -->
+    <url>
+        <loc>https://www.comiares.es/galeria</loc>
+        <lastmod>2026-06-30</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/galeria"/>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838247591_mlky6.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (1)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838248602_4zfpv.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (2)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838250302_9812z.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (3)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838250822_c6lh5.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (4)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838251363_1m74q.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (5)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838251936_5myv6.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (6)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838252507_5tv3r.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (7)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838253118_7blb4.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (8)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838253729_5a0ed.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (9)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838254293_d08l7.JPG</image:loc>
+            <image:title>Ronda d&#039;Ares (10)</image:title>
+            <image:caption>Ronda d&#039;Ares</image:caption>
+        </image:image>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/galeria</loc>
+        <lastmod>2026-06-30</lastmod>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/galeria"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/galeria"/>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838247591_mlky6.JPG</image:loc>
+            <image:title>Ronda de Ares (1)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838248602_4zfpv.JPG</image:loc>
+            <image:title>Ronda de Ares (2)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838250302_9812z.JPG</image:loc>
+            <image:title>Ronda de Ares (3)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838250822_c6lh5.JPG</image:loc>
+            <image:title>Ronda de Ares (4)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838251363_1m74q.JPG</image:loc>
+            <image:title>Ronda de Ares (5)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838251936_5myv6.JPG</image:loc>
+            <image:title>Ronda de Ares (6)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838252507_5tv3r.JPG</image:loc>
+            <image:title>Ronda de Ares (7)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838253118_7blb4.JPG</image:loc>
+            <image:title>Ronda de Ares (8)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838253729_5a0ed.JPG</image:loc>
+            <image:title>Ronda de Ares (9)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+        <image:image>
+            <image:loc>https://wqelwzlnxhbhiedmxona.supabase.co/storage/v1/object/public/photos/1782838254293_d08l7.JPG</image:loc>
+            <image:title>Ronda de Ares (10)</image:title>
+            <image:caption>Ronda de Ares</image:caption>
+        </image:image>
+    </url>
     <!-- DYNAMIC GALLERY END -->
 
     <!-- CONTACTE / CONTACTO -->
@@ -226,6 +348,182 @@
 
     <!-- DYNAMIC NEWS START -->
     <url>
+        <loc>https://www.comiares.es/noticies/la-comissio-de-festes-dares-presenta-la-samarreta-homenatge-a-ares-sd/</loc>
+        <lastmod>2026-08-16</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-presenta-la-samarreta-homenatge-a-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-presenta-la-samarreta-homenatge-a-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/la-comision-del-ares-festival-presenta-la-camiseta-homenaje-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/la-comision-del-ares-festival-presenta-la-camiseta-homenaje-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-presenta-la-samarreta-homenatge-a-ares-sd/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/la-comision-del-ares-festival-presenta-la-camiseta-homenaje-ares-sd/</loc>
+        <lastmod>2026-08-16</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-presenta-la-samarreta-homenatge-a-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-presenta-la-samarreta-homenatge-a-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/la-comision-del-ares-festival-presenta-la-camiseta-homenaje-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/la-comision-del-ares-festival-presenta-la-camiseta-homenaje-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-presenta-la-samarreta-homenatge-a-ares-sd/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/noticies/llibret-de-les-festes-ares-2026/</loc>
+        <lastmod>2026-08-05</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/llibret-de-les-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/llibret-de-les-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/ya-esta-disponible-el-libro-de-las-fiestas-de-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/ya-esta-disponible-el-libro-de-las-fiestas-de-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/llibret-de-les-festes-ares-2026/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/ya-esta-disponible-el-libro-de-las-fiestas-de-ares-2026/</loc>
+        <lastmod>2026-08-05</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/llibret-de-les-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/llibret-de-les-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/ya-esta-disponible-el-libro-de-las-fiestas-de-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/ya-esta-disponible-el-libro-de-las-fiestas-de-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/llibret-de-les-festes-ares-2026/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/noticies/la-comissio-de-festes-dares-impulsa-la-3a-subhasta-del-poble-per-a-recaptar-fons/</loc>
+        <lastmod>2026-07-28</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-impulsa-la-3a-subhasta-del-poble-per-a-recaptar-fons/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-impulsa-la-3a-subhasta-del-poble-per-a-recaptar-fons/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-impulsa-la-3-subasta-popular-para-recaudar-fondos/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-impulsa-la-3-subasta-popular-para-recaudar-fondos/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-impulsa-la-3a-subhasta-del-poble-per-a-recaptar-fons/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-impulsa-la-3-subasta-popular-para-recaudar-fondos/</loc>
+        <lastmod>2026-07-28</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-impulsa-la-3a-subhasta-del-poble-per-a-recaptar-fons/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-impulsa-la-3a-subhasta-del-poble-per-a-recaptar-fons/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-impulsa-la-3-subasta-popular-para-recaudar-fondos/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-impulsa-la-3-subasta-popular-para-recaudar-fondos/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/la-comissio-de-festes-dares-impulsa-la-3a-subhasta-del-poble-per-a-recaptar-fons/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/noticies/ares-dona-el-tret-deixida-a-les-festes-patronals-amb-una-fideua-popular/</loc>
+        <lastmod>2026-07-27</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/ares-dona-el-tret-deixida-a-les-festes-patronals-amb-una-fideua-popular/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/ares-dona-el-tret-deixida-a-les-festes-patronals-amb-una-fideua-popular/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/ares-da-el-pistoletazo-de-salida-a-las-fiestas-patronales-con-una-fideua-popular/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/ares-da-el-pistoletazo-de-salida-a-las-fiestas-patronales-con-una-fideua-popular/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/ares-dona-el-tret-deixida-a-les-festes-patronals-amb-una-fideua-popular/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/ares-da-el-pistoletazo-de-salida-a-las-fiestas-patronales-con-una-fideua-popular/</loc>
+        <lastmod>2026-07-27</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/ares-dona-el-tret-deixida-a-les-festes-patronals-amb-una-fideua-popular/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/ares-dona-el-tret-deixida-a-les-festes-patronals-amb-una-fideua-popular/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/ares-da-el-pistoletazo-de-salida-a-las-fiestas-patronales-con-una-fideua-popular/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/ares-da-el-pistoletazo-de-salida-a-las-fiestas-patronales-con-una-fideua-popular/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/ares-dona-el-tret-deixida-a-les-festes-patronals-amb-una-fideua-popular/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/noticies/nou-mocador-festes-ares-2026/</loc>
+        <lastmod>2026-07-22</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/nou-mocador-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/nou-mocador-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-presenta-el-nuevo-panuelo-de-las-fiestas-patronales-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-presenta-el-nuevo-panuelo-de-las-fiestas-patronales-2026/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/nou-mocador-festes-ares-2026/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-presenta-el-nuevo-panuelo-de-las-fiestas-patronales-2026/</loc>
+        <lastmod>2026-07-22</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/nou-mocador-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/nou-mocador-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-presenta-el-nuevo-panuelo-de-las-fiestas-patronales-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/la-comision-de-fiestas-de-ares-presenta-el-nuevo-panuelo-de-las-fiestas-patronales-2026/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/nou-mocador-festes-ares-2026/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/noticies/ares-del-maestrat-recupera-partida-pilota-valenciana/</loc>
+        <lastmod>2026-07-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/ares-del-maestrat-recupera-partida-pilota-valenciana/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/ares-del-maestrat-recupera-partida-pilota-valenciana/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/ares-del-maestrat-recuperara-la-pelota-en-la-calle-con-una-partida-de-exhibicion/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/ares-del-maestrat-recuperara-la-pelota-en-la-calle-con-una-partida-de-exhibicion/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/ares-del-maestrat-recupera-partida-pilota-valenciana/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/ares-del-maestrat-recuperara-la-pelota-en-la-calle-con-una-partida-de-exhibicion/</loc>
+        <lastmod>2026-07-08</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/ares-del-maestrat-recupera-partida-pilota-valenciana/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/ares-del-maestrat-recupera-partida-pilota-valenciana/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/ares-del-maestrat-recuperara-la-pelota-en-la-calle-con-una-partida-de-exhibicion/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/ares-del-maestrat-recuperara-la-pelota-en-la-calle-con-una-partida-de-exhibicion/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/ares-del-maestrat-recupera-partida-pilota-valenciana/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/noticies/diego-garcia-guanya-la-4a-edicio-del-concurs-de-disseny-festes-ares-2026/</loc>
+        <lastmod>2026-07-02</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/diego-garcia-guanya-la-4a-edicio-del-concurs-de-disseny-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/diego-garcia-guanya-la-4a-edicio-del-concurs-de-disseny-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/diego-garcia-gana-la-4-edicion-del-concurso-de-diseno-festes-ares/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/diego-garcia-gana-la-4-edicion-del-concurso-de-diseno-festes-ares/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/diego-garcia-guanya-la-4a-edicio-del-concurs-de-disseny-festes-ares-2026/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/diego-garcia-gana-la-4-edicion-del-concurso-de-diseno-festes-ares/</loc>
+        <lastmod>2026-07-02</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/diego-garcia-guanya-la-4a-edicio-del-concurs-de-disseny-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/diego-garcia-guanya-la-4a-edicio-del-concurs-de-disseny-festes-ares-2026/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/diego-garcia-gana-la-4-edicion-del-concurso-de-diseno-festes-ares/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/diego-garcia-gana-la-4-edicion-del-concurso-de-diseno-festes-ares/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/diego-garcia-guanya-la-4a-edicio-del-concurs-de-disseny-festes-ares-2026/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/noticies/nou-material-infraestructura-ares/</loc>
+        <lastmod>2026-06-16</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/nou-material-infraestructura-ares/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/nou-material-infraestructura-ares/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/comision-fiestas-ares-nuevo-material-infraestructura/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/comision-fiestas-ares-nuevo-material-infraestructura/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/nou-material-infraestructura-ares/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/comision-fiestas-ares-nuevo-material-infraestructura/</loc>
+        <lastmod>2026-06-16</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/nou-material-infraestructura-ares/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/nou-material-infraestructura-ares/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/comision-fiestas-ares-nuevo-material-infraestructura/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/comision-fiestas-ares-nuevo-material-infraestructura/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/nou-material-infraestructura-ares/"/>
+    </url>
+    <url>
         <loc>https://www.comiares.es/noticies/mostra-productes-de-la-terra-ares-del-maestrat/</loc>
         <lastmod>2026-06-09</lastmod>
         <changefreq>weekly</changefreq>
@@ -314,6 +612,28 @@
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/concurs-disseny-festes-ares-2026/"/>
     </url>
     <url>
+        <loc>https://www.comiares.es/noticies/allotjament-ares-del-maestrat/</loc>
+        <lastmod>2026-05-26</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/allotjament-ares-del-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/allotjament-ares-del-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/como-llegar-y-donde-alojarse-en-ares-del-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/como-llegar-y-donde-alojarse-en-ares-del-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/allotjament-ares-del-maestrat/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/como-llegar-y-donde-alojarse-en-ares-del-maestrat/</loc>
+        <lastmod>2026-05-26</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/allotjament-ares-del-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/allotjament-ares-del-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/como-llegar-y-donde-alojarse-en-ares-del-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/como-llegar-y-donde-alojarse-en-ares-del-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/allotjament-ares-del-maestrat/"/>
+    </url>
+    <url>
         <loc>https://www.comiares.es/noticies/que-vore-a-ares-del-maestrat/</loc>
         <lastmod>2026-05-25</lastmod>
         <changefreq>weekly</changefreq>
@@ -336,4 +656,29 @@
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/que-vore-a-ares-del-maestrat/"/>
     </url>
     <!-- DYNAMIC NEWS END -->
+
+    <!-- DYNAMIC PRODUCTS START -->
+    <url>
+        <loc>https://www.comiares.es/camisetes/samarreta-ares-sd/</loc>
+        <lastmod>2026-08-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/camisetes/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/camisetes/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/camisetes/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/camisetes/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/camisetes/samarreta-ares-sd/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/camisetes/samarreta-ares-sd/</loc>
+        <lastmod>2026-08-14</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/camisetes/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/camisetes/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/camisetes/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/camisetes/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/camisetes/samarreta-ares-sd/"/>
+    </url>
+    <!-- DYNAMIC PRODUCTS END -->
 </urlset>
