@@ -59,6 +59,15 @@
             background: linear-gradient(to right, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.35) 60%, rgba(0,0,0,0.15) 100%),
                         linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
         }
+        .tenda-hero-video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+            pointer-events: none;
+        }
         .tenda-hero-inner {
             position: relative;
             z-index: 1;
@@ -357,7 +366,11 @@
 
     <!-- Hero -->
     <section class="hero tenda-hero" id="hero">
-        <div class="tenda-hero-bg"></div>
+        <div class="tenda-hero-bg">
+            <video class="tenda-hero-video" autoplay loop muted playsinline poster="/img/tenda-hero.webp">
+                <source src="/video/Ares_sd_tenda_web.mp4" type="video/mp4">
+            </video>
+        </div>
         <div class="tenda-hero-inner">
             <div class="container" style="text-align: center;">
                 <h1>Tienda<br><em>Oficial</em></h1>
