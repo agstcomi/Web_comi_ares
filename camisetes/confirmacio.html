@@ -5,7 +5,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva Registrada — Camisetes Festes Ares 2026</title>
+    <title>Reserva Registrada — Samarreta Homenatge Ares SD</title>
     <meta name="robots" content="noindex, nofollow">
     <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
     <link rel="icon" href="/favicon.png" type="image/png">
@@ -148,6 +148,34 @@
             color: var(--text-muted);
             margin-bottom: 0.75rem;
         }
+        .product-summary-item {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding-bottom: 0.85rem;
+            margin-bottom: 0.65rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .product-summary-thumb {
+            width: 56px;
+            height: 56px;
+            border-radius: 8px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            flex-shrink: 0;
+        }
+        .product-summary-info h4 {
+            font-size: 0.92rem;
+            font-weight: 700;
+            margin: 0 0 0.15rem 0;
+            color: var(--text-primary);
+        }
+        .product-summary-info p {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin: 0;
+        }
         .summary-row {
             display: flex;
             justify-content: space-between;
@@ -271,7 +299,7 @@
                 <div class="bank-field">
                     <div class="bank-field-label">Concepte obligatori</div>
                     <div class="bank-field-value-row">
-                        <span class="bank-field-value" id="transfer-concept">Camiseta - [Nom i Cognoms]</span>
+                        <span class="bank-field-value" id="transfer-concept">Samarreta - [Nom i Cognoms]</span>
                         <button type="button" class="btn-copy" id="btn-copy-concept" onclick="copyConcept(this)">
                             <i data-lucide="copy" style="width:12px;height:12px;"></i>
                             <span>Copiar</span>
@@ -283,9 +311,16 @@
             <!-- Reservation summary -->
             <div class="reservation-summary" id="reservation-summary">
                 <h3>Resum de la teua comanda</h3>
+                <div class="product-summary-item">
+                    <img src="/img/camiseta-1.webp" alt="Samarreta Homenatge Ares SD" class="product-summary-thumb">
+                    <div class="product-summary-info">
+                        <h4>Samarreta Homenatge Ares SD</h4>
+                        <p>Edició Limitada · Ares del Maestrat</p>
+                    </div>
+                </div>
                 <div class="summary-row">
                     <span class="label">Producte</span>
-                    <span class="value">Camiseta Festes Ares SD</span>
+                    <span class="value">Samarreta Homenatge Ares SD</span>
                 </div>
                 <div class="summary-row">
                     <span class="label">Talla</span>
@@ -340,7 +375,7 @@
         const total = params.get('total') ? parseFloat(params.get('total')) : (35 * qty);
 
         const fullName = [name, surname].filter(Boolean).join(' ') || 'Nom i Cognoms';
-        const conceptText = `Camiseta - ${fullName}`;
+        const conceptText = `Samarreta - ${fullName}`;
 
         if (name) {
             document.getElementById('confirmation-subtitle').innerHTML =

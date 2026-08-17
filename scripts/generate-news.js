@@ -362,8 +362,8 @@ async function main() {
           fs.mkdirSync(outDirVal, { recursive: true });
         }
 
-        const titleVal = product.name || "Camiseta Festes Ares SD";
-        const descVal = product.description || "Reserva la camiseta oficial de les Festes Patronals d'Ares del Maestrat 2026.";
+        const titleVal = product.name || "Samarreta Homenatge Ares SD";
+        const descVal = product.description || "Reserva la Samarreta Homenatge a l'Ares SD. Edició limitada de la Comissió de Festes d'Ares del Maestrat.";
         const redirectUrlVal = `https://www.comiares.es/camisetes/${product.slug}/`;
         const redirectUrlCast = `https://www.comiares.es/es/camisetes/${product.slug}/`;
 
@@ -403,8 +403,8 @@ async function main() {
           fs.mkdirSync(outDirCast, { recursive: true });
         }
 
-        const titleCast = product.name_es || product.name || "Camiseta Fiestas Ares SD";
-        const descCast = product.description_es || product.description || "Reserva la camiseta oficial de las Fiestas Patronales de Ares del Maestrat 2026.";
+        const titleCast = product.name_es || product.name || "Camiseta Homenaje Ares SD";
+        const descCast = product.description_es || product.description || "Reserva la Camiseta Homenaje al Ares SD. Edición limitada de la Comisión de Fiestas de Ares del Maestrat.";
 
         let htmlCast = templateProdCast;
         htmlCast = htmlCast.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(titleCast)} | Tienda Oficial Comisión de Fiestas</title>`);
