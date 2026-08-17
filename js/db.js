@@ -5,6 +5,8 @@
 // L'administrador les configura una vegada des del panell d'administració
 // (apartat "Configuració") i es guarden de forma segura en localStorage.
 // Per a l'entorn de CI/CD (GitHub Actions), es gestionen via GitHub Secrets.
+const SUPABASE_URL = "%%SUPABASE_URL%%";
+const SUPABASE_ANON_KEY = "%%SUPABASE_ANON_KEY%%";
 
 // Mock Data representing real events/news of Comissió de Festes d'Ares
 const MOCK_NEWS = [
@@ -387,7 +389,12 @@ class AppDatabase {
         }
 
         // 2. Fallback to hardcoded configuration in the code
-        if (typeof SUPABASE_URL !== 'undefined' && typeof SUPABASE_ANON_KEY !== 'undefined' && SUPABASE_URL && SUPABASE_ANON_KEY) {
+        if (typeof SUPABASE_URL !== 'undefined' && 
+            typeof SUPABASE_ANON_KEY !== 'undefined' && 
+            SUPABASE_URL && 
+            SUPABASE_ANON_KEY && 
+            !SUPABASE_URL.startsWith('%%') && 
+            !SUPABASE_ANON_KEY.startsWith('%%')) {
             try {
                 if (window.supabase) {
                     this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

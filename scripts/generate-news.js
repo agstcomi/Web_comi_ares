@@ -695,6 +695,28 @@ async function main() {
         console.log("  [OK] es/programacio.html actualizada con datos estructurados de eventos estáticos.");
       }
     }
+    // F1 - Inject Supabase credentials into js/db.js if available in environment
+    if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+      const dbJsPath = path.join(__dirname, '..', 'js', 'db.js');
+      if (fs.existsSync(dbJsPath)) {
+        let dbJsContent = fs.readFileSync(dbJsPath, 'utf-8');
+        let updated = false;
+        
+        if (dbJsContent.includes('%%SUPABASE_URL%%')) {
+          dbJsContent = dbJsContent.replace('%%SUPABASE_URL%%', SUPABASE_URL);
+          updated = true;
+        }
+        if (dbJsContent.includes('%%SUPABASE_ANON_KEY%%')) {
+          dbJsContent = dbJsContent.replace('%%SUPABASE_ANON_KEY%%', SUPABASE_ANON_KEY);
+          updated = true;
+        }
+        
+        if (updated) {
+          fs.writeFileSync(dbJsPath, dbJsContent, 'utf-8');
+          console.log("  [OK] Credenciales de Supabase inyectadas en js/db.js.");
+        }
+      }
+    }
 
     console.log("Generación completada exitosamente.");
   } catch (error) {
