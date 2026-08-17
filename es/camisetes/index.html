@@ -772,7 +772,7 @@
             });
         })();
     </script>
-    <script src="/js/db.js?v=2.2" defer></script>
+    <script src="/js/db.js?v=2.3" defer></script>
     <script src="/js/main.js?v=1.16" defer></script>
     <script src="/js/push-notifications.js?v=1.20" defer></script>
     <script>
@@ -1004,21 +1004,19 @@
                         productImages = prod.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
                     }
                 }
+                productImages = [...new Set(productImages.map(s => typeof s === 'string' ? s.trim() : s).filter(Boolean))];
                 if (productImages.length === 0 && prod.image_url) {
                     productImages = [prod.image_url];
                 }
-                if (prod.image_url && !productImages.includes(prod.image_url)) {
-                    productImages.unshift(prod.image_url);
-                }
 
-                if (prod.image_url) {
-                    const mainImg = document.getElementById('main-img');
-                    if (mainImg) mainImg.src = prod.image_url;
-                }
+                const primaryImg = productImages.length > 0 ? productImages[0] : (prod.image_url || '/img/camiseta-1.webp');
+                const mainImg = document.getElementById('main-img');
+                if (mainImg) mainImg.src = primaryImg;
 
-                if (productImages.length > 0) {
-                    const galleryStrip = document.querySelector('.gallery-thumbs, .product-gallery-strip, #product-gallery-strip');
-                    if (galleryStrip) {
+                const galleryStrip = document.querySelector('.gallery-thumbs, .product-gallery-strip, #product-gallery-strip');
+                if (galleryStrip) {
+                    if (productImages.length > 1) {
+                        galleryStrip.style.display = 'flex';
                         galleryStrip.innerHTML = productImages.map((img, idx) => `
                             <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${name} — Imagen ${idx + 1}">
                                 <img src="${img}" alt="${name} — Imagen ${idx + 1}">
@@ -1028,12 +1026,21 @@
                             thumb.addEventListener('click', () => {
                                 galleryStrip.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
                                 thumb.classList.add('active');
-                                const mainImg = document.getElementById('main-img');
                                 if (mainImg && thumb.dataset.img) {
                                     mainImg.src = thumb.dataset.img;
                                 }
                             });
                         });
+                    } else if (productImages.length === 1) {
+                        galleryStrip.style.display = 'flex';
+                        galleryStrip.innerHTML = `
+                            <div class="gallery-thumb active" data-img="${productImages[0]}" data-alt="${name} — Imagen 1">
+                                <img src="${productImages[0]}" alt="${name} — Imagen 1">
+                            </div>
+                        `;
+                    } else {
+                        galleryStrip.style.display = 'none';
+                        galleryStrip.innerHTML = '';
                     }
                 }
 

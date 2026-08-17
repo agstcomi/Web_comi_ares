@@ -2062,8 +2062,12 @@ class AppDatabase {
                 } else if (!Array.isArray(p.images)) {
                     p.images = p.image_url ? [p.image_url] : [];
                 }
-                if (p.image_url && !p.images.includes(p.image_url)) {
-                    p.images.unshift(p.image_url);
+                p.images = [...new Set((p.images || []).map(s => typeof s === 'string' ? s.trim() : s).filter(Boolean))];
+                if (p.images.length === 0 && p.image_url) {
+                    p.images = [p.image_url];
+                }
+                if (p.images.length > 0) {
+                    p.image_url = p.images[0];
                 }
             });
         }
@@ -2090,17 +2094,13 @@ class AppDatabase {
                 images = product.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
             }
         }
-        if (product.image_url && !images.includes(product.image_url)) {
-            images.unshift(product.image_url);
-        }
-        if (!product.image_url && images.length > 0) {
-            product.image_url = images[0];
-        }
+        images = [...new Set(images.map(s => typeof s === 'string' ? s.trim() : s).filter(Boolean))];
+        const primaryImage = images.length > 0 ? images[0] : (product.image_url || '');
 
         const itemToSave = {
             ...product,
             images,
-            image_url: product.image_url || (images.length > 0 ? images[0] : ''),
+            image_url: primaryImage,
             id: product.id || ('prod-' + Date.now()),
             updated_at: new Date().toISOString()
         };

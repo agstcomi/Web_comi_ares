@@ -2712,26 +2712,50 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderProductGalleryPreviews() {
         const container = document.getElementById('product-gallery-previews');
         const imagesInput = document.getElementById('product-images');
+        const mainUrlInput = document.getElementById('product-image-url');
+        const mainPreview = document.getElementById('product-preview-main');
         if (!container || !imagesInput) return;
 
         let urls = imagesInput.value.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+        urls = [...new Set(urls)];
         container.innerHTML = '';
         if (urls.length === 0) {
             container.style.display = 'none';
+            if (mainUrlInput) mainUrlInput.value = '';
+            if (mainPreview) mainPreview.style.display = 'none';
             return;
         }
+
+        // Sync main image with 1st gallery image
+        if (mainUrlInput) mainUrlInput.value = urls[0];
+        if (mainPreview) {
+            mainPreview.src = urls[0];
+            mainPreview.style.display = 'block';
+        }
+
         container.style.display = 'flex';
         urls.forEach((url, idx) => {
             const wrap = document.createElement('div');
-            wrap.style.cssText = 'position:relative; width:52px; height:52px; border-radius:6px; border:1px solid var(--border-color); overflow:hidden; background:var(--bg-secondary); flex-shrink:0;';
+            wrap.style.cssText = 'position:relative; width:58px; height:58px; border-radius:8px; border:1px solid var(--border-color); overflow:hidden; background:var(--bg-secondary); flex-shrink:0;';
             wrap.innerHTML = `
                 <img src="${url}" alt="" style="width:100%; height:100%; object-fit:contain; background:#fff;">
-                <button type="button" data-idx="${idx}" title="Eliminar imatge" style="position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,0.7); color:#fff; border:none; cursor:pointer; font-size:11px; line-height:18px; text-align:center; padding:0; display:flex; align-items:center; justify-content:center;">&times;</button>
+                ${idx === 0 ? '<span style="position:absolute; top:2px; left:2px; background:rgba(0,0,0,0.75); color:#fbbf24; font-size:8px; font-weight:800; padding:1px 3px; border-radius:3px; line-height:1;">★ 1a</span>' : ''}
+                <button type="button" data-idx="${idx}" title="Eliminar imatge" style="position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:#ef4444; color:#fff; border:none; cursor:pointer; font-size:12px; line-height:18px; text-align:center; padding:0; display:flex; align-items:center; justify-content:center; box-shadow:0 1px 3px rgba(0,0,0,0.3);">&times;</button>
             `;
             wrap.querySelector('button').addEventListener('click', (e) => {
                 e.stopPropagation();
                 urls.splice(idx, 1);
                 imagesInput.value = urls.join(', ');
+                if (urls.length > 0) {
+                    if (mainUrlInput) mainUrlInput.value = urls[0];
+                    if (mainPreview) {
+                        mainPreview.src = urls[0];
+                        mainPreview.style.display = 'block';
+                    }
+                } else {
+                    if (mainUrlInput) mainUrlInput.value = '';
+                    if (mainPreview) mainPreview.style.display = 'none';
+                }
                 renderProductGalleryPreviews();
             });
             container.appendChild(wrap);
@@ -2791,7 +2815,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const reader = new FileReader();
                     reader.onload = (ev) => {
                         const wrap = document.createElement('div');
-                        wrap.style.cssText = 'position:relative; width:52px; height:52px; border-radius:6px; border:2px dashed #10b981; overflow:hidden; background:var(--bg-secondary); flex-shrink:0;';
+                        wrap.style.cssText = 'position:relative; width:58px; height:58px; border-radius:8px; border:2px dashed #10b981; overflow:hidden; background:var(--bg-secondary); flex-shrink:0;';
                         wrap.title = 'Pendent de pujar: ' + file.name;
                         wrap.innerHTML = `
                             <img src="${ev.target.result}" alt="" style="width:100%; height:100%; object-fit:contain; background:#fff;">
@@ -2825,7 +2849,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const category_es = document.getElementById('product-category-es').value.trim();
                 const price = parseFloat(document.getElementById('product-price').value) || 0;
                 const status = document.getElementById('product-status').value;
-                let image_url = document.getElementById('product-image-url').value.trim();
                 const imagesRaw = document.getElementById('product-images').value.trim();
                 let images = imagesRaw ? imagesRaw.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean) : [];
                 const description = document.getElementById('product-description').value.trim();
@@ -2835,7 +2858,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const mainFileInput = document.getElementById('product-file-main');
                 if (mainFileInput && mainFileInput.files && mainFileInput.files[0]) {
                     try {
-                        image_url = await window.db.uploadImage(mainFileInput.files[0]);
+                        const newMainUrl = await window.db.uploadImage(mainFileInput.files[0]);
+                        if (newMainUrl) {
+                            images.unshift(newMainUrl);
+                        }
                     } catch (uploadErr) {
                         console.warn("Could not upload main image to storage, using fallback:", uploadErr);
                     }
@@ -2856,12 +2882,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                if (!image_url && images.length > 0) {
-                    image_url = images[0];
-                }
-                if (image_url && !images.includes(image_url)) {
-                    images.unshift(image_url);
-                }
+                // Clean deduplication
+                images = [...new Set(images.filter(Boolean))];
+                const primaryImageUrl = images.length > 0 ? images[0] : '';
 
                 const productData = {
                     name,
@@ -2871,7 +2894,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     category_es,
                     price,
                     status,
-                    image_url,
+                    image_url: primaryImageUrl,
                     images,
                     description,
                     description_es
