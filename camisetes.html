@@ -124,10 +124,12 @@
             transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
         }
         .product-gallery-main:hover img { transform: scale(1.04); }
-        .gallery-thumbs {
+        .gallery-thumbs, .product-gallery-strip {
             display: flex;
             gap: 0.6rem;
             margin-top: 0.75rem;
+            overflow-x: auto;
+            padding-bottom: 4px;
         }
         .gallery-thumb {
             width: 72px;
@@ -576,7 +578,7 @@
                     <div class="product-gallery-main" id="gallery-main">
                         <img src="/img/camiseta-1.webp" alt="Camiseta Festes Ares 2026 — Imatge 1" id="main-img">
                     </div>
-                    <div class="gallery-thumbs">
+                    <div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip">
                         <div class="gallery-thumb active" data-img="/img/camiseta-1.webp" data-alt="Camiseta Festes Ares 2026 — Model 1">
                             <img src="/img/camiseta-1.webp" alt="Model 1">
                         </div>
@@ -783,7 +785,7 @@
             });
         })();
     </script>
-    <script src="/js/db.js?v=2.1" defer></script>
+    <script src="/js/db.js?v=2.2" defer></script>
     <script src="/js/main.js?v=1.16" defer></script>
     <script src="/js/push-notifications.js?v=1.20" defer></script>
     <script>
@@ -991,23 +993,47 @@
 
                 document.title = name + ' · Festes Ares 2026';
 
+                // Extract and normalize images list
+                let productImages = [];
+                if (Array.isArray(prod.images)) {
+                    productImages = prod.images.filter(Boolean);
+                } else if (typeof prod.images === 'string' && prod.images.trim()) {
+                    try {
+                        const parsed = JSON.parse(prod.images);
+                        if (Array.isArray(parsed)) productImages = parsed.filter(Boolean);
+                        else productImages = prod.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+                    } catch(e) {
+                        productImages = prod.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+                    }
+                }
+                if (productImages.length === 0 && prod.image_url) {
+                    productImages = [prod.image_url];
+                }
+                if (prod.image_url && !productImages.includes(prod.image_url)) {
+                    productImages.unshift(prod.image_url);
+                }
+
                 if (prod.image_url) {
                     const mainImg = document.getElementById('main-img');
                     if (mainImg) mainImg.src = prod.image_url;
                 }
-                if (prod.images && prod.images.length > 0) {
-                    const galleryStrip = document.querySelector('.product-gallery-strip');
+
+                if (productImages.length > 0) {
+                    const galleryStrip = document.querySelector('.gallery-thumbs, .product-gallery-strip, #product-gallery-strip');
                     if (galleryStrip) {
-                        galleryStrip.innerHTML = prod.images.map((img, idx) => `
-                            <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${name}">
-                                <img src="${img}" alt="${name}">
+                        galleryStrip.innerHTML = productImages.map((img, idx) => `
+                            <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${name} — Imatge ${idx + 1}">
+                                <img src="${img}" alt="${name} — Imatge ${idx + 1}">
                             </div>
                         `).join('');
                         galleryStrip.querySelectorAll('.gallery-thumb').forEach(thumb => {
                             thumb.addEventListener('click', () => {
                                 galleryStrip.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
                                 thumb.classList.add('active');
-                                document.getElementById('main-img').src = thumb.dataset.img;
+                                const mainImg = document.getElementById('main-img');
+                                if (mainImg && thumb.dataset.img) {
+                                    mainImg.src = thumb.dataset.img;
+                                }
                             });
                         });
                     }

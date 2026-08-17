@@ -5,8 +5,8 @@
 // L'administrador les configura una vegada des del panell d'administració
 // (apartat "Configuració") i es guarden de forma segura en localStorage.
 // Per a l'entorn de CI/CD (GitHub Actions), es gestionen via GitHub Secrets.
-const SUPABASE_URL = "%%SUPABASE_URL%%";
-const SUPABASE_ANON_KEY = "%%SUPABASE_ANON_KEY%%";
+const SUPABASE_URL = "https://wqelwzlnxhbhiedmxona.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndxZWx3emxueGhiaGllZG14b25hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODA5MzU5ODIsImV4cCI6MjA5NjUxMTk4Mn0.hQSwTGpSD0lBBoq-B0fzbeCRdrRIkTP4QSHYcVUzBTE";
 
 // Mock Data representing real events/news of Comissió de Festes d'Ares
 const MOCK_NEWS = [
@@ -185,19 +185,24 @@ const MOCK_PHOTOS = [
 const DEFAULT_PRODUCTS = [
     {
         id: "prod-camiseta-ares-sd-2026",
-        name: "Camiseta Festes Ares SD",
-        name_es: "Camiseta Fiestas Ares SD",
-        slug: "camisetes",
+        name: "Samarreta homenatge Ares SD",
+        name_es: "Camiseta homenaje Ares SD",
+        slug: "samarreta-ares-sd",
         category: "Roba · Edició Limitada 2026",
         category_es: "Ropa · Edición Limitada 2026",
         price: 35.00,
         status: "open",
-        description: "La camiseta oficial de les Festes Patronals d'Ares del Maestrat 2026. Confeccionada en cotó de qualitat, disseny exclusiu per a la temporada de festes. Edició limitada — un cop tancat el periode de reserves no s'acceptaran més comandes.",
-        description_es: "La camiseta oficial de las Fiestas Patronales de Ares del Maestrat 2026. Confeccionada en algodón de calidad, diseño exclusivo.",
+        description: "Commemora la història de l'Ares SD amb esta samarreta d'edició limitada. Un homenatge de la Comissió de Festes d'Ares al primer equip de futbol del poble, nascut l'any 1980 de l'entusiasme d'un grup de joves d'Ares.",
+        description_es: "Conmemora la historia del Ares SD con esta camiseta de edición limitada. Un homenaje de la Comisión de Fiestas de Ares al primer equipo de fútbol del pueblo, nacido en 1980 gracias al entusiasmo de un grupo de jóvenes de Ares.",
         image_url: "/img/camiseta-1.webp",
-        images: ["/img/camiseta-1.webp", "/img/camiseta-2.webp"],
+        images: [
+            "/img/camiseta-1.webp",
+            "/img/camiseta-2.webp",
+            "/img/camiseta-3.webp",
+            "/img/camiseta-4.webp"
+        ],
         sizes: ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL", "7XL"],
-        created_at: "2026-08-14T10:00:00.000Z"
+        created_at: "2026-08-14T11:33:16.401184+00:00"
     }
 ];
 
@@ -1980,7 +1985,7 @@ class AppDatabase {
                     .select('*')
                     .order('created_at', { ascending: false });
                 if (!error && data && data.length > 0) {
-                    return data;
+                    products = data;
                 }
             } catch (err) {
                 console.error("Error loading products from Supabase:", err);
@@ -1988,13 +1993,16 @@ class AppDatabase {
         } else {
             // Public or Local Mode - fetch static JSON first
             try {
-                const cacheBuster = Math.floor(Date.now() / 3600000); // 1 hour cache
+                const cacheBuster = Math.floor(Date.now() / 60000); // 1 minute cache
                 const dataUrl = `/data/products.json?v=${cacheBuster}`;
                 const res = await fetch(dataUrl);
                 if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                products = await res.json();
-                if (products && products.length > 0) {
-                    return products;
+                const staticData = await res.json();
+                if (staticData && staticData.length > 0) {
+                    products = staticData;
+                    try {
+                        localStorage.setItem('ares_products', JSON.stringify(products));
+                    } catch(e) {}
                 }
             } catch (err) {
                 console.warn("Error loading static products, falling back:", err);
@@ -2005,19 +2013,25 @@ class AppDatabase {
                             .select('*')
                             .order('created_at', { ascending: false });
                         if (!error && data && data.length > 0) {
-                            return data;
+                            products = data;
+                            try {
+                                localStorage.setItem('ares_products', JSON.stringify(products));
+                            } catch(e) {}
                         }
                     } catch (e) {}
                 }
             }
         }
 
-        await this.dbPromise;
-        try {
-            products = await this.getAllIDB('products');
-        } catch (err) {
-            console.error("Error loading products from IDB:", err);
+        if (!products || products.length === 0) {
+            await this.dbPromise;
+            try {
+                products = await this.getAllIDB('products');
+            } catch (err) {
+                console.error("Error loading products from IDB:", err);
+            }
         }
+
         if (!products || products.length === 0) {
             const stored = localStorage.getItem('ares_products');
             if (stored) {
@@ -2035,6 +2049,25 @@ class AppDatabase {
             localStorage.setItem('ares_products', JSON.stringify(DEFAULT_PRODUCTS));
         }
 
+        // Normalize images on each product object to ensure it is always an Array
+        if (products && products.length > 0) {
+            products.forEach(p => {
+                if (typeof p.images === 'string') {
+                    try {
+                        const parsed = JSON.parse(p.images);
+                        p.images = Array.isArray(parsed) ? parsed.filter(Boolean) : p.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+                    } catch(e) {
+                        p.images = p.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+                    }
+                } else if (!Array.isArray(p.images)) {
+                    p.images = p.image_url ? [p.image_url] : [];
+                }
+                if (p.image_url && !p.images.includes(p.image_url)) {
+                    p.images.unshift(p.image_url);
+                }
+            });
+        }
+
         return products;
     }
 
@@ -2044,8 +2077,30 @@ class AppDatabase {
     }
 
     async saveProduct(product) {
+        // Normalize images array
+        let images = [];
+        if (Array.isArray(product.images)) {
+            images = product.images.filter(Boolean);
+        } else if (typeof product.images === 'string' && product.images.trim()) {
+            try {
+                const parsed = JSON.parse(product.images);
+                if (Array.isArray(parsed)) images = parsed.filter(Boolean);
+                else images = product.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+            } catch(e) {
+                images = product.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+            }
+        }
+        if (product.image_url && !images.includes(product.image_url)) {
+            images.unshift(product.image_url);
+        }
+        if (!product.image_url && images.length > 0) {
+            product.image_url = images[0];
+        }
+
         const itemToSave = {
             ...product,
+            images,
+            image_url: product.image_url || (images.length > 0 ? images[0] : ''),
             id: product.id || ('prod-' + Date.now()),
             updated_at: new Date().toISOString()
         };
@@ -2074,7 +2129,7 @@ class AppDatabase {
                     .from('products')
                     .upsert([itemToSave])
                     .select();
-                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase save timeout')), 2500));
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase save timeout')), 3500));
                 const { data, error } = await Promise.race([upsertPromise, timeoutPromise]);
                 if (error) {
                     console.warn("Supabase upsert product warning:", error.message || error);

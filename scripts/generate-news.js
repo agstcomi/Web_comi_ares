@@ -1,8 +1,17 @@
 const fs = require('fs');
 const path = require('path');
 
-// Les credencials es llegeixen de variables d'entorn injectades per GitHub Actions Secrets.
-// MAI escriure credencials directament en el codi font.
+// Les credencials es llegeixen de variables d'entorn injectades per GitHub Actions Secrets o .env local.
+if ((!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) && fs.existsSync(path.join(__dirname, '..', '.env'))) {
+  const envContent = fs.readFileSync(path.join(__dirname, '..', '.env'), 'utf-8');
+  envContent.split('\n').forEach(line => {
+    const match = line.match(/^\s*([\w_]+)\s*=\s*(.*)?\s*$/);
+    if (match && !process.env[match[1]]) {
+      process.env[match[1]] = match[2].trim().replace(/^['"]|['"]$/g, '');
+    }
+  });
+}
+
 const SUPABASE_URL = process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
@@ -59,56 +68,69 @@ async function main() {
       "Authorization": `Bearer ${SUPABASE_ANON_KEY}`
     };
 
-    const newsResponse = await fetch(`${SUPABASE_URL}/rest/v1/news?status=in.(published,scheduled)&select=*&order=created_at.desc`, { headers });
-    if (!newsResponse.ok) {
-      throw new Error(`Error al consultar noticias en Supabase: ${newsResponse.status} ${newsResponse.statusText}`);
-    }
-    const allFetchedNews = await newsResponse.json();
-    const now = new Date();
-    const news = allFetchedNews.filter(item => {
-      if (item.status === 'draft') return false;
-      const pubDateStr = item.published_at || item.created_at;
-      if (pubDateStr) {
-        const pubDate = new Date(pubDateStr);
-        if (!isNaN(pubDate.getTime()) && pubDate > now) {
-          return false; // Scheduled for future date/time -> skip until exact moment
-        }
-      }
-      return true;
-    });
-    console.log(`Se encontraron ${news.length} noticias publicadas accesibles en el front.`);
-
-    const eventsResponse = await fetch(`${SUPABASE_URL}/rest/v1/events?select=*&order=date.asc,time.asc`, { headers });
-    if (!eventsResponse.ok) {
-      throw new Error(`Error al consultar eventos en Supabase: ${eventsResponse.status} ${eventsResponse.statusText}`);
-    }
-    const events = await eventsResponse.json();
-    console.log(`Se encontraron ${events.length} eventos (incluyendo configuraciones).`);
-
-    const photosResponse = await fetch(`${SUPABASE_URL}/rest/v1/photos?select=*&order=created_at.desc`, { headers });
-    if (!photosResponse.ok) {
-      throw new Error(`Error al consultar fotos en Supabase: ${photosResponse.status} ${photosResponse.statusText}`);
-    }
-    const photos = await photosResponse.json();
-    console.log(`Se encontraron ${photos.length} fotos.`);
-
-    const productsResponse = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=created_at.desc`, { headers });
-    if (!productsResponse.ok) {
-      throw new Error(`Error al consultar productos en Supabase: ${productsResponse.status} ${productsResponse.statusText}`);
-    }
-    const products = await productsResponse.json();
-    console.log(`Se encontraron ${products.length} productos.`);
-
-    // Crear la carpeta data/ si no existe y guardar los archivos JSON
+    let news = [];
+    let events = [];
+    let photos = [];
+    let products = [];
     const dataDir = path.join(__dirname, '..', 'data');
-    if (!fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir, { recursive: true });
+
+    try {
+      const newsResponse = await fetch(`${SUPABASE_URL}/rest/v1/news?status=in.(published,scheduled)&select=*&order=created_at.desc`, { headers });
+      if (!newsResponse.ok) {
+        throw new Error(`Error al consultar noticias en Supabase: ${newsResponse.status} ${newsResponse.statusText}`);
+      }
+      const allFetchedNews = await newsResponse.json();
+      const now = new Date();
+      news = allFetchedNews.filter(item => {
+        if (item.status === 'draft') return false;
+        const pubDateStr = item.published_at || item.created_at;
+        if (pubDateStr) {
+          const pubDate = new Date(pubDateStr);
+          if (!isNaN(pubDate.getTime()) && pubDate > now) {
+            return false; // Scheduled for future date/time -> skip until exact moment
+          }
+        }
+        return true;
+      });
+      console.log(`Se encontraron ${news.length} noticias publicadas accesibles en el front.`);
+
+      const eventsResponse = await fetch(`${SUPABASE_URL}/rest/v1/events?select=*&order=date.asc,time.asc`, { headers });
+      if (!eventsResponse.ok) {
+        throw new Error(`Error al consultar eventos en Supabase: ${eventsResponse.status} ${eventsResponse.statusText}`);
+      }
+      events = await eventsResponse.json();
+      console.log(`Se encontraron ${events.length} eventos (incluyendo configuraciones).`);
+
+      const photosResponse = await fetch(`${SUPABASE_URL}/rest/v1/photos?select=*&order=created_at.desc`, { headers });
+      if (!photosResponse.ok) {
+        throw new Error(`Error al consultar fotos en Supabase: ${photosResponse.status} ${photosResponse.statusText}`);
+      }
+      photos = await photosResponse.json();
+      console.log(`Se encontraron ${photos.length} fotos.`);
+
+      const productsResponse = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=created_at.desc`, { headers });
+      if (!productsResponse.ok) {
+        throw new Error(`Error al consultar productos en Supabase: ${productsResponse.status} ${productsResponse.statusText}`);
+      }
+      products = await productsResponse.json();
+      console.log(`Se encontraron ${products.length} productos.`);
+
+      // Guardar los archivos JSON si la conexión fue exitosa
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      fs.writeFileSync(path.join(dataDir, 'news.json'), JSON.stringify(news, null, 2), 'utf-8');
+      fs.writeFileSync(path.join(dataDir, 'events.json'), JSON.stringify(events, null, 2), 'utf-8');
+      fs.writeFileSync(path.join(dataDir, 'photos.json'), JSON.stringify(photos, null, 2), 'utf-8');
+      fs.writeFileSync(path.join(dataDir, 'products.json'), JSON.stringify(products, null, 2), 'utf-8');
+      console.log("  [OK] Archivos de datos estáticos guardados en la carpeta /data/");
+    } catch (networkErr) {
+      console.warn("Aviso: No se pudo conectar con Supabase (modo sin red/local). Usando archivos locales de data/:", networkErr.message || networkErr);
+      if (fs.existsSync(path.join(dataDir, 'news.json'))) news = JSON.parse(fs.readFileSync(path.join(dataDir, 'news.json'), 'utf-8'));
+      if (fs.existsSync(path.join(dataDir, 'events.json'))) events = JSON.parse(fs.readFileSync(path.join(dataDir, 'events.json'), 'utf-8'));
+      if (fs.existsSync(path.join(dataDir, 'photos.json'))) photos = JSON.parse(fs.readFileSync(path.join(dataDir, 'photos.json'), 'utf-8'));
+      if (fs.existsSync(path.join(dataDir, 'products.json'))) products = JSON.parse(fs.readFileSync(path.join(dataDir, 'products.json'), 'utf-8'));
     }
-    fs.writeFileSync(path.join(dataDir, 'news.json'), JSON.stringify(news, null, 2), 'utf-8');
-    fs.writeFileSync(path.join(dataDir, 'events.json'), JSON.stringify(events, null, 2), 'utf-8');
-    fs.writeFileSync(path.join(dataDir, 'photos.json'), JSON.stringify(photos, null, 2), 'utf-8');
-    fs.writeFileSync(path.join(dataDir, 'products.json'), JSON.stringify(products, null, 2), 'utf-8');
-    console.log("  [OK] Archivos de datos estáticos guardados en la carpeta /data/");
 
     // 2. Leer las plantillas base
     const templatePathVal = path.join(__dirname, '..', 'noticies.html');

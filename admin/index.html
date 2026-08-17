@@ -960,6 +960,7 @@ CREATE TABLE photos (
                 <div class="form-group">
                     <label for="product-files-extra">🖼️ Imatges Addicionals (Galeria)</label>
                     <input type="file" id="product-files-extra" accept="image/*" multiple style="border: 1px dashed var(--border-color); padding: 0.5rem; border-radius: 8px; width: 100%; margin-bottom: 0.5rem; background: var(--bg-primary);">
+                    <div id="product-gallery-previews" style="display: none; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem;"></div>
                     <input type="text" id="product-images" placeholder="O URLs separades per comes (ex: /img/foto1.webp, /img/foto2.webp)">
                 </div>
 
@@ -1075,8 +1076,8 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="/js/db.js?v=2.1" defer></script>
-    <script src="/admin/gestio.js?v=1.52"></script>
+    <script src="/js/db.js?v=2.2" defer></script>
+    <script src="/admin/gestio.js?v=2.2"></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);

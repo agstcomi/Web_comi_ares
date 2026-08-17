@@ -293,6 +293,25 @@ Completat en la sessió actual:
 
 ---
 
-## 24. Pròxim Pas
+## 25. Correcció de la Galeria d'Imatges de Productes a la Tenda (PRO/Local)
+Completat en la sessió actual:
+* **Problema identificat**: A les pàgines de productes (`camisetes.html`, `es/camisetes.html` i fitxers estàtics generats), la consulta de selecció del DOM buscava la classe `.product-gallery-strip`, mentre que el contenidor HTML tenia la classe `.gallery-thumbs`. Això provocava que `galleryStrip` fóra `null` i que la galeria mai s'actualitzara dinàmicament amb les imatges de `prod.images` (mostrant sempre únicament les 2 imatges estàtiques del codi HTML original).
+* **Solució al Frontend (`camisetes.html`, `es/camisetes.html`, `camisetes/index.html`, `es/camisetes/index.html`)**:
+  - Unificades les classes CSS i els selectors a `.gallery-thumbs, .product-gallery-strip, #product-gallery-strip`.
+  - Afegit suport de desplaçament horitzontal suau (`overflow-x: auto; padding-bottom: 4px;`) per a mostrar 3, 4 o més miniatures de manera fluida en mòbils i ordinadors.
+  - Normalització automàtica de `prod.images` a `applyProduct(prod)` (acceptant arrays de JavaScript, strings JSON, o llistes separades per comes), assegurant que totes les imatges del producte es renderitzen com a miniatures interactives amb canvi dinàmic de la imatge principal `#main-img`.
+* **Millores al Panell d'Administració (`admin/index.html` i `admin/gestio.js`)**:
+  - Afegit contenidor visual de previsualització `#product-gallery-previews` al modal d'edició de productes.
+  - Els administradors ara poden veure totes les imatges assignades al producte amb un botó d'eliminació ràpida (`×`) a cada miniatura per treure fotos amb un sol clic.
+  - En seleccionar múltiples arxius a `#product-files-extra`, es mostren immediatament previsualitzacions visuals dels arxius pendents de pujar.
+  - Al desar el formulari, es pugen tots els nous arxius a l'Storage de Supabase i es fusionen amb les imatges existents sense duplicats.
+* **Normalització a la Base de Dades (`js/db.js`)**:
+  - Les funcions `getProducts()` i `saveProduct(product)` ara normalitzen sempre la propietat `images` com a un array net d'URLs de text, garantint que la persistència a `localStorage`, `IndexedDB` i Supabase siga idèntica i consistent.
+  - Actualitzat `DEFAULT_PRODUCTS` a `js/db.js` amb les 4 imatges oficials de la samarreta.
+* **Cache-Busting (v2.2)**: S'ha incrementat la consulta de scripts a `?v=2.2` a tots els fitxers HTML del projecte.
+
+---
+
+## 26. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 

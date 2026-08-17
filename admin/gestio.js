@@ -2674,6 +2674,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
 
+                        renderProductGalleryPreviews();
+
                         const titleEl = document.getElementById('product-modal-title');
                         if (titleEl) titleEl.textContent = 'Editar Producte';
 
@@ -2707,6 +2709,40 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    function renderProductGalleryPreviews() {
+        const container = document.getElementById('product-gallery-previews');
+        const imagesInput = document.getElementById('product-images');
+        if (!container || !imagesInput) return;
+
+        let urls = imagesInput.value.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+        container.innerHTML = '';
+        if (urls.length === 0) {
+            container.style.display = 'none';
+            return;
+        }
+        container.style.display = 'flex';
+        urls.forEach((url, idx) => {
+            const wrap = document.createElement('div');
+            wrap.style.cssText = 'position:relative; width:52px; height:52px; border-radius:6px; border:1px solid var(--border-color); overflow:hidden; background:var(--bg-secondary); flex-shrink:0;';
+            wrap.innerHTML = `
+                <img src="${url}" alt="" style="width:100%; height:100%; object-fit:contain; background:#fff;">
+                <button type="button" data-idx="${idx}" title="Eliminar imatge" style="position:absolute; top:2px; right:2px; width:18px; height:18px; border-radius:50%; background:rgba(0,0,0,0.7); color:#fff; border:none; cursor:pointer; font-size:11px; line-height:18px; text-align:center; padding:0; display:flex; align-items:center; justify-content:center;">&times;</button>
+            `;
+            wrap.querySelector('button').addEventListener('click', (e) => {
+                e.stopPropagation();
+                urls.splice(idx, 1);
+                imagesInput.value = urls.join(', ');
+                renderProductGalleryPreviews();
+            });
+            container.appendChild(wrap);
+        });
+    }
+
+    const productImagesInput = document.getElementById('product-images');
+    if (productImagesInput) {
+        productImagesInput.addEventListener('input', renderProductGalleryPreviews);
+    }
+
     const btnNewProduct = document.getElementById('btn-new-product');
     if (btnNewProduct) {
         btnNewProduct.addEventListener('click', () => {
@@ -2716,6 +2752,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (idInput) idInput.value = '';
             const preview = document.getElementById('product-preview-main');
             if (preview) preview.style.display = 'none';
+            renderProductGalleryPreviews();
             const titleEl = document.getElementById('product-modal-title');
             if (titleEl) titleEl.textContent = 'Nou Producte';
             const modal = document.getElementById('modal-product');
@@ -2737,6 +2774,33 @@ document.addEventListener('DOMContentLoaded', () => {
                     preview.style.display = 'block';
                 };
                 reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    // Live preview for additional gallery images
+    const extraFilesInput = document.getElementById('product-files-extra');
+    if (extraFilesInput) {
+        extraFilesInput.addEventListener('change', (e) => {
+            const container = document.getElementById('product-gallery-previews');
+            if (!container) return;
+            container.style.display = 'flex';
+            const files = e.target.files;
+            if (files && files.length > 0) {
+                Array.from(files).forEach((file) => {
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        const wrap = document.createElement('div');
+                        wrap.style.cssText = 'position:relative; width:52px; height:52px; border-radius:6px; border:2px dashed #10b981; overflow:hidden; background:var(--bg-secondary); flex-shrink:0;';
+                        wrap.title = 'Pendent de pujar: ' + file.name;
+                        wrap.innerHTML = `
+                            <img src="${ev.target.result}" alt="" style="width:100%; height:100%; object-fit:contain; background:#fff;">
+                            <span style="position:absolute; bottom:1px; right:1px; background:#10b981; color:#fff; font-size:9px; padding:1px 3px; border-radius:3px; font-weight:bold;">NOU</span>
+                        `;
+                        container.appendChild(wrap);
+                    };
+                    reader.readAsDataURL(file);
+                });
             }
         });
     }
@@ -2763,7 +2827,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const status = document.getElementById('product-status').value;
                 let image_url = document.getElementById('product-image-url').value.trim();
                 const imagesRaw = document.getElementById('product-images').value.trim();
-                let images = imagesRaw ? imagesRaw.split(',').map(s => s.trim()).filter(Boolean) : [];
+                let images = imagesRaw ? imagesRaw.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean) : [];
                 const description = document.getElementById('product-description').value.trim();
                 const description_es = document.getElementById('product-description-es').value.trim();
 
@@ -2783,7 +2847,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     for (let i = 0; i < extraFilesInput.files.length; i++) {
                         try {
                             const extraUrl = await window.db.uploadImage(extraFilesInput.files[i]);
-                            if (extraUrl) images.push(extraUrl);
+                            if (extraUrl && !images.includes(extraUrl)) {
+                                images.push(extraUrl);
+                            }
                         } catch (uploadErr) {
                             console.warn("Could not upload extra image:", uploadErr);
                         }
@@ -2792,6 +2858,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 if (!image_url && images.length > 0) {
                     image_url = images[0];
+                }
+                if (image_url && !images.includes(image_url)) {
+                    images.unshift(image_url);
                 }
 
                 const productData = {
