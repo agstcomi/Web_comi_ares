@@ -52,6 +52,56 @@
         #login-config-details summary::-webkit-details-marker {
             display: none;
         }
+
+        /* Instant Hover Tooltips for Action Buttons */
+        [data-tooltip] {
+            position: relative;
+        }
+        [data-tooltip]::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: calc(100% + 7px);
+            right: 50%;
+            transform: translateX(50%) translateY(4px);
+            background: #0f172a;
+            color: #ffffff;
+            padding: 5px 9px;
+            font-size: 11px;
+            font-weight: 600;
+            line-height: 1.2;
+            white-space: nowrap;
+            border-radius: 6px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.22);
+            pointer-events: none;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s;
+            text-transform: none;
+            letter-spacing: normal;
+            font-family: var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+        }
+        [data-tooltip]::before {
+            content: '';
+            position: absolute;
+            bottom: calc(100% + 2px);
+            right: 50%;
+            transform: translateX(50%) translateY(4px);
+            border-width: 5px 5px 0 5px;
+            border-style: solid;
+            border-color: #0f172a transparent transparent transparent;
+            pointer-events: none;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.12s ease, transform 0.12s ease, visibility 0.12s;
+        }
+        [data-tooltip]:hover::after,
+        [data-tooltip]:hover::before {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(50%) translateY(0);
+        }
     </style>
 </head>
 <body>
@@ -526,12 +576,12 @@ CREATE TABLE photos (
                         <table class="admin-events-table" style="width: 100%; border-collapse: collapse;">
                             <thead>
                                 <tr>
-                                    <th style="padding: 0.85rem 1rem;">Client</th>
-                                    <th style="padding: 0.85rem 0.5rem; text-align: center;">Talla & Qty</th>
-                                    <th style="padding: 0.85rem 0.5rem;">Import</th>
-                                    <th style="padding: 0.85rem 0.5rem;">Estat</th>
-                                    <th style="padding: 0.85rem 0.5rem;">Data</th>
-                                    <th style="padding: 0.85rem 1rem; text-align: right;">Accions</th>
+                                    <th style="width: 32%; padding: 0.85rem 1rem;">Client</th>
+                                    <th style="width: 12%; padding: 0.85rem 0.5rem; text-align: center;">Talla & Qty</th>
+                                    <th style="width: 10%; padding: 0.85rem 0.5rem;">Import</th>
+                                    <th style="width: 14%; padding: 0.85rem 0.5rem;">Estat</th>
+                                    <th style="width: 12%; padding: 0.85rem 0.5rem;">Data</th>
+                                    <th style="width: 20%; padding: 0.85rem 1rem; text-align: right;">Accions</th>
                                 </tr>
                             </thead>
                             <tbody id="reservations-tbody">
@@ -1120,8 +1170,8 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="/js/db.js?v=2.6" defer></script>
-    <script src="/admin/gestio.js?v=2.6"></script>
+    <script src="/js/db.js?v=2.7" defer></script>
+    <script src="/admin/gestio.js?v=2.7"></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);

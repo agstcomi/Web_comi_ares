@@ -321,7 +321,7 @@ Completat localment:
   - Per a comandes ja pagades, s'ha afegit un botó d'acció **"Reenviar correu"** per si cal tornar a enviar la confirmació al comprador amb un sol clic.
   - S'ha implementat un sistema de notificacions visuals no intrusives (`showAdminToast`) que alerta l'administrador del resultat de l'enviament.
   - S'ha afegit un panell de configuració i botó de test per a EmailJS (`#form-emailjs-config` i `#btn-test-paid-email`) dins de la pestanya de la tenda amb el Template ID per defecte `template_s9dtrrv`.
-* **Disseny de 2 Files per a Botons d'Accions i Cache-Busting (v2.6 - Commit `1c355da`)**: S'ha redissenyat la cel·la d'accions en **2 files superposades alineades a la dreta**: a dalt l'acció principal (`Validar & Enviar Email` o `Reenviar Email`) i a sota les accions secundàries (`Pendent`, `Cancel·lar` i `🗑 Eliminar`). Això aprofita l'alçada natural de la fila, garanteix que absolutament cap botó es talle i manté la taula compacta i estètica.
+* **Botons d'Icona Compactes amb Tooltips Instantanis i Cache-Busting (v2.7 - PRO)**: S'han substituït els botons d'acció de la taula de reserves per botons quadrats compactes (`32px × 32px`) amb icones clares (`check`, `mail`, `rotate-ccw`, `x`, `trash-2`) i tooltips CSS flotants instantanis (*tooltips* amb etiqueta fosca i fletxa al passar el ratolí: *Validar pagament i enviar correu*, *Reenviar correu de pagament*, *Canviar estat a pendent*, *Cancel·lar reserva*, *Eliminar del registre*), assegurant un disseny 100% net i sense desbordaments ni talls.
 
 ---
 

@@ -2489,56 +2489,44 @@ document.addEventListener('DOMContentLoaded', () => {
             let actionsHtml = '';
             if (isPaid) {
                 actionsHtml = `
-                    <div style="display:flex;flex-direction:column;gap:0.35rem;align-items:flex-end;">
-                        <div>
-                            <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" style="padding:0.25rem 0.55rem;font-size:0.72rem;color:#15803d;border-color:#86efac;background:#f0fdf4;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;" title="Reenviar correu de confirmació de pagament">
-                                <i data-lucide="mail" style="width:12px;height:12px;"></i> Reenviar Email
-                            </button>
-                        </div>
-                        <div style="display:flex;gap:0.3rem;align-items:center;">
-                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.2rem 0.45rem;font-size:0.7rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.2rem;" title="Tornar a pendent">
-                                <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Pendent
-                            </button>
-                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.2rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;gap:0.2rem;" title="Cancel·lar reserva">
-                                <i data-lucide="x" style="width:11px;height:11px;"></i> Cancel·lar
-                            </button>
-                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre definitivament" style="width:24px;height:24px;min-width:24px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:5px;cursor:pointer;flex-shrink:0;">
-                                <i data-lucide="trash-2" style="width:11px;height:11px;"></i>
-                            </button>
-                        </div>
+                    <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
+                        <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" data-tooltip="Reenviar correu de pagament" aria-label="Reenviar correu de pagament" title="Reenviar correu de pagament" style="width:32px;height:32px;padding:0;color:#15803d;border-color:#86efac;background:#f0fdf4;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                            <i data-lucide="mail" style="width:15px;height:15px;"></i>
+                        </button>
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Canviar estat a pendent" aria-label="Canviar estat a pendent" title="Canviar estat a pendent" style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                            <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
+                        </button>
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:32px;height:32px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                            <i data-lucide="x" style="width:15px;height:15px;"></i>
+                        </button>
+                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                        </button>
                     </div>
                 `;
             } else if (isCancelled) {
                 actionsHtml = `
-                    <div style="display:flex;flex-direction:column;gap:0.35rem;align-items:flex-end;">
-                        <div>
-                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.55rem;font-size:0.72rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Reactivar reserva">
-                                <i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Reactivar Reserva
-                            </button>
-                        </div>
-                        <div style="display:flex;gap:0.3rem;align-items:center;">
-                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre definitivament" style="padding:0.2rem 0.45rem;font-size:0.7rem;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:5px;cursor:pointer;display:inline-flex;align-items:center;gap:0.2rem;">
-                                <i data-lucide="trash-2" style="width:11px;height:11px;"></i> Eliminar
-                            </button>
-                        </div>
+                    <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Reactivar reserva" aria-label="Reactivar reserva" title="Reactivar reserva" style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                            <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
+                        </button>
+                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                        </button>
                     </div>
                 `;
             } else {
                 actionsHtml = `
-                    <div style="display:flex;flex-direction:column;gap:0.35rem;align-items:flex-end;">
-                        <div>
-                            <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.25rem 0.6rem;font-size:0.74rem;font-weight:700;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;" title="Validar transferència i enviar correu al client">
-                                <i data-lucide="check" style="width:13px;height:13px;"></i> Validar & Enviar Email
-                            </button>
-                        </div>
-                        <div style="display:flex;gap:0.3rem;align-items:center;">
-                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.2rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;gap:0.2rem;" title="Cancel·lar reserva">
-                                <i data-lucide="x" style="width:11px;height:11px;"></i> Cancel·lar
-                            </button>
-                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre definitivament" style="width:24px;height:24px;min-width:24px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:5px;cursor:pointer;flex-shrink:0;">
-                                <i data-lucide="trash-2" style="width:11px;height:11px;"></i>
-                            </button>
-                        </div>
+                    <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
+                        <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" data-tooltip="Validar pagament i enviar correu" aria-label="Validar pagament i enviar correu" title="Validar pagament i enviar correu" style="width:32px;height:32px;padding:0;background:#15803d;color:#fff;border-color:#15803d;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                            <i data-lucide="check" style="width:16px;height:16px;"></i>
+                        </button>
+                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:32px;height:32px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                            <i data-lucide="x" style="width:15px;height:15px;"></i>
+                        </button>
+                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                        </button>
                     </div>
                 `;
             }
