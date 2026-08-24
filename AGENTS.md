@@ -312,6 +312,20 @@ Completat en la sessió actual:
 
 ---
 
-## 26. Pròxim Pas
+## 26. Enviament Automàtic de Correu de Confirmació de Pagament (Tenda / Samarretes)
+Completat localment:
+* **Plantilla de Correu HTML (`templates/email-pago-confirmado.html`)**: Creada una plantilla de disseny professional i responsive que coincideix amb la identitat corporativa de la Comissió, incorporant l'estat de comanda confirmada, badge verd de pagament validat, detall del producte amb miniatura de la samarreta, informació sobre la recollida presencial i enllaços a xarxes socials.
+* **Mètode d'Enviament (`js/db.js`)**: S'ha afegit el mètode `window.db.sendPaymentConfirmationEmail(reservation)` que formata totes les variables del client (`name`, `surname`, `email`, `size`, `quantity`, `total`, `concept`, `product_name`) i les envia mitjançant el servei EmailJS amb protecció de temps d'espera (timeout).
+* **Automatització al Panell d'Admin (`admin/gestio.js` i `admin/index.html`)**:
+  - En prémer el botó **"Validar & Enviar Email"** a la taula de reserves, s'actualitza l'estat de la comanda a `paid` a la base de dades i es dispara automàticament l'enviament del correu de confirmació de pagament usant el template oficial `template_s9dtrrv`.
+  - Per a comandes ja pagades, s'ha afegit un botó d'acció **"Reenviar correu"** per si cal tornar a enviar la confirmació al comprador amb un sol clic.
+  - S'ha implementat un sistema de notificacions visuals no intrusives (`showAdminToast`) que alerta l'administrador del resultat de l'enviament.
+  - S'ha afegit un panell de configuració i botó de test per a EmailJS (`#form-emailjs-config` i `#btn-test-paid-email`) dins de la pestanya de la tenda amb el Template ID per defecte `template_s9dtrrv`.
+* **Cache-Busting (v2.4)**: S'ha incrementat la versió dels scripts de l'admin a `?v=2.4`.
+
+---
+
+## 27. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
+
 

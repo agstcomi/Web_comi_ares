@@ -52,6 +52,65 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Toast Notification System
+    function showAdminToast(message, type = 'info', duration = 4500) {
+        let container = document.getElementById('admin-toast-container');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'admin-toast-container';
+            container.style.cssText = 'position: fixed; bottom: 24px; right: 24px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; max-width: 420px; pointer-events: none;';
+            document.body.appendChild(container);
+        }
+
+        const toast = document.createElement('div');
+        toast.style.cssText = `
+            pointer-events: auto;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1.4;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateY(20px);
+            opacity: 0;
+            font-family: var(--font-body, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+        `;
+
+        if (type === 'success') {
+            toast.style.backgroundColor = '#15803d';
+            toast.style.color = '#ffffff';
+            toast.style.border = '1px solid #166534';
+        } else if (type === 'error') {
+            toast.style.backgroundColor = '#b91c1c';
+            toast.style.color = '#ffffff';
+            toast.style.border = '1px solid #991b1b';
+        } else {
+            toast.style.backgroundColor = '#0f172a';
+            toast.style.color = '#ffffff';
+            toast.style.border = '1px solid #334155';
+        }
+
+        toast.innerHTML = `<span>${message}</span>`;
+        container.appendChild(toast);
+
+        // Animate in
+        requestAnimationFrame(() => {
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+        });
+
+        // Animate out
+        setTimeout(() => {
+            toast.style.transform = 'translateY(20px)';
+            toast.style.opacity = '0';
+            setTimeout(() => toast.remove(), 300);
+        }, duration);
+    }
+
     // 1. Authentication Check & Login Flow
     async function checkAuthState() {
         const user = await window.db.getCurrentUser();
@@ -185,6 +244,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadCountdownAdmin();
         await loadHomeAdmin();
         await loadReservationsTab();
+        initEmailJSConfig();
     }
 
     function updateDbStatusBadge() {
@@ -2429,6 +2489,9 @@ document.addEventListener('DOMContentLoaded', () => {
             let actionsHtml = '';
             if (isPaid) {
                 actionsHtml = `
+                    <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" style="padding:0.25rem 0.5rem;font-size:0.7rem;color:#15803d;border-color:#86efac;background:#f0fdf4;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;" title="Reenviar correu de pagament rebut">
+                        <i data-lucide="mail" style="width:11px;height:11px;"></i> Reenviar correu
+                    </button>
                     <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.45rem;font-size:0.7rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Tornar a pendent">
                         <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Pendent
                     </button>
@@ -2444,8 +2507,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
             } else {
                 actionsHtml = `
-                    <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.25rem 0.45rem;font-size:0.7rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Validar transferència">
-                        <i data-lucide="check" style="width:11px;height:11px;"></i> Validar
+                    <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.25rem 0.5rem;font-size:0.7rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;" title="Validar transferència i enviar correu al client">
+                        <i data-lucide="check" style="width:11px;height:11px;"></i> Validar & Enviar Email
                     </button>
                     <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.25rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;" title="Cancel·lar reserva">
                         <i data-lucide="x" style="width:11px;height:11px;"></i>
@@ -2476,7 +2539,7 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>`;
         }).join('');
 
-        // Attach toggle status listeners with instant optimistic UI update
+        // Attach toggle status listeners with instant optimistic UI update + automatic email on validation
         tbody.querySelectorAll('.btn-toggle-status').forEach(btn => {
             btn.addEventListener('click', async () => {
                 const id = btn.dataset.id;
@@ -2494,6 +2557,45 @@ document.addEventListener('DOMContentLoaded', () => {
                     await window.db.updateReservationStatus(id, targetStatus);
                 } catch(e) {
                     console.warn('Background update warning:', e);
+                }
+
+                // 3. If target status is 'paid', automatically send payment confirmation email!
+                if (targetStatus === 'paid' && target && target.email) {
+                    showAdminToast(`🔄 Validant pagament i enviant correu de confirmació a ${target.email}...`, 'info', 3000);
+                    try {
+                        await window.db.sendPaymentConfirmationEmail(target);
+                        showAdminToast(`✉️ Pagament validat! Correu enviat correctament a ${target.email}`, 'success', 5000);
+                    } catch(err) {
+                        console.error('Error enviant correu de pagament:', err);
+                        showAdminToast(`⚠️ Pagament marcat com a pagat, però no s'ha pogut enviar el correu: ${err.text || err.message || err}`, 'error', 7000);
+                    }
+                }
+            });
+        });
+
+        // Attach resend payment confirmation email listeners
+        tbody.querySelectorAll('.btn-resend-paid-email').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.dataset.id;
+                const target = allReservations.find(r => String(r.id) === String(id));
+                if (!target || !target.email) {
+                    showAdminToast("No s'ha trobat l'adreça de correu d'aquesta comanda.", 'error', 4000);
+                    return;
+                }
+
+                const clientName = `${target.name || ''} ${target.surname || ''}`.trim() || 'el client';
+                if (!confirm(`Vols reenviar el correu de confirmació de pagament a ${clientName} (${target.email})?`)) return;
+
+                btn.disabled = true;
+                showAdminToast(`🔄 Reenviant correu de pagament a ${target.email}...`, 'info', 3000);
+                try {
+                    await window.db.sendPaymentConfirmationEmail(target);
+                    showAdminToast(`✉️ Correu de confirmació reenviat amb èxit a ${target.email}`, 'success', 5000);
+                } catch(err) {
+                    console.error('Error reenviant correu:', err);
+                    showAdminToast(`⚠️ Error en reenviar el correu: ${err.text || err.message || err}`, 'error', 7000);
+                } finally {
+                    btn.disabled = false;
                 }
             });
         });
@@ -2548,6 +2650,61 @@ document.addEventListener('DOMContentLoaded', () => {
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
+    }
+
+    // EmailJS Configuration Handlers
+    function initEmailJSConfig() {
+        const form = document.getElementById('form-emailjs-config');
+        if (!form) return;
+
+        const inputService = document.getElementById('emailjs-service-id');
+        const inputKey = document.getElementById('emailjs-public-key');
+        const inputTemplate = document.getElementById('emailjs-paid-template-id');
+
+        if (inputService) inputService.value = localStorage.getItem('ares_emailjs_service_id') || 'service_hu53lep';
+        if (inputKey) inputKey.value = localStorage.getItem('ares_emailjs_public_key') || 'KJ16ReAN9A8vk7rQg';
+        if (inputTemplate) inputTemplate.value = localStorage.getItem('ares_emailjs_paid_template_id') || 'template_s9dtrrv';
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (inputService) localStorage.setItem('ares_emailjs_service_id', inputService.value.trim());
+            if (inputKey) localStorage.setItem('ares_emailjs_public_key', inputKey.value.trim());
+            if (inputTemplate) localStorage.setItem('ares_emailjs_paid_template_id', inputTemplate.value.trim());
+            showAdminToast("✓ Configuració d'EmailJS desada correctament.", 'success', 4000);
+        });
+
+        const btnTest = document.getElementById('btn-test-paid-email');
+        if (btnTest) {
+            btnTest.addEventListener('click', async () => {
+                const user = (window.db && window.db.getUser) ? window.db.getUser() : null;
+                const defaultEmail = (user && user.email) ? user.email : "comissio@aresdelmaestrat.com";
+                const testEmail = prompt("Introdueix l'adreça de correu per a rebre l'email de prova de confirmació de pagament:", defaultEmail);
+                if (!testEmail || !testEmail.trim()) return;
+
+                const dummyReservation = {
+                    name: 'Usuari de Prova',
+                    surname: "d'Ares",
+                    email: testEmail.trim(),
+                    size: 'L',
+                    quantity: 1,
+                    amount_cents: 3500,
+                    concept: 'Samarreta - Prova Sistema',
+                    product_name: 'Samarreta Homenatge Ares SD (Prova)'
+                };
+
+                btnTest.disabled = true;
+                showAdminToast(`🔄 Enviant correu de prova a ${testEmail.trim()}...`, 'info', 3000);
+                try {
+                    await window.db.sendPaymentConfirmationEmail(dummyReservation);
+                    showAdminToast(`✉️ Correu de prova enviat amb èxit a ${testEmail.trim()}! Revisa la teua bústia.`, 'success', 6000);
+                } catch(err) {
+                    console.error('Error enviant correu de prova:', err);
+                    alert(`Error enviant el correu de prova amb EmailJS:\n${err.text || err.message || JSON.stringify(err)}\n\nRecorda crear la plantilla a EmailJS i comprovar que el Template ID coincideix.`);
+                } finally {
+                    btnTest.disabled = false;
+                }
+            });
+        }
     }
 
     // Attach tab-click to load data

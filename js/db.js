@@ -1973,6 +1973,58 @@ class AppDatabase {
         } catch(e) {}
     }
 
+    async sendPaymentConfirmationEmail(reservation) {
+        if (!reservation || !reservation.email) {
+            throw new Error("L'adreça de correu electrònic de la reserva és necessària.");
+        }
+
+        const emailJsPublicKey = localStorage.getItem('ares_emailjs_public_key') || "KJ16ReAN9A8vk7rQg";
+        const serviceId = localStorage.getItem('ares_emailjs_service_id') || "service_hu53lep";
+        const templateId = localStorage.getItem('ares_emailjs_paid_template_id') || "template_s9dtrrv";
+
+        if (!window.emailjs) {
+            throw new Error("La llibreria EmailJS no està carregada al navegador.");
+        }
+
+        try {
+            window.emailjs.init({ publicKey: emailJsPublicKey });
+        } catch(e) {
+            console.warn("EmailJS init warning:", e);
+        }
+
+        const fullName = `${reservation.name || ''} ${reservation.surname || ''}`.trim() || 'Client';
+        const totalFormatted = reservation.amount_cents ? (reservation.amount_cents / 100).toFixed(2) : (reservation.total || '35.00');
+        const concept = reservation.concept || reservation.concept_text || `Samarreta - ${fullName}`;
+
+        const templateParams = {
+            name: reservation.name || fullName,
+            surname: reservation.surname || '',
+            to_name: fullName,
+            email: reservation.email,
+            to_email: reservation.email,
+            reply_to: reservation.email,
+            user_email: reservation.email,
+            customer_email: reservation.email,
+            product_name: reservation.product_name || 'Samarreta Homenatge Ares SD',
+            concept: concept,
+            concept_text: concept,
+            product_image: 'https://www.comiares.es/img/camiseta-1.webp',
+            product_image_url: 'https://www.comiares.es/img/camiseta-1.webp',
+            logo_url: 'https://www.comiares.es/img/logo-email.png',
+            size: reservation.size || '-',
+            qty: reservation.quantity || 1,
+            total: totalFormatted,
+            notes: reservation.notes || 'Cap'
+        };
+
+        const response = await Promise.race([
+            window.emailjs.send(serviceId, templateId, templateParams),
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Temps d'espera esgotat enviant el correu (Timeout 8s)")), 8000))
+        ]);
+
+        return response;
+    }
+
     // Products Actions
     async getProducts() {
         const isAdmin = window.location.pathname.includes('/admin/');
