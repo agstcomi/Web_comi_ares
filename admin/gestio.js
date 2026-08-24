@@ -2489,30 +2489,57 @@ document.addEventListener('DOMContentLoaded', () => {
             let actionsHtml = '';
             if (isPaid) {
                 actionsHtml = `
-                    <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" style="padding:0.3rem 0.5rem;font-size:0.72rem;color:#15803d;border-color:#86efac;background:#f0fdf4;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;" title="Reenviar correu de pagament rebut">
-                        <i data-lucide="mail" style="width:12px;height:12px;"></i> Reenviar Email
-                    </button>
-                    <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.3rem 0.45rem;font-size:0.72rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Tornar a pendent">
-                        <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Pendent
-                    </button>
-                    <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.3rem 0.45rem;font-size:0.72rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;" title="Cancel·lar reserva">
-                        <i data-lucide="x" style="width:12px;height:12px;"></i>
-                    </button>
+                    <div style="display:flex;flex-direction:column;gap:0.35rem;align-items:flex-end;">
+                        <div>
+                            <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" style="padding:0.25rem 0.55rem;font-size:0.72rem;color:#15803d;border-color:#86efac;background:#f0fdf4;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;" title="Reenviar correu de confirmació de pagament">
+                                <i data-lucide="mail" style="width:12px;height:12px;"></i> Reenviar Email
+                            </button>
+                        </div>
+                        <div style="display:flex;gap:0.3rem;align-items:center;">
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.2rem 0.45rem;font-size:0.7rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.2rem;" title="Tornar a pendent">
+                                <i data-lucide="rotate-ccw" style="width:11px;height:11px;"></i> Pendent
+                            </button>
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.2rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;gap:0.2rem;" title="Cancel·lar reserva">
+                                <i data-lucide="x" style="width:11px;height:11px;"></i> Cancel·lar
+                            </button>
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre definitivament" style="width:24px;height:24px;min-width:24px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:5px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="trash-2" style="width:11px;height:11px;"></i>
+                            </button>
+                        </div>
+                    </div>
                 `;
             } else if (isCancelled) {
                 actionsHtml = `
-                    <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.3rem 0.5rem;font-size:0.72rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Reactivar reserva">
-                        <i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Reactivar
-                    </button>
+                    <div style="display:flex;flex-direction:column;gap:0.35rem;align-items:flex-end;">
+                        <div>
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" style="padding:0.25rem 0.55rem;font-size:0.72rem;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Reactivar reserva">
+                                <i data-lucide="rotate-ccw" style="width:12px;height:12px;"></i> Reactivar Reserva
+                            </button>
+                        </div>
+                        <div style="display:flex;gap:0.3rem;align-items:center;">
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre definitivament" style="padding:0.2rem 0.45rem;font-size:0.7rem;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:5px;cursor:pointer;display:inline-flex;align-items:center;gap:0.2rem;">
+                                <i data-lucide="trash-2" style="width:11px;height:11px;"></i> Eliminar
+                            </button>
+                        </div>
+                    </div>
                 `;
             } else {
                 actionsHtml = `
-                    <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.3rem 0.55rem;font-size:0.72rem;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;" title="Validar transferència i enviar correu al client">
-                        <i data-lucide="check" style="width:12px;height:12px;"></i> Validar & Email
-                    </button>
-                    <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.3rem 0.5rem;font-size:0.72rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;gap:0.25rem;" title="Cancel·lar reserva">
-                        <i data-lucide="x" style="width:12px;height:12px;"></i> Cancel·lar
-                    </button>
+                    <div style="display:flex;flex-direction:column;gap:0.35rem;align-items:flex-end;">
+                        <div>
+                            <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" style="padding:0.25rem 0.6rem;font-size:0.74rem;font-weight:700;background:#15803d;color:#fff;border-color:#15803d;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;" title="Validar transferència i enviar correu al client">
+                                <i data-lucide="check" style="width:13px;height:13px;"></i> Validar & Enviar Email
+                            </button>
+                        </div>
+                        <div style="display:flex;gap:0.3rem;align-items:center;">
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" style="padding:0.2rem 0.45rem;font-size:0.7rem;color:#ef4444;border-color:#fca5a5;white-space:nowrap;display:inline-flex;align-items:center;gap:0.2rem;" title="Cancel·lar reserva">
+                                <i data-lucide="x" style="width:11px;height:11px;"></i> Cancel·lar
+                            </button>
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre definitivament" style="width:24px;height:24px;min-width:24px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:5px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="trash-2" style="width:11px;height:11px;"></i>
+                            </button>
+                        </div>
+                    </div>
                 `;
             }
 
@@ -2529,12 +2556,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <td style="padding:0.65rem 0.5rem;white-space:nowrap;">${statusBadge}</td>
                 <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.65rem 0.5rem;white-space:nowrap;">${dateStr}</td>
                 <td style="white-space:nowrap;text-align:right;padding:0.65rem 0.85rem;">
-                    <div style="display:inline-flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
-                        ${actionsHtml}
-                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" title="Eliminar del registre definitivament" style="width:28px;height:28px;min-width:28px;display:inline-flex;align-items:center;justify-content:center;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;flex-shrink:0;">
-                            <i data-lucide="trash-2" style="width:12px;height:12px;"></i>
-                        </button>
-                    </div>
+                    ${actionsHtml}
                 </td>
             </tr>`;
         }).join('');

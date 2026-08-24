@@ -523,15 +523,15 @@ CREATE TABLE photos (
 
                     <!-- Reservations Table -->
                     <div style="border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin-bottom: 2rem; overflow-x: auto;">
-                        <table class="admin-events-table" style="width: 100%; min-width: 760px; table-layout: fixed; border-collapse: collapse;">
+                        <table class="admin-events-table" style="width: 100%; border-collapse: collapse;">
                             <thead>
                                 <tr>
-                                    <th style="width: 25%; padding: 0.85rem 1rem;">Client</th>
-                                    <th style="width: 10%; padding: 0.85rem 0.5rem; text-align: center;">Talla & Qty</th>
-                                    <th style="width: 9%; padding: 0.85rem 0.5rem;">Import</th>
-                                    <th style="width: 11%; padding: 0.85rem 0.5rem;">Estat</th>
-                                    <th style="width: 11%; padding: 0.85rem 0.5rem;">Data</th>
-                                    <th style="width: 34%; padding: 0.85rem 1rem; text-align: right;">Accions</th>
+                                    <th style="padding: 0.85rem 1rem;">Client</th>
+                                    <th style="padding: 0.85rem 0.5rem; text-align: center;">Talla & Qty</th>
+                                    <th style="padding: 0.85rem 0.5rem;">Import</th>
+                                    <th style="padding: 0.85rem 0.5rem;">Estat</th>
+                                    <th style="padding: 0.85rem 0.5rem;">Data</th>
+                                    <th style="padding: 0.85rem 1rem; text-align: right;">Accions</th>
                                 </tr>
                             </thead>
                             <tbody id="reservations-tbody">
@@ -1120,8 +1120,8 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="/js/db.js?v=2.5" defer></script>
-    <script src="/admin/gestio.js?v=2.5"></script>
+    <script src="/js/db.js?v=2.6" defer></script>
+    <script src="/admin/gestio.js?v=2.6"></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);
