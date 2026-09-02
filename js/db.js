@@ -984,7 +984,26 @@ class AppDatabase {
     async getHomeConfig() {
         const defaultConfig = this.getDefaultHomeConfig();
 
-        // 1. Local storage cache first
+        // 1. If Supabase is configured, fetch live config from DB
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('events')
+                    .select('*')
+                    .eq('id', 'event-config-home')
+                    .single();
+                if (!error && data && data.long_description) {
+                    const homeConf = JSON.parse(data.long_description);
+                    const merged = { ...defaultConfig, ...homeConf };
+                    localStorage.setItem('ares_home_config', JSON.stringify(merged));
+                    return merged;
+                }
+            } catch (err) {
+                // Fallback below
+            }
+        }
+
+        // 2. Local storage cache fallback
         const stored = localStorage.getItem('ares_home_config');
         if (stored) {
             try {
@@ -994,42 +1013,23 @@ class AppDatabase {
             }
         }
 
-        // 2. Fetch from DB or static json
-        const isAdmin = window.location.pathname.includes('/admin/');
-        if (this.isSupabaseConfigured() && isAdmin) {
-            try {
-                const { data, error } = await this.supabase
-                    .from('events')
-                    .select('*')
-                    .eq('id', 'event-config-home')
-                    .single();
-                if (data && data.long_description) {
-                    const homeConf = JSON.parse(data.long_description);
+        // 3. Fetch from static json if offline or Supabase not configured
+        try {
+            const cacheBuster = Math.floor(Date.now() / 60000);
+            const dataUrl = `/data/events.json?v=${cacheBuster}`;
+            const res = await fetch(dataUrl);
+            if (res.ok) {
+                const events = await res.json();
+                const configEvent = events.find(e => e.id === 'event-config-home');
+                if (configEvent && configEvent.long_description) {
+                    const homeConf = JSON.parse(configEvent.long_description);
                     const merged = { ...defaultConfig, ...homeConf };
                     localStorage.setItem('ares_home_config', JSON.stringify(merged));
                     return merged;
                 }
-            } catch (err) {
-                console.warn("Could not load home config from Supabase:", err);
             }
-        } else {
-            try {
-                const cacheBuster = Math.floor(Date.now() / 300000);
-                const dataUrl = `/data/events.json?v=${cacheBuster}`;
-                const res = await fetch(dataUrl);
-                if (res.ok) {
-                    const events = await res.json();
-                    const configEvent = events.find(e => e.id === 'event-config-home');
-                    if (configEvent && configEvent.long_description) {
-                        const homeConf = JSON.parse(configEvent.long_description);
-                        const merged = { ...defaultConfig, ...homeConf };
-                        localStorage.setItem('ares_home_config', JSON.stringify(merged));
-                        return merged;
-                    }
-                }
-            } catch (err) {
-                console.warn("Could not load home config from static events:", err);
-            }
+        } catch (err) {
+            console.warn("Could not load home config from static events:", err);
         }
 
         // Local IDB Fallback

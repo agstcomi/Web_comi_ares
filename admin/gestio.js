@@ -2132,6 +2132,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         order.splice(fromIdx, 1);
                         order.splice(toIdx, 0, draggedKey);
                         renderHomeBlocksList();
+                        if (window.db && typeof window.db.saveHomeConfig === 'function') {
+                            window.db.saveHomeConfig(currentHomeConfig).catch(console.error);
+                        }
                     }
                 }
             });
@@ -2180,7 +2183,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    window.moveHomeBlock = function(blockKey, direction) {
+    window.moveHomeBlock = async function(blockKey, direction) {
         if (!currentHomeConfig || !currentHomeConfig.block_order) return;
         const index = currentHomeConfig.block_order.indexOf(blockKey);
         if (index === -1) return;
@@ -2192,10 +2195,15 @@ document.addEventListener('DOMContentLoaded', () => {
         currentHomeConfig.block_order[targetIndex] = temp;
 
         renderHomeBlocksList();
+        try {
+            await window.db.saveHomeConfig(currentHomeConfig);
+        } catch (e) {
+            console.error("Error auto-saving home block order:", e);
+        }
     };
 
-    window.toggleHomeBlockVisibility = function(blockKey) {
-        if (!currentHomeConfig) return;
+    window.toggleHomeBlockVisibility = async function(blockKey) {
+        if (!currentHomeConfig) currentHomeConfig = await window.db.getHomeConfig();
         if (!currentHomeConfig.hidden_blocks) currentHomeConfig.hidden_blocks = [];
         const idx = currentHomeConfig.hidden_blocks.indexOf(blockKey);
         if (idx === -1) {
@@ -2204,6 +2212,11 @@ document.addEventListener('DOMContentLoaded', () => {
             currentHomeConfig.hidden_blocks.splice(idx, 1);
         }
         renderHomeBlocksList();
+        try {
+            await window.db.saveHomeConfig(currentHomeConfig);
+        } catch (e) {
+            console.error("Error auto-saving home block visibility:", e);
+        }
     };
 
     const btnGoToCountdown = document.getElementById('btn-go-to-countdown');

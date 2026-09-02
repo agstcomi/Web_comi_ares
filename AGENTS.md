@@ -341,7 +341,21 @@ Completat localment:
 
 ---
 
-## 28. Pròxim Pas
+## 28. Ocultació Dinàmica d'Actes Destacats i Sincronització de Mòduls de la Home (PRO)
+Completat localment:
+* **Ocultació Automàtica si no hi ha Propers Actes Programats (`js/home.js`)**:
+  - Eliminat el fallback antic que forçava a mostrar actes passats a la portada (`if (upcoming.length === 0) upcoming = eventsList;`).
+  - Ara, si no hi ha actes futurs a partir de la data actual d'Espanya (`e.date >= today`), tota la secció `#events-highlight-section` (capçalera, botó de programa complet i contenidor) s'oculta automàticament (`display: none`), evitant mostrar seccions buides o actes antics obsolets.
+* **Sincronització en Temps Real dels Mòduls de la Home (`js/db.js` i `js/home.js`)**:
+  - `getHomeConfig()` ara consulta directament a Supabase en temps real quan està connectat, actualitzant automàticament la memòria cau local `ares_home_config`. D'aquesta manera, els blocs ocultats o reordenats es reflecteixen immediatament a la portada sense dependre de la compilació estàtica de GitHub Actions.
+  - A `loadHomeData()` es respecta de forma estricta la llista `hidden_blocks`: si `events-highlight-section` ha sigut desactivat des del panell d'administrador, la secció es manté completament oculta.
+* **Auto-Desat al Panell d'Administrador (`admin/gestio.js`)**:
+  - Les accions d'ocultar/mostrar blocs (`toggleHomeBlockVisibility`), pujar/baixar (`moveHomeBlock`) i el desplaçament d'arrossegar i deixar anar (drag & drop) ara es desen automàticament a Supabase i `localStorage` en el mateix instant de la interacció, sense obligar l'usuari a prémer el botó inferior de desar.
+* **Cache-Busting (v2.9)**: Incrementat a `?v=2.9` a tots els arxius HTML del projecte (`js/db.js`, `js/home.js`, `admin/gestio.js`).
+
+---
+
+## 29. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

@@ -224,48 +224,68 @@
         }
 
         // Load Events (Max 3 upcoming)
-        const eventsList = await window.db.getEvents();
+        const eventsSection = document.getElementById('events-highlight-section');
         const eventsContainer = document.getElementById('events-highlight-container');
-        const colors = window.db.getCategoryColors();
 
-        if (eventsList && eventsList.length > 0) {
-            // Filter upcoming events (or just show the first 3 if none are future)
-            const today = new Date().toISOString().split('T')[0];
-            let upcoming = eventsList.filter(e => e.date >= today);
-            if (upcoming.length === 0) upcoming = eventsList; // fallback to all if none in future
+        // Check if admin has hidden this section
+        let isHiddenByAdmin = false;
+        try {
+            const homeConfig = (window.db && typeof window.db.getHomeConfig === 'function')
+                ? await window.db.getHomeConfig()
+                : JSON.parse(localStorage.getItem('ares_home_config') || '{}');
+            if (homeConfig && Array.isArray(homeConfig.hidden_blocks) && homeConfig.hidden_blocks.includes('events-highlight-section')) {
+                isHiddenByAdmin = true;
+            }
+        } catch (e) {}
 
-            eventsContainer.innerHTML = upcoming.slice(0, 3).map((item, idx) => {
-            const escTitle = window.db.escapeHTML(item.title);
-            const escDesc = window.db.escapeHTML(item.description);
-            const escLoc = window.db.escapeHTML(item.location);
-            const escId = window.db.escapeHTML(item.id);
-            const formattedDate = formatDate(item.date);
-            return `
-                <div class="home-event-card animate-fade-in-up" data-id="${escId}" style="transition-delay: ${idx * 0.05}s;" onclick="window.location.href='programacio'">
-                <div class="event-title-row">
-                    <h3>${escTitle}</h3>
-                    <div style="display: flex; gap: 0.25rem;">
-                    ${window.renderCategoryBadges(item.category)}
-                    </div>
-                </div>
-                ${escDesc ? `<p class="event-desc">${escDesc}</p>` : ''}
-                <div class="event-footer">
-                    <div class="event-meta">
-                    <span class="event-date-time">${formattedDate} — ${item.time}h</span>
-                    <div class="event-location">
-                        <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
-                        <span>${escLoc}</span>
-                    </div>
-                    </div>
-                    <div class="event-arrow">
-                    <i data-lucide="chevron-right"></i>
-                    </div>
-                </div>
-                </div>
-            `;
-            }).join('');
+        if (isHiddenByAdmin) {
+            if (eventsSection) eventsSection.style.display = 'none';
         } else {
-            eventsContainer.innerHTML = '<div style="text-align: center; padding: 2rem; color: var(--text-muted);">No hi ha esdeveniments programats.</div>';
+            const eventsList = await window.db.getEvents();
+            const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
+            const upcoming = (eventsList && eventsList.length > 0)
+                ? eventsList.filter(e => e.date >= today)
+                : [];
+
+            if (upcoming.length === 0) {
+                // If there are no upcoming events, hide the entire section
+                if (eventsSection) eventsSection.style.display = 'none';
+            } else {
+                if (eventsSection) eventsSection.style.display = '';
+                if (eventsContainer) {
+                    const isEs = window.location.pathname.startsWith('/es/');
+                    eventsContainer.innerHTML = upcoming.slice(0, 3).map((item, idx) => {
+                        const escTitle = window.db.escapeHTML(isEs ? (item.title_es || item.title) : item.title);
+                        const escDesc = window.db.escapeHTML(isEs ? (item.description_es || item.description) : item.description);
+                        const escLoc = window.db.escapeHTML(isEs ? (item.location_es || item.location) : item.location);
+                        const escId = window.db.escapeHTML(item.id);
+                        const formattedDate = formatDate(item.date);
+                        return `
+                            <div class="home-event-card animate-fade-in-up" data-id="${escId}" style="transition-delay: ${idx * 0.05}s;" onclick="window.location.href='${isEs ? '/es/' : ''}programacio'">
+                            <div class="event-title-row">
+                                <h3>${escTitle}</h3>
+                                <div style="display: flex; gap: 0.25rem;">
+                                ${window.renderCategoryBadges(item.category)}
+                                </div>
+                            </div>
+                            ${escDesc ? `<p class="event-desc">${escDesc}</p>` : ''}
+                            <div class="event-footer">
+                                <div class="event-meta">
+                                <span class="event-date-time">${formattedDate} — ${item.time}h</span>
+                                <div class="event-location">
+                                    <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
+                                    <span>${escLoc}</span>
+                                </div>
+                                </div>
+                                <div class="event-arrow">
+                                <i data-lucide="chevron-right"></i>
+                                </div>
+                            </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            }
         }
 
         // Load FAQs
