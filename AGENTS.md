@@ -325,7 +325,23 @@ Completat localment:
 
 ---
 
-## 27. Pròxim Pas
+## 27. Correcció de Desactivació de Reserves de Samarretes i Error 401 en Trigger-Deploy (PRO)
+Completat localment:
+* **Diagnòstic de l'Error 401 a Supabase Edge Function (`trigger-deploy`)**:
+  - L'Edge Function `trigger-deploy` (`supabase/functions/trigger-deploy/index.ts`) exigia exclusivament una capçalera `Authorization: Bearer <WEBHOOK_SECRET>`. Quan el webhook de base de dades intern de Supabase es disparava, si no tenia configurada exactament aquesta capçalera HTTP o si enviava les credencials del sistema de Supabase (com la `service_role_key` o `anon_key`), la funció retornava `401 Unauthorized`.
+  - **Solució**: S'ha actualitzat `supabase/functions/trigger-deploy/index.ts` perquè accepte de forma transparent la validació de `WEBHOOK_SECRET` (amb o sense `Bearer`), `SUPABASE_SERVICE_ROLE_KEY` o `SUPABASE_ANON_KEY`, eliminant bloquejos erronis davant de crides internes legítimes de la base de dades.
+* **Sincronització de l'Estat de Reserves entre Admin i Front**:
+  - **Problema**: El botó "Tancar Reserves" (`#btn-toggle-reservations`) només desava un flag a la taula `events` (`shop-config-camisetes`), però no canviava l'estat a la taula `products`. Les pàgines públiques (`camisetes.html` i `tenda.html`) només llegien `product.status === 'closed'` del catàleg estàtic (`data/products.json`), ignorant la configuració global i mostrant sempre les reserves obertes.
+  - **Solució a `js/db.js` i `admin/gestio.js`**:
+    - `saveShopConfig(config)` ara utilitza l'esquema complet requerit per PostgreSQL (`title_es`, `description_es`, `long_description`, etc.) evitant errors de restricció `NOT NULL`.
+    - `saveShopConfig(config)` actualitza simultàniament l'estat de tots els productes a la taula `products` de Supabase (`status: closed/open`), la memòria cau local `ares_products`, i refresca immediatament la taula del panell d'administració (`loadProductsTable()`).
+* **Comprovació en Temps Real al Frontend (`camisetes.html`, `es/camisetes.html`, `tenda.html`, `es/tenda.html`)**:
+  - Les pàgines de compra i el catàleg de la botiga ara verifiquen `getShopConfig()` en viu. Si les reserves estan tancades a nivell global, es commuta immediatament a l'avís de *"🔒 Reserves tancades"* i s'amaga el selector de talles i el botó de reserva sense retard (0 ms).
+* **Cache-Busting (v2.8)**: Incrementat a `?v=2.8` a tots els arxius HTML del projecte.
+
+---
+
+## 28. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

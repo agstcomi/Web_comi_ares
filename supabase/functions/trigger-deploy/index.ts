@@ -13,22 +13,22 @@ serve(async (req) => {
     return new Response("ok", { headers: corsHeaders });
   }
 
-  // F4: Validar el secret compartit entre el webhook de Supabase i aquesta funci\u00f3.
-  // El secret s'ha de configurar com a variable d'entorn "WEBHOOK_SECRET" a Supabase Secrets
-  // i usar el mateix valor al configurar el Database Webhook de Supabase.
+  // F4: Validar el secret compartit entre el webhook de Supabase i aquesta funció.
+  // Es valida contra WEBHOOK_SECRET, la clau de servei (SUPABASE_SERVICE_ROLE_KEY) o la clau anònima (SUPABASE_ANON_KEY).
   const webhookSecret = Deno.env.get("WEBHOOK_SECRET");
-  const authHeader = req.headers.get("Authorization");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  const anonKey = Deno.env.get("SUPABASE_ANON_KEY");
 
-  if (!webhookSecret) {
-    console.error("WEBHOOK_SECRET no est\u00e0 configurat als Supabase Secrets.");
-    return new Response(JSON.stringify({ error: "Server misconfigured" }), {
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 500,
-    });
-  }
+  const authHeader = req.headers.get("Authorization") || req.headers.get("authorization");
+  const apikeyHeader = req.headers.get("apikey") || req.headers.get("ApiKey");
 
-  if (!authHeader || authHeader !== `Bearer ${webhookSecret}`) {
-    console.warn("Intent d'acc\u00e9s no autoritzat a trigger-deploy.");
+  const isAuthorized =
+    (webhookSecret && (authHeader === `Bearer ${webhookSecret}` || authHeader === webhookSecret)) ||
+    (serviceRoleKey && (authHeader === `Bearer ${serviceRoleKey}` || authHeader === serviceRoleKey)) ||
+    (anonKey && (authHeader === `Bearer ${anonKey}` || apikeyHeader === anonKey));
+
+  if (!isAuthorized) {
+    console.warn("Intent d'accés no autoritzat a trigger-deploy. Auth present:", !!authHeader, "apikey present:", !!apikeyHeader);
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 401,

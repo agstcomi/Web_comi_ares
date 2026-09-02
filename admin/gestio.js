@@ -2730,14 +2730,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnToggle = document.getElementById('btn-toggle-reservations');
     if (btnToggle) {
         btnToggle.addEventListener('click', async () => {
+            const originalHTML = btnToggle.innerHTML;
+            btnToggle.disabled = true;
+            btnToggle.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;">⟳</span> Actualitzant...';
             reservationsOpen = !reservationsOpen;
             try {
                 await window.db.saveShopConfig({ open: reservationsOpen, price_cents: 3500 });
                 updateReservationsToggleUI();
+                await loadProductsTable();
             } catch(e) {
                 alert('Error en canviar l\'estat de les reserves: ' + e.message);
                 reservationsOpen = !reservationsOpen; // revert
                 updateReservationsToggleUI();
+            } finally {
+                btnToggle.disabled = false;
+                if (!reservationsOpen) {
+                    btnToggle.innerHTML = originalHTML;
+                }
             }
         });
     }

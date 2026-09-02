@@ -1822,27 +1822,71 @@ class AppDatabase {
                     .select('*')
                     .eq('id', 'shop-config-camisetes')
                     .single();
-                if (error || !data) throw new Error('Not found');
-                try { return JSON.parse(data.title); } catch(e) { return { open: true, price_cents: 3500 }; }
-            } catch {
-                const local = localStorage.getItem(LOCAL_KEY);
-                return local ? JSON.parse(local) : { open: true, price_cents: 3500 };
+                if (!error && data) {
+                    let parsed = null;
+                    try { parsed = JSON.parse(data.long_description); } catch(e) {}
+                    if (!parsed) {
+                        try { parsed = JSON.parse(data.title); } catch(e) {}
+                    }
+                    if (parsed) {
+                        localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
+                        return parsed;
+                    }
+                }
+            } catch (e) {
+                // Fallback below
             }
-        } else {
-            const local = localStorage.getItem(LOCAL_KEY);
-            return local ? JSON.parse(local) : { open: true, price_cents: 3500 };
         }
+        const local = localStorage.getItem(LOCAL_KEY);
+        return local ? JSON.parse(local) : { open: true, price_cents: 3500 };
     }
 
     async saveShopConfig(config) {
         const LOCAL_KEY = 'ares_shop_config';
         localStorage.setItem(LOCAL_KEY, JSON.stringify(config));
+
+        const configItem = {
+            id: 'shop-config-camisetes',
+            title: JSON.stringify(config),
+            title_es: JSON.stringify(config),
+            description: 'System Shop Configuration - Do not delete',
+            description_es: 'Configuración de la Tienda del Sistema - No borrar',
+            long_description: JSON.stringify(config),
+            long_description_es: JSON.stringify(config),
+            date: '2099-12-31',
+            time: '00:00',
+            location: 'System Config',
+            location_es: 'System Config',
+            category: 'config',
+            image_url: ''
+        };
+
+        const newStatus = (config.open !== false) ? 'open' : 'closed';
+
+        // 1. Update products in local storage
+        try {
+            const localProds = JSON.parse(localStorage.getItem('ares_products') || '[]');
+            localProds.forEach(p => {
+                if (p.status !== 'sold_out') p.status = newStatus;
+            });
+            localStorage.setItem('ares_products', JSON.stringify(localProds));
+        } catch(e) {}
+
+        // 2. Persist to Supabase
         if (this.isSupabaseConfigured()) {
             try {
-                const { error } = await this.supabase
+                // Upsert config item in events table
+                const { error: cfgErr } = await this.supabase
                     .from('events')
-                    .upsert([{ id: 'shop-config-camisetes', title: JSON.stringify(config), description: 'Shop configuration', date: '2099-01-01', time: '00:00', location: 'admin', category: 'config' }]);
-                if (error) throw error;
+                    .upsert([configItem]);
+                if (cfgErr) console.warn('Could not save shop config to Supabase events:', cfgErr);
+
+                // Update status in products table
+                const { error: prodErr } = await this.supabase
+                    .from('products')
+                    .update({ status: newStatus })
+                    .neq('status', 'sold_out');
+                if (prodErr) console.warn('Could not update products status in Supabase:', prodErr);
             } catch(e) {
                 console.warn('Could not save shop config to Supabase:', e);
             }
@@ -2123,6 +2167,16 @@ class AppDatabase {
                 }
             });
         }
+
+        // Reflect reservations state from shop config if closed
+        try {
+            const localCfg = JSON.parse(localStorage.getItem('ares_shop_config') || '{}');
+            if (localCfg.open === false && products && products.length > 0) {
+                products.forEach(p => {
+                    if (p.status !== 'sold_out') p.status = 'closed';
+                });
+            }
+        } catch(e) {}
 
         return products;
     }

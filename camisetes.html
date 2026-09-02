@@ -785,7 +785,7 @@
             });
         })();
     </script>
-    <script src="/js/db.js?v=2.3" defer></script>
+    <script src="/js/db.js?v=2.8" defer></script>
     <script src="/js/main.js?v=1.16" defer></script>
     <script src="/js/push-notifications.js?v=1.20" defer></script>
     <script>
@@ -1054,7 +1054,8 @@
                     }
                 }
 
-                if (prod.status === 'closed' || prod.status === 'sold_out') {
+                const isClosed = (window.__shopConfigOpen === false) || prod.status === 'closed' || prod.status === 'sold_out';
+                if (isClosed) {
                     document.getElementById('closed-overlay').style.display = 'block';
                     document.getElementById('purchase-section').style.display = 'none';
                 } else {
@@ -1067,6 +1068,11 @@
 
             // 1. Instant sync load from localStorage (0 ms)
             try {
+                const localCfg = JSON.parse(localStorage.getItem('ares_shop_config') || '{}');
+                if (localCfg.open !== undefined) window.__shopConfigOpen = localCfg.open;
+            } catch(e) {}
+
+            try {
                 const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
                 let match = slugParam ? local.find(p => p.slug === slugParam || p.id === slugParam) : local[0];
                 if (match) applyProduct(match);
@@ -1075,6 +1081,16 @@
             // 2. Fetch fresh data from DB / Supabase
             try {
                 if (window.db) {
+                    // Check shop config (reservations open/closed)
+                    if (typeof window.db.getShopConfig === 'function') {
+                        window.db.getShopConfig().then(cfg => {
+                            if (cfg && cfg.open !== undefined) {
+                                window.__shopConfigOpen = cfg.open;
+                                if (currentProduct) applyProduct(currentProduct);
+                            }
+                        }).catch(() => {});
+                    }
+
                     let prod = null;
                     if (slugParam && typeof window.db.getProductBySlug === 'function') {
                         prod = await window.db.getProductBySlug(slugParam);

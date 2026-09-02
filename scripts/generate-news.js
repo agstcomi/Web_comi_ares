@@ -349,6 +349,10 @@ async function main() {
       const templateProdVal = fs.readFileSync(templateProdValPath, 'utf-8');
       const templateProdCast = fs.readFileSync(templateProdCastPath, 'utf-8');
 
+      // Keep root camisetes directory indices in sync with templates
+      fs.writeFileSync(path.join(__dirname, '..', 'camisetes', 'index.html'), templateProdVal, 'utf-8');
+      fs.writeFileSync(path.join(__dirname, '..', 'es', 'camisetes', 'index.html'), templateProdCast, 'utf-8');
+
       for (const product of products) {
         if (!product.slug) continue;
         console.log(`Procesando producto: "${product.name}" (Slug: ${product.slug})`);
