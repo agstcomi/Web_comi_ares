@@ -416,7 +416,21 @@ Completat i verificat:
 
 ---
 
-## 33. Pròxim Pas
+## 33. Solució a la Persistència del Preu de Productes des del Panell de Control (PRO)
+Completat i verificat:
+* **Diagnòstic de l'Error**:
+  1. A `js/db.js` (`getProducts()`, línia 2301), la inicialització i fusió de `DEFAULT_PRODUCTS` tenia forçat `price: defProd.price` al final del spread. Això provocava que en recarregar la taula de productes després de guardar un preu nou, el valor s'esborrava i es revertia immediatament a `35.00 €`.
+  2. En desar el formulari `#form-product` a `admin/gestio.js`, l'objecte `productData` es creava des de zero sense preservar camps existents com `sizes` o `created_at`.
+  3. A `camisetes.html` i `es/camisetes.html`, en accedir a la pàgina principal de la samarreta sense paràmetre `slug`, s'assignava directament `HARDCODED_PRODUCTS[0]` (35.00 €) sense consultar `localStorage.getItem('ares_products')`.
+* **Solucions Aplicades**:
+  - **`js/db.js`**: S'ha corregit `DEFAULT_PRODUCTS.forEach` per a respectar `existingPrice` i `existingSizes`. En `saveProduct(product)`, es converteix el preu a float numèric net (`numericPrice`), s'actualitza instantàniament `localStorage` (0 ms), IndexedDB i Supabase, i es sincronitza la configuració de botiga com a còpia de seguretat.
+  - **`admin/gestio.js`**: En desar el producte, es recupera l'element preexistent del catàleg per a fusionar totes les seues propietats (`sizes`, `created_at`, etc.) i es mostra un avís Toast confirmant l'operació.
+  - **`camisetes.html` i `es/camisetes.html`**: En la càrrega inicial síncrona (0 ms), es cerca a `ares_products` tant pel `slug` com per `id` fins i tot en visites directes a `/camisetes.html` i es renderitza el preu exacte (amb decimals quan pertoque). A més, en el pas 2 es prioritza el producte actualitzat de `db.getProducts()`.
+  - **Compilació JAMstack**: Executat `scripts/generate-news.js` per a reflectir tots els canvis en els directoris físics estàtics.
+
+---
+
+## 34. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

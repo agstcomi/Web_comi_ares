@@ -2298,7 +2298,9 @@ class AppDatabase {
             if (idx === -1) {
                 localProducts.push({ ...defProd });
             } else {
-                localProducts[idx] = { ...defProd, ...localProducts[idx], sizes: defProd.sizes, price: defProd.price };
+                const existingPrice = (localProducts[idx].price !== undefined && localProducts[idx].price !== null) ? localProducts[idx].price : defProd.price;
+                const existingSizes = (Array.isArray(localProducts[idx].sizes) && localProducts[idx].sizes.length > 0) ? localProducts[idx].sizes : defProd.sizes;
+                localProducts[idx] = { ...defProd, ...localProducts[idx], sizes: existingSizes, price: existingPrice };
             }
         });
 
@@ -2435,8 +2437,10 @@ class AppDatabase {
         images = [...new Set(images.map(s => typeof s === 'string' ? s.trim() : s).filter(Boolean))];
         const primaryImage = images.length > 0 ? images[0] : (product.image_url || '');
 
+        const numericPrice = parseFloat(product.price);
         const itemToSave = {
             ...product,
+            price: (!isNaN(numericPrice) && numericPrice >= 0) ? numericPrice : (product.price || 0),
             images,
             image_url: primaryImage,
             id: product.id || ('prod-' + Date.now()),
@@ -2446,9 +2450,9 @@ class AppDatabase {
         // 1. Instant local persistence in localStorage (0 ms)
         try {
             const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
-            const idx = local.findIndex(p => p.id === itemToSave.id);
+            const idx = local.findIndex(p => p.id === itemToSave.id || (itemToSave.slug && p.slug === itemToSave.slug));
             if (idx >= 0) {
-                local[idx] = itemToSave;
+                local[idx] = { ...local[idx], ...itemToSave };
             } else {
                 local.unshift(itemToSave);
             }
@@ -2460,7 +2464,19 @@ class AppDatabase {
             this.putIDB('products', itemToSave).catch(() => {});
         }).catch(() => {});
 
-        // 3. Supabase upsert with 2.5s timeout
+        // 3. Also update shop config in Supabase events table as backup/cross-device sync for shirt price
+        if (itemToSave.slug === 'samarreta-ares-sd' || itemToSave.id === 'prod-camiseta-ares-sd-2026') {
+            try {
+                const currentCfg = await this.getShopConfig().catch(() => ({ open: true, price_cents: 3500 }));
+                const newCents = Math.round(itemToSave.price * 100);
+                if (currentCfg.price_cents !== newCents) {
+                    currentCfg.price_cents = newCents;
+                    await this.saveShopConfig(currentCfg).catch(() => {});
+                }
+            } catch(e) {}
+        }
+
+        // 4. Supabase upsert with 3.5s timeout
         if (this.isSupabaseConfigured()) {
             try {
                 const upsertPromise = this.supabase

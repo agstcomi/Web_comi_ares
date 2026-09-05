@@ -1394,7 +1394,8 @@
                 if (subEl) subEl.textContent = desc;
 
                 const priceEl = document.getElementById('product-price');
-                if (priceEl) priceEl.innerHTML = `${Math.floor(PRICE)}<span style="font-size:1.2rem;">€</span>`;
+                const priceFormatted = (PRICE % 1 === 0) ? `${PRICE}` : PRICE.toFixed(2);
+                if (priceEl) priceEl.innerHTML = `${priceFormatted}<span style="font-size:1.2rem;">€</span>`;
 
                 const btnLabel = document.getElementById('btn-label');
                 if (btnLabel) btnLabel.textContent = 'Reserva ya';
@@ -1637,15 +1638,11 @@
             } catch(e) {}
 
             try {
-                let match = null;
-                if (slugParam) {
-                    match = HARDCODED_PRODUCTS.find(p => p.slug === slugParam || p.id === slugParam);
-                    const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
-                    const localMatch = local.find(p => p.slug === slugParam || p.id === slugParam);
-                    if (localMatch) match = { ...match, ...localMatch };
-                } else {
-                    match = HARDCODED_PRODUCTS[0];
-                }
+                const targetSlug = slugParam || 'samarreta-ares-sd';
+                let match = HARDCODED_PRODUCTS.find(p => p.slug === targetSlug || p.id === targetSlug) || HARDCODED_PRODUCTS[0];
+                const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
+                const localMatch = local.find(p => p.slug === targetSlug || p.id === targetSlug || (match && p.id === match.id));
+                if (localMatch) match = { ...match, ...localMatch };
                 if (match) applyProduct(match);
             } catch(e) {}
 
@@ -1665,9 +1662,15 @@
                     if (slugParam && typeof window.db.getProductBySlug === 'function') {
                         prod = await window.db.getProductBySlug(slugParam);
                     }
-                    if (!prod && !slugParam && typeof window.db.getProducts === 'function') {
+                    if (typeof window.db.getProducts === 'function') {
                         const all = await window.db.getProducts();
-                        prod = (all && all.length > 0) ? all[0] : null;
+                        if (all && all.length > 0) {
+                            if (slugParam) {
+                                prod = all.find(p => p.slug === slugParam || p.id === slugParam) || prod;
+                            } else {
+                                prod = all.find(p => p.slug === 'samarreta-ares-sd' || p.id === 'prod-camiseta-ares-sd-2026') || all[0];
+                            }
+                        }
                     }
                     if (prod) applyProduct(prod);
                 }

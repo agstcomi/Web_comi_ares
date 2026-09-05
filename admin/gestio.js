@@ -3282,7 +3282,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 images = [...new Set(images.filter(Boolean))];
                 const primaryImageUrl = images.length > 0 ? images[0] : '';
 
+                // Retrieve existing product to preserve properties like sizes, created_at, etc.
+                const existingProducts = await window.db.getProducts();
+                const existing = id ? existingProducts.find(p => String(p.id) === String(id) || (slug && p.slug === slug)) : null;
+
                 const productData = {
+                    ...(existing || {}),
                     name,
                     name_es,
                     slug,
@@ -3305,6 +3310,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 const modal = document.getElementById('modal-product');
                 if (modal) modal.classList.remove('active');
                 if (typeof closeModal === 'function') closeModal('modal-product');
+
+                if (typeof showAdminToast === 'function') {
+                    showAdminToast('✓ Producte desat correctament!', 'success', 4000);
+                }
 
                 await loadProductsTable();
 
