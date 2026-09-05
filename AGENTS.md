@@ -385,9 +385,18 @@ Completat i verificat:
   - S'han inclòs àlies preventius (`product_summary`, `products`, `productes_reservats`, `reserved_products`) i s'ha configurat `product_image` amb la miniatura del primer article en comandes del carret.
   - S'ha actualitzat `templates/email-confirmation.html` i s'han sincronitzat tots els fitxers físics del projecte.
 
+## 31. Imatge de Previsualització per a WhatsApp i Xarxes a la Tenda (PRO)
+Completat i verificat:
+* **Generació de `img/tenda-hero.jpg`**:
+  - Creat a partir de la imatge de portada oficial de la botiga (`img/tenda-hero.webp`) en format JPEG progressiu d'alta resolució (1024 × 682 px, 179 KB), ideal per als rastrejadors de xarxes socials i aplicacions de missatgeria com WhatsApp, Facebook, Telegram i Twitter.
+* **Actualització d'Etiquetes OpenGraph i Twitter Card (`tenda.html` i `es/tenda.html`)**:
+  - S'ha substituït la imatge genèrica `portada.jpg` per `https://www.comiares.es/img/tenda-hero.jpg`.
+  - Afegides les metadades completes: `og:image:secure_url`, `og:image:type` (`image/jpeg`), `og:image:width` (1024), `og:image:height` (682), `og:image:alt`, `og:description`, `twitter:card` (`summary_large_image`), `twitter:title`, `twitter:description` i `twitter:image`.
+  - D'aquesta manera, en compartir l'enllaç `https://www.comiares.es/tenda` a WhatsApp o xarxes, la targeta mostra immediatament la portada autèntica de la botiga oficial.
+
 ---
 
-## 31. Pròxim Pas
+## 32. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 
