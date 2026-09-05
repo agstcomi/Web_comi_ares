@@ -1128,6 +1128,15 @@
                     totalCents = Math.round(window.cart.getCartTotal() * 100);
                 }
 
+                const orderItems = (isCartCheckout && window.cart) ? window.cart.getCart() : [{
+                    name: prodName,
+                    name_es: prodName,
+                    size: selectedSize || 'Talla Única',
+                    quantity: quantity,
+                    price: unitPriceVal,
+                    image_url: prodImg
+                }];
+
                 const reservationData = {
                     id: 'res-' + Date.now(),
                     created_at: new Date().toISOString(),
@@ -1144,17 +1153,9 @@
                     product_slug: prodSlug,
                     product_image: prodImg,
                     product_image_url: prodImg,
-                    concept: conceptStr
+                    concept: conceptStr,
+                    items: orderItems
                 };
-
-                const orderItems = (isCartCheckout && window.cart) ? window.cart.getCart() : [{
-                    name: prodName,
-                    name_es: prodName,
-                    size: selectedSize || 'Talla Única',
-                    quantity: quantity,
-                    price: unitPriceVal,
-                    image_url: prodImg
-                }];
 
                 const totalQty = orderItems.reduce((acc, i) => acc + parseInt(i.quantity || 1, 10), 0);
 

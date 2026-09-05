@@ -396,7 +396,27 @@ Completat i verificat:
 
 ---
 
-## 32. Pròxim Pas
+## 32. Solució a la Persistència i Visualització de Reserves de Nous Productes al Panell d'Admin (PRO)
+Completat i verificat:
+* **Diagnòstic de l'Error de Persistència a Supabase**:
+  - La taula `reservations` de Supabase té un esquema estricte de columnes estàndard: `id` (TEXT), `name`, `surname`, `email`, `size`, `quantity`, `amount_cents`, `status`, `notes`, `created_at`.
+  - Quan un usuari feia una reserva d'un producte nou (Tote Bag, Samarreta Mirador, Rinyonera o comanda multi-producte del carret), `camisetes.html` enviava camps addicionals (`product_id`, `product_name`, `product_slug`, `product_image`, `concept`, `items`). PostgREST retornava un error `400 Bad Request (PGRST204: Could not find the 'product_name' column of 'reservations' in the schema cache)`.
+  - Aquest error s'atrapava silenciosament en `addReservation` (`js/db.js`), desant-se només a `localStorage` del comprador però sent rebutjat per Supabase. En obrir el panell d'administrador des de qualsevol equip, la taula de Supabase no contenia aquestes reserves.
+* **Empaquetament i Desempaquetament Transparent de Metadades (`js/db.js`)**:
+  - **Empaquetament (`formatReservationNotes` i `syncReservationToSupabase`)**: Les dades dels nous productes i el desglossament del carret s'empaqueten de manera transparent dins del camp de text `notes` mitjançant el prefix llegible per a humans (`[Producte: Nom] Observacions: ...`) i el tag estructurat `<!--ORDER_METADATA:{...}-->`. La càrrega útil enviada a Supabase només conté les columnes suportades per la taula, garantint respostes `201 Created` sense violacions d'esquema ni necessitat de migracions SQL manuals a PostgreSQL.
+  - **Desempaquetament (`unpackReservation`)**: En descarregar reserves de Supabase o emmagatzematge local, s'extreuen automàticament `product_name`, `product_slug`, `product_id`, `items` i `clean_notes`. Les reserves antigues sense metadades s'assignen per defecte a la Samarreta Homenatge Ares SD.
+  - **Auto-sincronització en segon pla**: `getReservations()` detecta si hi ha reserves a `localStorage` que encara no estiguen a Supabase (com les creades durant proves o en desconnexió) i les puja automàticament al núvol.
+* **Millora Integral del Panell d'Administrador (`admin/gestio.js`)**:
+  - **Desglossament d'articles a la taula**: Si una reserva té múltiples articles (comandes del carret), es mostren sota el nom del client amb un llistat clar de cada producte, quantitat i talla (`📦 Comanda Multi-producte: · 2x Tote Bag (Talla Única) · 1x Samarreta Mirador (L)`). Si el client va deixar observacions, es mostren amb una insígnia d'estil xat (`💬 "Observacions..."`).
+  - **Filtre intel·ligent per producte**: El desplegable `#filter-reservation-product` ara inclou tots els productes del catàleg i detecta qualsevol producte present a les reserves. El filtre cerca no només pel títol general, sinó per qualsevol dels articles individuals inclosos dins de comandes multi-producte.
+  - **Càlcul precís d'estadístiques**: La descomposició de talles més venudes (`topSize`) itera a través de cada element de la comanda, ignorant automàticament "Vàries talles".
+  - **Exportació CSV fidel**: Genera el resum detallat de productes i talles i exporta les observacions netes sense codis ni etiquetes tècniques.
+* **Actualització del Frontend (`camisetes.html`, `es/camisetes.html`, `camisetes/index.html`, `es/camisetes/index.html`)**:
+  - S'ha assegurat que `orderItems` es genera abans de `reservationData` i s'inclou la matriu `items: orderItems` en cada transacció.
+
+---
+
+## 33. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

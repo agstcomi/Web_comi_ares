@@ -2430,13 +2430,40 @@ document.addEventListener('DOMContentLoaded', () => {
             const products = await window.db.getProducts();
             const currentVal = select.value;
             const options = ['<option value="">Tots els productes</option>'];
+            const addedNames = new Set();
+
             if (products && products.length > 0) {
                 products.forEach(p => {
                     const name = p.name || p.slug;
-                    const escName = window.db.escapeHTML ? window.db.escapeHTML(name) : name;
-                    options.push(`<option value="${escName}">${escName}</option>`);
+                    if (name && !addedNames.has(name.toLowerCase())) {
+                        addedNames.add(name.toLowerCase());
+                        const escName = window.db.escapeHTML ? window.db.escapeHTML(name) : name;
+                        options.push(`<option value="${escName}">${escName}</option>`);
+                    }
                 });
             }
+
+            // Also inspect allReservations for products or multi-product orders
+            if (Array.isArray(allReservations) && allReservations.length > 0) {
+                allReservations.forEach(r => {
+                    if (r.product_name && !addedNames.has(r.product_name.toLowerCase())) {
+                        addedNames.add(r.product_name.toLowerCase());
+                        const escName = window.db.escapeHTML ? window.db.escapeHTML(r.product_name) : r.product_name;
+                        options.push(`<option value="${escName}">${escName}</option>`);
+                    }
+                    if (Array.isArray(r.items)) {
+                        r.items.forEach(it => {
+                            const itName = it.name || it.name_es;
+                            if (itName && !addedNames.has(itName.toLowerCase())) {
+                                addedNames.add(itName.toLowerCase());
+                                const escName = window.db.escapeHTML ? window.db.escapeHTML(itName) : itName;
+                                options.push(`<option value="${escName}">${escName}</option>`);
+                            }
+                        });
+                    }
+                });
+            }
+
             select.innerHTML = options.join('');
             if (currentVal) select.value = currentVal;
 
@@ -2453,9 +2480,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     async function loadReservationsTab() {
-        await populateReservationProductFilter();
         await loadProductsTable();
         await loadReservationsTable();
+        await populateReservationProductFilter();
     }
 
     async function loadReservationsTable() {
@@ -2467,6 +2494,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             allReservations = await window.db.getReservations();
             renderReservationsUI();
+            await populateReservationProductFilter();
         } catch (err) {
             console.error('Error loading reservations:', err);
             if (tbody) tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444;">Error: ${err.message}</td></tr>`;
@@ -2485,7 +2513,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pName = (r.product_name || 'Samarreta homenatge Ares SD').toLowerCase();
                 const pSlug = (r.product_slug || '').toLowerCase();
                 const pConcept = (r.concept || '').toLowerCase();
-                return pName.includes(q) || pSlug.includes(q) || pConcept.includes(q);
+                let matchesItem = false;
+                if (Array.isArray(r.items) && r.items.length > 0) {
+                    matchesItem = r.items.some(it => {
+                        const itName = (it.name || it.name_es || '').toLowerCase();
+                        const itSlug = (it.slug || '').toLowerCase();
+                        return itName.includes(q) || q.includes(itName) || (itSlug && itSlug.includes(q));
+                    });
+                }
+                return pName.includes(q) || q.includes(pName) || pSlug.includes(q) || pConcept.includes(q) || matchesItem;
             });
         }
 
@@ -2518,7 +2554,52 @@ document.addEventListener('DOMContentLoaded', () => {
                 const escName = window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname);
                 const escEmail = window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '');
                 const escSize = window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '');
-                const escProd = window.db.escapeHTML ? window.db.escapeHTML(r.product_name || 'Samarreta Homenatge Ares SD') : (r.product_name || 'Samarreta Homenatge Ares SD');
+                const escProd = window.db.escapeHTML ? window.db.escapeHTML(r.product_name || 'Samarreta homenatge Ares SD') : (r.product_name || 'Samarreta homenatge Ares SD');
+                const escNotes = (r.clean_notes || r.notes || '')
+                    .replace(/<!--ORDER_METADATA:[\s\S]*?-->/g, '')
+                    .replace(/\[(?:Producte|Comanda):\s*[^\]]+\]\s*/gi, '')
+                    .replace(/^Observacions:\s*/i, '')
+                    .trim();
+
+                let prodDetailsHtml = '';
+                if (Array.isArray(r.items) && r.items.length > 1) {
+                    const itemsList = r.items.map(it => {
+                        const itName = window.db.escapeHTML ? window.db.escapeHTML(it.name || it.name_es || 'Producte') : (it.name || it.name_es || 'Producte');
+                        const itSize = window.db.escapeHTML ? window.db.escapeHTML(it.size || 'Talla Única') : (it.size || 'Talla Única');
+                        return `· ${it.quantity}x ${itName} (${itSize})`;
+                    }).join('<br>');
+                    prodDetailsHtml = `
+                        <div style="font-size:0.75rem;font-weight:700;color:var(--text-primary);margin-top:0.25rem;">
+                            📦 ${escProd}
+                        </div>
+                        <div style="font-size:0.7rem;color:var(--text-secondary);margin-top:0.15rem;line-height:1.3;padding-left:0.5rem;border-left:2px solid var(--border-color);">
+                            ${itemsList}
+                        </div>
+                    `;
+                } else if (Array.isArray(r.items) && r.items.length === 1) {
+                    const singleItem = r.items[0];
+                    const singleName = window.db.escapeHTML ? window.db.escapeHTML(singleItem.name || escProd) : (singleItem.name || escProd);
+                    prodDetailsHtml = `
+                        <div style="font-size:0.75rem;font-weight:700;color:var(--text-primary);margin-top:0.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                            📦 ${singleName}
+                        </div>
+                    `;
+                } else {
+                    prodDetailsHtml = `
+                        <div style="font-size:0.75rem;font-weight:700;color:var(--text-primary);margin-top:0.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                            📦 ${escProd}
+                        </div>
+                    `;
+                }
+
+                let notesBadgeHtml = '';
+                if (escNotes) {
+                    notesBadgeHtml = `
+                        <div style="font-size:0.7rem;color:#b45309;background:#fef3c7;border:1px solid #fde68a;border-radius:4px;padding:0.2rem 0.45rem;margin-top:0.25rem;display:inline-block;max-width:100%;overflow:hidden;text-overflow:ellipsis;" title="${window.db.escapeHTML ? window.db.escapeHTML(escNotes) : escNotes}">
+                            💬 <em>${window.db.escapeHTML ? window.db.escapeHTML(escNotes) : escNotes}</em>
+                        </div>
+                    `;
+                }
 
                 let actionsHtml = '';
                 if (isPaid) {
@@ -2569,7 +2650,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td style="padding:0.65rem 0.85rem;overflow:hidden;text-overflow:ellipsis;">
                         <div style="font-weight:700;font-size:0.85rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escName}</div>
                         <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escEmail}</div>
-                        <div style="font-size:0.7rem;font-weight:700;color:var(--text-muted);margin-top:0.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📦 ${escProd}</div>
+                        ${prodDetailsHtml}
+                        ${notesBadgeHtml}
                     </td>
                     <td style="text-align:center;padding:0.65rem 0.5rem;white-space:nowrap;">
                         <span style="font-weight:800;font-size:0.9rem;">${escSize}</span>
@@ -2595,7 +2677,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const sizeCounts = {};
         activeReservations.forEach(r => {
-            sizeCounts[r.size] = (sizeCounts[r.size] || 0) + (r.quantity || 1);
+            if (Array.isArray(r.items) && r.items.length > 0) {
+                r.items.forEach(it => {
+                    const sz = it.size || 'Talla Única';
+                    if (sz !== 'Vàries talles' && sz !== 'Varias tallas') {
+                        sizeCounts[sz] = (sizeCounts[sz] || 0) + (parseInt(it.quantity, 10) || 1);
+                    }
+                });
+            } else {
+                const sz = r.size || 'Talla Única';
+                if (sz !== 'Vàries talles' && sz !== 'Varias tallas') {
+                    sizeCounts[sz] = (sizeCounts[sz] || 0) + (parseInt(r.quantity, 10) || 1);
+                }
+            }
         });
         const topSize = Object.entries(sizeCounts).sort((a, b) => b[1] - a[1])[0];
 
@@ -2612,7 +2706,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="border:1px solid var(--border-color);border-radius:8px;padding:0.75rem 1rem;background:var(--bg-secondary);text-align:center;">
                     <div style="font-size:1.35rem;font-weight:800;font-family:var(--font-heading);">${s.val}</div>
                     <div style="font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);margin-top:0.2rem;">${s.label}</div>
-                </div>
             `).join('');
         }
 
@@ -2709,7 +2802,15 @@ document.addEventListener('DOMContentLoaded', () => {
             targetReservations = targetReservations.filter(r => {
                 const pName = (r.product_name || 'Samarreta homenatge Ares SD').toLowerCase();
                 const pSlug = (r.product_slug || '').toLowerCase();
-                return pName.includes(q) || pSlug.includes(q);
+                let matchesItem = false;
+                if (Array.isArray(r.items) && r.items.length > 0) {
+                    matchesItem = r.items.some(it => {
+                        const itName = (it.name || it.name_es || '').toLowerCase();
+                        const itSlug = (it.slug || '').toLowerCase();
+                        return itName.includes(q) || q.includes(itName) || (itSlug && itSlug.includes(q));
+                    });
+                }
+                return pName.includes(q) || q.includes(pName) || pSlug.includes(q) || matchesItem;
             });
         }
 
@@ -2719,18 +2820,30 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const headers = ['Producte', 'Nom', 'Cognoms', 'Email', 'Talla', 'Quantitat', 'Import (€)', 'Estat', 'Data', 'Observacions'];
-        const rows = targetReservations.map(r => [
-            `"${(r.product_name || 'Samarreta homenatge Ares SD').replace(/"/g, '""')}"`,
-            `"${(r.name || '').replace(/"/g, '""')}"`,
-            `"${(r.surname || '').replace(/"/g, '""')}"`,
-            `"${(r.email || '').replace(/"/g, '""')}"`,
-            `"${(r.size || '').replace(/"/g, '""')}"`,
-            r.quantity || 1,
-            r.amount_cents ? (r.amount_cents / 100).toFixed(2) : '0.00',
-            `"${r.status === 'paid' ? 'Pagat' : 'Pendent Transferència'}"`,
-            r.created_at ? new Date(r.created_at).toLocaleString('ca-ES') : '',
-            `"${(r.notes || '').replace(/"/g, '""')}"`
-        ]);
+        const rows = targetReservations.map(r => {
+            let prodStr = r.product_name || 'Samarreta homenatge Ares SD';
+            if (Array.isArray(r.items) && r.items.length > 0) {
+                prodStr = r.items.map(it => `${it.quantity}x ${it.name} (${it.size || 'Talla Única'})`).join(' + ');
+            }
+            const cleanNotes = (r.clean_notes || r.notes || '')
+                .replace(/<!--ORDER_METADATA:[\s\S]*?-->/g, '')
+                .replace(/\[(?:Producte|Comanda):\s*[^\]]+\]\s*/gi, '')
+                .replace(/^Observacions:\s*/i, '')
+                .trim();
+
+            return [
+                `"${prodStr.replace(/"/g, '""')}"`,
+                `"${(r.name || '').replace(/"/g, '""')}"`,
+                `"${(r.surname || '').replace(/"/g, '""')}"`,
+                `"${(r.email || '').replace(/"/g, '""')}"`,
+                `"${(r.size || '').replace(/"/g, '""')}"`,
+                r.quantity || 1,
+                r.amount_cents ? (r.amount_cents / 100).toFixed(2) : '0.00',
+                `"${r.status === 'paid' ? 'Pagat' : 'Pendent Transferència'}"`,
+                r.created_at ? new Date(r.created_at).toLocaleString('ca-ES') : '',
+                `"${cleanNotes.replace(/"/g, '""')}"`
+            ];
+        });
         const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
         const bom = '\uFEFF'; // UTF-8 BOM for Excel
         const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });

@@ -1952,7 +1952,125 @@ class AppDatabase {
         return config;
     }
 
+    unpackReservation(r) {
+        if (!r) return r;
+        const out = { ...r };
+
+        // Parse metadata embedded in notes if present
+        if (out.notes && typeof out.notes === 'string' && out.notes.includes('<!--ORDER_METADATA:')) {
+            try {
+                const match = out.notes.match(/<!--ORDER_METADATA:([\s\S]*?)-->/);
+                if (match && match[1]) {
+                    const meta = JSON.parse(match[1]);
+                    if (meta.product_name && !out.product_name) out.product_name = meta.product_name;
+                    if (meta.product_slug && !out.product_slug) out.product_slug = meta.product_slug;
+                    if (meta.product_id && !out.product_id) out.product_id = meta.product_id;
+                    if (meta.product_image && !out.product_image) out.product_image = meta.product_image;
+                    if (meta.product_image_url && !out.product_image_url) out.product_image_url = meta.product_image_url;
+                    if (meta.concept && !out.concept) out.concept = meta.concept;
+                    if (Array.isArray(meta.items) && meta.items.length > 0 && (!out.items || out.items.length === 0)) {
+                        out.items = meta.items;
+                    }
+                }
+            } catch(e) {
+                console.warn('Error parsing reservation metadata:', e);
+            }
+        }
+
+        // Also parse [Producte: ...] or [Comanda: ...] if no product_name
+        if (!out.product_name && out.notes && typeof out.notes === 'string') {
+            const prodMatch = out.notes.match(/\[(?:Producte|Comanda):\s*([^\]]+)\]/i);
+            if (prodMatch && prodMatch[1]) {
+                out.product_name = prodMatch[1].trim();
+            }
+        }
+
+        // Default product name for legacy reservations
+        if (!out.product_name) {
+            out.product_name = 'Samarreta homenatge Ares SD';
+            out.product_slug = 'samarreta-ares-sd';
+        }
+
+        // Extract clean notes without metadata for display and CSV
+        out.clean_notes = (out.notes || '')
+            .replace(/<!--ORDER_METADATA:[\s\S]*?-->/g, '')
+            .replace(/\[(?:Producte|Comanda):\s*[^\]]+\]\s*/gi, '')
+            .replace(/^Observacions:\s*/i, '')
+            .trim();
+
+        // Ensure out.items is always populated
+        if (!Array.isArray(out.items) || out.items.length === 0) {
+            out.items = [{
+                name: out.product_name,
+                name_es: out.product_name,
+                size: out.size || 'Talla Única',
+                quantity: parseInt(out.quantity, 10) || 1,
+                price: out.amount_cents ? (out.amount_cents / 100 / (parseInt(out.quantity, 10) || 1)) : 0,
+                image_url: out.product_image || out.product_image_url || '/img/camiseta-1.webp'
+            }];
+        }
+
+        return out;
+    }
+
+    formatReservationNotes(item) {
+        const userNotes = (item.clean_notes || item.notes || '')
+            .replace(/<!--ORDER_METADATA:[\s\S]*?-->/g, '')
+            .replace(/\[(?:Producte|Comanda):\s*[^\]]+\]\s*/gi, '')
+            .replace(/^Observacions:\s*/i, '')
+            .trim();
+
+        const orderMeta = {
+            product_id: item.product_id || '',
+            product_name: item.product_name || 'Samarreta homenatge Ares SD',
+            product_slug: item.product_slug || 'samarreta-ares-sd',
+            product_image: item.product_image || item.product_image_url || '/img/camiseta-1.webp',
+            concept: item.concept || '',
+            items: Array.isArray(item.items) && item.items.length > 0 ? item.items : [{
+                name: item.product_name || 'Samarreta homenatge Ares SD',
+                size: item.size || 'Talla Única',
+                quantity: parseInt(item.quantity, 10) || 1,
+                price: item.amount_cents ? (item.amount_cents / 100 / (parseInt(item.quantity, 10) || 1)) : 0
+            }]
+        };
+
+        const prodTag = `[Producte: ${orderMeta.product_name}]`;
+        const obsPart = userNotes ? ` Observacions: ${userNotes}` : '';
+        const metaTag = `\n<!--ORDER_METADATA:${JSON.stringify(orderMeta)}-->`;
+        return `${prodTag}${obsPart}${metaTag}`.trim();
+    }
+
+    async syncReservationToSupabase(item) {
+        if (!this.isSupabaseConfigured() || !item) return null;
+        const formattedNotes = this.formatReservationNotes(item);
+
+        const supabasePayload = {
+            id: String(item.id || ('res-' + Date.now())),
+            name: item.name || '',
+            surname: item.surname || '',
+            email: item.email || '',
+            size: item.size || 'Talla Única',
+            quantity: parseInt(item.quantity || 1, 10),
+            amount_cents: parseInt(item.amount_cents || 0, 10),
+            status: item.status || 'pending_transfer',
+            notes: formattedNotes,
+            created_at: item.created_at || new Date().toISOString()
+        };
+
+        const { data, error } = await this.supabase
+            .from('reservations')
+            .upsert([supabasePayload], { onConflict: 'id' })
+            .select();
+
+        if (error) {
+            console.warn('Supabase upsert warning for reservation:', error);
+            throw error;
+        }
+        return data && data[0] ? this.unpackReservation(data[0]) : item;
+    }
+
     async getReservations() {
+        let list = [];
         if (this.isSupabaseConfigured()) {
             try {
                 const { data, error } = await this.supabase
@@ -1960,13 +2078,33 @@ class AppDatabase {
                     .select('*')
                     .order('created_at', { ascending: false });
                 if (error) throw error;
-                return data || [];
+                list = (data || []).map(r => this.unpackReservation(r));
+
+                // Sync check: check if any local reservations exist that are not yet in Supabase
+                try {
+                    const localItems = await this.getLocalReservations();
+                    const remoteIds = new Set(list.map(r => String(r.id)));
+                    for (const loc of localItems) {
+                        if (loc && loc.id && !remoteIds.has(String(loc.id))) {
+                            console.log('Sincronitzant reserva local pendent a Supabase:', loc.id);
+                            await this.syncReservationToSupabase(loc).catch(e => console.warn('Sync failed:', e));
+                            list.unshift(this.unpackReservation(loc));
+                            remoteIds.add(String(loc.id));
+                        }
+                    }
+                } catch(syncErr) {
+                    console.warn('Local reservation sync error:', syncErr);
+                }
+
+                return list.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
             } catch(err) {
                 console.error('Error loading reservations from Supabase:', err);
-                return this.getLocalReservations();
+                const local = await this.getLocalReservations();
+                return (local || []).map(r => this.unpackReservation(r));
             }
         } else {
-            return this.getLocalReservations();
+            const local = await this.getLocalReservations();
+            return (local || []).map(r => this.unpackReservation(r));
         }
     }
 
@@ -1985,45 +2123,44 @@ class AppDatabase {
 
     async addReservation(item) {
         const newItem = {
-            id: 'res-' + Date.now(),
-            created_at: new Date().toISOString(),
-            status: 'pending_transfer',
+            id: item.id || ('res-' + Date.now()),
+            created_at: item.created_at || new Date().toISOString(),
+            status: item.status || 'pending_transfer',
             ...item
         };
+
+        const unpacked = this.unpackReservation(newItem);
 
         // 1. Instant synchronous write to localStorage for 100% immediate persistence
         try {
             const reservations = JSON.parse(localStorage.getItem('ares_reservations') || '[]');
-            const idx = reservations.findIndex(r => r.id === newItem.id);
+            const idx = reservations.findIndex(r => String(r.id) === String(unpacked.id));
             if (idx >= 0) {
-                reservations[idx] = newItem;
+                reservations[idx] = unpacked;
             } else {
-                reservations.unshift(newItem);
+                reservations.unshift(unpacked);
             }
             localStorage.setItem('ares_reservations', JSON.stringify(reservations));
         } catch(e) {}
 
         // 2. Write to IndexedDB in background
         this.dbPromise.then(() => {
-            this.putIDB('reservations', newItem).catch(() => {});
+            this.putIDB('reservations', unpacked).catch(() => {});
         }).catch(() => {});
 
-        // 3. If Supabase is configured, attempt remote insert with 1.5s timeout
+        // 3. If Supabase is configured, attempt remote insert with standard schema payload
         if (this.isSupabaseConfigured()) {
             try {
-                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase timeout')), 1500));
-                const insertPromise = this.supabase
-                    .from('reservations')
-                    .insert([newItem])
-                    .select();
-                const { data, error } = await Promise.race([insertPromise, timeoutPromise]);
-                if (!error && data && data[0]) return data[0];
+                const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase timeout')), 5000));
+                const insertPromise = this.syncReservationToSupabase(unpacked);
+                const res = await Promise.race([insertPromise, timeoutPromise]);
+                if (res) return res;
             } catch(err) {
                 console.warn('Supabase reservation insert:', err.message || err);
             }
         }
 
-        return newItem;
+        return unpacked;
     }
 
     async deleteReservation(id) {
@@ -2042,7 +2179,7 @@ class AppDatabase {
         await this.deleteIDB('reservations', id).catch(() => {});
         try {
             const reservations = JSON.parse(localStorage.getItem('ares_reservations') || '[]');
-            const filtered = reservations.filter(r => r.id !== id);
+            const filtered = reservations.filter(r => String(r.id) !== String(id));
             localStorage.setItem('ares_reservations', JSON.stringify(filtered));
         } catch(e) {}
     }
@@ -2094,34 +2231,39 @@ class AppDatabase {
             console.warn("EmailJS init warning:", e);
         }
 
-        const fullName = `${reservation.name || ''} ${reservation.surname || ''}`.trim() || 'Client';
-        const totalFormatted = reservation.amount_cents ? (reservation.amount_cents / 100).toFixed(2) : (reservation.total || '35.00');
-        const concept = reservation.concept || reservation.concept_text || `RESERVA ${fullName}`.trim();
+        const unpacked = this.unpackReservation(reservation);
+        const fullName = `${unpacked.name || ''} ${unpacked.surname || ''}`.trim() || 'Client';
+        const totalFormatted = unpacked.amount_cents ? (unpacked.amount_cents / 100).toFixed(2) : (unpacked.total || '35.00');
+        const concept = unpacked.concept || unpacked.concept_text || `RESERVA ${fullName}`.trim();
 
-        const rawImg = reservation.product_image || reservation.product_image_url || '/img/camiseta-1.webp';
+        const rawImg = unpacked.product_image || unpacked.product_image_url || (unpacked.items && unpacked.items[0] && unpacked.items[0].image_url) || '/img/camiseta-1.webp';
         const fullImg = rawImg.startsWith('http') ? rawImg : `https://www.comiares.es${rawImg.startsWith('/') ? '' : '/'}${rawImg}`;
 
+        const prodSummary = (Array.isArray(unpacked.items) && unpacked.items.length > 0)
+            ? unpacked.items.map(it => `${it.quantity}x ${it.name} (${it.size || 'Talla Única'})`).join(', ')
+            : (unpacked.product_name || 'Samarreta Homenatge Ares SD');
+
         const templateParams = {
-            name: reservation.name || fullName,
-            surname: reservation.surname || '',
+            name: unpacked.name || fullName,
+            surname: unpacked.surname || '',
             to_name: fullName,
-            email: reservation.email,
-            to_email: reservation.email,
-            reply_to: reservation.email,
-            user_email: reservation.email,
-            customer_email: reservation.email,
-            product_name: reservation.product_name || 'Samarreta Homenatge Ares SD',
+            email: unpacked.email,
+            to_email: unpacked.email,
+            reply_to: unpacked.email,
+            user_email: unpacked.email,
+            customer_email: unpacked.email,
+            product_name: unpacked.product_name || 'Samarreta Homenatge Ares SD',
             concept: concept,
             bank_concept: concept,
             concept_text: concept,
-            product_summary: reservation.product_name || '',
+            product_summary: prodSummary,
             product_image: fullImg,
             product_image_url: fullImg,
             logo_url: 'https://www.comiares.es/img/logo-email.png',
-            size: reservation.size || '-',
-            qty: reservation.quantity || 1,
+            size: unpacked.size || '-',
+            qty: unpacked.quantity || 1,
             total: totalFormatted,
-            notes: reservation.notes || 'Cap'
+            notes: unpacked.clean_notes || 'Cap'
         };
 
         const response = await Promise.race([
