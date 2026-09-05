@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Reserva Registrada — Samarreta Homenatge Ares SD</title>
+  <title>Reserva Registrada — {{product_name}}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -34,24 +34,25 @@
                 Sol·licitud de Reserva Registrada
               </h1>
               <p style="margin: 0 0 24px 0; font-family: 'Roboto', Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #475569;">
-                Hola <strong>{{name}}</strong>, hem registrat correctament la teua sol·licitud de reserva per a la <strong>Samarreta Homenatge Ares SD</strong>.
+                Hola <strong>{{name}}</strong>, hem registrat correctament la teua sol·licitud de reserva per a: <strong>{{product_name}}</strong>.
               </p>
 
-              <!-- Caixa Detall de la Comanda amb Imatge Adaptada -->
-              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; margin-bottom: 24px; padding: 14px; font-family: 'Roboto', Arial, sans-serif;">
+              <!-- Caixa Detall de la Comanda amb suport per a miniatures de cada producte -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; margin-bottom: 24px; padding: 16px; font-family: 'Roboto', Arial, sans-serif;">
                 <tr>
-                  <!-- Imatge del producte optimitzada i lleugera -->
-                  <td width="68" valign="middle" align="center" style="padding-right: 14px;">
-                    <img src="https://www.comiares.es/img/camiseta-1.webp" alt="Samarreta Homenatge Ares SD" width="64" height="64" style="display: block; width: 64px; height: 64px; object-fit: contain; background: #ffffff; border-radius: 8px; border: 1px solid #cbd5e1; padding: 2px;">
-                  </td>
-                  <td valign="middle" style="font-family: 'Roboto', Arial, sans-serif;">
-                    <div style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 3px; font-family: 'Roboto', Arial, sans-serif;">
-                      Samarreta Homenatge Ares SD
+                  <td style="font-family: 'Roboto', Arial, sans-serif;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; letter-spacing: 0.05em; margin-bottom: 10px;">
+                      Detall dels productes reservats:
                     </div>
-                    <div style="font-size: 13px; color: #64748b; line-height: 1.4; font-family: 'Roboto', Arial, sans-serif;">
-                      Talla: <strong style="color: #0f172a;">{{size}}</strong> &nbsp;·&nbsp; Quantitat: <strong style="color: #0f172a;">{{qty}}</strong>
+
+                    <!-- Miniatures i llistat de productes -->
+                    {{{items_html}}}
+
+                    <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-top: 12px; background: #ffffff; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Roboto', Arial, sans-serif;">
+                      <strong style="color: #0f172a; display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;">Productes reservats:</strong>
+                      {{concept}}
                     </div>
-                    <div style="font-size: 15px; font-weight: 800; color: #15803d; margin-top: 4px; font-family: 'Roboto', Arial, sans-serif;">
+                    <div style="font-size: 16px; font-weight: 800; color: #15803d; margin-top: 10px; font-family: 'Roboto', Arial, sans-serif; text-align: right;">
                       Import Total: {{total}} €
                     </div>
                   </td>
@@ -86,7 +87,7 @@
                             Concepte obligatori:
                           </div>
                           <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 12px; font-weight: 700; color: #0f172a; font-size: 14px; text-align: center; font-family: 'Roboto', Arial, sans-serif;">
-                            {{concept}}
+                            {{bank_concept}}
                           </div>
                         </td>
                       </tr>
@@ -101,6 +102,16 @@
                   <td style="padding: 14px 16px; font-size: 13px; line-height: 1.5; color: #92400e; font-family: 'Roboto', Arial, sans-serif;">
                     <strong>📩 Pas final obligatori per a validar la reserva:</strong><br>
                     Un cop realitzada la transferència bancària, <strong>respon directament a aquest mateix correu adjuntant el justificant o comprovant del pagament</strong>.
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Segueix-nos a les xarxes socials -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 22px; font-family: 'Roboto', Arial, sans-serif;">
+                <tr>
+                  <td style="padding: 12px 16px; font-size: 13px; line-height: 1.5; color: #475569; font-family: 'Roboto', Arial, sans-serif; text-align: center;">
+                    📱 Tens qualsevol dubte? Contacta amb nosaltres a Instagram:
+                    <a href="https://instagram.com/comi_ares" style="color: #0284c7; text-decoration: none; font-weight: 700; margin-left: 4px;">@comi_ares</a>
                   </td>
                 </tr>
               </table>

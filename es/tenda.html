@@ -448,7 +448,8 @@
     <div id="footer-placeholder"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
-    <script src="/js/db.js?v=2.9" defer></script>
+    <script src="/js/db.js?v=3.0" defer></script>
+    <script src="/js/cart.js?v=3.0" defer></script>
     <script src="/js/main.js?v=1.16" defer></script>
     <script src="/js/push-notifications.js?v=1.20" defer></script>
     <script>
@@ -471,7 +472,7 @@
                 }
 
                 const html = products.map(p => {
-                    const isOpen = (shopCfg.open !== false) && p.status === 'open';
+                    const isOpen = p.status === 'open';
                     const badgeText = isOpen ? 'Reserva Abierta' : p.status === 'sold_out' ? 'Agotado' : 'Reservas Cerradas';
                     const badgeBg = isOpen ? '#000' : '#ef4444';
                     const statusText = isOpen ? 'Reserva abierta' : p.status === 'sold_out' ? 'Agotado' : 'Reservas cerradas';

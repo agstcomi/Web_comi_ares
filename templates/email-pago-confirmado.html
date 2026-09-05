@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pagament Rebut — Samarreta Homenatge Ares SD</title>
+  <title>Pagament Rebut — {{product_name}}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
@@ -44,27 +44,24 @@
                 Comanda Confirmada
               </h1>
               <p style="margin: 0 0 24px 0; font-family: 'Roboto', Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #475569;">
-                Hola <strong>{{name}}</strong>, t'informem que <strong>s'ha rebut correctament el pagament</strong> del teu producte per a la <strong>Samarreta Homenatge Ares SD</strong>. La teua comanda ja està formalitzada amb èxit!
+                Hola <strong>{{name}}</strong>, t'informem que <strong>s'ha rebut correctament el pagament</strong> per a la teua reserva de <strong>{{product_name}}</strong>. La teua comanda ja està formalitzada amb èxit!
               </p>
 
-              <!-- Caixa Detall de la Comanda amb Imatge Adaptada -->
+              <!-- Caixa Detall de la Comanda amb suport per a miniatures de cada producte -->
               <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; margin-bottom: 24px; padding: 14px; font-family: 'Roboto', Arial, sans-serif;">
                 <tr>
-                  <!-- Imatge del producte optimitzada i lleugera -->
-                  <td width="68" valign="middle" align="center" style="padding-right: 14px;">
-                    <img src="https://www.comiares.es/img/camiseta-1.webp" alt="Samarreta Homenatge Ares SD" width="64" height="64" style="display: block; width: 64px; height: 64px; object-fit: contain; background: #ffffff; border-radius: 8px; border: 1px solid #cbd5e1; padding: 2px;">
-                  </td>
-                  <td valign="middle" style="font-family: 'Roboto', Arial, sans-serif;">
-                    <div style="font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 3px; font-family: 'Roboto', Arial, sans-serif;">
-                      Samarreta Homenatge Ares SD
+                  <td style="font-family: 'Roboto', Arial, sans-serif;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; letter-spacing: 0.05em; margin-bottom: 10px;">
+                      Productes confirmats:
                     </div>
-                    <div style="font-size: 13px; color: #64748b; line-height: 1.4; font-family: 'Roboto', Arial, sans-serif;">
-                      Talla: <strong style="color: #0f172a;">{{size}}</strong> &nbsp;·&nbsp; Quantitat: <strong style="color: #0f172a;">{{qty}}</strong>
+
+                    <!-- Miniatures i llistat de productes -->
+                    {{{items_html}}}
+
+                    <div style="font-size: 13px; color: #64748b; line-height: 1.4; margin-top: 10px; background: #ffffff; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
+                      Referència / Concepte: <strong style="color: #0f172a;">{{bank_concept}}</strong>
                     </div>
-                    <div style="font-size: 13px; color: #64748b; line-height: 1.4; margin-top: 2px; font-family: 'Roboto', Arial, sans-serif;">
-                      Referència / Concepte: <strong style="color: #0f172a;">{{concept}}</strong>
-                    </div>
-                    <div style="font-size: 15px; font-weight: 800; color: #15803d; margin-top: 4px; font-family: 'Roboto', Arial, sans-serif;">
+                    <div style="font-size: 15px; font-weight: 800; color: #15803d; margin-top: 10px; text-align: right;">
                       Import Pagat: {{total}} €
                     </div>
                   </td>
@@ -84,7 +81,7 @@
                       Moltes gràcies per la teua reserva i pel teu suport a la Comissió!
                     </p>
                     <p style="margin: 0; font-size: 14px; line-height: 1.6; color: #166534;">
-                      T'informarem per <strong>aquesta mateixa via (correu electrònic)</strong> i a través de les nostres <strong>xarxes socials</strong> tan prompte com les samarretes estiguen disponibles per a recollir a Ares del Maestrat.
+                      T'informarem per <strong>aquesta mateixa via (correu electrònic)</strong> i a través de les nostres <strong>xarxes socials</strong> tan prompte com la teua comanda siga disponible per a recollir a Ares del Maestrat.
                     </p>
                   </td>
                 </tr>
@@ -95,7 +92,7 @@
                 <tr>
                   <td style="padding: 14px 16px; font-size: 13px; line-height: 1.5; color: #475569; font-family: 'Roboto', Arial, sans-serif; text-align: center;">
                     📱 Estigues atent/a a les nostres novetats i avisos de recollida:<br>
-                    <a href="https://www.instagram.com/comissioares2026" style="color: #0284c7; text-decoration: none; font-weight: 700; margin: 0 6px;">Instagram: @comissioares2026</a>
+                    <a href="https://instagram.com/comi_ares" style="color: #0284c7; text-decoration: none; font-weight: 700; margin: 0 6px;">Instagram: @comi_ares</a>
                     &nbsp;·&nbsp;
                     <a href="https://www.comiares.es" style="color: #0284c7; text-decoration: none; font-weight: 700; margin: 0 6px;">www.comiares.es</a>
                   </td>

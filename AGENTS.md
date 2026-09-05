@@ -355,7 +355,39 @@ Completat localment:
 
 ---
 
-## 29. Pròxim Pas
+## 29. Nous Productes de Marxandatge i Guia de Talles Dinàmica (PRO)
+Completat i verificat:
+* **Nous Productes al Catàleg (`data/products.json`, `js/db.js`, `camisetes.html`, `es/camisetes.html`)**:
+  - Afegits 3 nous productes de marxandatge oficial:
+    - **Tote Bag «El mirador del Maestrat»** (6.00 €, Talla Única, imatge `img/tote-bag-1.jpg`).
+    - **Samarreta «El mirador del Maestrat»** (12.00 €, talles XS a 5XL, fitxa tècnica oficial de tallatge i taula de mides en cm, imatge `img/samarreta-mirador-1.jpg`).
+    - **Rinyonera «El mirador del Maestrat»** (12.00 €, Talla Única, cinta ajustable, imatge `img/rinyonera-mirador-1.jpg`).
+* **Guia de Talles Dinàmica i Condicional**:
+  - Els productes amb `Talla Única` amaguen automàticament qualsevol referència o enllaç a "Guia de talles" (`#size-guide-toggle-link` i `#size-accordion` ocults amb `display: none`).
+  - La Samarreta Mirador incorpora la taula específica amb mides de tallatge XS a 5XL i enllaç a la imatge tècnica oficial (`img/tallatge-mirador.png`).
+* **Interactivitat i Delegació Global d'Esdeveniments**:
+  - S'ha implementat delegació d'esdeveniments a nivell de document (`document.addEventListener('click', ...)`) per a assegurar que tots els botons de selecció de talla, selectors de quantitat (+ / −), botons d'afegir al carret, reserva directa i tancament de modal funcionen de forma immediata i sense bloquejos d'estat ni interferències d'elements superposats.
+
+---
+
+## 30. Carret de Compra Multi-producte i Correcció de Correus EmailJS (PRO)
+Completat i verificat:
+* **Sistema de Carret Multi-producte (`js/cart.js`)**:
+  - Nou mòdul global `window.cart` amb persistència a `localStorage` (`ares_cart`).
+  - Calaix lateral lliscant (Drawer) amb llistat d'articles afegits, miniatures, selecció de talla, modificador de quantitats (+ / − / eliminar), subtotal en temps real i botó de tramitació de comanda completa.
+  - Insígnia flotant de recompte d'articles (`#cart-drawer-badge`).
+* **Sincronització de l'Import Total per Defecte (6.00 € / 12.00 €)**:
+  - En carregar qualsevol producte (`applyProduct`), s'executa immediatament `updateQty(quantity)`, sincronitzant `#total-display`, `#modal-total` i `#btn-confirm-label` amb el preu real de l'article en lloc del valor estàtic heretat de 35.00 €.
+  - S'han actualitzat les plantilles físiques estàtiques en el generador JAMstack (`scripts/generate-news.js`) per a garantir que les pàgines de cada producte naixen amb el preu exacte calculat en l'HTML inicial.
+* **Correcció dels Paràmetres del Correu de Confirmació (`emailjs.send`)**:
+  - **Problema**: Al correu de confirmació de reserva, a l'apartat "PRODUCTES RESERVATS" apareixia el concepte de la transferència bancària (`RESERVA Nom Cognom`) en lloc del resum d'articles comprats. Això succeïa perquè el paràmetre `concept` s'assignava amb `bankConcept`.
+  - **Solució**: S'ha assignat a `concept` el resum detallat de productes (`productSummary`, ex: `2x Samarreta... (L), 1x Tote Bag...`), preservant `bank_concept` per al bloc de la transferència bancària (`CONCEPTE OBLIGATORI`).
+  - S'han inclòs àlies preventius (`product_summary`, `products`, `productes_reservats`, `reserved_products`) i s'ha configurat `product_image` amb la miniatura del primer article en comandes del carret.
+  - S'ha actualitzat `templates/email-confirmation.html` i s'han sincronitzat tots els fitxers físics del projecte.
+
+---
+
+## 31. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

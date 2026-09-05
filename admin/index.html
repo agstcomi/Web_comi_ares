@@ -524,16 +524,6 @@ CREATE TABLE photos (
                             <h3>Gestió de la Tenda i Productes</h3>
                             <p style="margin-bottom: 0;">Gestiona els productes a la venda (alta, edició de preus, imatges i descripcions) i les reserves rebudes.</p>
                         </div>
-                        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                            <button class="btn btn-sm" id="btn-toggle-reservations" style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                                <i data-lucide="toggle-right" style="width: 14px; height: 14px;"></i>
-                                <span id="toggle-reservations-label">Tancar Reserves</span>
-                            </button>
-                            <button class="btn btn-sm btn-secondary" id="btn-download-reservations-csv" style="display: inline-flex; align-items: center; gap: 0.5rem;">
-                                <i data-lucide="download" style="width: 14px; height: 14px;"></i>
-                                Descarregar CSV
-                            </button>
-                        </div>
                     </div>
 
                     <!-- Catàleg de Productes Section -->
@@ -562,6 +552,23 @@ CREATE TABLE photos (
                                     <tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Carregant productes...</td></tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <!-- Reservations Section Header + Product Filter -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                        <h4 style="margin: 0; font-size: 1.1rem; text-transform: uppercase;">Llistat de Reserves Rebudes</h4>
+                        <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                            <div style="display: flex; align-items: center; gap: 0.4rem; background: var(--bg-secondary); border: 1px solid var(--border-color); padding: 0.35rem 0.75rem; border-radius: 8px;">
+                                <i data-lucide="filter" style="width: 14px; height: 14px; color: var(--text-muted);"></i>
+                                <select id="filter-reservation-product" style="border: none; background: transparent; font-size: 0.85rem; font-family: var(--font-body); font-weight: 700; color: var(--text-primary); outline: none; cursor: pointer;">
+                                    <option value="">Tots els productes</option>
+                                </select>
+                            </div>
+                            <button class="btn btn-sm btn-secondary" id="btn-download-reservations-csv" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                                <i data-lucide="download" style="width: 14px; height: 14px;"></i>
+                                Descarregar CSV
+                            </button>
                         </div>
                     </div>
 
@@ -1170,7 +1177,7 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="/js/db.js?v=2.9" defer></script>
+    <script src="/js/db.js?v=3.0" defer></script>
     <script src="/admin/gestio.js?v=2.9"></script>
     <script>
         function openModal(id) {

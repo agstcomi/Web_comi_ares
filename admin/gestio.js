@@ -2421,6 +2421,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    let selectedProductFilter = '';
+
+    async function populateReservationProductFilter() {
+        const select = document.getElementById('filter-reservation-product');
+        if (!select) return;
+        try {
+            const products = await window.db.getProducts();
+            const currentVal = select.value;
+            const options = ['<option value="">Tots els productes</option>'];
+            if (products && products.length > 0) {
+                products.forEach(p => {
+                    const name = p.name || p.slug;
+                    const escName = window.db.escapeHTML ? window.db.escapeHTML(name) : name;
+                    options.push(`<option value="${escName}">${escName}</option>`);
+                });
+            }
+            select.innerHTML = options.join('');
+            if (currentVal) select.value = currentVal;
+
+            if (!select.dataset.listenerAttached) {
+                select.addEventListener('change', () => {
+                    selectedProductFilter = select.value;
+                    renderReservationsUI();
+                });
+                select.dataset.listenerAttached = 'true';
+            }
+        } catch(e) {
+            console.warn('Error populating product filter select:', e);
+        }
+    }
+
+    async function loadReservationsTab() {
+        await populateReservationProductFilter();
+        await loadProductsTable();
+        await loadReservationsTable();
+    }
+
     async function loadReservationsTable() {
         const tbody = document.getElementById('reservations-tbody');
         if (tbody && (!allReservations || allReservations.length === 0)) {
@@ -2441,19 +2478,120 @@ document.addEventListener('DOMContentLoaded', () => {
         const statsEl = document.getElementById('reservations-stats');
         if (!tbody) return;
 
+        let displayReservations = allReservations || [];
+        if (selectedProductFilter) {
+            const q = selectedProductFilter.toLowerCase();
+            displayReservations = displayReservations.filter(r => {
+                const pName = (r.product_name || 'Samarreta homenatge Ares SD').toLowerCase();
+                const pSlug = (r.product_slug || '').toLowerCase();
+                const pConcept = (r.concept || '').toLowerCase();
+                return pName.includes(q) || pSlug.includes(q) || pConcept.includes(q);
+            });
+        }
+
         if (!allReservations || allReservations.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No hi ha reserves encara.</td></tr>';
             if (statsEl) statsEl.innerHTML = '';
             return;
         }
 
+        if (displayReservations.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No s\'han trobat reserves per al producte seleccionat.</td></tr>';
+        } else {
+            // Table rows (No horizontal scroll needed)
+            tbody.innerHTML = displayReservations.map(r => {
+                const isPaid = r.status === 'paid';
+                const isCancelled = r.status === 'cancelled';
+
+                let statusBadge = '';
+                if (isPaid) {
+                    statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#dcfce7;color:#15803d;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="check-circle-2" style="width:12px;height:12px;"></i> Pagat</span>';
+                } else if (isCancelled) {
+                    statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fee2e2;color:#b91c1c;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="x-circle" style="width:12px;height:12px;"></i> Cancel·lada</span>';
+                } else {
+                    statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fef9c3;color:#854d0e;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="clock" style="width:12px;height:12px;"></i> Pendent</span>';
+                }
+
+                const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('ca-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '-';
+                const amount = r.amount_cents ? (r.amount_cents / 100).toFixed(2) + '€' : '-';
+                const escId = window.db.escapeHTML ? window.db.escapeHTML(String(r.id || '')) : String(r.id || '');
+                const escName = window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname);
+                const escEmail = window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '');
+                const escSize = window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '');
+                const escProd = window.db.escapeHTML ? window.db.escapeHTML(r.product_name || 'Samarreta Homenatge Ares SD') : (r.product_name || 'Samarreta Homenatge Ares SD');
+
+                let actionsHtml = '';
+                if (isPaid) {
+                    actionsHtml = `
+                        <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
+                            <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" data-tooltip="Reenviar correu de pagament" aria-label="Reenviar correu de pagament" title="Reenviar correu de pagament" style="width:32px;height:32px;padding:0;color:#15803d;border-color:#86efac;background:#f0fdf4;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="mail" style="width:15px;height:15px;"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Canviar estat a pendent" aria-label="Canviar estat a pendent" title="Canviar estat a pendent" style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:32px;height:32px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="x" style="width:15px;height:15px;"></i>
+                            </button>
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                            </button>
+                        </div>
+                    `;
+                } else if (isCancelled) {
+                    actionsHtml = `
+                        <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Reactivar reserva" aria-label="Reactivar reserva" title="Reactivar reserva" style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
+                            </button>
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    actionsHtml = `
+                        <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
+                            <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" data-tooltip="Validar pagament i enviar correu" aria-label="Validar pagament i enviar correu" title="Validar pagament i enviar correu" style="width:32px;height:32px;padding:0;background:#15803d;color:#fff;border-color:#15803d;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="check" style="width:16px;height:16px;"></i>
+                            </button>
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:32px;height:32px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="x" style="width:15px;height:15px;"></i>
+                            </button>
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+
+                return `<tr style="${isCancelled ? 'opacity: 0.6; background: rgba(0,0,0,0.02);' : ''}">
+                    <td style="padding:0.65rem 0.85rem;overflow:hidden;text-overflow:ellipsis;">
+                        <div style="font-weight:700;font-size:0.85rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escName}</div>
+                        <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escEmail}</div>
+                        <div style="font-size:0.7rem;font-weight:700;color:var(--text-muted);margin-top:0.25rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">📦 ${escProd}</div>
+                    </td>
+                    <td style="text-align:center;padding:0.65rem 0.5rem;white-space:nowrap;">
+                        <span style="font-weight:800;font-size:0.9rem;">${escSize}</span>
+                        <span style="font-size:0.72rem;color:var(--text-secondary);">×${r.quantity || 1}</span>
+                    </td>
+                    <td style="font-weight:700;font-size:0.85rem;padding:0.65rem 0.5rem;white-space:nowrap;">${amount}</td>
+                    <td style="padding:0.65rem 0.5rem;white-space:nowrap;">${statusBadge}</td>
+                    <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.65rem 0.5rem;white-space:nowrap;">${dateStr}</td>
+                    <td style="white-space:nowrap;text-align:right;padding:0.65rem 0.85rem;">
+                        ${actionsHtml}
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
         // Stats
-        const activeReservations = allReservations.filter(r => r.status !== 'cancelled');
+        const activeReservations = displayReservations.filter(r => r.status !== 'cancelled');
         const totalUnits = activeReservations.reduce((a, r) => a + (r.quantity || 1), 0);
         const totalRevenue = activeReservations.filter(r => r.status === 'paid').reduce((a, r) => a + (r.amount_cents || 0), 0);
-        const paidCount = allReservations.filter(r => r.status === 'paid').length;
-        const pendingCount = allReservations.filter(r => r.status === 'pending' || r.status === 'pending_transfer').length;
-        const cancelledCount = allReservations.filter(r => r.status === 'cancelled').length;
+        const paidCount = displayReservations.filter(r => r.status === 'paid').length;
+        const pendingCount = displayReservations.filter(r => r.status === 'pending' || r.status === 'pending_transfer').length;
+        const cancelledCount = displayReservations.filter(r => r.status === 'cancelled').length;
 
         const sizeCounts = {};
         activeReservations.forEach(r => {
@@ -2463,8 +2601,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (statsEl) {
             statsEl.innerHTML = [
-                { icon: 'users', val: allReservations.length, label: 'Reserves totals' },
-                { icon: 'package', val: totalUnits, label: 'Camisetes' },
+                { icon: 'users', val: displayReservations.length, label: selectedProductFilter ? 'Reserves filtrades' : 'Reserves totals' },
+                { icon: 'package', val: totalUnits, label: 'Unitats' },
                 { icon: 'check-circle', val: paidCount, label: 'Pagades' },
                 { icon: 'clock', val: pendingCount, label: 'Pendents' },
                 { icon: 'x-circle', val: cancelledCount, label: 'Cancel·lades' },
@@ -2477,90 +2615,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `).join('');
         }
-
-        // Table rows (No horizontal scroll needed)
-        tbody.innerHTML = allReservations.map(r => {
-            const isPaid = r.status === 'paid';
-            const isCancelled = r.status === 'cancelled';
-
-            let statusBadge = '';
-            if (isPaid) {
-                statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#dcfce7;color:#15803d;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="check-circle-2" style="width:12px;height:12px;"></i> Pagat</span>';
-            } else if (isCancelled) {
-                statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fee2e2;color:#b91c1c;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="x-circle" style="width:12px;height:12px;"></i> Cancel·lada</span>';
-            } else {
-                statusBadge = '<span style="font-size:0.72rem;font-weight:700;padding:0.25rem 0.5rem;background:#fef9c3;color:#854d0e;border-radius:6px;text-transform:uppercase;white-space:nowrap;display:inline-flex;align-items:center;gap:0.3rem;"><i data-lucide="clock" style="width:12px;height:12px;"></i> Pendent</span>';
-            }
-
-            const dateStr = r.created_at ? new Date(r.created_at).toLocaleDateString('ca-ES', { day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit' }) : '-';
-            const amount = r.amount_cents ? (r.amount_cents / 100).toFixed(2) + '€' : '-';
-            const escId = window.db.escapeHTML ? window.db.escapeHTML(String(r.id || '')) : String(r.id || '');
-            const escName = window.db.escapeHTML ? window.db.escapeHTML(r.name + ' ' + r.surname) : (r.name + ' ' + r.surname);
-            const escEmail = window.db.escapeHTML ? window.db.escapeHTML(r.email || '') : (r.email || '');
-            const escSize = window.db.escapeHTML ? window.db.escapeHTML(r.size || '') : (r.size || '');
-
-            let actionsHtml = '';
-            if (isPaid) {
-                actionsHtml = `
-                    <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
-                        <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" data-tooltip="Reenviar correu de pagament" aria-label="Reenviar correu de pagament" title="Reenviar correu de pagament" style="width:32px;height:32px;padding:0;color:#15803d;border-color:#86efac;background:#f0fdf4;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                            <i data-lucide="mail" style="width:15px;height:15px;"></i>
-                        </button>
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Canviar estat a pendent" aria-label="Canviar estat a pendent" title="Canviar estat a pendent" style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                            <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
-                        </button>
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:32px;height:32px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                            <i data-lucide="x" style="width:15px;height:15px;"></i>
-                        </button>
-                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
-                        </button>
-                    </div>
-                `;
-            } else if (isCancelled) {
-                actionsHtml = `
-                    <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Reactivar reserva" aria-label="Reactivar reserva" title="Reactivar reserva" style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                            <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
-                        </button>
-                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
-                        </button>
-                    </div>
-                `;
-            } else {
-                actionsHtml = `
-                    <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
-                        <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" data-tooltip="Validar pagament i enviar correu" aria-label="Validar pagament i enviar correu" title="Validar pagament i enviar correu" style="width:32px;height:32px;padding:0;background:#15803d;color:#fff;border-color:#15803d;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                            <i data-lucide="check" style="width:16px;height:16px;"></i>
-                        </button>
-                        <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:32px;height:32px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                            <i data-lucide="x" style="width:15px;height:15px;"></i>
-                        </button>
-                        <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
-                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
-                        </button>
-                    </div>
-                `;
-            }
-
-            return `<tr style="${isCancelled ? 'opacity: 0.6; background: rgba(0,0,0,0.02);' : ''}">
-                <td style="padding:0.65rem 0.85rem;overflow:hidden;text-overflow:ellipsis;">
-                    <div style="font-weight:700;font-size:0.85rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escName}</div>
-                    <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escEmail}</div>
-                </td>
-                <td style="text-align:center;padding:0.65rem 0.5rem;white-space:nowrap;">
-                    <span style="font-weight:800;font-size:0.9rem;">${escSize}</span>
-                    <span style="font-size:0.72rem;color:var(--text-secondary);">×${r.quantity || 1}</span>
-                </td>
-                <td style="font-weight:700;font-size:0.85rem;padding:0.65rem 0.5rem;white-space:nowrap;">${amount}</td>
-                <td style="padding:0.65rem 0.5rem;white-space:nowrap;">${statusBadge}</td>
-                <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.65rem 0.5rem;white-space:nowrap;">${dateStr}</td>
-                <td style="white-space:nowrap;text-align:right;padding:0.65rem 0.85rem;">
-                    ${actionsHtml}
-                </td>
-            </tr>`;
-        }).join('');
 
         // Attach toggle status listeners with instant optimistic UI update + automatic email on validation
         tbody.querySelectorAll('.btn-toggle-status').forEach(btn => {
@@ -2646,12 +2700,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function downloadReservationsCSV() {
-        if (!allReservations || allReservations.length === 0) {
-            alert('No hi ha reserves per descarregar.');
+        const filterSelect = document.getElementById('filter-reservation-product');
+        const filterVal = filterSelect ? filterSelect.value : selectedProductFilter;
+
+        let targetReservations = allReservations || [];
+        if (filterVal) {
+            const q = filterVal.toLowerCase();
+            targetReservations = targetReservations.filter(r => {
+                const pName = (r.product_name || 'Samarreta homenatge Ares SD').toLowerCase();
+                const pSlug = (r.product_slug || '').toLowerCase();
+                return pName.includes(q) || pSlug.includes(q);
+            });
+        }
+
+        if (!targetReservations || targetReservations.length === 0) {
+            alert('No hi ha reserves per descarregar per al filtre seleccionat.');
             return;
         }
-        const headers = ['Nom', 'Cognoms', 'Email', 'Talla', 'Quantitat', 'Import (€)', 'Estat', 'Data', 'Observacions'];
-        const rows = allReservations.map(r => [
+
+        const headers = ['Producte', 'Nom', 'Cognoms', 'Email', 'Talla', 'Quantitat', 'Import (€)', 'Estat', 'Data', 'Observacions'];
+        const rows = targetReservations.map(r => [
+            `"${(r.product_name || 'Samarreta homenatge Ares SD').replace(/"/g, '""')}"`,
             `"${(r.name || '').replace(/"/g, '""')}"`,
             `"${(r.surname || '').replace(/"/g, '""')}"`,
             `"${(r.email || '').replace(/"/g, '""')}"`,
@@ -2668,7 +2737,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `reserves-camisetes-${new Date().toISOString().split('T')[0]}.csv`;
+        const slugTag = filterVal ? filterVal.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'tots-els-productes';
+        a.download = `reserves-${slugTag}-${new Date().toISOString().split('T')[0]}.csv`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -2817,8 +2887,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td style="font-size:0.85rem;color:var(--text-secondary);">${escCat}</td>
                     <td style="font-weight:700;">${priceFormatted}</td>
                     <td>${statusBadge}</td>
-                    <td>
-                        <button class="btn btn-sm btn-edit-product" data-id="${escId}" style="padding: 0.35rem 0.6rem; margin-right: 0.5rem; background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary);">
+                    <td style="white-space:nowrap;">
+                        <button class="btn btn-sm btn-toggle-product-status" data-id="${escId}" data-status="${p.status === 'open' ? 'closed' : 'open'}" title="${p.status === 'open' ? 'Tancar reserves d\'aquest producte' : 'Obrir reserves d\'aquest producte'}" style="padding: 0.35rem 0.6rem; margin-right: 0.35rem; background-color: ${p.status === 'open' ? '#fee2e2' : '#dcfce7'}; color: ${p.status === 'open' ? '#991b1b' : '#166534'}; border-color: transparent;">
+                            <i data-lucide="${p.status === 'open' ? 'lock' : 'unlock'}" style="width: 12px; height: 12px;"></i> ${p.status === 'open' ? 'Tancar' : 'Obrir'}
+                        </button>
+                        <button class="btn btn-sm btn-edit-product" data-id="${escId}" style="padding: 0.35rem 0.6rem; margin-right: 0.35rem; background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary);">
                             <i data-lucide="edit-3" style="width: 12px; height: 12px;"></i> Editar
                         </button>
                         <button class="btn btn-sm btn-danger btn-delete-product" data-id="${escId}" style="padding: 0.35rem 0.6rem;">
@@ -2827,6 +2900,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     </td>
                 </tr>`;
             }).join('');
+
+            // Attach toggle product status listeners
+            tbody.querySelectorAll('.btn-toggle-product-status').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.getAttribute('data-id');
+                    const targetStatus = btn.getAttribute('data-status');
+                    try {
+                        await window.db.toggleProductStatus(id, targetStatus);
+                        if (typeof showAdminToast === 'function') {
+                            showAdminToast(targetStatus === 'open' ? '🔓 Reserves obertes per a aquest producte' : '🔒 Reserves tancades per a aquest producte', 'success', 4000);
+                        }
+                        await loadProductsTable();
+                    } catch (e) {
+                        if (typeof showAdminToast === 'function') {
+                            showAdminToast('Error en canviar l\'estat: ' + e.message, 'error', 5000);
+                        } else {
+                            alert('Error: ' + e.message);
+                        }
+                    }
+                });
+            });
 
             // Attach edit listeners
             tbody.querySelectorAll('.btn-edit-product').forEach(btn => {

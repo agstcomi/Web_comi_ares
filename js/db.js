@@ -203,6 +203,60 @@ const DEFAULT_PRODUCTS = [
         ],
         sizes: ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL", "7XL"],
         created_at: "2026-08-14T11:33:16.401184+00:00"
+    },
+    {
+        id: "prod-tote-bag-mirador-2026",
+        name: "Tote Bag El Mirador del Maestrat",
+        name_es: "Tote Bag El Mirador del Maestrat",
+        slug: "tote-bag",
+        category: "Complements · Edició Limitada 2026",
+        category_es: "Complementos · Edición Limitada 2026",
+        price: 6.00,
+        status: "open",
+        description: "Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l'any 2026. Bossa ideal per al dia a dia.",
+        description_es: "Bolsa de tela de color negro con la ilustración ganadora del Concurso de Diseño para Fiestas del año 2026. Bolsa ideal para el día a día.",
+        image_url: "/img/tote-bag-1.jpg",
+        images: [
+            "/img/tote-bag-1.jpg"
+        ],
+        sizes: ["Talla Única"],
+        created_at: "2026-09-04T10:00:00.000000+00:00"
+    },
+    {
+        id: "prod-samarreta-mirador-2026",
+        name: "Samarreta «El mirador del Maestrat»",
+        name_es: "Camiseta «El mirador del Maestrat»",
+        slug: "samarreta-mirador-maestrat",
+        category: "Roba · Edició Limitada 2026",
+        category_es: "Ropa · Edición Limitada 2026",
+        price: 12.00,
+        status: "open",
+        description: "Samarreta de color negre amb la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
+        description_es: "Camiseta de color negro con la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
+        image_url: "/img/samarreta-mirador-1.jpg",
+        images: [
+            "/img/samarreta-mirador-1.jpg"
+        ],
+        sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"],
+        created_at: "2026-09-04T12:57:00.000000+00:00"
+    },
+    {
+        id: "prod-rinyonera-mirador-2026",
+        name: "Rinyonera «El mirador del Maestrat»",
+        name_es: "Riñonera «El mirador del Maestrat»",
+        slug: "rinyonera-mirador-maestrat",
+        category: "Complements · Edició Limitada 2026",
+        category_es: "Complementos · Edición Limitada 2026",
+        price: 12.00,
+        status: "open",
+        description: "Rinyonera de color negre amb cinta ajustable i la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
+        description_es: "Riñonera de color negro con cinta ajustable y la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
+        image_url: "/img/rinyonera-mirador-1.jpg",
+        images: [
+            "/img/rinyonera-mirador-1.jpg"
+        ],
+        sizes: ["Talla Única"],
+        created_at: "2026-09-04T13:04:00.000000+00:00"
     }
 ];
 
@@ -256,6 +310,10 @@ class AppDatabase {
 
         console.log("Migrating database storage from localStorage to IndexedDB...");
         try {
+            const localNews = (JSON.parse(localStorage.getItem('ares_news') || '[]'))
+                .filter(item => item && !['news-1', 'news-2', 'news-3'].includes(item.id));
+            const newsToMigrate = localNews.length > 0 ? localNews : (typeof MOCK_NEWS !== 'undefined' ? MOCK_NEWS : []);
+
             const localEvents = (JSON.parse(localStorage.getItem('ares_events') || '[]'))
                 .filter(item => item && !['event-1', 'event-2', 'event-3', 'event-4', 'event-5', 'event-6'].includes(item.id));
             const eventsToMigrate = localEvents.length > 0 ? localEvents : MOCK_EVENTS;
@@ -2038,7 +2096,10 @@ class AppDatabase {
 
         const fullName = `${reservation.name || ''} ${reservation.surname || ''}`.trim() || 'Client';
         const totalFormatted = reservation.amount_cents ? (reservation.amount_cents / 100).toFixed(2) : (reservation.total || '35.00');
-        const concept = reservation.concept || reservation.concept_text || `Samarreta - ${fullName}`;
+        const concept = reservation.concept || reservation.concept_text || `RESERVA ${fullName}`.trim();
+
+        const rawImg = reservation.product_image || reservation.product_image_url || '/img/camiseta-1.webp';
+        const fullImg = rawImg.startsWith('http') ? rawImg : `https://www.comiares.es${rawImg.startsWith('/') ? '' : '/'}${rawImg}`;
 
         const templateParams = {
             name: reservation.name || fullName,
@@ -2051,9 +2112,11 @@ class AppDatabase {
             customer_email: reservation.email,
             product_name: reservation.product_name || 'Samarreta Homenatge Ares SD',
             concept: concept,
+            bank_concept: concept,
             concept_text: concept,
-            product_image: 'https://www.comiares.es/img/camiseta-1.webp',
-            product_image_url: 'https://www.comiares.es/img/camiseta-1.webp',
+            product_summary: reservation.product_name || '',
+            product_image: fullImg,
+            product_image_url: fullImg,
             logo_url: 'https://www.comiares.es/img/logo-email.png',
             size: reservation.size || '-',
             qty: reservation.quantity || 1,
@@ -2072,8 +2135,32 @@ class AppDatabase {
     // Products Actions
     async getProducts() {
         const isAdmin = window.location.pathname.includes('/admin/');
-        let products = [];
+        let remoteProducts = [];
+        let localProducts = [];
 
+        // 1. Always load local storage / default baseline first
+        try {
+            const stored = localStorage.getItem('ares_products');
+            if (stored) {
+                localProducts = JSON.parse(stored);
+            }
+        } catch (e) {}
+
+        if (!localProducts || localProducts.length === 0) {
+            localProducts = [...DEFAULT_PRODUCTS];
+        }
+
+        // Ensure default products exist in local baseline and update fresh properties
+        DEFAULT_PRODUCTS.forEach(defProd => {
+            const idx = localProducts.findIndex(p => p.id === defProd.id || p.slug === defProd.slug);
+            if (idx === -1) {
+                localProducts.push({ ...defProd });
+            } else {
+                localProducts[idx] = { ...defProd, ...localProducts[idx], sizes: defProd.sizes, price: defProd.price };
+            }
+        });
+
+        // 2. Fetch from Supabase if configured & admin or fallback
         if (this.isSupabaseConfigured() && isAdmin) {
             try {
                 const { data, error } = await this.supabase
@@ -2081,7 +2168,7 @@ class AppDatabase {
                     .select('*')
                     .order('created_at', { ascending: false });
                 if (!error && data && data.length > 0) {
-                    products = data;
+                    remoteProducts = data;
                 }
             } catch (err) {
                 console.error("Error loading products from Supabase:", err);
@@ -2092,58 +2179,63 @@ class AppDatabase {
                 const cacheBuster = Math.floor(Date.now() / 60000); // 1 minute cache
                 const dataUrl = `/data/products.json?v=${cacheBuster}`;
                 const res = await fetch(dataUrl);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
-                const staticData = await res.json();
-                if (staticData && staticData.length > 0) {
-                    products = staticData;
-                    try {
-                        localStorage.setItem('ares_products', JSON.stringify(products));
-                    } catch(e) {}
+                if (res.ok) {
+                    const staticData = await res.json();
+                    if (staticData && staticData.length > 0) {
+                        remoteProducts = staticData;
+                    }
                 }
             } catch (err) {
-                console.warn("Error loading static products, falling back:", err);
-                if (this.isSupabaseConfigured()) {
-                    try {
-                        const { data, error } = await this.supabase
-                            .from('products')
-                            .select('*')
-                            .order('created_at', { ascending: false });
-                        if (!error && data && data.length > 0) {
-                            products = data;
-                            try {
-                                localStorage.setItem('ares_products', JSON.stringify(products));
-                            } catch(e) {}
-                        }
-                    } catch (e) {}
+                console.warn("Error loading static products:", err);
+            }
+        }
+
+        // 3. Merge strategy: Combine remoteProducts and localProducts cleanly
+        let productsMap = new Map();
+
+        // Baseline: Add localProducts first
+        localProducts.forEach(p => {
+            if (p && (p.id || p.slug)) {
+                const key = p.id || p.slug;
+                productsMap.set(key, { ...p });
+            }
+        });
+
+        // Merge remoteProducts
+        remoteProducts.forEach(remoteItem => {
+            if (remoteItem && (remoteItem.id || remoteItem.slug)) {
+                const key = remoteItem.id || remoteItem.slug;
+                const localItem = productsMap.get(key);
+
+                if (!localItem) {
+                    productsMap.set(key, { ...remoteItem });
+                } else {
+                    const localTime = localItem.updated_at ? new Date(localItem.updated_at).getTime() : 0;
+                    const remoteTime = remoteItem.updated_at ? new Date(remoteItem.updated_at).getTime() : 0;
+
+                    if (remoteTime > localTime) {
+                        productsMap.set(key, {
+                            ...localItem,
+                            ...remoteItem,
+                            status: remoteItem.status || localItem.status || 'open'
+                        });
+                    } else {
+                        productsMap.set(key, {
+                            ...remoteItem,
+                            ...localItem,
+                            status: localItem.status || remoteItem.status || 'open'
+                        });
+                    }
                 }
             }
-        }
+        });
 
-        if (!products || products.length === 0) {
-            await this.dbPromise;
-            try {
-                products = await this.getAllIDB('products');
-            } catch (err) {
-                console.error("Error loading products from IDB:", err);
-            }
-        }
+        let products = Array.from(productsMap.values());
 
-        if (!products || products.length === 0) {
-            const stored = localStorage.getItem('ares_products');
-            if (stored) {
-                try {
-                    products = JSON.parse(stored);
-                } catch (e) {}
-            }
-        }
-
-        if (!products || products.length === 0) {
-            products = [...DEFAULT_PRODUCTS];
-            for (const prod of DEFAULT_PRODUCTS) {
-                await this.putIDB('products', prod).catch(() => {});
-            }
-            localStorage.setItem('ares_products', JSON.stringify(DEFAULT_PRODUCTS));
-        }
+        // Update local cache
+        try {
+            localStorage.setItem('ares_products', JSON.stringify(products));
+        } catch(e) {}
 
         // Normalize images on each product object to ensure it is always an Array
         if (products && products.length > 0) {
@@ -2168,22 +2260,20 @@ class AppDatabase {
             });
         }
 
-        // Reflect reservations state from shop config if closed
-        try {
-            const localCfg = JSON.parse(localStorage.getItem('ares_shop_config') || '{}');
-            if (localCfg.open === false && products && products.length > 0) {
-                products.forEach(p => {
-                    if (p.status !== 'sold_out') p.status = 'closed';
-                });
-            }
-        } catch(e) {}
-
         return products;
     }
 
     async getProductBySlug(slug) {
         const products = await this.getProducts();
         return products.find(p => p.slug === slug || p.id === slug) || null;
+    }
+
+    async toggleProductStatus(productId, newStatus) {
+        const products = await this.getProducts();
+        const prod = products.find(p => String(p.id) === String(productId) || p.slug === productId);
+        if (!prod) throw new Error("Producte no trobat.");
+        prod.status = newStatus;
+        return await this.saveProduct(prod);
     }
 
     async saveProduct(product) {

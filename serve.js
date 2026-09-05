@@ -27,11 +27,17 @@ const server = http.createServer((req, res) => {
   // Clean URL rewrite logic
   let targetPath = pathname;
   
-  // Clean news detail URLs rewrite
+  // Clean news and product detail URLs rewrite
   if (pathname.startsWith('/noticies/') && pathname.split('/').filter(Boolean).length >= 2) {
     targetPath = '/noticies.html';
   } else if (pathname.startsWith('/es/noticies/') && pathname.split('/').filter(Boolean).length >= 3) {
     targetPath = '/es/noticies.html';
+  } else if (pathname.startsWith('/camisetes/') && pathname.split('/').filter(Boolean).length >= 2) {
+    const directPath = path.join(__dirname, pathname, 'index.html');
+    targetPath = fs.existsSync(directPath) ? path.join(pathname, 'index.html') : '/camisetes.html';
+  } else if (pathname.startsWith('/es/camisetes/') && pathname.split('/').filter(Boolean).length >= 3) {
+    const directPath = path.join(__dirname, pathname, 'index.html');
+    targetPath = fs.existsSync(directPath) ? path.join(pathname, 'index.html') : '/es/camisetes.html';
   } else {
     // Check if path exists. If not, and it has no extension, try appending .html
     const absolutePath = path.join(__dirname, pathname);

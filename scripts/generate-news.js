@@ -12,13 +12,11 @@ if ((!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) && fs.existsSy
   });
 }
 
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
+const SUPABASE_URL = process.env.SUPABASE_URL || '';
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
 
 if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
-  console.error("ERROR: Les variables d'entorn SUPABASE_URL i SUPABASE_ANON_KEY són obligatòries.");
-  console.error("Configura-les com a GitHub Secrets i assegura't que el workflow les injecta.");
-  process.exit(1);
+  console.warn("Aviso: SUPABASE_URL i SUPABASE_ANON_KEY no estan definides. Executant en mode local amb /data/.");
 }
 
 
@@ -108,11 +106,30 @@ async function main() {
       photos = await photosResponse.json();
       console.log(`Se encontraron ${photos.length} fotos.`);
 
-      const productsResponse = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=created_at.desc`, { headers });
-      if (!productsResponse.ok) {
-        throw new Error(`Error al consultar productos en Supabase: ${productsResponse.status} ${productsResponse.statusText}`);
+      try {
+        const productsResponse = await fetch(`${SUPABASE_URL}/rest/v1/products?select=*&order=created_at.desc`, { headers });
+        if (productsResponse.ok) {
+          const remoteProds = await productsResponse.json();
+          if (remoteProds && remoteProds.length > 0) {
+            products = remoteProds;
+          }
+        }
+      } catch (prodErr) {
+        console.warn("Aviso al consultar productos en Supabase, usando locales:", prodErr.message || prodErr);
       }
-      products = await productsResponse.json();
+
+      if (fs.existsSync(path.join(dataDir, 'products.json'))) {
+        try {
+          const localProds = JSON.parse(fs.readFileSync(path.join(dataDir, 'products.json'), 'utf-8'));
+          if (localProds && localProds.length > 0) {
+            const map = new Map();
+            localProds.forEach(p => map.set(p.id || p.slug, p));
+            products.forEach(p => map.set(p.id || p.slug, { ...map.get(p.id || p.slug), ...p }));
+            products = Array.from(map.values());
+          }
+        } catch (e) {}
+      }
+
       console.log(`Se encontraron ${products.length} productos.`);
 
       // Guardar los archivos JSON si la conexión fue exitosa
@@ -371,6 +388,43 @@ async function main() {
         const redirectUrlVal = `https://www.comiares.es/camisetes/${product.slug}/`;
         const redirectUrlCast = `https://www.comiares.es/es/camisetes/${product.slug}/`;
 
+        let productImages = [];
+        if (Array.isArray(product.images)) productImages = product.images.filter(Boolean);
+        else if (typeof product.images === 'string' && product.images.trim()) {
+          try { productImages = JSON.parse(product.images).filter(Boolean); } catch(e) { productImages = product.images.split(',').map(s => s.trim()).filter(Boolean); }
+        }
+        if (productImages.length === 0 && product.image_url) productImages = [product.image_url];
+        const primaryImg = productImages.length > 0 ? productImages[0] : (product.image_url || '/img/camiseta-1.webp');
+        const priceVal = parseFloat(product.price) || 35.00;
+
+        let sizesList = Array.isArray(product.sizes) ? product.sizes : [];
+        if (typeof product.sizes === 'string') {
+          try { sizesList = JSON.parse(product.sizes); } catch(e) { sizesList = product.sizes.split(',').map(s => s.trim()); }
+        }
+        if (!sizesList || sizesList.length === 0) sizesList = ["Talla Única"];
+
+        let galleryStripVal = '';
+        if (productImages.length > 1) {
+          galleryStripVal = `<div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:flex;">` +
+            productImages.map((img, idx) => `
+              <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${escapeHtml(titleVal)} — Imatge ${idx + 1}">
+                <img src="${img}" alt="${escapeHtml(titleVal)} — Imatge ${idx + 1}">
+              </div>
+            `).join('') + `</div>`;
+        } else if (productImages.length === 1) {
+          galleryStripVal = `<div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:flex;">
+            <div class="gallery-thumb active" data-img="${productImages[0]}" data-alt="${escapeHtml(titleVal)} — Imatge 1">
+              <img src="${productImages[0]}" alt="${escapeHtml(titleVal)} — Imatge 1">
+            </div>
+          </div>`;
+        } else {
+          galleryStripVal = `<div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:none;"></div>`;
+        }
+
+        let sizeGridVal = `<div class="size-grid" id="size-grid">` +
+          sizesList.map(s => `<button type="button" class="size-btn ${sizesList.length === 1 ? 'active' : ''}" data-size="${s}">${s}</button>`).join('') +
+          `</div>`;
+
         let htmlVal = templateProdVal;
         htmlVal = htmlVal.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(titleVal)} | Tenda Oficial Comissió de Festes</title>`);
         htmlVal = htmlVal.replace(/<meta name="description" content="[^"]*">/i, `<meta name="description" content="${escapeHtml(descVal)}">`);
@@ -388,6 +442,47 @@ async function main() {
         htmlVal = htmlVal.replace(/<link rel="alternate" hreflang="es" href="[^"]*">/i, `<link rel="alternate" hreflang="es" href="${redirectUrlCast}">`);
         htmlVal = htmlVal.replace(/<link rel="alternate" hreflang="es-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="es-ES" href="${redirectUrlCast}">`);
         htmlVal = htmlVal.replace(/<link rel="alternate" hreflang="x-default" href="[^"]*">/i, `<link rel="alternate" hreflang="x-default" href="${redirectUrlVal}">`);
+
+        // Static DOM replacements for Valencian product HTML
+        htmlVal = htmlVal.replace(/<h1[^>]*id="product-title"[^>]*>[\s\S]*?<\/h1>/i, `<h1 class="product-title" id="product-title">${escapeHtml(titleVal)}</h1>`);
+        htmlVal = htmlVal.replace(/<p[^>]*id="product-subtitle"[^>]*>[\s\S]*?<\/p>/i, `<p class="product-subtitle" id="product-subtitle">${escapeHtml(descVal)}</p>`);
+        htmlVal = htmlVal.replace(/<div[^>]*id="product-price"[^>]*>[\s\S]*?<\/div>/i, `<div class="product-price" id="product-price">${Math.floor(priceVal)}<span style="font-size:1.2rem;">€</span></div>`);
+        htmlVal = htmlVal.replace(/<div[^>]*id="total-display"[^>]*>[\s\S]*?<\/div>/i, `<div class="total-display" id="total-display">${priceVal.toFixed(2)}€</div>`);
+        htmlVal = htmlVal.replace(/<span id="btn-confirm-label">[\s\S]*?<\/span>/i, `<span id="btn-confirm-label">Confirmar Reserva (${priceVal.toFixed(2)}€)</span>`);
+        htmlVal = htmlVal.replace(/<span id="modal-total">[\s\S]*?<\/span>/i, `<span id="modal-total">${priceVal.toFixed(2)}€</span>`);
+        htmlVal = htmlVal.replace(/<img[^>]*id="main-img"[^>]*>/i, `<img src="${primaryImg}" alt="${escapeHtml(titleVal)}" id="main-img">`);
+        htmlVal = htmlVal.replace(/<span[^>]*id="breadcrumb-product-name"[^>]*>[\s\S]*?<\/span>/i, `<span id="breadcrumb-product-name">${escapeHtml(titleVal)}</span>`);
+        htmlVal = htmlVal.replace(/<span[^>]*id="modal-product-name"[^>]*>[\s\S]*?<\/span>/i, `<span id="modal-product-name">${escapeHtml(titleVal)}</span>`);
+        htmlVal = htmlVal.replace(/<div[^>]*id="product-gallery-strip"[^>]*>[\s\S]*?<\/div>/i, galleryStripVal);
+        htmlVal = htmlVal.replace(/<div[^>]*id="size-grid"[^>]*>[\s\S]*?<\/div>/i, sizeGridVal);
+
+        const isSingleSizeVal = sizesList.length === 1 && (sizesList[0] === 'Talla Única' || sizesList[0] === 'Talla única');
+        if (isSingleSizeVal) {
+          htmlVal = htmlVal.replace(/<a id="size-guide-toggle-link"[^>]*>[\s\S]*?<\/a>/i, `<a id="size-guide-toggle-link" style="display:none;">Guia de talles →</a>`);
+          htmlVal = htmlVal.replace(/<div class="size-guide-accordion" id="size-accordion"[^>]*>[\s\S]*?<\/div>\s*<\/div>\s*(?=<div class="divider">)/i, `<div class="size-guide-accordion" id="size-accordion" style="display:none;"></div>`);
+          htmlVal = htmlVal.replace(/<span id="selected-size-label"[^>]*>[\s\S]*?<\/span>/i, `<span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;">— Talla Única</span>`);
+        } else {
+          htmlVal = htmlVal.replace(/<a id="size-guide-toggle-link"[^>]*>[\s\S]*?<\/a>/i, `<a id="size-guide-toggle-link" style="display:inline-block;">Guia de talles →</a>`);
+          htmlVal = htmlVal.replace(/<div class="size-guide-accordion" id="size-accordion"[^>]*style="display:none;"/i, `<div class="size-guide-accordion" id="size-accordion" style="display:block;"`);
+          if (product.slug === 'samarreta-mirador-maestrat') {
+            htmlVal = htmlVal.replace(/<div class="size-guide-body">[\s\S]*?<\/div>\s*<\/div>\s*(?=<div class="divider">)/i, `<div class="size-guide-body">
+              <table class="sg-table">
+                <thead><tr><th></th><th>XS</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>2XL</th><th>3XL</th><th>4XL</th><th>5XL</th></tr></thead>
+                <tbody>
+                  <tr><td title="Llargada total">A (Llarg)</td><td>68</td><td>70</td><td>72</td><td>74</td><td>76</td><td>78</td><td>82</td><td>84</td><td>84</td></tr>
+                  <tr><td title="Amplada total">B (Ample)</td><td>48</td><td>51</td><td>53,5</td><td>56</td><td>58</td><td>61</td><td>66</td><td>68</td><td>68</td></tr>
+                </tbody>
+              </table>
+              <p class="sg-note"><strong>A</strong> = Llargada (cm) · <strong>B</strong> = Amplada (cm)</p>
+              <div style="margin-top: 0.75rem; text-align: center;">
+                <a href="/img/tallatge-mirador.png" target="_blank" rel="noopener" style="font-size: 0.82rem; font-weight: 700; color: var(--color-primary); text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                  Veure fitxa tècnica de tallatge oficial (imatge)
+                </a>
+              </div>
+            </div></div>`);
+          }
+        }
 
         const injectionVal = `
     <!-- Inyectado por el generador JAMstack de productos -->
@@ -410,6 +505,28 @@ async function main() {
         const titleCast = product.name_es || product.name || "Camiseta Homenaje Ares SD";
         const descCast = product.description_es || product.description || "Reserva la Camiseta Homenaje al Ares SD. Edición limitada de la Comisión de Fiestas de Ares del Maestrat.";
 
+        let galleryStripCast = '';
+        if (productImages.length > 1) {
+          galleryStripCast = `<div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:flex;">` +
+            productImages.map((img, idx) => `
+              <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${escapeHtml(titleCast)} — Imagen ${idx + 1}">
+                <img src="${img}" alt="${escapeHtml(titleCast)} — Imagen ${idx + 1}">
+              </div>
+            `).join('') + `</div>`;
+        } else if (productImages.length === 1) {
+          galleryStripCast = `<div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:flex;">
+            <div class="gallery-thumb active" data-img="${productImages[0]}" data-alt="${escapeHtml(titleCast)} — Imagen 1">
+              <img src="${productImages[0]}" alt="${escapeHtml(titleCast)} — Imagen 1">
+            </div>
+          </div>`;
+        } else {
+          galleryStripCast = `<div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:none;"></div>`;
+        }
+
+        let sizeGridCast = `<div class="size-grid" id="size-grid">` +
+          sizesList.map(s => `<button type="button" class="size-btn ${sizesList.length === 1 ? 'active' : ''}" data-size="${s}">${s}</button>`).join('') +
+          `</div>`;
+
         let htmlCast = templateProdCast;
         htmlCast = htmlCast.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(titleCast)} | Tienda Oficial Comisión de Fiestas</title>`);
         htmlCast = htmlCast.replace(/<meta name="description" content="[^"]*">/i, `<meta name="description" content="${escapeHtml(descCast)}">`);
@@ -427,6 +544,47 @@ async function main() {
         htmlCast = htmlCast.replace(/<link rel="alternate" hreflang="es" href="[^"]*">/i, `<link rel="alternate" hreflang="es" href="${redirectUrlCast}">`);
         htmlCast = htmlCast.replace(/<link rel="alternate" hreflang="es-ES" href="[^"]*">/i, `<link rel="alternate" hreflang="es-ES" href="${redirectUrlCast}">`);
         htmlCast = htmlCast.replace(/<link rel="alternate" hreflang="x-default" href="[^"]*">/i, `<link rel="alternate" hreflang="x-default" href="${redirectUrlVal}">`);
+
+        // Static DOM replacements for Spanish product HTML
+        htmlCast = htmlCast.replace(/<h1[^>]*id="product-title"[^>]*>[\s\S]*?<\/h1>/i, `<h1 class="product-title" id="product-title">${escapeHtml(titleCast)}</h1>`);
+        htmlCast = htmlCast.replace(/<p[^>]*id="product-subtitle"[^>]*>[\s\S]*?<\/p>/i, `<p class="product-subtitle" id="product-subtitle">${escapeHtml(descCast)}</p>`);
+        htmlCast = htmlCast.replace(/<div[^>]*id="product-price"[^>]*>[\s\S]*?<\/div>/i, `<div class="product-price" id="product-price">${Math.floor(priceVal)}<span style="font-size:1.2rem;">€</span></div>`);
+        htmlCast = htmlCast.replace(/<div[^>]*id="total-display"[^>]*>[\s\S]*?<\/div>/i, `<div class="total-display" id="total-display">${priceVal.toFixed(2)}€</div>`);
+        htmlCast = htmlCast.replace(/<span id="btn-confirm-label">[\s\S]*?<\/span>/i, `<span id="btn-confirm-label">Confirmar Reserva (${priceVal.toFixed(2)}€)</span>`);
+        htmlCast = htmlCast.replace(/<span id="modal-total">[\s\S]*?<\/span>/i, `<span id="modal-total">${priceVal.toFixed(2)}€</span>`);
+        htmlCast = htmlCast.replace(/<img[^>]*id="main-img"[^>]*>/i, `<img src="${primaryImg}" alt="${escapeHtml(titleCast)}" id="main-img">`);
+        htmlCast = htmlCast.replace(/<span[^>]*id="breadcrumb-product-name"[^>]*>[\s\S]*?<\/span>/i, `<span id="breadcrumb-product-name">${escapeHtml(titleCast)}</span>`);
+        htmlCast = htmlCast.replace(/<span[^>]*id="modal-product-name"[^>]*>[\s\S]*?<\/span>/i, `<span id="modal-product-name">${escapeHtml(titleCast)}</span>`);
+        htmlCast = htmlCast.replace(/<div[^>]*id="product-gallery-strip"[^>]*>[\s\S]*?<\/div>/i, galleryStripCast);
+        htmlCast = htmlCast.replace(/<div[^>]*id="size-grid"[^>]*>[\s\S]*?<\/div>/i, sizeGridCast);
+
+        const isSingleSizeCast = sizesList.length === 1 && (sizesList[0] === 'Talla Única' || sizesList[0] === 'Talla única');
+        if (isSingleSizeCast) {
+          htmlCast = htmlCast.replace(/<a id="size-guide-toggle-link"[^>]*>[\s\S]*?<\/a>/i, `<a id="size-guide-toggle-link" style="display:none;">Guía de tallas →</a>`);
+          htmlCast = htmlCast.replace(/<div class="size-guide-accordion" id="size-accordion"[^>]*>[\s\S]*?<\/div>\s*<\/div>\s*(?=<div class="divider">)/i, `<div class="size-guide-accordion" id="size-accordion" style="display:none;"></div>`);
+          htmlCast = htmlCast.replace(/<span id="selected-size-label"[^>]*>[\s\S]*?<\/span>/i, `<span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;">— Talla Única</span>`);
+        } else {
+          htmlCast = htmlCast.replace(/<a id="size-guide-toggle-link"[^>]*>[\s\S]*?<\/a>/i, `<a id="size-guide-toggle-link" style="display:inline-block;">Guía de tallas →</a>`);
+          htmlCast = htmlCast.replace(/<div class="size-guide-accordion" id="size-accordion"[^>]*style="display:none;"/i, `<div class="size-guide-accordion" id="size-accordion" style="display:block;"`);
+          if (product.slug === 'samarreta-mirador-maestrat') {
+            htmlCast = htmlCast.replace(/<div class="size-guide-body">[\s\S]*?<\/div>\s*<\/div>\s*(?=<div class="divider">)/i, `<div class="size-guide-body">
+              <table class="sg-table">
+                <thead><tr><th></th><th>XS</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>2XL</th><th>3XL</th><th>4XL</th><th>5XL</th></tr></thead>
+                <tbody>
+                  <tr><td title="Longitud total">A (Largo)</td><td>68</td><td>70</td><td>72</td><td>74</td><td>76</td><td>78</td><td>82</td><td>84</td><td>84</td></tr>
+                  <tr><td title="Anchura total">B (Ancho)</td><td>48</td><td>51</td><td>53,5</td><td>56</td><td>58</td><td>61</td><td>66</td><td>68</td><td>68</td></tr>
+                </tbody>
+              </table>
+              <p class="sg-note"><strong>A</strong> = Longitud (cm) · <strong>B</strong> = Anchura (cm)</p>
+              <div style="margin-top: 0.75rem; text-align: center;">
+                <a href="/img/tallatge-mirador.png" target="_blank" rel="noopener" style="font-size: 0.82rem; font-weight: 700; color: var(--color-primary); text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                  Ver ficha técnica de tallaje oficial (imagen)
+                </a>
+              </div>
+            </div></div>`);
+          }
+        }
 
         const injectionCast = `
     <!-- Inyectado por el generador JAMstack de productos -->

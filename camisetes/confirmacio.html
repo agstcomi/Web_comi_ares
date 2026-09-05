@@ -311,16 +311,16 @@
             <!-- Reservation summary -->
             <div class="reservation-summary" id="reservation-summary">
                 <h3>Resum de la teua comanda</h3>
-                <div class="product-summary-item">
-                    <img src="/img/camiseta-1.webp" alt="Samarreta Homenatge Ares SD" class="product-summary-thumb">
+                <div class="product-summary-item" style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+                    <img src="/img/camiseta-1.webp" alt="Producte" class="product-summary-thumb" id="sum-product-img" style="width:60px;height:60px;object-fit:contain;background:#fff;border-radius:10px;border:1px solid var(--border-color);padding:4px;">
                     <div class="product-summary-info">
-                        <h4>Samarreta Homenatge Ares SD</h4>
-                        <p>Edició Limitada · Ares del Maestrat</p>
+                        <h4 id="sum-product-title" style="margin:0 0 0.2rem 0;font-size:0.95rem;font-weight:800;">Samarreta Homenatge Ares SD</h4>
+                        <p style="margin:0;font-size:0.75rem;color:var(--text-muted);">Edició Limitada · Ares del Maestrat</p>
                     </div>
                 </div>
                 <div class="summary-row">
                     <span class="label">Producte</span>
-                    <span class="value">Samarreta Homenatge Ares SD</span>
+                    <span class="value" id="sum-product-name">Samarreta Homenatge Ares SD</span>
                 </div>
                 <div class="summary-row">
                     <span class="label">Talla</span>
@@ -366,27 +366,64 @@
     <script>
         document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-        const params = new URLSearchParams(window.location.search);
-        const name = params.get('name') || '';
-        const surname = params.get('surname') || '';
-        const email = params.get('email') || '';
-        const size = params.get('size') || 'M';
-        const qty = parseInt(params.get('qty') || '1', 10);
-        const total = params.get('total') ? parseFloat(params.get('total')) : (35 * qty);
+        let lastOrder = null;
+        try {
+            const raw = localStorage.getItem('ares_last_order');
+            if (raw) lastOrder = JSON.parse(raw);
+        } catch(e) {}
 
+        const params = new URLSearchParams(window.location.search);
+        const name = (lastOrder && lastOrder.name) || params.get('name') || '';
+        const surname = (lastOrder && lastOrder.surname) || params.get('surname') || '';
+        const email = (lastOrder && lastOrder.email) || params.get('email') || '';
+        const total = (lastOrder && lastOrder.total) ? parseFloat(lastOrder.total) : (params.get('total') ? parseFloat(params.get('total')) : 35);
+        const prodName = (lastOrder && lastOrder.items && lastOrder.items.length > 1) ? 'Comanda Multi-producte' : (params.get('product_name') || 'Samarreta Homenatge Ares SD');
+        
         const fullName = [name, surname].filter(Boolean).join(' ') || 'Nom i Cognoms';
-        const conceptText = `Samarreta - ${fullName}`;
+        const conceptText = (lastOrder && lastOrder.concept) || `RESERVA ${fullName}`;
 
         if (name) {
             document.getElementById('confirmation-subtitle').innerHTML =
-                `Gràcies, <strong>${escapeHTML(name)}</strong>! Hem registrat correctament la teua sol·licitud de reserva. Per a confirmar-la, realitza la transferència bancària:`;
+                `Gràcies, <strong>${escapeHTML(name)}</strong>! Hem registrat correctament la teua reserva.<br><span style="display:inline-block; margin-top: 0.6rem; color: #15803d; font-weight: 700; background: #dcfce7; border: 1px solid #86efac; padding: 8px 14px; border-radius: 10px; font-size: 0.92rem;">📩 T'hem enviat un correu electrònic de confirmació a <u>${escapeHTML(email)}</u></span>`;
         }
 
         document.getElementById('transfer-amount').textContent = total.toFixed(2).replace('.', ',') + ' €';
-        document.getElementById('sum-amount').textContent = total.toFixed(2).replace('.', ',') + ' €';
-        document.getElementById('sum-size').textContent = size;
-        document.getElementById('sum-qty').textContent = qty;
         document.getElementById('transfer-concept').textContent = conceptText;
+
+        // Render summary items
+        const resSummaryBox = document.getElementById('reservation-summary');
+        if (resSummaryBox) {
+            const items = (lastOrder && lastOrder.items && lastOrder.items.length > 0) ? lastOrder.items : [{
+                name: prodName,
+                name_es: prodName,
+                size: params.get('size') || 'M',
+                quantity: parseInt(params.get('qty') || '1', 10),
+                price: total,
+                image_url: params.get('product_image') || '/img/camiseta-1.webp'
+            }];
+
+            resSummaryBox.innerHTML = `
+                <h3 style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-muted);margin-bottom:1rem;">Resum de la teua comanda</h3>
+                ${items.map(item => `
+                    <div class="product-summary-item" style="display:flex;align-items:center;gap:1rem;margin-bottom:0.75rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border-color);">
+                        <img src="${item.image_url}" alt="${escapeHTML(item.name)}" class="product-summary-thumb" style="width:54px;height:54px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid var(--border-color);padding:2px;flex-shrink:0;">
+                        <div class="product-summary-info" style="flex:1;text-align:left;">
+                            <h4 style="margin:0 0 0.2rem 0;font-size:0.92rem;font-weight:800;color:var(--text-primary);">${escapeHTML(item.name)}</h4>
+                            <p style="margin:0;font-size:0.78rem;color:var(--text-muted);">
+                                Talla: <strong style="color:var(--text-primary);">${escapeHTML(item.size || 'Talla Única')}</strong> &nbsp;·&nbsp; Unitats: <strong style="color:var(--text-primary);">${item.quantity}</strong>
+                            </p>
+                        </div>
+                        <div style="font-weight:700;font-size:0.95rem;color:var(--text-primary);">
+                            ${(parseFloat(item.price || 0) * parseInt(item.quantity || 1, 10)).toFixed(2).replace('.', ',')} €
+                        </div>
+                    </div>
+                `).join('')}
+                <div class="summary-row" style="display:flex;justify-content:space-between;padding-top:0.5rem;font-weight:700;font-size:1rem;color:var(--text-primary);">
+                    <span class="label">Import total</span>
+                    <span class="value" style="color:#15803d;font-weight:800;">${total.toFixed(2).replace('.', ',')} €</span>
+                </div>
+            `;
+        }
 
         function copyText(text, btn) {
             navigator.clipboard.writeText(text).then(() => {
