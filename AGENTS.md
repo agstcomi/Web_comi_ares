@@ -430,7 +430,18 @@ Completat i verificat:
 
 ---
 
-## 34. Pròxim Pas
+## 34. Solució a la Desquadració del Resum de Reserves a la Botiga (PRO)
+Completat i verificat:
+* **Diagnòstic de l'Error**:
+  - En entrar a la pestanya de botiga i productes al panell de control (`admin/index.html`), el contenidor de mètriques `#reservations-stats` es mostrava amb les targetes niuades unes dins d'altres (efecte nines russes / matrioixca).
+  - La causa era l'omissió de l'etiqueta de tancament `</div>` a la plantilla de generació de les targetes a `admin/gestio.js` (línia 2709). Com que cada targeta obria un `<div style="...">` sense tancar-lo abans de la següent iteració de `.map()`, el parser HTML del navegador interpretava cada targeta consecutiva com a filla de l'anterior.
+* **Solució Aplicada**:
+  - A [admin/gestio.js](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/gestio.js): Afegida l'etiqueta de tancament `</div>` a la plantilla de les targetes de resum de reserves.
+  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped la versió de càrrega de `gestio.js` a `?v=3.1` per a invalidar la memòria cau del navegador immediatament.
+
+---
+
+## 35. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

@@ -2706,6 +2706,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div style="border:1px solid var(--border-color);border-radius:8px;padding:0.75rem 1rem;background:var(--bg-secondary);text-align:center;">
                     <div style="font-size:1.35rem;font-weight:800;font-family:var(--font-heading);">${s.val}</div>
                     <div style="font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);margin-top:0.2rem;">${s.label}</div>
+                </div>
             `).join('');
         }
 
