@@ -441,8 +441,10 @@ Completat i verificat:
   - Permet seleccionar o desseleccionar múltiples productes alhora amb caselles de verificació (`checkboxes`).
   - L'etiqueta del botó indica de forma dinàmica `"Tots els productes"`, el nom del producte individual (si només se'n tria un), o `"N productes"` si n'hi ha diversos.
   - La taula de reserves, les mètriques i l'exportació CSV s'actualitzen en temps real per a incloure les comandes que continguen qualsevol dels productes seleccionats.
-  - **Correcció Descàrrega CSV**: En canviar al filtre multi-producte, la variable antiga `filterVal` havia quedat sense definir al generar el nom del fitxer (`slugTag`), impedint la descàrrega del fitxer CSV. S'ha corregit utilitzant `selectedProductFilters` i s'ha incrementat la versió a `?v=3.3`.
-  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped la versió de càrrega de `gestio.js` a `?v=3.3`.
+  - **Correcció i Desglossament de CSV per Producte i Talla**:
+    1. Es va resoldre l'error de `slugTag` amb el filtre multi-producte.
+    2. **Desglossament fila a fila**: Abans, les comandes multi-producte s'agrupaven en un sol camp de text (`"2x Samarreta + 1x Tote Bag"`) i la columna Talla indicava `"Vàries talles"`, impossibilitant ordenar o filtrar per talla a Excel. Ara el CSV genera una línia individual per a cada article encomanat amb columnes directes: `Producte`, `Talla`, `Quantitat`, `Nom`, `Cognoms`, `Email`, `Import (€)`, `Estat`, `Data`, `Concepte`, `Observacions`. Així a Excel es pot filtrar directament per qualsevol talla (S, M, L, XL...) o producte en un sol clic.
+  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped la versió de càrrega de `gestio.js` a `?v=3.4`.
 
 ---
 

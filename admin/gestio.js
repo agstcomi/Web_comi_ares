@@ -2903,30 +2903,87 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const headers = ['Producte', 'Nom', 'Cognoms', 'Email', 'Talla', 'Quantitat', 'Import (€)', 'Estat', 'Data', 'Observacions'];
-        const rows = targetReservations.map(r => {
-            let prodStr = r.product_name || 'Samarreta homenatge Ares SD';
-            if (Array.isArray(r.items) && r.items.length > 0) {
-                prodStr = r.items.map(it => `${it.quantity}x ${it.name} (${it.size || 'Talla Única'})`).join(' + ');
-            }
+        const headers = ['Producte', 'Talla', 'Quantitat', 'Nom', 'Cognoms', 'Email', 'Import (€)', 'Estat', 'Data', 'Concepte', 'Observacions'];
+        const rows = [];
+
+        targetReservations.forEach(r => {
             const cleanNotes = (r.clean_notes || r.notes || '')
                 .replace(/<!--ORDER_METADATA:[\s\S]*?-->/g, '')
                 .replace(/\[(?:Producte|Comanda):\s*[^\]]+\]\s*/gi, '')
                 .replace(/^Observacions:\s*/i, '')
                 .trim();
 
-            return [
-                `"${prodStr.replace(/"/g, '""')}"`,
-                `"${(r.name || '').replace(/"/g, '""')}"`,
-                `"${(r.surname || '').replace(/"/g, '""')}"`,
-                `"${(r.email || '').replace(/"/g, '""')}"`,
-                `"${(r.size || '').replace(/"/g, '""')}"`,
-                r.quantity || 1,
-                r.amount_cents ? (r.amount_cents / 100).toFixed(2) : '0.00',
-                `"${r.status === 'paid' ? 'Pagat' : 'Pendent Transferència'}"`,
-                r.created_at ? new Date(r.created_at).toLocaleString('ca-ES') : '',
-                `"${cleanNotes.replace(/"/g, '""')}"`
-            ];
+            const statusText = r.status === 'paid' ? 'Pagat' : (r.status === 'cancelled' ? 'Cancel·lada' : 'Pendent Transferència');
+            const dateText = r.created_at ? new Date(r.created_at).toLocaleString('ca-ES') : '';
+            const conceptText = r.concept || (r.id ? String(r.id) : '');
+
+            // Itemized export for cart/multi-item orders
+            if (Array.isArray(r.items) && r.items.length > 0) {
+                let itemsToExport = r.items;
+                if (selectedProductFilters.length > 0) {
+                    const filtered = r.items.filter(it => {
+                        const itName = (it.name || it.name_es || '').toLowerCase();
+                        const itSlug = (it.slug || '').toLowerCase();
+                        return selectedProductFilters.some(f => {
+                            const q = f.toLowerCase();
+                            return itName.includes(q) || q.includes(itName) || (itSlug && itSlug.includes(q));
+                        });
+                    });
+                    if (filtered.length > 0) {
+                        itemsToExport = filtered;
+                    }
+                }
+
+                itemsToExport.forEach(it => {
+                    const prodName = it.name || it.name_es || r.product_name || 'Producte';
+                    const size = (it.size && it.size !== 'Vàries talles' && it.size !== 'Varias tallas') 
+                        ? it.size 
+                        : (r.size && r.size !== 'Vàries talles' && r.size !== 'Varias tallas' ? r.size : 'Talla Única');
+                    const qty = parseInt(it.quantity, 10) || 1;
+                    let itemAmount = '0.00';
+                    if (it.price) {
+                        itemAmount = (parseFloat(it.price) * qty).toFixed(2);
+                    } else if (r.items.length === 1 && r.amount_cents) {
+                        itemAmount = (r.amount_cents / 100).toFixed(2);
+                    } else if (r.amount_cents) {
+                        itemAmount = ((r.amount_cents / 100) / r.items.length).toFixed(2);
+                    }
+
+                    rows.push([
+                        `"${prodName.replace(/"/g, '""')}"`,
+                        `"${size.replace(/"/g, '""')}"`,
+                        qty,
+                        `"${(r.name || '').replace(/"/g, '""')}"`,
+                        `"${(r.surname || '').replace(/"/g, '""')}"`,
+                        `"${(r.email || '').replace(/"/g, '""')}"`,
+                        itemAmount,
+                        `"${statusText}"`,
+                        `"${dateText}"`,
+                        `"${conceptText.replace(/"/g, '""')}"`,
+                        `"${cleanNotes.replace(/"/g, '""')}"`
+                    ]);
+                });
+            } else {
+                // Single legacy reservation
+                const prodName = r.product_name || 'Samarreta homenatge Ares SD';
+                const size = r.size || 'Talla Única';
+                const qty = parseInt(r.quantity, 10) || 1;
+                const totalAmount = r.amount_cents ? (r.amount_cents / 100).toFixed(2) : '0.00';
+
+                rows.push([
+                    `"${prodName.replace(/"/g, '""')}"`,
+                    `"${size.replace(/"/g, '""')}"`,
+                    qty,
+                    `"${(r.name || '').replace(/"/g, '""')}"`,
+                    `"${(r.surname || '').replace(/"/g, '""')}"`,
+                    `"${(r.email || '').replace(/"/g, '""')}"`,
+                    totalAmount,
+                    `"${statusText}"`,
+                    `"${dateText}"`,
+                    `"${conceptText.replace(/"/g, '""')}"`,
+                    `"${cleanNotes.replace(/"/g, '""')}"`
+                ]);
+            }
         });
         const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
         const bom = '\uFEFF'; // UTF-8 BOM for Excel
