@@ -1899,7 +1899,7 @@ class AppDatabase {
         return local ? JSON.parse(local) : { open: true, price_cents: 3500 };
     }
 
-    async saveShopConfig(config) {
+    async saveShopConfig(config, syncStatuses = false) {
         const LOCAL_KEY = 'ares_shop_config';
         localStorage.setItem(LOCAL_KEY, JSON.stringify(config));
 
@@ -1921,14 +1921,16 @@ class AppDatabase {
 
         const newStatus = (config.open !== false) ? 'open' : 'closed';
 
-        // 1. Update products in local storage
-        try {
-            const localProds = JSON.parse(localStorage.getItem('ares_products') || '[]');
-            localProds.forEach(p => {
-                if (p.status !== 'sold_out') p.status = newStatus;
-            });
-            localStorage.setItem('ares_products', JSON.stringify(localProds));
-        } catch(e) {}
+        // 1. Only sync all products status if explicitly requested (e.g. global toggle)
+        if (syncStatuses) {
+            try {
+                const localProds = JSON.parse(localStorage.getItem('ares_products') || '[]');
+                localProds.forEach(p => {
+                    if (p.status !== 'sold_out') p.status = newStatus;
+                });
+                localStorage.setItem('ares_products', JSON.stringify(localProds));
+            } catch(e) {}
+        }
 
         // 2. Persist to Supabase
         if (this.isSupabaseConfigured()) {
@@ -1939,17 +1941,78 @@ class AppDatabase {
                     .upsert([configItem]);
                 if (cfgErr) console.warn('Could not save shop config to Supabase events:', cfgErr);
 
-                // Update status in products table
-                const { error: prodErr } = await this.supabase
-                    .from('products')
-                    .update({ status: newStatus })
-                    .neq('status', 'sold_out');
-                if (prodErr) console.warn('Could not update products status in Supabase:', prodErr);
+                if (syncStatuses) {
+                    // Update status in products table
+                    const { error: prodErr } = await this.supabase
+                        .from('products')
+                        .update({ status: newStatus })
+                        .neq('status', 'sold_out');
+                    if (prodErr) console.warn('Could not update products status in Supabase:', prodErr);
+                }
             } catch(e) {
                 console.warn('Could not save shop config to Supabase:', e);
             }
         }
         return config;
+    }
+
+    async saveProductsOrder(orderedIds) {
+        if (!Array.isArray(orderedIds)) return false;
+        try {
+            const cfg = await this.getShopConfig().catch(() => ({ open: true }));
+            cfg.product_order = orderedIds;
+            await this.saveShopConfig(cfg, false);
+
+            // Also update local cache products order
+            const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
+            local.sort((a, b) => {
+                const keyA = a.id || a.slug;
+                const keyB = b.id || b.slug;
+                let idxA = orderedIds.indexOf(keyA);
+                if (idxA === -1 && a.slug) idxA = orderedIds.indexOf(a.slug);
+                if (idxA === -1 && a.id) idxA = orderedIds.indexOf(a.id);
+                if (idxA === -1) idxA = 999;
+
+                let idxB = orderedIds.indexOf(keyB);
+                if (idxB === -1 && b.slug) idxB = orderedIds.indexOf(b.slug);
+                if (idxB === -1 && b.id) idxB = orderedIds.indexOf(b.id);
+                if (idxB === -1) idxB = 999;
+
+                return idxA - idxB;
+            });
+            local.forEach((p, idx) => p.order = idx);
+            localStorage.setItem('ares_products', JSON.stringify(local));
+            return true;
+        } catch (e) {
+            console.error("Error saving products order:", e);
+            throw e;
+        }
+    }
+
+    async toggleProductActive(productId, active) {
+        const cfg = await this.getShopConfig().catch(() => ({ open: true }));
+        let inactives = Array.isArray(cfg.inactive_products) ? [...cfg.inactive_products] : [];
+        const targetId = String(productId);
+
+        if (!active) {
+            if (!inactives.includes(targetId)) inactives.push(targetId);
+        } else {
+            inactives = inactives.filter(k => k !== targetId);
+        }
+        cfg.inactive_products = inactives;
+        await this.saveShopConfig(cfg, false);
+
+        // Update local products cache
+        try {
+            const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
+            const prod = local.find(p => String(p.id) === targetId || p.slug === targetId);
+            if (prod) {
+                prod.active = active;
+                localStorage.setItem('ares_products', JSON.stringify(local));
+            }
+        } catch(e) {}
+
+        return true;
     }
 
     unpackReservation(r) {
@@ -2419,11 +2482,6 @@ class AppDatabase {
 
         let products = Array.from(productsMap.values());
 
-        // Update local cache
-        try {
-            localStorage.setItem('ares_products', JSON.stringify(products));
-        } catch(e) {}
-
         // Normalize images on each product object to ensure it is always an Array
         if (products && products.length > 0) {
             products.forEach(p => {
@@ -2446,6 +2504,49 @@ class AppDatabase {
                 }
             });
         }
+
+        // Apply shop config: active status and custom display ordering
+        try {
+            const shopConfig = await this.getShopConfig().catch(() => ({}));
+            const inactiveList = (shopConfig && Array.isArray(shopConfig.inactive_products)) ? shopConfig.inactive_products : [];
+            const orderList = (shopConfig && Array.isArray(shopConfig.product_order)) ? shopConfig.product_order : [];
+
+            products.forEach(p => {
+                const key = p.id || p.slug;
+                const isInactive = inactiveList.includes(key) || (p.slug && inactiveList.includes(p.slug)) || (p.id && inactiveList.includes(p.id)) || p.active === false;
+                p.active = !isInactive;
+            });
+
+            if (orderList.length > 0) {
+                products.sort((a, b) => {
+                    const keyA = a.id || a.slug;
+                    const keyB = b.id || b.slug;
+                    let posA = orderList.indexOf(keyA);
+                    if (posA === -1 && a.slug) posA = orderList.indexOf(a.slug);
+                    if (posA === -1 && a.id) posA = orderList.indexOf(a.id);
+                    if (posA === -1) posA = 999;
+
+                    let posB = orderList.indexOf(keyB);
+                    if (posB === -1 && b.slug) posB = orderList.indexOf(b.slug);
+                    if (posB === -1 && b.id) posB = orderList.indexOf(b.id);
+                    if (posB === -1) posB = 999;
+
+                    if (posA !== posB) return posA - posB;
+                    return 0;
+                });
+            }
+
+            products.forEach((p, idx) => {
+                p.order = idx;
+            });
+        } catch (cfgErr) {
+            console.warn("Could not apply shop config to products:", cfgErr);
+        }
+
+        // Update local cache
+        try {
+            localStorage.setItem('ares_products', JSON.stringify(products));
+        } catch(e) {}
 
         return products;
     }
@@ -2487,6 +2588,7 @@ class AppDatabase {
             images,
             image_url: primaryImage,
             id: product.id || ('prod-' + Date.now()),
+            active: product.active !== false,
             updated_at: new Date().toISOString()
         };
 
@@ -2507,24 +2609,60 @@ class AppDatabase {
             this.putIDB('products', itemToSave).catch(() => {});
         }).catch(() => {});
 
-        // 3. Also update shop config in Supabase events table as backup/cross-device sync for shirt price
+        // 3. Sync active state to shop config if defined
+        if (itemToSave.active !== undefined) {
+            try {
+                const cfg = await this.getShopConfig().catch(() => ({ open: true }));
+                let inactives = Array.isArray(cfg.inactive_products) ? [...cfg.inactive_products] : [];
+                const key = itemToSave.id || itemToSave.slug;
+                if (itemToSave.active === false) {
+                    if (!inactives.includes(key)) inactives.push(key);
+                } else {
+                    inactives = inactives.filter(k => k !== key && k !== itemToSave.id && k !== itemToSave.slug);
+                }
+                cfg.inactive_products = inactives;
+                await this.saveShopConfig(cfg, false);
+            } catch(e) {}
+        }
+
+        // 4. Also update shop config in Supabase events table as backup/cross-device sync for shirt price
         if (itemToSave.slug === 'samarreta-ares-sd' || itemToSave.id === 'prod-camiseta-ares-sd-2026') {
             try {
                 const currentCfg = await this.getShopConfig().catch(() => ({ open: true, price_cents: 3500 }));
                 const newCents = Math.round(itemToSave.price * 100);
                 if (currentCfg.price_cents !== newCents) {
                     currentCfg.price_cents = newCents;
-                    await this.saveShopConfig(currentCfg).catch(() => {});
+                    await this.saveShopConfig(currentCfg, false).catch(() => {});
                 }
             } catch(e) {}
         }
 
-        // 4. Supabase upsert with 3.5s timeout
+        // 5. Supabase upsert with 3.5s timeout (send only schema-valid columns)
         if (this.isSupabaseConfigured()) {
             try {
+                const supabasePayload = {
+                    id: itemToSave.id,
+                    name: itemToSave.name,
+                    name_es: itemToSave.name_es,
+                    slug: itemToSave.slug,
+                    category: itemToSave.category,
+                    category_es: itemToSave.category_es,
+                    price: itemToSave.price,
+                    status: itemToSave.status || 'open',
+                    description: itemToSave.description,
+                    description_es: itemToSave.description_es,
+                    image_url: itemToSave.image_url,
+                    images: itemToSave.images,
+                    sizes: itemToSave.sizes,
+                    updated_at: itemToSave.updated_at
+                };
+                if (itemToSave.created_at) {
+                    supabasePayload.created_at = itemToSave.created_at;
+                }
+
                 const upsertPromise = this.supabase
                     .from('products')
-                    .upsert([itemToSave])
+                    .upsert([supabasePayload])
                     .select();
                 const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('Supabase save timeout')), 3500));
                 const { data, error } = await Promise.race([upsertPromise, timeoutPromise]);
@@ -2555,6 +2693,14 @@ class AppDatabase {
                 console.error("Error deleting product from Supabase:", err);
             }
         }
+
+        // Clean up from shop config
+        try {
+            const cfg = await this.getShopConfig().catch(() => ({ open: true }));
+            if (cfg.product_order) cfg.product_order = cfg.product_order.filter(k => k !== id);
+            if (cfg.inactive_products) cfg.inactive_products = cfg.inactive_products.filter(k => k !== id);
+            await this.saveShopConfig(cfg, false);
+        } catch(e) {}
 
         await this.dbPromise;
         await this.deleteIDB('products', id).catch(() => {});

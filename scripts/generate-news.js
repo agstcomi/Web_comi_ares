@@ -130,6 +130,37 @@ async function main() {
         } catch (e) {}
       }
 
+      // Aplicar orden y estado activo de la configuración de la tienda
+      const shopEvent = events.find(e => e.id === 'shop-config-camisetes');
+      if (shopEvent) {
+        try {
+          const shopCfg = JSON.parse(shopEvent.long_description || shopEvent.title);
+          if (shopCfg) {
+            const orderList = Array.isArray(shopCfg.product_order) ? shopCfg.product_order : [];
+            const inactiveList = Array.isArray(shopCfg.inactive_products) ? shopCfg.inactive_products : [];
+            products.forEach(p => {
+              const key = p.id || p.slug;
+              p.active = !inactiveList.includes(key) && !inactiveList.includes(p.id) && !inactiveList.includes(p.slug);
+            });
+            if (orderList.length > 0) {
+              products.sort((a, b) => {
+                const keyA = a.id || a.slug;
+                const keyB = b.id || b.slug;
+                let posA = orderList.indexOf(keyA);
+                if (posA === -1 && a.slug) posA = orderList.indexOf(a.slug);
+                if (posA === -1 && a.id) posA = orderList.indexOf(a.id);
+                if (posA === -1) posA = 999;
+                let posB = orderList.indexOf(keyB);
+                if (posB === -1 && b.slug) posB = orderList.indexOf(b.slug);
+                if (posB === -1 && b.id) posB = orderList.indexOf(b.id);
+                if (posB === -1) posB = 999;
+                return posA - posB;
+              });
+            }
+          }
+        } catch (e) {}
+      }
+
       console.log(`Se encontraron ${products.length} productos.`);
 
       // Guardar los archivos JSON si la conexión fue exitosa

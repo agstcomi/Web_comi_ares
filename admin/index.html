@@ -537,19 +537,20 @@ CREATE TABLE photos (
                         </div>
 
                         <div style="overflow-x: auto;">
-                            <table class="admin-events-table" style="width: 100%;">
+                            <table class="admin-table admin-products-table" style="width: 100%; border-collapse: collapse;">
                                 <thead>
                                     <tr>
-                                        <th style="width: 10%;">Imatge</th>
-                                        <th style="width: 25%;">Nom del Producte</th>
-                                        <th style="width: 15%;">Categoria</th>
-                                        <th style="width: 12%;">Preu</th>
-                                        <th style="width: 15%;">Estat</th>
-                                        <th style="width: 23%;">Accions</th>
+                                        <th style="width: 70px; text-align: center;">Ordre</th>
+                                        <th style="width: 60px; text-align: center;">Imatge</th>
+                                        <th style="min-width: 180px;">Nom del Producte</th>
+                                        <th style="width: 130px;">Categoria</th>
+                                        <th style="width: 80px;">Preu</th>
+                                        <th style="width: 150px;">Estat</th>
+                                        <th style="min-width: 320px; text-align: right;">Accions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="products-tbody">
-                                    <tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">Carregant productes...</td></tr>
+                                    <tr><td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-muted);">Carregant productes...</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -1023,7 +1024,7 @@ CREATE TABLE photos (
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
                         <label for="product-slug">Slug (URL)</label>
                         <input type="text" id="product-slug" required placeholder="camisetes">
@@ -1033,11 +1034,18 @@ CREATE TABLE photos (
                         <input type="number" id="product-price" step="0.01" required placeholder="12.00">
                     </div>
                     <div class="form-group">
-                        <label for="product-status">Estat</label>
+                        <label for="product-status">Reserves</label>
                         <select id="product-status" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); background-color: var(--bg-primary); border-radius: 8px; font-family: var(--font-body);">
                             <option value="open">Reserves Obertes</option>
                             <option value="closed">Reserves Tancades</option>
                             <option value="sold_out">Esgotat</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="product-active">Visibilitat Tenda</label>
+                        <select id="product-active" style="width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); background-color: var(--bg-primary); border-radius: 8px; font-family: var(--font-body);">
+                            <option value="true">Actiu (Visible)</option>
+                            <option value="false">Desactivat (Ocult)</option>
                         </select>
                     </div>
                 </div>
@@ -1184,8 +1192,8 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="/js/db.js?v=3.2" defer></script>
-    <script src="/admin/gestio.js?v=3.5"></script>
+    <script src="/js/db.js?v=3.3" defer></script>
+    <script src="/admin/gestio.js?v=3.6"></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);

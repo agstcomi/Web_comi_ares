@@ -460,7 +460,33 @@ Completat i verificat:
 
 ---
 
-## 36. Pròxim Pas
+## 36. Reordenació de Productes, Commutador Activar/Desactivar i Correcció de Visibilitat a Desktop (PRO)
+Completat i verificat:
+* **Diagnòstic de Visibilitat a Desktop (Botons amagats)**:
+  - A la taula de productes de l'administrador (`admin/index.html`), s'utilitzava la classe `.admin-events-table`, la qual té fixat per CSS `table-layout: fixed;` i `td { overflow: hidden; }`.
+  - Com que a la capçalera la columna d'Accions tenia només un `width: 23%`, l'espai era insuficient en pantalles d'escriptori i el botó "Borrar" quedava completament tallat i invisible sense poder interactuar-hi.
+  - **Solució**: S'ha creat la classe específica `.admin-products-table` a `css/styles.css` amb `table-layout: auto;`, eliminant el tall per desbordament i assegurant que totes les columnes i botons siguen 100% visibles tant en escriptori com en tauletes i mòbils.
+* **Modificació de l'Ordre de Productes al Front (Pujar / Baixar)**:
+  - S'ha afegit una nova columna `Ordre` a la taula del catàleg amb botons interactius de fletxa amunt (`arrow-up`) i fletxa avall (`arrow-down`).
+  - En prémer amunt o avall, els productes intercanvien posició i s'executa `window.db.saveProductsOrder(orderedIds)`.
+  - L'ordre es desa i se sincronitza de forma resilient a `ares_shop_config` (clau `product_order`) a la taula `events` (`shop-config-camisetes`), a `localStorage` i als fitxers estàtics `data/products.json`.
+  - La funció `getProducts()` de `js/db.js` ordena de forma automàtica i determinista els productes segons aquesta llista abans de retornar-los al catàleg públic (`tenda.html`, `es/tenda.html`).
+* **Botó i Estat Desactivar / Activar**:
+  - S'ha afegit el botó de commutació `btn-toggle-product-active`:
+    - Si el producte està actiu: mostra "Desactivar" (icona `eye-off`) i el passa a ocult de la tenda pública.
+    - Si el producte està desactivat: mostra "Activar" (icona `eye`) i el torna a fer visible.
+  - A la columna d'estat de la taula, es mostra ara tant l'estat de reserves (`Reserves Obertes` / `Tancades`) com el de visibilitat (`Actiu` amb punt verd / `Desactivat (Ocult)` amb fons ambre).
+  - Al modal d'edició/alta de producte (`modal-product`), s'ha afegit el desplegable "Visibilitat Tenda" (`Actiu (Visible)` / `Desactivat (Ocult)`).
+  - A les botigues públiques `tenda.html` i `es/tenda.html`, es filtren els productes amb `active !== false`. Si un producte desactivat és visitat directament per URL a `camisetes.html` o `es/camisetes.html`, es mostra un avís clar de "Producte no disponible" i s'oculta el formulari de comanda.
+* **Compatibilitat de l'Esquema Supabase (Prevenint Error 400)**:
+  - La taula `products` de Supabase a PostgreSQL no conté columnes `order` ni `active`. S'ha modificat `saveProduct` a `js/db.js` per a filtrar la càrrega útil (`supabasePayload`) enviant només les columnes vàlides de l'esquema de base de dades, emmagatzemant `product_order` i `inactive_products` dins del registre de configuració de botiga `shop-config-camisetes` que admet JSON lliure. Això evita violacions d'esquema PostgREST i assegura sincronització multiplataforma sense errors.
+* **Cache-Busting**:
+  - `admin/index.html`: `gestio.js?v=3.6`, `db.js?v=3.3`.
+  - `tenda.html`, `es/tenda.html`, `camisetes.html`, `es/camisetes.html`: `db.js?v=3.3`.
+
+---
+
+## 37. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

@@ -3090,7 +3090,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnToggle.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;">⟳</span> Actualitzant...';
             reservationsOpen = !reservationsOpen;
             try {
-                await window.db.saveShopConfig({ open: reservationsOpen, price_cents: 3500 });
+                await window.db.saveShopConfig({ open: reservationsOpen, price_cents: 3500 }, true);
                 updateReservationsToggleUI();
                 await loadProductsTable();
             } catch(e) {
@@ -3119,17 +3119,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const tbody = document.getElementById('products-tbody');
         if (!tbody) return;
 
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Carregant productes...</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">Carregant productes...</td></tr>';
 
         try {
             const products = await window.db.getProducts();
 
             if (!products || products.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">No hi ha productes al catàleg.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">No hi ha productes al catàleg.</td></tr>';
                 return;
             }
 
-            tbody.innerHTML = products.map(p => {
+            tbody.innerHTML = products.map((p, idx) => {
                 const imgUrl = (!p.image_url)
                     ? 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&q=80&w=400'
                     : (p.image_url.startsWith('http') || p.image_url.startsWith('data:image') || p.image_url.startsWith('/'))
@@ -3140,44 +3140,140 @@ document.addEventListener('DOMContentLoaded', () => {
                 const escName = window.db.escapeHTML ? window.db.escapeHTML(p.name || '') : (p.name || '');
                 const escCat = window.db.escapeHTML ? window.db.escapeHTML(p.category || '-') : (p.category || '-');
                 const priceFormatted = (typeof p.price === 'number') ? p.price.toFixed(2) + ' €' : (p.price ? p.price + ' €' : '0.00 €');
-                const escId = window.db.escapeHTML ? window.db.escapeHTML(String(p.id)) : String(p.id);
+                const escId = window.db.escapeHTML ? window.db.escapeHTML(String(p.id || p.slug)) : String(p.id || p.slug);
+                const isActive = p.active !== false;
 
                 let statusBadge = '';
                 if (p.status === 'open') {
-                    statusBadge = '<span style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.4rem;background:#dcfce7;color:#15803d;border-radius:4px;text-transform:uppercase;">Reserves Obertes</span>';
+                    statusBadge = '<span style="font-size:0.68rem;font-weight:700;padding:0.2rem 0.45rem;background:#dcfce7;color:#15803d;border-radius:4px;text-transform:uppercase;border:1px solid #bbf7d0;">Reserves Obertes</span>';
                 } else if (p.status === 'closed') {
-                    statusBadge = '<span style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.4rem;background:#fee2e2;color:#b91c1c;border-radius:4px;text-transform:uppercase;">Reserves Tancades</span>';
+                    statusBadge = '<span style="font-size:0.68rem;font-weight:700;padding:0.2rem 0.45rem;background:#fee2e2;color:#b91c1c;border-radius:4px;text-transform:uppercase;border:1px solid #fecaca;">Reserves Tancades</span>';
                 } else if (p.status === 'sold_out') {
-                    statusBadge = '<span style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.4rem;background:#fef9c3;color:#854d0e;border-radius:4px;text-transform:uppercase;">Esgotat</span>';
+                    statusBadge = '<span style="font-size:0.68rem;font-weight:700;padding:0.2rem 0.45rem;background:#fef9c3;color:#854d0e;border-radius:4px;text-transform:uppercase;border:1px solid #fef08a;">Esgotat</span>';
                 } else {
-                    statusBadge = `<span style="font-size:0.7rem;font-weight:700;padding:0.2rem 0.4rem;background:#e2e8f0;color:#475569;border-radius:4px;text-transform:uppercase;">${window.db.escapeHTML ? window.db.escapeHTML(p.status || '') : (p.status || '')}</span>`;
+                    statusBadge = `<span style="font-size:0.68rem;font-weight:700;padding:0.2rem 0.45rem;background:#e2e8f0;color:#475569;border-radius:4px;text-transform:uppercase;">${window.db.escapeHTML ? window.db.escapeHTML(p.status || '') : (p.status || '')}</span>`;
                 }
 
+                const visibilityBadge = isActive
+                    ? '<span style="font-size:0.68rem;font-weight:700;padding:0.2rem 0.45rem;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:4px;display:inline-flex;align-items:center;gap:0.25rem;"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;"></span>Actiu</span>'
+                    : '<span style="font-size:0.68rem;font-weight:700;padding:0.2rem 0.45rem;background:#fef3c7;color:#92400e;border:1px solid #fde68a;border-radius:4px;display:inline-flex;align-items:center;gap:0.25rem;"><span style="width:6px;height:6px;border-radius:50%;background:#f59e0b;"></span>Desactivat (Ocult)</span>';
+
                 return `<tr>
-                    <td><img class="admin-table-img" src="${escImgUrl}" alt="${escName}"></td>
-                    <td style="font-weight:600;">${escName}</td>
+                    <!-- Col 1: Ordre Up / Down -->
+                    <td style="text-align:center; white-space:nowrap;">
+                        <div style="display:inline-flex; gap:0.25rem;">
+                            <button type="button" class="btn-move-prod-up" data-index="${idx}" ${idx === 0 ? 'disabled' : ''} style="background:var(--bg-primary); border:1px solid var(--border-color); color:var(--text-primary); cursor:${idx === 0 ? 'not-allowed' : 'pointer'}; padding:0.35rem 0.45rem; border-radius:6px; opacity:${idx === 0 ? '0.3' : '1'}; transition:all 0.2s;" title="Pujar de posició al catàleg">
+                                <i data-lucide="arrow-up" style="width:13px; height:13px;"></i>
+                            </button>
+                            <button type="button" class="btn-move-prod-down" data-index="${idx}" ${idx === products.length - 1 ? 'disabled' : ''} style="background:var(--bg-primary); border:1px solid var(--border-color); color:var(--text-primary); cursor:${idx === products.length - 1 ? 'not-allowed' : 'pointer'}; padding:0.35rem 0.45rem; border-radius:6px; opacity:${idx === products.length - 1 ? '0.3' : '1'}; transition:all 0.2s;" title="Baixar de posició al catàleg">
+                                <i data-lucide="arrow-down" style="width:13px; height:13px;"></i>
+                            </button>
+                        </div>
+                    </td>
+
+                    <!-- Col 2: Imatge -->
+                    <td style="text-align:center;"><img class="admin-table-img" src="${escImgUrl}" alt="${escName}"></td>
+
+                    <!-- Col 3: Nom del Producte -->
+                    <td>
+                        <div style="font-weight:600; color:var(--text-primary);">${escName}</div>
+                        <div style="font-size:0.75rem; color:var(--text-muted); font-family:monospace;">/camisetes/${window.db.escapeHTML ? window.db.escapeHTML(p.slug || '') : (p.slug || '')}</div>
+                    </td>
+
+                    <!-- Col 4: Categoria -->
                     <td style="font-size:0.85rem;color:var(--text-secondary);">${escCat}</td>
+
+                    <!-- Col 5: Preu -->
                     <td style="font-weight:700;">${priceFormatted}</td>
-                    <td>${statusBadge}</td>
-                    <td style="white-space:nowrap;">
-                        <button class="btn btn-sm btn-toggle-product-status" data-id="${escId}" data-status="${p.status === 'open' ? 'closed' : 'open'}" title="${p.status === 'open' ? 'Tancar reserves d\'aquest producte' : 'Obrir reserves d\'aquest producte'}" style="padding: 0.35rem 0.6rem; margin-right: 0.35rem; background-color: ${p.status === 'open' ? '#fee2e2' : '#dcfce7'}; color: ${p.status === 'open' ? '#991b1b' : '#166534'}; border-color: transparent;">
-                            <i data-lucide="${p.status === 'open' ? 'lock' : 'unlock'}" style="width: 12px; height: 12px;"></i> ${p.status === 'open' ? 'Tancar' : 'Obrir'}
-                        </button>
-                        <button class="btn btn-sm btn-edit-product" data-id="${escId}" style="padding: 0.35rem 0.6rem; margin-right: 0.35rem; background-color: var(--text-primary); color: var(--bg-primary); border-color: var(--text-primary);">
-                            <i data-lucide="edit-3" style="width: 12px; height: 12px;"></i> Editar
-                        </button>
-                        <button class="btn btn-sm btn-danger btn-delete-product" data-id="${escId}" style="padding: 0.35rem 0.6rem;">
-                            <i data-lucide="trash-2" style="width: 12px; height: 12px;"></i> Borrar
-                        </button>
+
+                    <!-- Col 6: Estat (Reserves + Visibilitat) -->
+                    <td>
+                        <div style="display:flex; flex-direction:column; gap:0.3rem; align-items:flex-start;">
+                            ${statusBadge}
+                            ${visibilityBadge}
+                        </div>
+                    </td>
+
+                    <!-- Col 7: Accions (Obrir/Tancar, Desactivar/Activar, Editar, Borrar) -->
+                    <td style="text-align:right;">
+                        <div style="display:inline-flex; gap:0.35rem; align-items:center; justify-content:flex-end; flex-wrap:wrap;">
+                            <!-- Obrir / Tancar Reserves -->
+                            <button type="button" class="btn btn-sm btn-toggle-product-status" data-id="${escId}" data-status="${p.status === 'open' ? 'closed' : 'open'}" title="${p.status === 'open' ? 'Tancar reserves d\'aquest producte' : 'Obrir reserves d\'aquest producte'}" style="padding:0.35rem 0.6rem; background-color:${p.status === 'open' ? '#fee2e2' : '#dcfce7'}; color:${p.status === 'open' ? '#991b1b' : '#166534'}; border:1px solid ${p.status === 'open' ? '#fecaca' : '#bbf7d0'}; display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; border-radius:6px; cursor:pointer;">
+                                <i data-lucide="${p.status === 'open' ? 'lock' : 'unlock'}" style="width:12px; height:12px;"></i> ${p.status === 'open' ? 'Tancar' : 'Obrir'}
+                            </button>
+
+                            <!-- Desactivar / Activar Producte -->
+                            <button type="button" class="btn btn-sm btn-toggle-product-active" data-id="${escId}" data-active="${isActive ? 'true' : 'false'}" title="${isActive ? 'Desactivar producte (ocultar de la tenda pública)' : 'Activar producte (fer visible a la tenda pública)'}" style="padding:0.35rem 0.6rem; background-color:${isActive ? '#fef3c7' : '#e0e7ff'}; color:${isActive ? '#92400e' : '#3730a3'}; border:1px solid ${isActive ? '#fde68a' : '#c7d2fe'}; display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; border-radius:6px; cursor:pointer;">
+                                <i data-lucide="${isActive ? 'eye-off' : 'eye'}" style="width:12px; height:12px;"></i> ${isActive ? 'Desactivar' : 'Activar'}
+                            </button>
+
+                            <!-- Editar Producte -->
+                            <button type="button" class="btn btn-sm btn-edit-product" data-id="${escId}" title="Editar dades del producte" style="padding:0.35rem 0.6rem; background-color:var(--text-primary); color:var(--bg-primary); border:1px solid var(--text-primary); display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; border-radius:6px; cursor:pointer;">
+                                <i data-lucide="edit-3" style="width:12px; height:12px;"></i> Editar
+                            </button>
+
+                            <!-- Borrar Producte -->
+                            <button type="button" class="btn btn-sm btn-danger btn-delete-product" data-id="${escId}" title="Eliminar producte del catàleg" style="padding:0.35rem 0.6rem; display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; border-radius:6px; cursor:pointer;">
+                                <i data-lucide="trash-2" style="width:12px; height:12px;"></i> Borrar
+                            </button>
+                        </div>
                     </td>
                 </tr>`;
             }).join('');
 
-            // Attach toggle product status listeners
+            // Attach Up & Down reordering listeners
+            tbody.querySelectorAll('.btn-move-prod-up').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const index = parseInt(btn.getAttribute('data-index'), 10);
+                    if (index > 0) {
+                        btn.disabled = true;
+                        const temp = products[index];
+                        products[index] = products[index - 1];
+                        products[index - 1] = temp;
+                        const orderedIds = products.map(p => p.id || p.slug);
+                        try {
+                            await window.db.saveProductsOrder(orderedIds);
+                            if (typeof showAdminToast === 'function') {
+                                showAdminToast('✓ Ordre dels productes actualitzat!', 'success', 3000);
+                            }
+                            await loadProductsTable();
+                        } catch(err) {
+                            alert('Error en desar l\'ordre: ' + err.message);
+                            await loadProductsTable();
+                        }
+                    }
+                });
+            });
+
+            tbody.querySelectorAll('.btn-move-prod-down').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const index = parseInt(btn.getAttribute('data-index'), 10);
+                    if (index < products.length - 1) {
+                        btn.disabled = true;
+                        const temp = products[index];
+                        products[index] = products[index + 1];
+                        products[index + 1] = temp;
+                        const orderedIds = products.map(p => p.id || p.slug);
+                        try {
+                            await window.db.saveProductsOrder(orderedIds);
+                            if (typeof showAdminToast === 'function') {
+                                showAdminToast('✓ Ordre dels productes actualitzat!', 'success', 3000);
+                            }
+                            await loadProductsTable();
+                        } catch(err) {
+                            alert('Error en desar l\'ordre: ' + err.message);
+                            await loadProductsTable();
+                        }
+                    }
+                });
+            });
+
+            // Attach toggle product status listeners (Obrir / Tancar)
             tbody.querySelectorAll('.btn-toggle-product-status').forEach(btn => {
                 btn.addEventListener('click', async () => {
                     const id = btn.getAttribute('data-id');
                     const targetStatus = btn.getAttribute('data-status');
+                    btn.disabled = true;
                     try {
                         await window.db.toggleProductStatus(id, targetStatus);
                         if (typeof showAdminToast === 'function') {
@@ -3190,6 +3286,27 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             alert('Error: ' + e.message);
                         }
+                        btn.disabled = false;
+                    }
+                });
+            });
+
+            // Attach toggle active listeners (Desactivar / Activar)
+            tbody.querySelectorAll('.btn-toggle-product-active').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    const id = btn.getAttribute('data-id');
+                    const currentlyActive = btn.getAttribute('data-active') === 'true';
+                    const newActive = !currentlyActive;
+                    btn.disabled = true;
+                    try {
+                        await window.db.toggleProductActive(id, newActive);
+                        if (typeof showAdminToast === 'function') {
+                            showAdminToast(newActive ? '👁️ Producte activat (visible a la tenda)' : '🙈 Producte desactivat (ocult a la tenda)', 'success', 4000);
+                        }
+                        await loadProductsTable();
+                    } catch (e) {
+                        alert('Error en canviar visibilitat del producte: ' + e.message);
+                        btn.disabled = false;
                     }
                 });
             });
@@ -3199,7 +3316,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.addEventListener('click', async () => {
                     const id = btn.getAttribute('data-id');
                     const productsList = await window.db.getProducts();
-                    const prod = productsList.find(item => String(item.id) === id);
+                    const prod = productsList.find(item => String(item.id) === id || item.slug === id);
                     if (prod) {
                         document.getElementById('product-id').value = prod.id || '';
                         document.getElementById('product-name').value = prod.name || '';
@@ -3209,6 +3326,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         document.getElementById('product-category-es').value = prod.category_es || '';
                         document.getElementById('product-price').value = (prod.price !== undefined && prod.price !== null) ? prod.price : '';
                         document.getElementById('product-status').value = prod.status || 'open';
+                        if (document.getElementById('product-active')) {
+                            document.getElementById('product-active').value = (prod.active !== false) ? 'true' : 'false';
+                        }
                         document.getElementById('product-image-url').value = prod.image_url || '';
                         document.getElementById('product-images').value = Array.isArray(prod.images) ? prod.images.join(', ') : (prod.images || '');
                         document.getElementById('product-description').value = prod.description || '';
@@ -3246,11 +3366,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 btn.addEventListener('click', async () => {
                     const id = btn.getAttribute('data-id');
                     if (confirm('Estàs segur que vols eliminar aquest producte del catàleg?')) {
+                        btn.disabled = true;
                         try {
                             await window.db.deleteProduct(id);
+                            if (typeof showAdminToast === 'function') {
+                                showAdminToast('✓ Producte eliminat del catàleg', 'success', 4000);
+                            }
                             await loadProductsTable();
                         } catch (e) {
                             alert('Error en eliminar el producte: ' + e.message);
+                            btn.disabled = false;
                         }
                     }
                 });
@@ -3260,7 +3385,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         } catch (err) {
             console.error('Error loading products table:', err);
-            tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;padding:2rem;color:#ef4444;">Error: ${err.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:2rem;color:#ef4444;">Error: ${err.message}</td></tr>`;
         }
     }
 
@@ -3329,6 +3454,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (form) form.reset();
             const idInput = document.getElementById('product-id');
             if (idInput) idInput.value = '';
+            if (document.getElementById('product-active')) {
+                document.getElementById('product-active').value = 'true';
+            }
             const preview = document.getElementById('product-preview-main');
             if (preview) preview.style.display = 'none';
             renderProductGalleryPreviews();
@@ -3404,6 +3532,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const category_es = document.getElementById('product-category-es').value.trim();
                 const price = parseFloat(document.getElementById('product-price').value) || 0;
                 const status = document.getElementById('product-status').value;
+                const activeEl = document.getElementById('product-active');
+                const activeVal = activeEl ? activeEl.value === 'true' : true;
                 const imagesRaw = document.getElementById('product-images').value.trim();
                 let images = imagesRaw ? imagesRaw.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean) : [];
                 const description = document.getElementById('product-description').value.trim();
@@ -3454,6 +3584,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     category_es,
                     price,
                     status,
+                    active: activeVal,
                     image_url: primaryImageUrl,
                     images,
                     description,
