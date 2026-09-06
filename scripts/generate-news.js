@@ -56,6 +56,69 @@ function getAbsoluteImageUrl(url) {
   return resolvedUrl;
 }
 
+const DEFAULT_PRODUCTS = [
+  {
+    id: "prod-camiseta-ares-sd-2026",
+    name: "Samarreta homenatge Ares SD",
+    name_es: "Camiseta homenaje Ares SD",
+    slug: "samarreta-ares-sd",
+    category: "Roba · Edició Limitada 2026",
+    category_es: "Ropa · Edición Limitada 2026",
+    price: 35.00,
+    status: "open",
+    description: "Commemora la història de l'Ares SD amb esta samarreta d'edició limitada. Un homenatge de la Comissió de Festes d'Ares al primer equip de futbol del poble, nascut l'any 1980 de l'entusiasme d'un grup de joves d'Ares.",
+    description_es: "Conmemora la historia del Ares SD con esta camiseta de edición limitada. Un homenaje de la Comisión de Fiestas de Ares al primer equipo de fútbol del pueblo, nacido en 1980 gracias al entusiasmo de un grupo de jóvenes de Ares.",
+    image_url: "/img/camiseta-1.webp",
+    images: ["/img/camiseta-1.webp", "/img/camiseta-2.webp", "/img/camiseta-3.webp", "/img/camiseta-4.webp"],
+    sizes: ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL", "7XL"]
+  },
+  {
+    id: "prod-tote-bag-mirador-2026",
+    name: "Tote Bag El Mirador del Maestrat",
+    name_es: "Tote Bag El Mirador del Maestrat",
+    slug: "tote-bag",
+    category: "Complements · Edició Limitada 2026",
+    category_es: "Complementos · Edición Limitada 2026",
+    price: 6.00,
+    status: "open",
+    description: "Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l'any 2026. Bossa ideal per al dia a dia.",
+    description_es: "Bolsa de tela de color negro con la ilustración ganadora del Concurso de Diseño para Fiestas del año 2026. Bolsa ideal para el día a día.",
+    image_url: "/img/tote-bag-1.jpg",
+    images: ["/img/tote-bag-1.jpg"],
+    sizes: ["Talla Única"]
+  },
+  {
+    id: "prod-samarreta-mirador-2026",
+    name: "Samarreta «El mirador del Maestrat»",
+    name_es: "Camiseta «El mirador del Maestrat»",
+    slug: "samarreta-mirador-maestrat",
+    category: "Roba · Edició Limitada 2026",
+    category_es: "Ropa · Edición Limitada 2026",
+    price: 12.00,
+    status: "open",
+    description: "Samarreta de color negre amb la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
+    description_es: "Camiseta de color negro con la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
+    image_url: "/img/samarreta-mirador-1.jpg",
+    images: ["/img/samarreta-mirador-1.jpg"],
+    sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"]
+  },
+  {
+    id: "prod-rinyonera-mirador-2026",
+    name: "Rinyonera «El mirador del Maestrat»",
+    name_es: "Riñonera «El mirador del Maestrat»",
+    slug: "rinyonera-mirador-maestrat",
+    category: "Complements · Edició Limitada 2026",
+    category_es: "Complementos · Edición Limitada 2026",
+    price: 12.00,
+    status: "open",
+    description: "Rinyonera de color negre amb cinta ajustable i la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
+    description_es: "Riñonera de color negro con cinta ajustable y la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
+    image_url: "/img/rinyonera-mirador-1.jpg",
+    images: ["/img/rinyonera-mirador-1.jpg"],
+    sizes: ["Talla Única"]
+  }
+];
+
 async function main() {
   console.log("Iniciando generación de páginas estáticas de noticias...");
 
@@ -118,17 +181,19 @@ async function main() {
         console.warn("Aviso al consultar productos en Supabase, usando locales:", prodErr.message || prodErr);
       }
 
+      const prodMap = new Map();
+      DEFAULT_PRODUCTS.forEach(p => prodMap.set(p.id || p.slug, { ...p }));
+      products.forEach(p => prodMap.set(p.id || p.slug, { ...prodMap.get(p.id || p.slug), ...p }));
+
       if (fs.existsSync(path.join(dataDir, 'products.json'))) {
         try {
           const localProds = JSON.parse(fs.readFileSync(path.join(dataDir, 'products.json'), 'utf-8'));
           if (localProds && localProds.length > 0) {
-            const map = new Map();
-            localProds.forEach(p => map.set(p.id || p.slug, p));
-            products.forEach(p => map.set(p.id || p.slug, { ...map.get(p.id || p.slug), ...p }));
-            products = Array.from(map.values());
+            localProds.forEach(p => prodMap.set(p.id || p.slug, { ...prodMap.get(p.id || p.slug), ...p }));
           }
         } catch (e) {}
       }
+      products = Array.from(prodMap.values());
 
       // Aplicar orden y estado activo de la configuración de la tienda
       const shopEvent = events.find(e => e.id === 'shop-config-camisetes');
@@ -178,6 +243,7 @@ async function main() {
       if (fs.existsSync(path.join(dataDir, 'events.json'))) events = JSON.parse(fs.readFileSync(path.join(dataDir, 'events.json'), 'utf-8'));
       if (fs.existsSync(path.join(dataDir, 'photos.json'))) photos = JSON.parse(fs.readFileSync(path.join(dataDir, 'photos.json'), 'utf-8'));
       if (fs.existsSync(path.join(dataDir, 'products.json'))) products = JSON.parse(fs.readFileSync(path.join(dataDir, 'products.json'), 'utf-8'));
+      if (!products || products.length === 0) products = [...DEFAULT_PRODUCTS];
     }
 
     // 2. Leer las plantillas base

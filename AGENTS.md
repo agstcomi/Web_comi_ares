@@ -505,7 +505,25 @@ Completat i verificat:
 
 ---
 
-## 38. Pròxim Pas
+## 38. Solució a l'Error de Nom de Producte en Reserva Directa ("Reserva ja") (PRO)
+Completat i verificat:
+* **Diagnòstic de l'Error**:
+  - Quan un usuari entrava a la fitxa de qualsevol producte de la tenda que no fóra la samarreta commemorativa original (com ara *Tote Bag El Mirador del Maestrat*, *Samarreta «El mirador del Maestrat»* o *Rinyonera «El mirador del Maestrat»*) i premia directament el botó **"Reserva ja"** (`#btn-add-cart`) en comptes d'afegir-lo al carret, el modal de confirmació de reserva mostrava sempre de forma errònia el nom `"Samarreta Homenatge Ares SD"`.
+  - **Causes trobades**:
+    1. A `camisetes.html` i `camisetes/index.html`, la fila del resum del modal contenia estàticament `<span>Samarreta Homenatge Ares SD</span>` sense cap atribut `id="modal-product-name"`, de manera que `scripts/generate-news.js` no podia reemplaçar-ho en les pàgines estàtiques compilades.
+    2. En el controlador d'esdeveniments del botó `#btn-add-cart`, es mostrava `#modal-summary` i s'actualitzava la talla (`#modal-size`) i quantitat (`#modal-qty`), però mai s'actualitzava el text del nom del producte (`#modal-product-name`).
+    3. A `applyProduct(prod)`, no s'actualitzava el contingut de `#modal-product-name`.
+    4. A `data/products.json`, només constava el producte inicial, fent que en compilacions estàtiques sense xarxa no es generessin els directoris estàtics de la resta de productes.
+* **Solucions Aplicades**:
+  - **Identificador i actualització dinàmica**: S'ha afegit `id="modal-product-name"` al resum del modal de `camisetes.html` i `camisetes/index.html`.
+  - **Actualització al clic de "Reserva ja"**: S'ha incorporat la lògica per a assignar a `#modal-product-name` el nom del producte actiu (`currentProduct.name` o `currentProduct.name_es` segons l'idioma) tant a `camisetes.html` com a `es/camisetes.html`.
+  - **Sincronització a `applyProduct`**: S'actualitza `#modal-product-name` automàticament en carregar qualsevol producte.
+  - **Actualització de `orderItems`**: S'ha assegurat que `name` i `name_es` es guarden amb els noms reals del producte triat tant en valencià com en castellà al formulari de reserva.
+  - **Actualització del catàleg estàtic (`data/products.json`)**: S'han incorporat tots els 4 productes oficials i s'ha executat `node scripts/generate-news.js` generant les pàgines estàtiques de tots els productes (`/camisetes/tote-bag/`, `/camisetes/samarreta-mirador-maestrat/`, `/camisetes/rinyonera-mirador-maestrat/` i les seues versions a `/es/`).
+
+---
+
+## 39. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

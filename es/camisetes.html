@@ -993,6 +993,10 @@
                 if (modalSummary) {
                     modalSummary.style.display = 'block';
                 }
+                const modalProd = document.getElementById('modal-product-name');
+                if (modalProd && currentProduct) {
+                    modalProd.textContent = currentProduct.name_es || currentProduct.name || 'Camiseta Homenaje Ares SD';
+                }
                 const modalSize = document.getElementById('modal-size');
                 if (modalSize) modalSize.textContent = selectedSize || 'Talla Única';
                 updateQty(quantity);
@@ -1129,7 +1133,7 @@
                 }
 
                 const orderItems = (isCartCheckout && window.cart) ? window.cart.getCart() : [{
-                    name: prodName,
+                    name: currentProduct ? currentProduct.name : 'Samarreta Homenatge Ares SD',
                     name_es: prodName,
                     size: selectedSize || 'Talla Única',
                     quantity: quantity,
