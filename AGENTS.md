@@ -430,14 +430,19 @@ Completat i verificat:
 
 ---
 
-## 34. Solució a la Desquadració del Resum de Reserves a la Botiga (PRO)
+## 34. Solució a la Desquadració del Resum de Reserves i Filtre Multi-Producte a la Botiga (PRO)
 Completat i verificat:
-* **Diagnòstic de l'Error**:
+* **Diagnòstic de l'Error de Desquadrat**:
   - En entrar a la pestanya de botiga i productes al panell de control (`admin/index.html`), el contenidor de mètriques `#reservations-stats` es mostrava amb les targetes niuades unes dins d'altres (efecte nines russes / matrioixca).
-  - La causa era l'omissió de l'etiqueta de tancament `</div>` a la plantilla de generació de les targetes a `admin/gestio.js` (línia 2709). Com que cada targeta obria un `<div style="...">` sense tancar-lo abans de la següent iteració de `.map()`, el parser HTML del navegador interpretava cada targeta consecutiva com a filla de l'anterior.
-* **Solució Aplicada**:
-  - A [admin/gestio.js](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/gestio.js): Afegida l'etiqueta de tancament `</div>` a la plantilla de les targetes de resum de reserves.
-  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped la versió de càrrega de `gestio.js` a `?v=3.1` per a invalidar la memòria cau del navegador immediatament.
+  - La causa era l'omissió de l'etiqueta de tancament `</div>` a la plantilla de generació de les targetes a `admin/gestio.js`. Com que cada targeta obria un `<div style="...">` sense tancar-lo abans de la següent iteració de `.map()`, el parser HTML del navegador interpretava cada targeta consecutiva com a filla de l'anterior.
+  - S'ha corregit l'etiqueta de tancament `</div>` i millorat l'estil de les caselles (targetes individuals amb `border-radius: 12px`, `background: var(--bg-secondary)`, ombra suau, número gran i etiqueta) alineades una al costat de l'altra dins la graella `repeat(auto-fit, minmax(130px, 1fr))`.
+* **Filtre Desplegable Multi-Producte**:
+  - S'ha substituït el `<select>` simple pel component desplegable multi-selecció (`#product-dropdown-container`), inspirat en el disseny de categories de programació.
+  - Permet seleccionar o desseleccionar múltiples productes alhora amb caselles de verificació (`checkboxes`).
+  - L'etiqueta del botó indica de forma dinàmica `"Tots els productes"`, el nom del producte individual (si només se'n tria un), o `"N productes"` si n'hi ha diversos.
+  - La taula de reserves, les mètriques i l'exportació CSV s'actualitzen en temps real per a incloure les comandes que continguen qualsevol dels productes seleccionats.
+  - S'ha afegit el botó ràpid `"Tots els productes"` al peu del desplegable per a netejar la selecció immediatament.
+  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped la versió de càrrega de `gestio.js` a `?v=3.2`.
 
 ---
 

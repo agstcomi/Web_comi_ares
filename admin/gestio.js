@@ -2421,24 +2421,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    let selectedProductFilter = '';
+    let selectedProductFilters = [];
 
     async function populateReservationProductFilter() {
-        const select = document.getElementById('filter-reservation-product');
-        if (!select) return;
+        const container = document.getElementById('product-dropdown-container');
+        const itemsContainer = document.getElementById('filter-products-items');
+        const dropdownBtn = document.getElementById('filter-products-btn');
+        const dropdownContent = document.getElementById('filter-products-dropdown');
+        const clearBtn = document.getElementById('filter-products-clear-btn');
+        if (!container || !itemsContainer) return;
+
         try {
             const products = await window.db.getProducts();
-            const currentVal = select.value;
-            const options = ['<option value="">Tots els productes</option>'];
             const addedNames = new Set();
+            const productNamesList = [];
 
             if (products && products.length > 0) {
                 products.forEach(p => {
                     const name = p.name || p.slug;
                     if (name && !addedNames.has(name.toLowerCase())) {
                         addedNames.add(name.toLowerCase());
-                        const escName = window.db.escapeHTML ? window.db.escapeHTML(name) : name;
-                        options.push(`<option value="${escName}">${escName}</option>`);
+                        productNamesList.push(name);
                     }
                 });
             }
@@ -2448,34 +2451,112 @@ document.addEventListener('DOMContentLoaded', () => {
                 allReservations.forEach(r => {
                     if (r.product_name && !addedNames.has(r.product_name.toLowerCase())) {
                         addedNames.add(r.product_name.toLowerCase());
-                        const escName = window.db.escapeHTML ? window.db.escapeHTML(r.product_name) : r.product_name;
-                        options.push(`<option value="${escName}">${escName}</option>`);
+                        productNamesList.push(r.product_name);
                     }
                     if (Array.isArray(r.items)) {
                         r.items.forEach(it => {
                             const itName = it.name || it.name_es;
                             if (itName && !addedNames.has(itName.toLowerCase())) {
                                 addedNames.add(itName.toLowerCase());
-                                const escName = window.db.escapeHTML ? window.db.escapeHTML(itName) : itName;
-                                options.push(`<option value="${escName}">${escName}</option>`);
+                                productNamesList.push(itName);
                             }
                         });
                     }
                 });
             }
 
-            select.innerHTML = options.join('');
-            if (currentVal) select.value = currentVal;
+            // Build checkboxes HTML
+            itemsContainer.innerHTML = productNamesList.map(name => {
+                const isChecked = selectedProductFilters.includes(name);
+                const escName = window.db.escapeHTML ? window.db.escapeHTML(name) : name;
+                return `
+                    <label class="filter-dropdown-item" style="display:flex;align-items:center;gap:0.65rem;padding:0.5rem 0.75rem;border-radius:8px;cursor:pointer;font-size:0.825rem;color:var(--text-secondary);transition:var(--transition);user-select:none;margin:0;font-family:var(--font-body);">
+                        <input type="checkbox" value="${escName}" ${isChecked ? 'checked' : ''} style="cursor:pointer;width:15px;height:15px;accent-color:var(--text-primary);margin:0;flex-shrink:0;">
+                        <span style="font-weight:500;flex-grow:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${escName}">${escName}</span>
+                    </label>
+                `;
+            }).join('');
 
-            if (!select.dataset.listenerAttached) {
-                select.addEventListener('change', () => {
-                    selectedProductFilter = select.value;
+            // Update label
+            updateProductFilterLabel();
+
+            // Setup listeners once
+            if (!container.dataset.listenerAttached) {
+                dropdownBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const isShown = dropdownContent.classList.contains('show') || dropdownContent.style.display === 'block';
+                    if (isShown) {
+                        dropdownContent.style.display = 'none';
+                        dropdownContent.classList.remove('show');
+                        dropdownBtn.classList.remove('active-dropdown');
+                    } else {
+                        dropdownContent.style.display = 'block';
+                        dropdownContent.classList.add('show');
+                        dropdownBtn.classList.add('active-dropdown');
+                    }
+                });
+
+                dropdownContent.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+
+                document.addEventListener('click', () => {
+                    dropdownContent.style.display = 'none';
+                    dropdownContent.classList.remove('show');
+                    dropdownBtn.classList.remove('active-dropdown');
+                });
+
+                if (clearBtn) {
+                    clearBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        selectedProductFilters = [];
+                        itemsContainer.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+                            cb.checked = false;
+                        });
+                        updateProductFilterLabel();
+                        renderReservationsUI();
+                    });
+                }
+
+                container.dataset.listenerAttached = 'true';
+            }
+
+            // Re-bind checkbox listeners
+            itemsContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    const val = checkbox.value;
+                    if (checkbox.checked) {
+                        if (!selectedProductFilters.includes(val)) {
+                            selectedProductFilters.push(val);
+                        }
+                    } else {
+                        selectedProductFilters = selectedProductFilters.filter(item => item !== val);
+                    }
+                    updateProductFilterLabel();
                     renderReservationsUI();
                 });
-                select.dataset.listenerAttached = 'true';
-            }
+            });
+
         } catch(e) {
-            console.warn('Error populating product filter select:', e);
+            console.warn('Error populating product filter dropdown:', e);
+        }
+    }
+
+    function updateProductFilterLabel() {
+        const labelEl = document.getElementById('filter-products-label');
+        const dropdownBtn = document.getElementById('filter-products-btn');
+        if (!labelEl || !dropdownBtn) return;
+
+        if (selectedProductFilters.length === 0) {
+            labelEl.textContent = 'Tots els productes';
+            dropdownBtn.classList.remove('active-filter');
+        } else if (selectedProductFilters.length === 1) {
+            const name = selectedProductFilters[0];
+            labelEl.textContent = name.length > 20 ? name.substring(0, 18) + '...' : name;
+            dropdownBtn.classList.add('active-filter');
+        } else {
+            labelEl.textContent = `${selectedProductFilters.length} productes`;
+            dropdownBtn.classList.add('active-filter');
         }
     }
 
@@ -2507,21 +2588,23 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!tbody) return;
 
         let displayReservations = allReservations || [];
-        if (selectedProductFilter) {
-            const q = selectedProductFilter.toLowerCase();
+        if (selectedProductFilters.length > 0) {
             displayReservations = displayReservations.filter(r => {
-                const pName = (r.product_name || 'Samarreta homenatge Ares SD').toLowerCase();
-                const pSlug = (r.product_slug || '').toLowerCase();
-                const pConcept = (r.concept || '').toLowerCase();
-                let matchesItem = false;
-                if (Array.isArray(r.items) && r.items.length > 0) {
-                    matchesItem = r.items.some(it => {
-                        const itName = (it.name || it.name_es || '').toLowerCase();
-                        const itSlug = (it.slug || '').toLowerCase();
-                        return itName.includes(q) || q.includes(itName) || (itSlug && itSlug.includes(q));
-                    });
-                }
-                return pName.includes(q) || q.includes(pName) || pSlug.includes(q) || pConcept.includes(q) || matchesItem;
+                return selectedProductFilters.some(filterVal => {
+                    const q = filterVal.toLowerCase();
+                    const pName = (r.product_name || 'Samarreta homenatge Ares SD').toLowerCase();
+                    const pSlug = (r.product_slug || '').toLowerCase();
+                    const pConcept = (r.concept || '').toLowerCase();
+                    let matchesItem = false;
+                    if (Array.isArray(r.items) && r.items.length > 0) {
+                        matchesItem = r.items.some(it => {
+                            const itName = (it.name || it.name_es || '').toLowerCase();
+                            const itSlug = (it.slug || '').toLowerCase();
+                            return itName.includes(q) || q.includes(itName) || (itSlug && itSlug.includes(q));
+                        });
+                    }
+                    return pName.includes(q) || q.includes(pName) || pSlug.includes(q) || pConcept.includes(q) || matchesItem;
+                });
             });
         }
 
@@ -2694,18 +2777,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const topSize = Object.entries(sizeCounts).sort((a, b) => b[1] - a[1])[0];
 
         if (statsEl) {
+            const isFiltered = selectedProductFilters.length > 0;
             statsEl.innerHTML = [
-                { icon: 'users', val: displayReservations.length, label: selectedProductFilter ? 'Reserves filtrades' : 'Reserves totals' },
+                { icon: 'users', val: displayReservations.length, label: isFiltered ? 'Reserves filtrades' : 'Reserves totals' },
                 { icon: 'package', val: totalUnits, label: 'Unitats' },
-                { icon: 'check-circle', val: paidCount, label: 'Pagades' },
+                { icon: 'check-circle-2', val: paidCount, label: 'Pagades' },
                 { icon: 'clock', val: pendingCount, label: 'Pendents' },
                 { icon: 'x-circle', val: cancelledCount, label: 'Cancel·lades' },
                 { icon: 'euro', val: (totalRevenue / 100).toFixed(2) + '€', label: 'Recaptat' },
                 { icon: 'tag', val: topSize ? topSize[0] : '-', label: 'Talla + venuda' },
             ].map(s => `
-                <div style="border:1px solid var(--border-color);border-radius:8px;padding:0.75rem 1rem;background:var(--bg-secondary);text-align:center;">
-                    <div style="font-size:1.35rem;font-weight:800;font-family:var(--font-heading);">${s.val}</div>
-                    <div style="font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);margin-top:0.2rem;">${s.label}</div>
+                <div style="border:1px solid var(--border-color);border-radius:12px;padding:0.9rem 0.6rem;background:var(--bg-secondary);text-align:center;box-shadow:0 1px 3px rgba(0,0,0,0.03);display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0.35rem;min-height:75px;">
+                    <div style="font-size:1.45rem;font-weight:800;font-family:var(--font-heading);color:var(--text-primary);line-height:1.1;">${s.val}</div>
+                    <div style="font-size:0.68rem;text-transform:uppercase;color:var(--text-muted);font-weight:700;letter-spacing:0.4px;">${s.label}</div>
                 </div>
             `).join('');
         }
@@ -2794,29 +2878,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function downloadReservationsCSV() {
-        const filterSelect = document.getElementById('filter-reservation-product');
-        const filterVal = filterSelect ? filterSelect.value : selectedProductFilter;
-
         let targetReservations = allReservations || [];
-        if (filterVal) {
-            const q = filterVal.toLowerCase();
+        if (selectedProductFilters.length > 0) {
             targetReservations = targetReservations.filter(r => {
-                const pName = (r.product_name || 'Samarreta homenatge Ares SD').toLowerCase();
-                const pSlug = (r.product_slug || '').toLowerCase();
-                let matchesItem = false;
-                if (Array.isArray(r.items) && r.items.length > 0) {
-                    matchesItem = r.items.some(it => {
-                        const itName = (it.name || it.name_es || '').toLowerCase();
-                        const itSlug = (it.slug || '').toLowerCase();
-                        return itName.includes(q) || q.includes(itName) || (itSlug && itSlug.includes(q));
-                    });
-                }
-                return pName.includes(q) || q.includes(pName) || pSlug.includes(q) || matchesItem;
+                return selectedProductFilters.some(filterVal => {
+                    const q = filterVal.toLowerCase();
+                    const pName = (r.product_name || 'Samarreta homenatge Ares SD').toLowerCase();
+                    const pSlug = (r.product_slug || '').toLowerCase();
+                    let matchesItem = false;
+                    if (Array.isArray(r.items) && r.items.length > 0) {
+                        matchesItem = r.items.some(it => {
+                            const itName = (it.name || it.name_es || '').toLowerCase();
+                            const itSlug = (it.slug || '').toLowerCase();
+                            return itName.includes(q) || q.includes(itName) || (itSlug && itSlug.includes(q));
+                        });
+                    }
+                    return pName.includes(q) || q.includes(pName) || pSlug.includes(q) || matchesItem;
+                });
             });
         }
 
         if (!targetReservations || targetReservations.length === 0) {
-            alert('No hi ha reserves per descarregar per al filtre seleccionat.');
+            alert('No hi ha reserves per descarregar per als productes seleccionats.');
             return;
         }
 
