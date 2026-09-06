@@ -3034,11 +3034,27 @@ document.addEventListener('DOMContentLoaded', () => {
                     name: 'Usuari de Prova',
                     surname: "d'Ares",
                     email: testEmail.trim(),
-                    size: 'L',
-                    quantity: 1,
-                    amount_cents: 3500,
-                    concept: 'Samarreta - Prova Sistema',
-                    product_name: 'Samarreta Homenatge Ares SD (Prova)'
+                    size: 'Vàries talles',
+                    quantity: 2,
+                    amount_cents: 4700,
+                    concept: 'Comanda Multi-producte - Prova',
+                    product_name: 'Comanda Multi-producte',
+                    items: [
+                        {
+                            name: 'Samarreta «El mirador del Maestrat»',
+                            size: 'L',
+                            quantity: 1,
+                            price: '35.00',
+                            image_url: 'https://www.comiares.es/img/camiseta-1.webp'
+                        },
+                        {
+                            name: 'Bossa de tela / Tote Bag',
+                            size: 'Talla Única',
+                            quantity: 1,
+                            price: '12.00',
+                            image_url: 'https://www.comiares.es/img/camiseta-1.webp'
+                        }
+                    ]
                 };
 
                 btnTest.disabled = true;

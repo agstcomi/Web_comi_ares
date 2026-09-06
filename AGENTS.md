@@ -444,11 +444,23 @@ Completat i verificat:
   - **Correcció i Desglossament de CSV per Producte i Talla**:
     1. Es va resoldre l'error de `slugTag` amb el filtre multi-producte.
     2. **Desglossament fila a fila**: Abans, les comandes multi-producte s'agrupaven en un sol camp de text (`"2x Samarreta + 1x Tote Bag"`) i la columna Talla indicava `"Vàries talles"`, impossibilitant ordenar o filtrar per talla a Excel. Ara el CSV genera una línia individual per a cada article encomanat amb columnes directes: `Producte`, `Talla`, `Quantitat`, `Nom`, `Cognoms`, `Email`, `Import (€)`, `Estat`, `Data`, `Concepte`, `Observacions`. Així a Excel es pot filtrar directament per qualsevol talla (S, M, L, XL...) o producte en un sol clic.
-  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped la versió de càrrega de `gestio.js` a `?v=3.4`.
+  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped la versió de càrrega de `gestio.js` a `?v=3.5` i `db.js` a `?v=3.1`.
 
 ---
 
-## 35. Pròxim Pas
+## 35. Desglossament d'Articles al Correu de Confirmació de Pagament (PRO)
+Completat i verificat:
+* **Diagnòstic**:
+  - Al validar una reserva o comanda multi-producte des del panell d'administrador (`admin/gestio.js`), el mètode `window.db.sendPaymentConfirmationEmail` a `js/db.js` no incloïa la variable `items_html` (la taula HTML amb la imatge, nom, talla, preu unitari i subtotal de cada producte) ni els àlies de resum (`products_summary`, `products`, `reserved_products`, `items`).
+  - Per això, el correu de confirmació de reserva sí que mostrava els articles desglossats (perquè a `camisetes.html` es generava `itemsHtml`), però el de pagament arribava sense el detall dels productes ni les talles seleccionades.
+* **Solució Aplicada**:
+  - A [js/db.js](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/js/db.js): S'ha actualitzat `sendPaymentConfirmationEmail(reservation)` per a generar dinàmicament `items_html` a partir de `unpacked.items` (o de la reserva individual), generant la taula visual idèntica a la del correu de reserva. També s'han afegit tots els paràmetres de suport (`product_summary`, `products_summary`, `products`, `reserved_products`, `productes_reservats`, `items_html`, `size`, `qty`).
+  - A [admin/gestio.js](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/gestio.js): S'ha actualitzat `dummyReservation` del botó "Prova" per a incloure múltiples articles de mostra amb talles i preus.
+  - Bumped versions de memòria cau a `db.js?v=3.1` i `gestio.js?v=3.5` a `admin/index.html`.
+
+---
+
+## 36. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

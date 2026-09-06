@@ -2239,9 +2239,45 @@ class AppDatabase {
         const rawImg = unpacked.product_image || unpacked.product_image_url || (unpacked.items && unpacked.items[0] && unpacked.items[0].image_url) || '/img/camiseta-1.webp';
         const fullImg = rawImg.startsWith('http') ? rawImg : `https://www.comiares.es${rawImg.startsWith('/') ? '' : '/'}${rawImg}`;
 
-        const prodSummary = (Array.isArray(unpacked.items) && unpacked.items.length > 0)
-            ? unpacked.items.map(it => `${it.quantity}x ${it.name} (${it.size || 'Talla Única'})`).join(', ')
-            : (unpacked.product_name || 'Samarreta Homenatge Ares SD');
+        const orderItems = (Array.isArray(unpacked.items) && unpacked.items.length > 0)
+            ? unpacked.items
+            : [{
+                name: unpacked.product_name || 'Samarreta homenatge Ares SD',
+                size: unpacked.size || 'Talla Única',
+                quantity: unpacked.quantity || 1,
+                price: unpacked.amount_cents ? (unpacked.amount_cents / 100 / (unpacked.quantity || 1)).toFixed(2) : '35.00',
+                image_url: fullImg
+            }];
+
+        const totalQty = orderItems.reduce((acc, i) => acc + (parseInt(i.quantity, 10) || 1), 0);
+        const prodSummary = orderItems.map(i => `${i.quantity}x ${i.name || i.name_es || 'Producte'} (${i.size || 'Talla Única'})`).join(', ');
+
+        const itemsHtml = orderItems.map(item => {
+            const rawItemImg = item.image_url || fullImg;
+            const img = rawItemImg.startsWith('http') ? rawItemImg : (`https://www.comiares.es${rawItemImg.startsWith('/') ? '' : '/'}${rawItemImg}`);
+            const qty = parseInt(item.quantity, 10) || 1;
+            const unitPrice = parseFloat(item.price || (unpacked.amount_cents ? (unpacked.amount_cents / 100 / totalQty) : 0)).toFixed(2).replace('.', ',');
+            const itemTotal = (parseFloat(item.price || (unpacked.amount_cents ? (unpacked.amount_cents / 100 / totalQty) : 0)) * qty).toFixed(2).replace('.', ',');
+            const itemName = this.escapeHTML ? this.escapeHTML(item.name || item.name_es || 'Producte') : (item.name || item.name_es || 'Producte');
+            const itemSize = this.escapeHTML ? this.escapeHTML(item.size || 'Talla Única') : (item.size || 'Talla Única');
+
+            return `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 8px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 10px;">
+  <tr>
+    <td width="54" valign="middle" align="center" style="padding-right: 10px;">
+      <img src="${img}" alt="${itemName}" width="48" height="48" style="display: block; width: 48px; height: 48px; object-fit: contain; background: #ffffff; border-radius: 6px; border: 1px solid #cbd5e1; padding: 2px;">
+    </td>
+    <td valign="middle" style="font-family: 'Roboto', Arial, sans-serif; font-size: 13px; color: #0f172a;">
+      <strong style="color: #0f172a;">${qty}x ${itemName}</strong>
+      <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+        Talla: <strong style="color: #334155;">${itemSize}</strong> &nbsp;·&nbsp; ${unitPrice} € / un.
+      </div>
+    </td>
+    <td valign="middle" align="right" style="font-family: 'Roboto', Arial, sans-serif; font-size: 13px; font-weight: 700; color: #0f172a; padding-left: 8px;">
+      ${itemTotal} €
+    </td>
+  </tr>
+</table>`;
+        }).join('');
 
         const templateParams = {
             name: unpacked.name || fullName,
@@ -2252,16 +2288,22 @@ class AppDatabase {
             reply_to: unpacked.email,
             user_email: unpacked.email,
             customer_email: unpacked.email,
-            product_name: unpacked.product_name || 'Samarreta Homenatge Ares SD',
+            product_name: orderItems.length > 1 ? 'Comanda Multi-producte' : (orderItems[0].name || unpacked.product_name || 'Samarreta Homenatge Ares SD'),
             concept: concept,
             bank_concept: concept,
             concept_text: concept,
             product_summary: prodSummary,
+            products_summary: prodSummary,
+            products: prodSummary,
+            reserved_products: prodSummary,
+            productes_reservats: prodSummary,
+            items: prodSummary,
+            items_html: itemsHtml,
             product_image: fullImg,
             product_image_url: fullImg,
             logo_url: 'https://www.comiares.es/img/logo-email.png',
-            size: unpacked.size || '-',
-            qty: unpacked.quantity || 1,
+            size: orderItems.length > 1 ? prodSummary : (orderItems[0].size || unpacked.size || 'Talla Única'),
+            qty: totalQty,
             total: totalFormatted,
             notes: unpacked.clean_notes || 'Cap'
         };
