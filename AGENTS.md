@@ -453,10 +453,10 @@ Completat i verificat:
 * **Diagnòstic**:
   - Al validar una reserva o comanda multi-producte des del panell d'administrador (`admin/gestio.js`), el mètode `window.db.sendPaymentConfirmationEmail` a `js/db.js` no incloïa la variable `items_html` (la taula HTML amb la imatge, nom, talla, preu unitari i subtotal de cada producte) ni els àlies de resum (`products_summary`, `products`, `reserved_products`, `items`).
   - Per això, el correu de confirmació de reserva sí que mostrava els articles desglossats (perquè a `camisetes.html` es generava `itemsHtml`), però el de pagament arribava sense el detall dels productes ni les talles seleccionades.
-* **Solució Aplicada**:
-  - A [js/db.js](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/js/db.js): S'ha actualitzat `sendPaymentConfirmationEmail(reservation)` per a generar dinàmicament `items_html` a partir de `unpacked.items` (o de la reserva individual), generant la taula visual idèntica a la del correu de reserva. També s'han afegit tots els paràmetres de suport (`product_summary`, `products_summary`, `products`, `reserved_products`, `productes_reservats`, `items_html`, `size`, `qty`).
-  - A [admin/gestio.js](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/gestio.js): S'ha actualitzat `dummyReservation` del botó "Prova" per a incloure múltiples articles de mostra amb talles i preus.
-  - Bumped versions de memòria cau a `db.js?v=3.1` i `gestio.js?v=3.5` a `admin/index.html`.
+* **Correcció de Compatibilitat EmailJS (`{{...}}` vs `{{{...}}}`)**:
+  - EmailJS no suporta la sintaxi de triples claus `{{{items_html}}}` (la qual cosa provocava que la plantilla descartés la variable i es mostrés buida). S'ha adaptat la plantilla a la sintaxi oficial `{{items_html}}` i s'ha afegit un bloc de seguretat garantit amb `{{product_summary}}` que mostra sempre el detall textual de cada producte i talla.
+  - A [js/db.js](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/js/db.js): `concept` s'envia amb el resum d'articles (`prodSummary`) per si la plantilla l'utilitza com a detall com feia la de reserva, i `bank_concept` manté la referència del client.
+  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped `db.js` a `?v=3.2`.
 
 ---
 

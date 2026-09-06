@@ -55,8 +55,14 @@
                       Productes confirmats:
                     </div>
 
-                    <!-- Miniatures i llistat de productes -->
-                    {{{items_html}}}
+                    <!-- Miniatures i llistat de productes (EmailJS usa {{...}}) -->
+                    {{items_html}}
+
+                    <!-- Resum garantit de productes i talles -->
+                    <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-top: 8px; margin-bottom: 10px; background: #ffffff; padding: 10px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Roboto', Arial, sans-serif;">
+                      <strong style="color: #0f172a; display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px;">Detall dels articles:</strong>
+                      {{product_summary}}
+                    </div>
 
                     <div style="font-size: 13px; color: #64748b; line-height: 1.4; margin-top: 10px; background: #ffffff; padding: 8px 10px; border-radius: 8px; border: 1px solid #cbd5e1;">
                       Referència / Concepte: <strong style="color: #0f172a;">{{bank_concept}}</strong>
