@@ -3161,12 +3161,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 return `<tr>
                     <!-- Col 1: Ordre Up / Down -->
                     <td style="text-align:center; white-space:nowrap;">
-                        <div style="display:inline-flex; gap:0.25rem;">
-                            <button type="button" class="btn-move-prod-up" data-index="${idx}" ${idx === 0 ? 'disabled' : ''} style="background:var(--bg-primary); border:1px solid var(--border-color); color:var(--text-primary); cursor:${idx === 0 ? 'not-allowed' : 'pointer'}; padding:0.35rem 0.45rem; border-radius:6px; opacity:${idx === 0 ? '0.3' : '1'}; transition:all 0.2s;" title="Pujar de posició al catàleg">
-                                <i data-lucide="arrow-up" style="width:13px; height:13px;"></i>
+                        <div style="display:inline-flex; flex-direction:column; gap:2px; align-items:center;">
+                            <button type="button" class="btn-prod-order btn-move-prod-up" data-index="${idx}" ${idx === 0 ? 'disabled' : ''} title="Pujar de posició al catàleg" data-tooltip="Pujar posició">
+                                <i data-lucide="chevron-up" style="width:12px; height:12px;"></i>
                             </button>
-                            <button type="button" class="btn-move-prod-down" data-index="${idx}" ${idx === products.length - 1 ? 'disabled' : ''} style="background:var(--bg-primary); border:1px solid var(--border-color); color:var(--text-primary); cursor:${idx === products.length - 1 ? 'not-allowed' : 'pointer'}; padding:0.35rem 0.45rem; border-radius:6px; opacity:${idx === products.length - 1 ? '0.3' : '1'}; transition:all 0.2s;" title="Baixar de posició al catàleg">
-                                <i data-lucide="arrow-down" style="width:13px; height:13px;"></i>
+                            <button type="button" class="btn-prod-order btn-move-prod-down" data-index="${idx}" ${idx === products.length - 1 ? 'disabled' : ''} title="Baixar de posició al catàleg" data-tooltip="Baixar posició">
+                                <i data-lucide="chevron-down" style="width:12px; height:12px;"></i>
                             </button>
                         </div>
                     </td>
@@ -3196,25 +3196,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     <!-- Col 7: Accions (Obrir/Tancar, Desactivar/Activar, Editar, Borrar) -->
                     <td style="text-align:right;">
-                        <div style="display:inline-flex; gap:0.35rem; align-items:center; justify-content:flex-end; flex-wrap:wrap;">
+                        <div class="product-actions">
                             <!-- Obrir / Tancar Reserves -->
-                            <button type="button" class="btn btn-sm btn-toggle-product-status" data-id="${escId}" data-status="${p.status === 'open' ? 'closed' : 'open'}" title="${p.status === 'open' ? 'Tancar reserves d\'aquest producte' : 'Obrir reserves d\'aquest producte'}" style="padding:0.35rem 0.6rem; background-color:${p.status === 'open' ? '#fee2e2' : '#dcfce7'}; color:${p.status === 'open' ? '#991b1b' : '#166534'}; border:1px solid ${p.status === 'open' ? '#fecaca' : '#bbf7d0'}; display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; border-radius:6px; cursor:pointer;">
-                                <i data-lucide="${p.status === 'open' ? 'lock' : 'unlock'}" style="width:12px; height:12px;"></i> ${p.status === 'open' ? 'Tancar' : 'Obrir'}
+                            <button type="button" class="btn-prod-action btn-toggle-product-status" data-id="${escId}" data-status="${p.status === 'open' ? 'closed' : 'open'}" title="${p.status === 'open' ? 'Tancar reserves d\'aquest producte' : 'Obrir reserves d\'aquest producte'}" data-tooltip="${p.status === 'open' ? 'Tancar reserves' : 'Obrir reserves'}" style="background-color:${p.status === 'open' ? '#fee2e2' : '#dcfce7'}; color:${p.status === 'open' ? '#991b1b' : '#166534'}; border-color:${p.status === 'open' ? '#fecaca' : '#bbf7d0'};">
+                                <i data-lucide="${p.status === 'open' ? 'lock' : 'unlock'}" style="width:14px; height:14px;"></i>
                             </button>
 
                             <!-- Desactivar / Activar Producte -->
-                            <button type="button" class="btn btn-sm btn-toggle-product-active" data-id="${escId}" data-active="${isActive ? 'true' : 'false'}" title="${isActive ? 'Desactivar producte (ocultar de la tenda pública)' : 'Activar producte (fer visible a la tenda pública)'}" style="padding:0.35rem 0.6rem; background-color:${isActive ? '#fef3c7' : '#e0e7ff'}; color:${isActive ? '#92400e' : '#3730a3'}; border:1px solid ${isActive ? '#fde68a' : '#c7d2fe'}; display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; border-radius:6px; cursor:pointer;">
-                                <i data-lucide="${isActive ? 'eye-off' : 'eye'}" style="width:12px; height:12px;"></i> ${isActive ? 'Desactivar' : 'Activar'}
+                            <button type="button" class="btn-prod-action btn-toggle-product-active" data-id="${escId}" data-active="${isActive ? 'true' : 'false'}" title="${isActive ? 'Desactivar (ocultar de la tenda)' : 'Activar (mostrar a la tenda)'}" data-tooltip="${isActive ? 'Desactivar' : 'Activar'}" style="background-color:${isActive ? '#fef3c7' : '#e0e7ff'}; color:${isActive ? '#92400e' : '#3730a3'}; border-color:${isActive ? '#fde68a' : '#c7d2fe'};">
+                                <i data-lucide="${isActive ? 'eye-off' : 'eye'}" style="width:14px; height:14px;"></i>
                             </button>
 
                             <!-- Editar Producte -->
-                            <button type="button" class="btn btn-sm btn-edit-product" data-id="${escId}" title="Editar dades del producte" style="padding:0.35rem 0.6rem; background-color:var(--text-primary); color:var(--bg-primary); border:1px solid var(--text-primary); display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; border-radius:6px; cursor:pointer;">
-                                <i data-lucide="edit-3" style="width:12px; height:12px;"></i> Editar
+                            <button type="button" class="btn-prod-action btn-edit-product" data-id="${escId}" title="Editar dades del producte" data-tooltip="Editar producte" style="background-color:var(--text-primary); color:var(--bg-primary);">
+                                <i data-lucide="edit-3" style="width:14px; height:14px;"></i>
                             </button>
 
                             <!-- Borrar Producte -->
-                            <button type="button" class="btn btn-sm btn-danger btn-delete-product" data-id="${escId}" title="Eliminar producte del catàleg" style="padding:0.35rem 0.6rem; display:inline-flex; align-items:center; gap:0.3rem; font-size:0.78rem; font-weight:600; border-radius:6px; cursor:pointer;">
-                                <i data-lucide="trash-2" style="width:12px; height:12px;"></i> Borrar
+                            <button type="button" class="btn-prod-action btn-delete-product" data-id="${escId}" title="Eliminar producte del catàleg" data-tooltip="Eliminar producte" style="background-color:#fee2e2; color:#b91c1c; border-color:#fca5a5;">
+                                <i data-lucide="trash-2" style="width:14px; height:14px;"></i>
                             </button>
                         </div>
                     </td>

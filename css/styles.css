@@ -2274,7 +2274,7 @@ nav.nav-menu ul li > a::after {
 }
 
 .admin-products-table th {
-    padding: 0.75rem 0.6rem;
+    padding: 0.65rem 0.5rem;
     font-size: 0.72rem;
     background-color: var(--bg-secondary);
     font-family: var(--font-heading);
@@ -2286,7 +2286,7 @@ nav.nav-menu ul li > a::after {
 }
 
 .admin-products-table td {
-    padding: 0.75rem 0.6rem;
+    padding: 0.65rem 0.5rem;
     font-size: 0.85rem;
     border-bottom: 1px solid var(--border-color);
     vertical-align: middle;
@@ -2294,6 +2294,59 @@ nav.nav-menu ul li > a::after {
 
 .admin-products-table tr:hover td {
     background-color: rgba(0, 0, 0, 0.015);
+}
+
+.admin-products-table .product-actions {
+    display: inline-flex;
+    gap: 0.35rem;
+    align-items: center;
+    justify-content: flex-end;
+    white-space: nowrap;
+}
+
+.admin-products-table .btn-prod-action {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    border: 1px solid transparent;
+}
+
+.admin-products-table .btn-prod-action:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.admin-products-table .btn-prod-order {
+    width: 26px;
+    height: 20px;
+    padding: 0;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    transition: all 0.15s ease;
+}
+
+.admin-products-table .btn-prod-order:hover:not(:disabled) {
+    background: var(--bg-secondary);
+    border-color: var(--text-primary);
+}
+
+.admin-products-table .btn-prod-order:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
 }
 
 .admin-events-table th {

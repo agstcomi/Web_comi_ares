@@ -486,7 +486,27 @@ Completat i verificat:
 
 ---
 
-## 37. Pròxim Pas
+## 37. Disseny Compacte de la Taula de Catàleg i Eliminació d'Scroll Lateral a Desktop (PRO)
+Completat i verificat:
+* **Diagnòstic d'Scroll Lateral a Desktop**:
+  - Amb la incorporació de tots els 4 botons d'acció amb text complet ("Tancar/Obrir", "Desactivar/Activar", "Editar", "Borrar") més la columna d'Ordre, la taula del catàleg superava l'amplada de l'àrea de treball en escriptori (~990px), forçant una barra de desplaçament horitzontal i trencant els botons d'acció en dues línies.
+* **Optimització i Disseny d'Icones Compactes**:
+  - **Botons d'Accions**: S'han substituït els botons allargats de text per botons quadrats d'icona compactes de 32x32px (`.btn-prod-action`) amb tooltips contextuals instantanis (`data-tooltip` i `title` natiu) que mantenen els colors identificatius de cada estat:
+    - 🔓/🔒 *Obrir / Tancar reserves* (icona `lock`/`unlock` amb fons verd/roig suau).
+    - 👁️/🙈 *Activar / Desactivar visibilitat* (icona `eye`/`eye-off` amb fons ambre/indi).
+    - ✏️ *Editar producte* (icona `edit-3` fosc contrastat).
+    - 🗑️ *Eliminar producte* (icona `trash-2` amb fons roig clar).
+  - **Botons d'Ordre Apilats**: S'ha reduït l'amplada de la columna d'ordre de 70px a 44px mitjançant botons apilats verticalment de 26x20px (`.btn-prod-order`) amb `chevron-up` i `chevron-down`.
+  - **Ajust de Capçaleres**: Amplada total de la taula reduïda de ~990px a ~720px, encaixant al 100% de l'espai en escriptori sense cap mena d'scroll horitzontal.
+* **Fitxers Modificats**:
+  - `css/styles.css` (`.admin-products-table .product-actions`, `.btn-prod-action`, `.btn-prod-order`).
+  - `admin/index.html` (mides `th` compactes, cache-busting `styles.css?v=1.27`, `gestio.js?v=3.7`).
+  - `admin/gestio.js` (generació de l'HTML compacte i tooltips a `loadProductsTable()`).
+
+---
+
+## 38. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
+
 
 

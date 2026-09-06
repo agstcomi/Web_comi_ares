@@ -28,7 +28,7 @@
     ">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="../css/styles.css?v=1.24">
+    <link rel="stylesheet" href="../css/styles.css?v=1.27">
     
     <!-- Lucide Icons CDN (F10: versió anclada) -->
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
@@ -540,13 +540,13 @@ CREATE TABLE photos (
                             <table class="admin-table admin-products-table" style="width: 100%; border-collapse: collapse;">
                                 <thead>
                                     <tr>
-                                        <th style="width: 70px; text-align: center;">Ordre</th>
-                                        <th style="width: 60px; text-align: center;">Imatge</th>
-                                        <th style="min-width: 180px;">Nom del Producte</th>
+                                        <th style="width: 44px; text-align: center;">Ordre</th>
+                                        <th style="width: 52px; text-align: center;">Imatge</th>
+                                        <th>Nom del Producte</th>
                                         <th style="width: 130px;">Categoria</th>
-                                        <th style="width: 80px;">Preu</th>
-                                        <th style="width: 150px;">Estat</th>
-                                        <th style="min-width: 320px; text-align: right;">Accions</th>
+                                        <th style="width: 70px;">Preu</th>
+                                        <th style="width: 135px;">Estat</th>
+                                        <th style="width: 155px; text-align: right;">Accions</th>
                                     </tr>
                                 </thead>
                                 <tbody id="products-tbody">
@@ -1193,7 +1193,7 @@ CREATE TABLE photos (
 
     <!-- Scripts -->
     <script src="/js/db.js?v=3.3" defer></script>
-    <script src="/admin/gestio.js?v=3.6"></script>
+    <script src="/admin/gestio.js?v=3.7"></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);
