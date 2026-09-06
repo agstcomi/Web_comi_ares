@@ -441,8 +441,8 @@ Completat i verificat:
   - Permet seleccionar o desseleccionar múltiples productes alhora amb caselles de verificació (`checkboxes`).
   - L'etiqueta del botó indica de forma dinàmica `"Tots els productes"`, el nom del producte individual (si només se'n tria un), o `"N productes"` si n'hi ha diversos.
   - La taula de reserves, les mètriques i l'exportació CSV s'actualitzen en temps real per a incloure les comandes que continguen qualsevol dels productes seleccionats.
-  - S'ha afegit el botó ràpid `"Tots els productes"` al peu del desplegable per a netejar la selecció immediatament.
-  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped la versió de càrrega de `gestio.js` a `?v=3.2`.
+  - **Correcció Descàrrega CSV**: En canviar al filtre multi-producte, la variable antiga `filterVal` havia quedat sense definir al generar el nom del fitxer (`slugTag`), impedint la descàrrega del fitxer CSV. S'ha corregit utilitzant `selectedProductFilters` i s'ha incrementat la versió a `?v=3.3`.
+  - A [admin/index.html](file:///c:/Users/andre/Desktop/Andreu/Ares/Comissió/web/admin/index.html): Bumped la versió de càrrega de `gestio.js` a `?v=3.3`.
 
 ---
 

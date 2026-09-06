@@ -2934,7 +2934,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        const slugTag = filterVal ? filterVal.toLowerCase().replace(/[^a-z0-9]+/g, '-') : 'tots-els-productes';
+        const slugTag = selectedProductFilters.length > 0 
+            ? selectedProductFilters.map(p => p.toLowerCase().replace(/[^a-z0-9]+/g, '-')).join('-') 
+            : 'tots-els-productes';
         a.download = `reserves-${slugTag}-${new Date().toISOString().split('T')[0]}.csv`;
         document.body.appendChild(a);
         a.click();
