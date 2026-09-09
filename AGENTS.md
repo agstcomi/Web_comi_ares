@@ -546,7 +546,14 @@ Completat i verificat:
 
 ---
 
-## 40. Pròxim Pas
+## 40. Correcció de Comarca a la Pàgina del Temps (l'Alt Maestrat) (PRO)
+Completat i verificat:
+* **Diagnòstic**: A `temps.html` i `es/temps.html`, tant al text descriptiu estàtic com a l'esquema JSON-LD `Place`, figurava que Ares del Maestrat pertanyia a la comarca de *Els Ports* / *dels Ports*.
+* **Solució**: S'ha corregit a la comarca correcta, **l'Alt Maestrat**, tant a la versió en valencià (`temps.html`) com en castellà (`es/temps.html`).
+
+---
+
+## 41. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 
