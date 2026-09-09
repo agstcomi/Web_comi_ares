@@ -84,6 +84,8 @@ document.addEventListener('DOMContentLoaded', () => {
     async function initProgramacio() {
         try {
             allEvents = await window.db.getEvents();
+            // Safety filter: ensure config items never enter programacio
+            allEvents = (allEvents || []).filter(e => e && e.id && !e.id.includes('config') && e.category !== 'config' && e.date !== '2099-12-31');
             
             // Render category filters dynamically
             renderCategoryDropdown();
@@ -188,16 +190,93 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (activeFilteredEvents.length === 0) {
-            const emptyText = selectedDate
-                ? (isEs ? 'No hay ningún acto programado para este día.' : 'No hi ha cap acte programat per a aquest dia.')
-                : (isEs ? 'No se ha encontrado ningún acto que coincida con los criterios de búsqueda o no hay próximos actos.' : "No s'ha trobat cap acte que coincidisca amb els criteris de cerca o no hi ha pròxims actes.");
+            let emptyIcon = 'calendar-clock';
+            let emptyTitle = '';
+            let emptyDesc = '';
+            let showResetBtn = false;
+            let showPastEventsBtn = false;
+
+            if (selectedDate) {
+                emptyIcon = 'calendar-x';
+                emptyTitle = isEs ? 'No hay ningún acto programado para este día' : 'No hi ha cap acte programat per a aquest dia';
+                emptyDesc = isEs 
+                    ? 'Selecciona otra fecha marcada con un punto en el calendario o haz clic en «Limpiar filtro».' 
+                    : 'Selecciona una altra data marcada amb un punt al calendari o fes clic a «Netejar filtre».';
+                showResetBtn = true;
+            } else if (searchQuery || selectedCategories.length > 0) {
+                emptyIcon = 'search-x';
+                emptyTitle = isEs ? 'No se ha encontrado ningún acto' : "No s'ha trobat cap acte";
+                emptyDesc = isEs 
+                    ? 'No hay ningún acto que coincida con los criterios de búsqueda o los filtros seleccionados.' 
+                    : "No hi ha cap acte que coincidisca amb els criteris de cerca o filtres seleccionats.";
+                showResetBtn = true;
+            } else {
+                emptyIcon = 'calendar-clock';
+                emptyTitle = isEs ? 'No hay nada programado próximamente' : 'No hi ha res programat pròximament';
+                emptyDesc = isEs 
+                    ? 'Actualmente no hay actos previstos en la programación. Permanece atento a nuestras noticias y redes sociales para conocer las próximas novedades.' 
+                    : 'Actualment no hi ha actes previstos en la programació. Estigues atent a les nostres notícies i xarxes socials per a conèixer les pròximes novetats.';
+                if (allEvents.length > 0) {
+                    showPastEventsBtn = true;
+                }
+            }
+
             timeline.innerHTML = `
-                <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);">
-                    <i data-lucide="calendar-x" style="width: 48px; height: 48px; margin-bottom: 1rem; color: var(--text-muted);"></i>
-                    <p>${emptyText}</p>
+                <div class="empty-events-card animate-fade-in-up" style="text-align: center; padding: 3.5rem 2rem; background: var(--bg-card, #ffffff); border: 1px solid rgba(0,0,0,0.06); border-radius: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.02); margin-top: 0.5rem;">
+                    <div style="width: 64px; height: 64px; border-radius: 50%; background: #f3f4f6; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; color: #6b7280;">
+                        <i data-lucide="${emptyIcon}" style="width: 32px; height: 32px;"></i>
+                    </div>
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--text-primary, #111827); margin-bottom: 0.5rem;">${emptyTitle}</h3>
+                    <p style="font-size: 0.95rem; color: var(--text-muted, #6b7280); max-width: 480px; margin: 0 auto; line-height: 1.5;">${emptyDesc}</p>
+                    ${showResetBtn ? `
+                        <div style="margin-top: 1.5rem;">
+                            <button id="btn-reset-filters-empty" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 999px; padding: 0.6rem 1.25rem; font-size: 0.875rem; cursor: pointer;">
+                                <i data-lucide="rotate-ccw" style="width: 14px; height: 14px;"></i>
+                                <span>${isEs ? 'Restablecer filtros' : 'Restablir filtres'}</span>
+                            </button>
+                        </div>
+                    ` : ''}
+                    ${showPastEventsBtn ? `
+                        <div style="margin-top: 1.5rem;">
+                            <button id="btn-view-past-events" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; border-radius: 999px; padding: 0.6rem 1.25rem; font-size: 0.875rem; cursor: pointer;">
+                                <i data-lucide="history" style="width: 14px; height: 14px;"></i>
+                                <span>${isEs ? 'Ver actos anteriores' : 'Veure actes anteriors'}</span>
+                            </button>
+                        </div>
+                    ` : ''}
                 </div>
             `;
             if (window.lucide) window.lucide.createIcons();
+
+            const resetBtn = document.getElementById('btn-reset-filters-empty');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', () => {
+                    selectedDate = null;
+                    searchQuery = '';
+                    selectedCategories = [];
+                    const searchInput = document.getElementById('search-input');
+                    if (searchInput) searchInput.value = '';
+                    renderCategoryDropdown();
+                    renderCalendar(currentCalendarYear, currentCalendarMonth);
+                    renderEvents();
+                });
+            }
+
+            const pastBtn = document.getElementById('btn-view-past-events');
+            if (pastBtn) {
+                pastBtn.addEventListener('click', () => {
+                    const lastEvent = allEvents[allEvents.length - 1];
+                    if (lastEvent) {
+                        const parts = lastEvent.date.split('-');
+                        currentCalendarYear = parseInt(parts[0]);
+                        currentCalendarMonth = parseInt(parts[1]) - 1;
+                        selectedDate = lastEvent.date;
+                        weekAnchorDate = new Date(currentCalendarYear, currentCalendarMonth, parseInt(parts[2]));
+                        renderCalendar(currentCalendarYear, currentCalendarMonth);
+                        renderEvents();
+                    }
+                });
+            }
 
             // Update events header info
             updateEventsHeader();
@@ -461,7 +540,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Populate dropdown items
         let html = '';
-        Object.keys(colors).forEach(cat => {
+        Object.keys(colors).filter(cat => cat.toLowerCase() !== 'config').forEach(cat => {
             const displayName = window.getCategoryName(cat);
             const safeCat = window.db.escapeHTML(cat);
             const safeDisplayName = window.db.escapeHTML(displayName);
@@ -675,14 +754,8 @@ document.addEventListener('DOMContentLoaded', () => {
             currentCalendarYear = parseInt(parts[0]);
             currentCalendarMonth = parseInt(parts[1]) - 1; // 0-indexed
             targetDate = new Date(currentCalendarYear, currentCalendarMonth, parseInt(parts[2]));
-        } else if (allEvents.length > 0) {
-            // Fallback to the month of the last event
-            const parts = allEvents[allEvents.length - 1].date.split('-');
-            currentCalendarYear = parseInt(parts[0]);
-            currentCalendarMonth = parseInt(parts[1]) - 1;
-            targetDate = new Date(currentCalendarYear, currentCalendarMonth, parseInt(parts[2]));
         } else {
-            // Fallback to today
+            // Fallback to today (current month/year) if no upcoming events
             const parts = todayStr.split('-');
             currentCalendarYear = parseInt(parts[0]);
             currentCalendarMonth = parseInt(parts[1]) - 1;

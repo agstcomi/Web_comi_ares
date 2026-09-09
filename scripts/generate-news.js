@@ -888,7 +888,7 @@ async function main() {
 
     // --- ACTUALIZAR DATOS ESTRUCTURADOS ESTÁTICOS DE PROGRAMACIÓN ---
     console.log("Generando datos estructurados de eventos estáticos para programacio.html...");
-    const filteredEvents = events.filter(e => !e.id.startsWith('event-config-'));
+    const filteredEvents = events.filter(e => !e.id.startsWith('event-config-') && !e.id.startsWith('shop-config-') && !e.id.includes('config') && e.category !== 'config' && e.date !== '2099-12-31');
     
     const generateEventSchemas = (lang) => {
       const isEs = lang === 'es';

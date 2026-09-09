@@ -241,7 +241,8 @@
         if (isHiddenByAdmin) {
             if (eventsSection) eventsSection.style.display = 'none';
         } else {
-            const eventsList = await window.db.getEvents();
+            const rawEvents = await window.db.getEvents();
+            const eventsList = (rawEvents || []).filter(e => e && e.id && !e.id.includes('config') && e.category !== 'config' && e.date !== '2099-12-31');
             const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
             const upcoming = (eventsList && eventsList.length > 0)
                 ? eventsList.filter(e => e.date >= today)

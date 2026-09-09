@@ -519,7 +519,8 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!tbody) return;
 
         tbody.innerHTML = '<tr><td colspan="5" style="text-align: center;">Carregant dades...</td></tr>';
-        const events = await window.db.getEvents();
+        const rawEvents = await window.db.getEvents();
+        const events = (rawEvents || []).filter(e => e && e.id && !e.id.includes('config') && e.category !== 'config' && e.date !== '2099-12-31');
         const colors = window.db.getCategoryColors();
 
         if (events.length === 0) {

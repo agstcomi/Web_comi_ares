@@ -1233,6 +1233,23 @@ class AppDatabase {
             }
         }
 
+        // Process shop config record if present
+        const shopConfigEvent = events.find(e => e.id === 'shop-config-camisetes');
+        if (shopConfigEvent) {
+            try {
+                let parsed = null;
+                try { parsed = JSON.parse(shopConfigEvent.long_description); } catch(e) {}
+                if (!parsed) {
+                    try { parsed = JSON.parse(shopConfigEvent.title); } catch(e) {}
+                }
+                if (parsed) {
+                    localStorage.setItem('ares_shop_config', JSON.stringify(parsed));
+                }
+            } catch (e) {
+                console.error("Error parsing shop config from Supabase event:", e);
+            }
+        }
+
         const getSortTime = (t) => {
             if (!t) return '99:99';
             const m = t.match(/^(\d{2}):(\d{2})$/);
@@ -1255,10 +1272,20 @@ class AppDatabase {
             return getSortTime(a.time).localeCompare(getSortTime(b.time));
         });
 
-        // Filter out config records from returned list
-        return events.filter(e => e.id !== 'event-config-category-colors' && e.id !== 'event-config-faqs' && e.id !== 'event-config-countdown' && e.id !== 'event-config-home');
+        // Filter out all config records from returned list
+        return events.filter(e => !this.isConfigEvent(e));
     }
 
+    isConfigEvent(item) {
+        if (!item || !item.id) return false;
+        const id = String(item.id).toLowerCase();
+        const cat = String(item.category || '').toLowerCase();
+        return id.startsWith('event-config-') ||
+               id.startsWith('shop-config-') ||
+               id.includes('-config-') ||
+               cat === 'config' ||
+               item.date === '2099-12-31';
+    }
 
     async getLocalEvents() {
         await this.dbPromise;
@@ -1277,7 +1304,8 @@ class AppDatabase {
             }
             return t;
         };
-        return events.sort((a, b) => {
+        const validEvents = events.filter(e => !this.isConfigEvent(e));
+        return validEvents.sort((a, b) => {
             const dateDiff = a.date.localeCompare(b.date);
             if (dateDiff !== 0) return dateDiff;
             return getSortTime(a.time).localeCompare(getSortTime(b.time));

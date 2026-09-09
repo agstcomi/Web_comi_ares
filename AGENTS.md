@@ -523,8 +523,32 @@ Completat i verificat:
 
 ---
 
-## 39. Pròxim Pas
+## 39. Filtratge de Registres de Configuració en Esdeveniments i Estat Buit de Programació (PRO)
+Completat i verificat:
+* **Diagnòstic del Problema**:
+  - En entrar a `/programacio` o `/es/programacio`, apareixia com a únic pròxim acte un esdeveniment el **31 de desembre de 2099** amb contingut JSON en brut: `{"open":false,"price_cents":3500,"product_order":[...]}` i categoria `config`.
+  - **Causa**: La configuració de la botiga (`shop-config-camisetes`), així com altres configuracions (`event-config-*`), s'emmagatzema a la taula `events` de Supabase amb data fictícia `'2099-12-31'`. Mentre que les funcions antigues de `js/db.js` només filtraven IDs que començaven per `event-config-*`, el registre `shop-config-camisetes` no s'estava filtrant, per la qual cosa es retornava com un acte públic normal. A més, en haver passat ja les festes de 2026, era l'únic registre amb data futura, fent que el calendari botés a Desembre 2099 i mostrés el JSON com a acte.
+* **Solucions Aplicades**:
+  - **Mètode `isConfigEvent(item)` a `js/db.js`**: Implementat un filtre exhaustiu que detecta qualsevol registre de configuració (començant per `event-config-`, `shop-config-`, contenint `-config-`, amb categoria `'config'` o amb data `'2099-12-31'`).
+  - **Filtratge a `getEvents()` i `getLocalEvents()`**: Tots els esdeveniments retornats a la web pública i a l'administrador filtren automàticament qualsevol registre de configuració. A més, `getEvents()` aprofita la descàrrega per a sincronitzar `shop-config-camisetes` amb `localStorage.getItem('ares_shop_config')`.
+  - **Filtre de seguretat a `scripts/generate-news.js`, `js/programacio.js`, `js/home.js` i `admin/gestio.js`**: Protecció en cascada que garanteix que cap registre de configuració puga arribar mai a l'esquema SEO Schema.org, a la cronologia d'actes, a la portada de la web ni a la taula d'actes de l'admin.
+  - **Calendari per defecte quan no hi ha pròxims actes**: Quan no hi ha cap acte futur (`upcomingEvent` nul), el calendari no bota a 2099 ni a un mes passat aliè; s'inicia de forma natural al mes i any actuals (data d'avui).
+  - **Estat buit millorat a `programacio.html`**:
+    - Si no hi ha cap acte programat pròximament (sense cerca ni filtres), es mostra una targeta elegant amb icona `calendar-clock`:
+      - **Valencià**: *"No hi ha res programat pròximament"* — *"Actualment no hi ha actes previstos en la programació. Estigues atent a les nostres notícies i xarxes socials per a conèixer les pròximes novetats."*
+      - **Castellà**: *"No hay nada programado próximamente"* — *"Actualmente no hay actos previstos en la programación. Permanece atento a nuestras noticias y redes sociales para conocer las próximas novedades."*
+    - Si hi ha actes d'edicions anteriors a la base de dades, s'ofereix el botó interactiu *"Veure actes anteriors"* / *"Ver actos anteriores"*, que permet saltar directament a l'última data celebrada.
+    - Si l'estat buit es deu a filtres o dates concretes, es mostren missatges específics i botó de *"Restablir filtres"* / *"Netejar filtre"*.
+* **Cache-Busting**:
+  - `programacio.html`, `es/programacio.html`: `db.js?v=3.4`, `programacio.js?v=1.15`.
+  - `index.html`, `es/index.html`: `db.js?v=3.4`, `home.js?v=3.0`.
+  - `admin/index.html`: `db.js?v=3.4`, `gestio.js?v=3.8`.
+
+---
+
+## 40. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
+
 
 
 
