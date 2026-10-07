@@ -585,8 +585,32 @@ Completat i verificat:
 
 ---
 
-## 42. Pròxim Pas
+## 42. Eliminació Completa del Selector de Talles, Guia de Talles i Botons de Compra en Productes Tancats (PRO)
+Completat i verificat:
+* **Diagnòstic de l'Incident**:
+  - En accedir directament a una pàgina estàtica compilada d'un producte amb reserves tancades (per exemple, `https://comiares.es/camisetes/samarreta-ares-sd/`), la plantilla estàtica conservava la secció `#purchase-section` amb el selector de talles ("TALLA", botons S-7XL, guia de talles, botó "Afegir al carret" i "Reserva ja").
+  - **Causes trobades**:
+    1. A `data/products.json`, els productes tenien `status: "open"`, de manera que en compilar sense Supabase o en fallback client-side es prenien com a oberts.
+    2. La funció de fusió de productes a `js/db.js` i `scripts/generate-news.js` permetia que l'estat desat a `localStorage` sobreescriguera l'estat remot de Supabase.
+    3. L'expressió regular utilitzada a `scripts/generate-news.js` per a eliminar `#purchase-section` coincidia mandrosament amb el `<div class="divider"></div>` intern, deixant la resta del bloc al codi HTML estàtic.
+* **Solucions Aplicades**:
+  1. **Algorisme Robust de Purgat DOM Estàtic (`removeElementById`)**:
+     - Implementada la funció `removeElementById(html, id)` a `scripts/generate-news.js`, la qual calcula la profunditat exacta d'etiquetes `<div>` niuades.
+     - Quan un producte té `isClosed` (`status === 'closed'` / `'sold_out'` o `active === false`), s'eliminen al 100% del codi font estàtic tant `<div id="purchase-section">` com `<div id="modal-reservation">`.
+     - `#closed-overlay` es marca directament amb `style="display:block;"` en el HTML estàtic inicial.
+  2. **Sincronització d'Estat i Prioritat Remota de Supabase**:
+     - Actualitzat `data/products.json`, `DEFAULT_PRODUCTS` a `js/db.js` i `scripts/generate-news.js`, i `HARDCODED_PRODUCTS` a tots els arxius de producte amb `status: "closed"`.
+     - A `js/db.js` (`getProducts()`) i `scripts/generate-news.js`, l'estat remot de Supabase té ara prioritat absoluta per sobre de qualsevol valor desfasat a `localStorage`.
+  3. **Tractament Preventiu i Segur en Temps d'Execució Client**:
+     - A `camisetes/index.html` i `es/camisetes/index.html` (`applyProduct`), s'ha afegit comprovació prèvia d'`isClosed` i s'han protegit amb `null-check` totes les referències a `#selected-size-label` i `#size-grid`, evitant excepcions de JavaScript en fitxes de productes tancats.
+  4. **Verificació Estricta**:
+     - Verificades les 8 pàgines estàtiques compilades (`camisetes/*/index.html` i `es/camisetes/*/index.html`), confirmant que `purchase-section: false`, `size-grid: false`, `btn-add-cart: false`, `btn-add-to-cart-drawer: false`, `modal-reservation: false` i `closed-overlay displayed: true`.
+
+---
+
+## 43. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
+
 
 
 

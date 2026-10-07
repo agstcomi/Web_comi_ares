@@ -191,7 +191,7 @@ const DEFAULT_PRODUCTS = [
         category: "Roba · Edició Limitada 2026",
         category_es: "Ropa · Edición Limitada 2026",
         price: 35.00,
-        status: "open",
+        status: "closed",
         description: "Commemora la història de l'Ares SD amb esta samarreta d'edició limitada. Un homenatge de la Comissió de Festes d'Ares al primer equip de futbol del poble, nascut l'any 1980 de l'entusiasme d'un grup de joves d'Ares.",
         description_es: "Conmemora la historia del Ares SD con esta camiseta de edición limitada. Un homenaje de la Comisión de Fiestas de Ares al primer equipo de fútbol del pueblo, nacido en 1980 gracias al entusiasmo de un grupo de jóvenes de Ares.",
         image_url: "/img/camiseta-1.webp",
@@ -212,7 +212,7 @@ const DEFAULT_PRODUCTS = [
         category: "Complements · Edició Limitada 2026",
         category_es: "Complementos · Edición Limitada 2026",
         price: 6.00,
-        status: "open",
+        status: "closed",
         description: "Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l'any 2026. Bossa ideal per al dia a dia.",
         description_es: "Bolsa de tela de color negro con la ilustración ganadora del Concurso de Diseño para Fiestas del año 2026. Bolsa ideal para el día a día.",
         image_url: "/img/tote-bag-1.jpg",
@@ -230,7 +230,7 @@ const DEFAULT_PRODUCTS = [
         category: "Roba · Edició Limitada 2026",
         category_es: "Ropa · Edición Limitada 2026",
         price: 12.00,
-        status: "open",
+        status: "closed",
         description: "Samarreta de color negre amb la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
         description_es: "Camiseta de color negro con la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
         image_url: "/img/samarreta-mirador-1.jpg",
@@ -248,7 +248,7 @@ const DEFAULT_PRODUCTS = [
         category: "Complements · Edició Limitada 2026",
         category_es: "Complementos · Edición Limitada 2026",
         price: 12.00,
-        status: "open",
+        status: "closed",
         description: "Rinyonera de color negre amb cinta ajustable i la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
         description_es: "Riñonera de color negro con cinta ajustable y la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
         image_url: "/img/rinyonera-mirador-1.jpg",
@@ -2529,7 +2529,7 @@ class AppDatabase {
             }
         });
 
-        // Merge remoteProducts
+        // Merge remoteProducts (remoteProducts have higher authority for status/availability)
         remoteProducts.forEach(remoteItem => {
             if (remoteItem && (remoteItem.id || remoteItem.slug)) {
                 const key = remoteItem.id || remoteItem.slug;
@@ -2541,17 +2541,18 @@ class AppDatabase {
                     const localTime = localItem.updated_at ? new Date(localItem.updated_at).getTime() : 0;
                     const remoteTime = remoteItem.updated_at ? new Date(remoteItem.updated_at).getTime() : 0;
 
-                    if (remoteTime > localTime) {
+                    if (remoteTime >= localTime) {
                         productsMap.set(key, {
                             ...localItem,
                             ...remoteItem,
-                            status: remoteItem.status || localItem.status || 'open'
+                            status: remoteItem.status || localItem.status || 'closed'
                         });
                     } else {
                         productsMap.set(key, {
                             ...remoteItem,
                             ...localItem,
-                            status: localItem.status || remoteItem.status || 'open'
+                            // Remote status always takes precedence over outdated local status
+                            status: remoteItem.status || localItem.status || 'closed'
                         });
                     }
                 }

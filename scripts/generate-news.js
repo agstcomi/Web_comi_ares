@@ -30,6 +30,53 @@ function escapeHtml(text) {
     .replace(/'/g, "&#039;");
 }
 
+function removeElementById(html, id) {
+  const regex = new RegExp('<([a-zA-Z0-9]+)[^>]*\\bid=["\']' + id + '["\'][^>]*>', 'i');
+  const match = regex.exec(html);
+  if (!match) return html;
+
+  const start = match.index;
+  const tagName = match[1].toLowerCase();
+  const openTagPrefix = '<' + tagName;
+  const closeTagStr = '</' + tagName + '>';
+
+  let depth = 0;
+  let pos = start;
+
+  while (pos < html.length) {
+    if (html.slice(pos, pos + openTagPrefix.length).toLowerCase() === openTagPrefix) {
+      const nextChar = html[pos + openTagPrefix.length];
+      if (nextChar === ' ' || nextChar === '>' || nextChar === '/' || nextChar === '\n' || nextChar === '\t') {
+        const tagEnd = html.indexOf('>', pos);
+        if (tagEnd !== -1) {
+          if (html[tagEnd - 1] === '/') {
+            pos = tagEnd + 1;
+            continue;
+          }
+          depth++;
+          pos = tagEnd + 1;
+          continue;
+        }
+      }
+    } else if (html.slice(pos, pos + closeTagStr.length).toLowerCase() === closeTagStr) {
+      depth--;
+      pos += closeTagStr.length;
+      if (depth === 0) {
+        let finalStart = start;
+        const commentMatch = html.slice(0, start).match(/(<!--[\s\S]*?-->\s*)$/);
+        if (commentMatch && commentMatch[1].toLowerCase().includes(id.toLowerCase())) {
+          finalStart = start - commentMatch[1].length;
+        }
+        return html.slice(0, finalStart) + html.slice(pos);
+      }
+      continue;
+    }
+    pos++;
+  }
+  return html;
+}
+
+
 function getAbsoluteImageUrl(url) {
   if (!url) return "";
   if (url.startsWith("data:image")) return "";
@@ -65,7 +112,7 @@ const DEFAULT_PRODUCTS = [
     category: "Roba · Edició Limitada 2026",
     category_es: "Ropa · Edición Limitada 2026",
     price: 35.00,
-    status: "open",
+    status: "closed",
     description: "Commemora la història de l'Ares SD amb esta samarreta d'edició limitada. Un homenatge de la Comissió de Festes d'Ares al primer equip de futbol del poble, nascut l'any 1980 de l'entusiasme d'un grup de joves d'Ares.",
     description_es: "Conmemora la historia del Ares SD con esta camiseta de edición limitada. Un homenaje de la Comisión de Fiestas de Ares al primer equipo de fútbol del pueblo, nacido en 1980 gracias al entusiasmo de un grupo de jóvenes de Ares.",
     image_url: "/img/camiseta-1.webp",
@@ -80,7 +127,7 @@ const DEFAULT_PRODUCTS = [
     category: "Complements · Edició Limitada 2026",
     category_es: "Complementos · Edición Limitada 2026",
     price: 6.00,
-    status: "open",
+    status: "closed",
     description: "Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l'any 2026. Bossa ideal per al dia a dia.",
     description_es: "Bolsa de tela de color negro con la ilustración ganadora del Concurso de Diseño para Fiestas del año 2026. Bolsa ideal para el día a día.",
     image_url: "/img/tote-bag-1.jpg",
@@ -95,7 +142,7 @@ const DEFAULT_PRODUCTS = [
     category: "Roba · Edició Limitada 2026",
     category_es: "Ropa · Edición Limitada 2026",
     price: 12.00,
-    status: "open",
+    status: "closed",
     description: "Samarreta de color negre amb la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
     description_es: "Camiseta de color negro con la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
     image_url: "/img/samarreta-mirador-1.jpg",
@@ -110,7 +157,7 @@ const DEFAULT_PRODUCTS = [
     category: "Complements · Edició Limitada 2026",
     category_es: "Complementos · Edición Limitada 2026",
     price: 12.00,
-    status: "open",
+    status: "closed",
     description: "Rinyonera de color negre amb cinta ajustable i la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
     description_es: "Riñonera de color negro con cinta ajustable y la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
     image_url: "/img/rinyonera-mirador-1.jpg",
@@ -183,7 +230,6 @@ async function main() {
 
       const prodMap = new Map();
       DEFAULT_PRODUCTS.forEach(p => prodMap.set(p.id || p.slug, { ...p }));
-      products.forEach(p => prodMap.set(p.id || p.slug, { ...prodMap.get(p.id || p.slug), ...p }));
 
       if (fs.existsSync(path.join(dataDir, 'products.json'))) {
         try {
@@ -193,6 +239,9 @@ async function main() {
           }
         } catch (e) {}
       }
+
+      // Supabase remote products must have the highest authority
+      products.forEach(p => prodMap.set(p.id || p.slug, { ...prodMap.get(p.id || p.slug), ...p }));
       products = Array.from(prodMap.values());
 
       // Aplicar orden y estado activo de la configuración de la tienda
@@ -581,6 +630,20 @@ async function main() {
           }
         }
 
+        const isClosedVal = product.status === 'closed' || product.status === 'sold_out' || product.active === false;
+        if (isClosedVal) {
+          if (product.active === false) {
+            htmlVal = htmlVal.replace(/<div id="closed-overlay">[\s\S]*?<\/div>/i, `<div id="closed-overlay" style="display:block;">
+              <strong>🔒 Producte no disponible</strong>
+              <p>Aquest producte es troba actualment desactivat de la tenda.</p>
+            </div>`);
+          } else {
+            htmlVal = htmlVal.replace(/<div id="closed-overlay">/i, `<div id="closed-overlay" style="display:block;">`);
+          }
+          htmlVal = removeElementById(htmlVal, 'purchase-section');
+          htmlVal = removeElementById(htmlVal, 'modal-reservation');
+        }
+
         const injectionVal = `
     <!-- Inyectado por el generador JAMstack de productos -->
     <meta name="robots" content="max-image-preview:large">
@@ -681,6 +744,20 @@ async function main() {
               </div>
             </div></div>`);
           }
+        }
+
+        const isClosedCast = product.status === 'closed' || product.status === 'sold_out' || product.active === false;
+        if (isClosedCast) {
+          if (product.active === false) {
+            htmlCast = htmlCast.replace(/<div id="closed-overlay">[\s\S]*?<\/div>/i, `<div id="closed-overlay" style="display:block;">
+              <strong>🔒 Producto no disponible</strong>
+              <p>Este producto se encuentra actualmente desactivado de la tienda.</p>
+            </div>`);
+          } else {
+            htmlCast = htmlCast.replace(/<div id="closed-overlay">/i, `<div id="closed-overlay" style="display:block;">`);
+          }
+          htmlCast = removeElementById(htmlCast, 'purchase-section');
+          htmlCast = removeElementById(htmlCast, 'modal-reservation');
         }
 
         const injectionCast = `
