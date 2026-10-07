@@ -94,7 +94,10 @@ document.addEventListener('DOMContentLoaded', () => {
             toast.style.border = '1px solid #334155';
         }
 
-        toast.innerHTML = `<span>${message}</span>`;
+        // F-XSS-TOAST: Use textContent to prevent stored XSS via user-controlled data (e.g. email) in toast messages
+        const span = document.createElement('span');
+        span.textContent = message;
+        toast.appendChild(span);
         container.appendChild(toast);
 
         // Animate in

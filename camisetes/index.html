@@ -1044,6 +1044,10 @@
             // 5. Add to Cart (Drawer)
             const btnCartDrawer = e.target.closest('#btn-add-to-cart-drawer');
             if (btnCartDrawer) {
+                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
+                    alert('Les reserves d\'aquest producte estan tancades.');
+                    return;
+                }
                 if (!checkSizeSelection()) return;
                 if (window.cart) {
                     window.cart.addToCart(getActiveProductItem());
@@ -1052,6 +1056,16 @@
 
             // 6. Direct Purchase / Comprar Ara
             const btnAddCart = e.target.closest('#btn-add-cart');
+            if (btnAddCart) {
+                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
+                    alert('Les reserves d\'aquest producte estan tancades.');
+                    return;
+                }
+                const modalResCheck = document.getElementById('modal-reservation');
+                if (!modalResCheck) {
+                    alert('Les reserves estan tancades.');
+                    return;
+                }
             if (btnAddCart) {
                 if (!checkSizeSelection()) return;
                 const summaryBox = document.getElementById('cart-items-summary-box');
@@ -1165,6 +1179,15 @@
             e.preventDefault();
             const btn = document.getElementById('btn-confirm');
 
+            // SEGURETAT: Bloqueig estricte si el producte té reserves tancades
+            if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
+                alert('Aquest producte no està disponible per a reserves. No es pot processar la sol·licitud.');
+                closeModal();
+                const mEl = document.getElementById('modal-reservation');
+                if (mEl) mEl.remove();
+                return;
+            }
+
             try {
                 const name = document.getElementById('res-name').value.trim();
                 const surname = document.getElementById('res-surname').value.trim();
@@ -1175,7 +1198,13 @@
                     alert('Si us plau, omple tots els camps obligatoris (*).');
                     return;
                 }
-                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                // Reject HTML tags / script injection in any field (client-side defence-in-depth)
+                const htmlTagPattern = /<[^>]+>/;
+                if (htmlTagPattern.test(email) || htmlTagPattern.test(name) || htmlTagPattern.test(surname) || htmlTagPattern.test(notes)) {
+                    alert('Els camps no poden contenir codi HTML o etiquetes. Si us plau, reviseu les dades introduïdes.');
+                    return;
+                }
+                if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]{2,}$/.test(email)) {
                     alert('Si us plau, introdueix un correu electrònic vàlid.');
                     return;
                 }
@@ -1643,10 +1672,14 @@
                             if (closedDesc) closedDesc.textContent = "Aquest producte es troba actualment desactivat de la tenda.";
                         }
                     }
-                    document.getElementById('purchase-section').style.display = 'none';
+                    const purchSec = document.getElementById('purchase-section');
+                    if (purchSec) purchSec.remove();
+                    const resModalEl = document.getElementById('modal-reservation');
+                    if (resModalEl) resModalEl.remove();
                 } else {
                     document.getElementById('closed-overlay').style.display = 'none';
-                    document.getElementById('purchase-section').style.display = 'block';
+                    const purchSec = document.getElementById('purchase-section');
+                    if (purchSec) purchSec.style.display = 'block';
                 }
 
             }

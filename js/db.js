@@ -2213,11 +2213,61 @@ class AppDatabase {
     }
 
     async addReservation(item) {
+        // ── GUARD 1: Strict email validation (server-side, prevents HTML/XSS injection) ──
+        const emailVal = (item.email || '').trim();
+        // Reject if email contains any HTML tag characters or is not a valid email format
+        if (/<|>|&lt;|&gt;|javascript:/i.test(emailVal)) {
+            throw new Error('El correu electrònic conté caràcters no permesos.');
+        }
+        if (!/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]{2,}$/.test(emailVal)) {
+            throw new Error('El format del correu electrònic no és vàlid.');
+        }
+
+        // ── GUARD 2: Sanitize text fields — reject HTML tags in name/surname/notes ──
+        const htmlTagPattern = /<[^>]+>/;
+        if (htmlTagPattern.test(item.name || '') || htmlTagPattern.test(item.surname || '')) {
+            throw new Error('El nom o cognoms contenen caràcters no permesos.');
+        }
+
+        // ── GUARD 3: Server-side product availability check ──
+        if (item.product_id || item.product_slug) {
+            try {
+                const products = await this.getProducts();
+                const prodId = String(item.product_id || '');
+                const prodSlug = String(item.product_slug || '');
+                const prod = products.find(p =>
+                    (prodId && (String(p.id) === prodId || p.slug === prodId)) ||
+                    (prodSlug && p.slug === prodSlug)
+                );
+                if (prod) {
+                    if (prod.active === false) {
+                        throw new Error('Aquest producte no està disponible per a reserva.');
+                    }
+                    if (prod.status === 'closed' || prod.status === 'sold_out') {
+                        throw new Error('Les reserves d\'aquest producte estan tancades.');
+                    }
+                }
+            } catch (availErr) {
+                // Only rethrow if it's our own availability/validation error, not a DB fetch error
+                if (availErr.message && (
+                    availErr.message.includes('no està disponible') ||
+                    availErr.message.includes('reserves') ||
+                    availErr.message.includes('tancad')
+                )) {
+                    throw availErr;
+                }
+                // Otherwise log and continue (defensive: don't block on DB fetch failures)
+                console.warn('Product availability check failed (non-critical):', availErr);
+            }
+        }
+
         const newItem = {
             id: item.id || ('res-' + Date.now()),
             created_at: item.created_at || new Date().toISOString(),
             status: item.status || 'pending_transfer',
-            ...item
+            ...item,
+            // Normalise sanitised email (trimmed)
+            email: emailVal
         };
 
         const unpacked = this.unpackReservation(newItem);

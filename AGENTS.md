@@ -553,7 +553,39 @@ Completat i verificat:
 
 ---
 
-## 41. Pròxim Pas
+## 41. Auditoria de Seguretat i Remeiació: Bypass de Reserves i XSS per Etiqueta HTML (PRO)
+Completat i verificat:
+* **Diagnòstic de l'Incident**:
+  - Un usuari maliciós va aconseguir crear una reserva d'un producte amb reserves tancades/desactivades, registrant com a adreça de correu l'intent de XSS Stored: `<audio src=x onerror='console.log("i hate vibe coding")'>`.
+  - **Vulnerabilitat 1 (Bypass de Disponibilitat des d'Inspeccionar Element)**:
+    - En el frontend de les fitxes de producte, quan un producte tenia `isClosed` (`status === 'closed'` / `'sold_out'` o `active === false`), el codi només aplicava `display: none` a `#purchase-section`.
+    - El modal `#modal-reservation` i el seu formulari `#reservation-form` romanien presents al DOM. Qualsevol usuari amb les eines de desenvolupament (F12 / Inspeccionar) podia canviar el CSS de `#purchase-section`, cridar a la consola `modal.classList.add('open')` o fer un `dispatch` del formulari.
+    - El controlador de submit `resForm.addEventListener('submit')` no comprovava l'estat del producte (`currentProduct.status`).
+    - El botó "Afegir al carret" i el mètode `cart.triggerCheckout()` tampoc no comprovaven la disponibilitat del producte abans d'obrir el checkout.
+    - No hi havia cap comprovació server-side a `window.db.addReservation()`.
+  - **Vulnerabilitat 2 (Stored XSS en Notificacions Toast d'Admin)**:
+    - A `admin/gestio.js`, la funció `showAdminToast(message)` feia `toast.innerHTML = '<span>' + message + '</span>'`. En canviar l'estat d'una reserva o reenviar correus, es concatenava `target.email` sense escapar en el missatge del toast, executant qualsevol codi HTML/JavaScript injectat com a payload d'àudio o imatge.
+* **Solucions Aplicades (Defensa en Profunditat)**:
+  1. **Eliminació Física del DOM quan la Reserva està Tancada**:
+     - Quan `isClosed` és cert a `applyProduct(prod)`, s'elimina activament tant `#purchase-section` com `#modal-reservation` del document (`purchSec.remove()`, `resModalEl.remove()`). El formulari de reserva deixa d'existir físicament a la pàgina; cap manipulació d'estils o classes CSS a les eines de desenvolupador pot fer-lo aparèixer.
+  2. **Bloqueig en el Controlador d'Enviament (`resForm`)**:
+     - Si s'intenta disparar l'enviament del formulari per qualsevol via (teclat, consola o script), es valida `currentProduct.status` i `currentProduct.active`. Si està tancat, es cancel·la immediatament l'enviament, s'alerta l'usuari i s'elimina el modal del DOM.
+  3. **Bloqueig als Botons de Compra i Carret**:
+     - `#btn-add-cart` i `#btn-add-to-cart-drawer` verifiquen la disponibilitat del producte abans de fer res.
+     - `window.cart.addToCart(item)` bloqueja qualsevol intent d'afegir un producte amb estat `closed`, `sold_out` o `active === false`.
+     - `window.cart.triggerCheckout()` comprova la disponibilitat de cada producte del carret contra la base de dades abans d'obrir el modal de reserva. Si algun producte està tancat, avisa l'usuari i l'obliga a retirar-lo.
+  4. **Guàrdies Server-Side a `js/db.js` (`addReservation`)**:
+     - **Validació estricta d'Email**: Es rebutja qualsevol correu amb caràcters d'etiqueta HTML (`<`, `>`, `&lt;`, `&gt;`, `javascript:`) o que no complisca la regex RFC/HTML5 estricta `/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]{2,}$/`.
+     - **Validació de caràcters HTML**: Es rebutgen caràcters HTML (`/<[^>]+>/`) en `name` i `surname`.
+     - **Comprovació de disponibilitat abans de persistir**: `addReservation()` obté el producte remot i llença una excepció fatal si té `active === false`, `status === 'closed'` o `status === 'sold_out'`, impedint la inserció tant a Supabase com a l'emmagatzematge local.
+  5. **Remediació Definitiva d'XSS a `admin/gestio.js`**:
+     - `showAdminToast()` ara utilitza `textContent` en lloc de `innerHTML`, neutralitzant qualsevol possible execució de scripts en notificacions.
+  6. **Validació Client-Side Preventiva a totes les 12 Pàgines de Producte**:
+     - Aplicada comprovació amb `htmlTagPattern = /<[^>]+>/` i regex estricta a `camisetes.html`, `es/camisetes.html` i tots els seus subdirectoris (`samarreta-ares-sd`, `samarreta-mirador-maestrat`, `tote-bag`, `rinyonera-mirador-maestrat`).
+
+---
+
+## 42. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

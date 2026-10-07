@@ -974,6 +974,10 @@
             // 5. Add to Cart (Drawer)
             const btnCartDrawer = e.target.closest('#btn-add-to-cart-drawer');
             if (btnCartDrawer) {
+                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
+                    alert('Las reservas de este producto están cerradas.');
+                    return;
+                }
                 if (!checkSizeSelection()) return;
                 if (window.cart) {
                     window.cart.addToCart(getActiveProductItem());
@@ -982,6 +986,16 @@
 
             // 6. Direct Purchase / Comprar Ara
             const btnAddCart = e.target.closest('#btn-add-cart');
+            if (btnAddCart) {
+                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
+                    alert('Las reservas de este producto están cerradas.');
+                    return;
+                }
+                const modalResCheck = document.getElementById('modal-reservation');
+                if (!modalResCheck) {
+                    alert('Las reservas están cerradas.');
+                    return;
+                }
             if (btnAddCart) {
                 if (!checkSizeSelection()) return;
                 const summaryBox = document.getElementById('cart-items-summary-box');
@@ -1094,6 +1108,15 @@
             resForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const btn = document.getElementById('btn-confirm');
+
+            // SEGURIDAD: Bloqueo estricto si el producto tiene reservas cerradas
+            if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
+                alert('Este producto no está disponible para reservas. No se puede procesar la solicitud.');
+                closeModal();
+                const mEl = document.getElementById('modal-reservation');
+                if (mEl) mEl.remove();
+                return;
+            }
 
             try {
                 const name = document.getElementById('res-name').value.trim();
@@ -1573,10 +1596,14 @@
                             if (closedDesc) closedDesc.textContent = "Este producto se encuentra actualmente desactivado de la tienda.";
                         }
                     }
-                    document.getElementById('purchase-section').style.display = 'none';
+                    const purchSec = document.getElementById('purchase-section');
+                    if (purchSec) purchSec.remove();
+                    const resModalEl = document.getElementById('modal-reservation');
+                    if (resModalEl) resModalEl.remove();
                 } else {
                     document.getElementById('closed-overlay').style.display = 'none';
-                    document.getElementById('purchase-section').style.display = 'block';
+                    const purchSec = document.getElementById('purchase-section');
+                    if (purchSec) purchSec.style.display = 'block';
                 }
 
             }

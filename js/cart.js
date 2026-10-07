@@ -37,6 +37,11 @@
 
         addToCart(item) {
             if (!item || !item.id) return;
+            // Bloqueig de seguretat: No permetre afegir productes tancats o desactivats
+            if (item.status === 'closed' || item.status === 'sold_out' || item.active === false) {
+                this.showToast(isCastellano() ? 'Este producto está cerrado o agotado.' : 'Aquest producte està tancat o esgotat.');
+                return;
+            }
             const cart = this.getCart();
             const size = item.size || 'Talla Única';
             const qty = Math.max(1, parseInt(item.quantity || 1, 10));
@@ -326,9 +331,28 @@
             }
         }
 
-        triggerCheckout() {
+        async triggerCheckout() {
             const cart = this.getCart();
             if (cart.length === 0) return;
+
+            // Bloqueig de seguretat: Validar disponibilitat dels productes abans d'obrir checkout
+            if (window.db && typeof window.db.getProducts === 'function') {
+                try {
+                    const products = await window.db.getProducts();
+                    const closedItems = cart.filter(item => {
+                        const p = products.find(prod => String(prod.id) === String(item.id) || prod.slug === item.slug);
+                        return p && (p.status === 'closed' || p.status === 'sold_out' || p.active === false);
+                    });
+                    if (closedItems.length > 0) {
+                        const isEs = isCastellano();
+                        alert(isEs ? 'Algunos productos de tu carrito ya no están disponibles para reserva. Por favor, elimínalos para continuar.' : 'Alguns productes del teu carret ja no estan disponibles per a reserva. Si us plau, elimina\'ls per a continuar.');
+                        this.openCart();
+                        return;
+                    }
+                } catch (e) {
+                    console.warn('Checkout availability verification error:', e);
+                }
+            }
 
             const modal = document.getElementById('modal-reservation') || document.getElementById('reservation-modal');
 
