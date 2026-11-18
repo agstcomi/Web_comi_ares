@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recollida de la teua Comanda — Festes d'Ares 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+    body, table, td, p, a, h1, h2, h3, h4, span, strong {
+      font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif !important;
+    }
+    @media only screen and (max-width: 600px) {
+      .pickup-card {
+        padding: 14px !important;
+      }
+      .content-padding {
+        padding: 24px 18px 20px 18px !important;
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4f6f8; font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; color: #1e293b; -webkit-font-smoothing: antialiased;">
+  <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f4f6f8; padding: 32px 12px; font-family: 'Roboto', Arial, sans-serif;">
+    <tr>
+      <td align="center">
+        <table role="presentation" width="100%" style="max-width: 580px; background-color: #ffffff; border-radius: 20px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 24px rgba(0,0,0,0.06); font-family: 'Roboto', Arial, sans-serif;" cellspacing="0" cellpadding="0" border="0">
+          
+          <!-- Capçalera: Únicament el logo oficial de la Comissió -->
+          <tr>
+            <td align="center" style="background-color: #ffffff; padding: 32px 20px 24px 20px; border-bottom: 1px solid #f1f5f9;">
+              <img src="https://www.comiares.es/img/logo-email.png" alt="Logo Comissió de Festes d'Ares del Maestrat" width="135" height="auto" style="display: block; max-width: 135px; width: 100%; height: auto; margin: 0 auto; border: 0;">
+            </td>
+          </tr>
+
+          <!-- Cos Principal -->
+          <tr>
+            <td class="content-padding" style="padding: 32px 28px 24px 28px; font-family: 'Roboto', Arial, sans-serif;">
+              
+              <!-- Badge d'estat de recollida -->
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 16px;">
+                <tr>
+                  <td style="background-color: #eff6ff; border: 1px solid #bfdbfe; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 800; color: #1d4ed8; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Roboto', Arial, sans-serif;">
+                    📦 Informació de Recollida de Comanda
+                  </td>
+                </tr>
+              </table>
+
+              <h1 style="margin: 0 0 12px 0; font-family: 'Roboto', Arial, sans-serif; font-size: 22px; font-weight: 900; color: #0f172a; text-transform: uppercase; letter-spacing: -0.02em;">
+                La teua comanda ja està llesta!
+              </h1>
+              <p style="margin: 0 0 24px 0; font-family: 'Roboto', Arial, sans-serif; font-size: 15px; line-height: 1.6; color: #475569;">
+                Hola <strong>{{name}}</strong>, t'informem que els productes que vas encomanar a través de la botiga oficial de la <strong>Comissió de Festes d'Ares del Maestrat 2026</strong> ja han arribat i estan preparats per a ser recollits.
+              </p>
+
+              <!-- Caixa Detall de la Comanda Personalitzada -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 14px; margin-bottom: 24px; padding: 14px; font-family: 'Roboto', Arial, sans-serif;">
+                <tr>
+                  <td style="font-family: 'Roboto', Arial, sans-serif;">
+                    <div style="font-size: 11px; text-transform: uppercase; font-weight: 800; color: #64748b; letter-spacing: 0.05em; margin-bottom: 10px;">
+                      Productes de la teua comanda:
+                    </div>
+
+                    <!-- Miniatures i llistat de productes (EmailJS usa {{items_html}}) -->
+                    {{items_html}}
+
+                    <!-- Resum garantit d'articles i talles -->
+                    <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-top: 8px; margin-bottom: 10px; background: #ffffff; padding: 10px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Roboto', Arial, sans-serif;">
+                      <strong style="color: #0f172a; display: block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px;">Detall dels articles encomanats:</strong>
+                      {{product_summary}}
+                    </div>
+
+                    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-top: 10px; font-size: 13px;">
+                      <tr>
+                        <td style="color: #64748b; font-family: 'Roboto', Arial, sans-serif;">
+                          Referència / Concepte: <strong style="color: #0f172a;">{{bank_concept}}</strong>
+                        </td>
+                        <td align="right" style="font-weight: 800; color: #15803d; font-size: 14px; font-family: 'Roboto', Arial, sans-serif;">
+                          ✓ Pagament Confirmat
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Bloc Destacat de Punts de Recollida -->
+              <div style="margin-bottom: 24px;">
+                <div style="font-size: 12px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.06em; color: #0f172a; margin-bottom: 12px;">
+                  🗓️ On i quan pots recollir la teua comanda?
+                </div>
+
+                <!-- Opció 1: Jornades Abrasa'm (Principal) -->
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" class="pickup-card" style="background-color: #fffbeb; border: 2px solid #f59e0b; border-radius: 14px; margin-bottom: 14px; overflow: hidden; font-family: 'Roboto', Arial, sans-serif;">
+                  <tr>
+                    <td style="background-color: #f59e0b; color: #ffffff; padding: 10px 16px; font-family: 'Roboto', Arial, sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;">
+                      ⭐ Opció 1 · Jornades Gastronòmiques de l'"Abrasa'm"
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 16px; font-family: 'Roboto', Arial, sans-serif;">
+                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tr>
+                          <td style="padding-bottom: 6px; font-size: 14px; line-height: 1.5; color: #78350f; font-family: 'Roboto', Arial, sans-serif;">
+                            <strong>📅 Data:</strong> 5 de desembre
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding-bottom: 8px; font-size: 14px; line-height: 1.5; color: #78350f; font-family: 'Roboto', Arial, sans-serif;">
+                            <strong>📍 Lloc:</strong> Durant les Jornades Gastronòmiques de l'<strong>"Abrasa'm"</strong> a Ares del Maestrat.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="font-size: 13px; line-height: 1.5; color: #92400e; font-family: 'Roboto', Arial, sans-serif;">
+                            Podràs passar pel punt de la Comissió durant la jornada festiva per a recollir el teu paquet i gaudir de la festa amb nosaltres.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+
+                <!-- Opció 2: Ajuntament d'Ares (Alternativa) -->
+                <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" class="pickup-card" style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 14px; overflow: hidden; font-family: 'Roboto', Arial, sans-serif;">
+                  <tr>
+                    <td style="background-color: #0f172a; color: #ffffff; padding: 10px 16px; font-family: 'Roboto', Arial, sans-serif; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em;">
+                      🏛️ Opció 2 · Si no pots acudir a les jornades
+                    </td>
+                  </tr>
+                  <tr>
+                    <td style="padding: 16px; font-family: 'Roboto', Arial, sans-serif;">
+                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tr>
+                          <td style="padding-bottom: 6px; font-size: 14px; line-height: 1.5; color: #1e293b; font-family: 'Roboto', Arial, sans-serif;">
+                            <strong>📍 Lloc:</strong> <strong>Ajuntament d'Ares del Maestrat</strong>
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="padding-bottom: 8px; font-size: 14px; line-height: 1.5; color: #1e293b; font-family: 'Roboto', Arial, sans-serif;">
+                            <strong>⏰ Horari de recollida:</strong> En el seu horari lectiu d'atenció al públic, de <strong>10:00 h a 15:30 h</strong>.
+                          </td>
+                        </tr>
+                        <tr>
+                          <td style="font-size: 13px; line-height: 1.5; color: #64748b; font-family: 'Roboto', Arial, sans-serif;">
+                            En cas de no poder vindre el dia 5, les comandes restants es deixaran custodiades a l'Ajuntament perquè pugues passar a recollir-les en aquest horari amb total tranquil·litat.
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Com recollir la teua comanda (Instruccions senzilles) -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f1f5f9; border-radius: 12px; margin-bottom: 24px; font-family: 'Roboto', Arial, sans-serif;">
+                <tr>
+                  <td style="padding: 14px 16px; font-size: 13px; line-height: 1.5; color: #334155; font-family: 'Roboto', Arial, sans-serif;">
+                    💡 <strong>Com arreplegar el paquet?</strong><br>
+                    Només has d'indicar el teu nom complet o ensenyar aquest mateix correu electrònic amb el concepte / referència: <strong style="color: #0f172a;">{{bank_concept}}</strong>.
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Contacte / Xarxes Socials -->
+              <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 24px; font-family: 'Roboto', Arial, sans-serif;">
+                <tr>
+                  <td style="padding: 14px 16px; font-size: 13px; line-height: 1.5; color: #475569; font-family: 'Roboto', Arial, sans-serif; text-align: center;">
+                    📱 Tens qualsevol dubte o incidència? Contacta amb nosaltres:<br>
+                    <a href="https://instagram.com/comi_ares" style="color: #0284c7; text-decoration: none; font-weight: 700; margin: 0 6px;">Instagram: @comi_ares</a>
+                    &nbsp;·&nbsp;
+                    <a href="https://www.comiares.es" style="color: #0284c7; text-decoration: none; font-weight: 700; margin: 0 6px;">www.comiares.es</a>
+                  </td>
+                </tr>
+              </table>
+
+              <p style="margin: 0; font-size: 13px; color: #64748b; line-height: 1.5; font-family: 'Roboto', Arial, sans-serif;">
+                Moltes gràcies pel teu suport a les Festes d'Ares!<br>
+                <strong style="color: #0f172a;">Comissió de Festes d'Ares del Maestrat 2026</strong>
+              </p>
+            </td>
+          </tr>
+
+          <!-- Peu de Pàgina -->
+          <tr>
+            <td align="center" style="background-color: #f8fafc; padding: 18px 20px; border-top: 1px solid #e2e8f0; font-size: 12px; color: #94a3b8; font-family: 'Roboto', Arial, sans-serif;">
+              Comissió de Festes d'Ares del Maestrat &nbsp;·&nbsp; <a href="https://www.comiares.es" style="color: #64748b; text-decoration: underline;">www.comiares.es</a>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

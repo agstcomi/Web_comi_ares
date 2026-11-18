@@ -608,7 +608,26 @@ Completat i verificat:
 
 ---
 
-## 43. Pròxim Pas
+## 43. Plantilles de Correu d'Avís de Recollida i Enviament Massiu EmailJS (Local)
+Completat i verificat:
+* **Objectiu**: Crear el disseny HTML del correu electrònic destinat a tots els clients que han reservat i pagat la seva comanda a la botiga, informant dels punts i horaris de recollida, i vincular-lo directament al panell d'administració per a l'enviament massiu o individual mitjançant EmailJS.
+* **Fitxers Creats i Modificats**:
+  - `templates/email-recollida.html`: Plantilla oficial en valencià.
+  - `templates/email-recollida-es.html`: Plantilla en castellà.
+  - `js/db.js`: Afegit mètode `buildReservationEmailParams(reservation)` i `sendPickupNotificationEmail(reservation, customTemplateId)`.
+  - `admin/index.html`: Afegit botó superior "Notificar Recollida a Pagats", camp `emailjs-pickup-template-id`, botó "Prova Recollida" i modal complet `modal-broadcast-pickup`.
+  - `admin/gestio.js`: Implementat l'enviament massiu amb barra de progrés, retards de seguretat (800ms) contra rate limits d'EmailJS, gestió d'errors i botó individual de recollida per fila a la taula de reserves.
+* **Aspectes de Disseny i Estil**:
+  - Mateix disseny i estructura visual que `email-confirmation.html` i `email-pago-confirmado.html`: font Roboto amb fallbacks, contenidor de 580px d'amplada amb cantonades arrodonides de 20px, ombra suau, capçalera neta amb només el logotip de la Comissió (`logo-email.png`) i peu de pàgina corporatiu.
+  - Taula amb el desglossament detallat de la comanda de cada usuari: suport per a miniatures de producte (`{{items_html}}`), resum de productes i talles (`{{product_summary}}`), codi de concepte/referència (`{{bank_concept}}`) i badge d'estat de pagament confirmat.
+  - **Blocs Destacats de Recollida**:
+    1. **Opció 1 (Principal)**: Dia 5 de desembre durant les Jornades Gastronòmiques de l'"Abrasa'm" a Ares del Maestrat.
+    2. **Opció 2 (Alternativa)**: A l'Ajuntament d'Ares del Maestrat en el seu horari lectiu (10:00 h a 15:30 h).
+  - Indicacions per a la recollida (mostrar correu o referència), botons de contacte i xarxes socials (@comi_ares).
+
+---
+
+## 44. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

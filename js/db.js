@@ -2353,25 +2353,7 @@ class AppDatabase {
         } catch(e) {}
     }
 
-    async sendPaymentConfirmationEmail(reservation) {
-        if (!reservation || !reservation.email) {
-            throw new Error("L'adreça de correu electrònic de la reserva és necessària.");
-        }
-
-        const emailJsPublicKey = localStorage.getItem('ares_emailjs_public_key') || "KJ16ReAN9A8vk7rQg";
-        const serviceId = localStorage.getItem('ares_emailjs_service_id') || "service_hu53lep";
-        const templateId = localStorage.getItem('ares_emailjs_paid_template_id') || "template_s9dtrrv";
-
-        if (!window.emailjs) {
-            throw new Error("La llibreria EmailJS no està carregada al navegador.");
-        }
-
-        try {
-            window.emailjs.init({ publicKey: emailJsPublicKey });
-        } catch(e) {
-            console.warn("EmailJS init warning:", e);
-        }
-
+    buildReservationEmailParams(reservation) {
         const unpacked = this.unpackReservation(reservation);
         const fullName = `${unpacked.name || ''} ${unpacked.surname || ''}`.trim() || 'Client';
         const totalFormatted = unpacked.amount_cents ? (unpacked.amount_cents / 100).toFixed(2) : (unpacked.total || '35.00');
@@ -2449,6 +2431,59 @@ class AppDatabase {
             total: totalFormatted,
             notes: unpacked.clean_notes || 'Cap'
         };
+
+        return { unpacked, fullName, templateParams };
+    }
+
+    async sendPaymentConfirmationEmail(reservation) {
+        if (!reservation || !reservation.email) {
+            throw new Error("L'adreça de correu electrònic de la reserva és necessària.");
+        }
+
+        const emailJsPublicKey = localStorage.getItem('ares_emailjs_public_key') || "KJ16ReAN9A8vk7rQg";
+        const serviceId = localStorage.getItem('ares_emailjs_service_id') || "service_hu53lep";
+        const templateId = localStorage.getItem('ares_emailjs_paid_template_id') || "template_s9dtrrv";
+
+        if (!window.emailjs) {
+            throw new Error("La llibreria EmailJS no està carregada al navegador.");
+        }
+
+        try {
+            window.emailjs.init({ publicKey: emailJsPublicKey });
+        } catch(e) {
+            console.warn("EmailJS init warning:", e);
+        }
+
+        const { templateParams } = this.buildReservationEmailParams(reservation);
+
+        const response = await Promise.race([
+            window.emailjs.send(serviceId, templateId, templateParams),
+            new Promise((_, reject) => setTimeout(() => reject(new Error("Temps d'espera esgotat enviant el correu (Timeout 8s)")), 8000))
+        ]);
+
+        return response;
+    }
+
+    async sendPickupNotificationEmail(reservation, customTemplateId) {
+        if (!reservation || !reservation.email) {
+            throw new Error("L'adreça de correu electrònic de la reserva és necessària.");
+        }
+
+        const emailJsPublicKey = localStorage.getItem('ares_emailjs_public_key') || "KJ16ReAN9A8vk7rQg";
+        const serviceId = localStorage.getItem('ares_emailjs_service_id') || "service_hu53lep";
+        const templateId = customTemplateId || localStorage.getItem('ares_emailjs_pickup_template_id') || "template_recollida";
+
+        if (!window.emailjs) {
+            throw new Error("La llibreria EmailJS no està carregada al navegador.");
+        }
+
+        try {
+            window.emailjs.init({ publicKey: emailJsPublicKey });
+        } catch(e) {
+            console.warn("EmailJS init warning:", e);
+        }
+
+        const { templateParams } = this.buildReservationEmailParams(reservation);
 
         const response = await Promise.race([
             window.emailjs.send(serviceId, templateId, templateParams),

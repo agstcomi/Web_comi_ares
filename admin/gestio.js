@@ -248,6 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
         await loadHomeAdmin();
         await loadReservationsTab();
         initEmailJSConfig();
+        initPickupBroadcastModal();
     }
 
     function updateDbStatusBadge() {
@@ -2692,6 +2693,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (isPaid) {
                     actionsHtml = `
                         <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
+                            <button class="btn btn-sm btn-send-pickup-email" data-id="${escId}" data-tooltip="Enviar avís de recollida a aquest client" aria-label="Enviar avís de recollida a aquest client" title="Enviar avís de recollida a aquest client" style="width:32px;height:32px;padding:0;color:#2563eb;border-color:#bfdbfe;background:#eff6ff;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="package" style="width:15px;height:15px;"></i>
+                            </button>
                             <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" data-tooltip="Reenviar correu de pagament" aria-label="Reenviar correu de pagament" title="Reenviar correu de pagament" style="width:32px;height:32px;padding:0;color:#15803d;border-color:#86efac;background:#f0fdf4;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
                                 <i data-lucide="mail" style="width:15px;height:15px;"></i>
                             </button>
@@ -2828,6 +2832,33 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.error('Error enviant correu de pagament:', err);
                         showAdminToast(`⚠️ Pagament marcat com a pagat, però no s'ha pogut enviar el correu: ${err.text || err.message || err}`, 'error', 7000);
                     }
+                }
+            });
+        });
+
+        // Attach send pickup notice email listeners
+        tbody.querySelectorAll('.btn-send-pickup-email').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.dataset.id;
+                const target = allReservations.find(r => String(r.id) === String(id));
+                if (!target || !target.email) {
+                    showAdminToast("No s'ha trobat l'adreça de correu d'aquesta comanda.", 'error', 4000);
+                    return;
+                }
+
+                const clientName = `${target.name || ''} ${target.surname || ''}`.trim() || 'el client';
+                if (!confirm(`Vols enviar el correu d'avís de recollida de comanda (Abrasa'm / Ajuntament) a ${clientName} (${target.email})?`)) return;
+
+                btn.disabled = true;
+                showAdminToast(`🔄 Enviant avís de recollida a ${target.email}...`, 'info', 3000);
+                try {
+                    await window.db.sendPickupNotificationEmail(target);
+                    showAdminToast(`✉️ Avís de recollida enviat amb èxit a ${target.email}`, 'success', 5000);
+                } catch(err) {
+                    console.error('Error enviant avís de recollida:', err);
+                    showAdminToast(`⚠️ Error en enviar l'avís de recollida: ${err.text || err.message || err}`, 'error', 7000);
+                } finally {
+                    btn.disabled = false;
                 }
             });
         });
@@ -3013,16 +3044,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputService = document.getElementById('emailjs-service-id');
         const inputKey = document.getElementById('emailjs-public-key');
         const inputTemplate = document.getElementById('emailjs-paid-template-id');
+        const inputPickupTemplate = document.getElementById('emailjs-pickup-template-id');
 
         if (inputService) inputService.value = localStorage.getItem('ares_emailjs_service_id') || 'service_hu53lep';
         if (inputKey) inputKey.value = localStorage.getItem('ares_emailjs_public_key') || 'KJ16ReAN9A8vk7rQg';
         if (inputTemplate) inputTemplate.value = localStorage.getItem('ares_emailjs_paid_template_id') || 'template_s9dtrrv';
+        if (inputPickupTemplate) inputPickupTemplate.value = localStorage.getItem('ares_emailjs_pickup_template_id') || 'template_recollida';
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             if (inputService) localStorage.setItem('ares_emailjs_service_id', inputService.value.trim());
             if (inputKey) localStorage.setItem('ares_emailjs_public_key', inputKey.value.trim());
             if (inputTemplate) localStorage.setItem('ares_emailjs_paid_template_id', inputTemplate.value.trim());
+            if (inputPickupTemplate) localStorage.setItem('ares_emailjs_pickup_template_id', inputPickupTemplate.value.trim());
             showAdminToast("✓ Configuració d'EmailJS desada correctament.", 'success', 4000);
         });
 
@@ -3072,6 +3106,174 @@ document.addEventListener('DOMContentLoaded', () => {
                 } finally {
                     btnTest.disabled = false;
                 }
+            });
+        }
+
+        const btnTestPickup = document.getElementById('btn-test-pickup-email');
+        if (btnTestPickup) {
+            btnTestPickup.addEventListener('click', async () => {
+                const user = (window.db && window.db.getUser) ? window.db.getUser() : null;
+                const defaultEmail = (user && user.email) ? user.email : "comissio@aresdelmaestrat.com";
+                const testEmail = prompt("Introdueix l'adreça per a rebre l'email de prova d'AVÍS DE RECOLLIDA (Abrasa'm / Ajuntament):", defaultEmail);
+                if (!testEmail || !testEmail.trim()) return;
+
+                const dummyReservation = {
+                    name: 'Usuari de Prova',
+                    surname: "d'Ares",
+                    email: testEmail.trim(),
+                    size: 'L',
+                    quantity: 1,
+                    amount_cents: 3500,
+                    concept: 'Samarreta «El mirador del Maestrat» - Prova',
+                    product_name: 'Samarreta «El mirador del Maestrat»',
+                    items: [
+                        {
+                            name: 'Samarreta «El mirador del Maestrat»',
+                            size: 'L',
+                            quantity: 1,
+                            price: '35.00',
+                            image_url: 'https://www.comiares.es/img/camiseta-1.webp'
+                        }
+                    ]
+                };
+
+                btnTestPickup.disabled = true;
+                showAdminToast(`🔄 Enviant correu de prova d'avís de recollida a ${testEmail.trim()}...`, 'info', 3000);
+                try {
+                    await window.db.sendPickupNotificationEmail(dummyReservation);
+                    showAdminToast(`✉️ Correu de prova de recollida enviat amb èxit a ${testEmail.trim()}!`, 'success', 6000);
+                } catch(err) {
+                    console.error('Error enviant correu de recollida:', err);
+                    alert(`Error enviant el correu de prova d'avís de recollida amb EmailJS:\n${err.text || err.message || JSON.stringify(err)}\n\nRecorda comprovar el Template ID de Recollida a EmailJS.`);
+                } finally {
+                    btnTestPickup.disabled = false;
+                }
+            });
+        }
+    }
+
+    // Modal de Notificació Massiva d'Avís de Recollida
+    function initPickupBroadcastModal() {
+        const btnOpen = document.getElementById('btn-open-pickup-broadcast-modal');
+        const modal = document.getElementById('modal-broadcast-pickup');
+        const summary = document.getElementById('pickup-broadcast-summary');
+        const btnStart = document.getElementById('btn-start-pickup-broadcast');
+        const btnCancel = document.getElementById('btn-cancel-pickup-broadcast');
+        const progressContainer = document.getElementById('pickup-broadcast-progress-container');
+        const progressBar = document.getElementById('pickup-progress-bar');
+        const progressCounter = document.getElementById('pickup-progress-counter');
+        const progressLabel = document.getElementById('pickup-progress-label');
+        const progressLog = document.getElementById('pickup-progress-log');
+
+        if (!btnOpen || !modal) return;
+
+        btnOpen.addEventListener('click', () => {
+            const paidReservations = (allReservations || []).filter(r => r.status === 'paid' && r.email && r.email.trim());
+            
+            if (paidReservations.length === 0) {
+                summary.innerHTML = `<div style="color: #b45309; font-weight: 600;">⚠️ No s'ha trobat cap comanda amb estat <strong>"Pagat"</strong> i adreça de correu vàlida registrada.</div>`;
+                if (btnStart) btnStart.disabled = true;
+            } else {
+                const totalAmount = paidReservations.reduce((sum, r) => sum + (parseFloat(r.amount_cents ? (r.amount_cents/100) : (r.total || 0)) || 0), 0);
+                summary.innerHTML = `
+                    <div style="margin-bottom: 0.6rem; color: var(--text-primary); font-size: 0.9rem;">
+                        ✓ S'han trobat <strong>${paidReservations.length} comandes pagades</strong> (${totalAmount.toFixed(2)} € en total).
+                    </div>
+                    <div style="font-size: 0.78rem; color: var(--text-secondary); max-height: 120px; overflow-y: auto; background: var(--bg-primary); padding: 0.6rem; border-radius: 6px; border: 1px solid var(--border-color); line-height: 1.6;">
+                        ${paidReservations.map((r, idx) => `<div><strong>${idx + 1}.</strong> ${window.db.escapeHTML ? window.db.escapeHTML(r.name || 'Client') : r.name} &lt;${window.db.escapeHTML ? window.db.escapeHTML(r.email) : r.email}&gt; — <em>${window.db.escapeHTML ? window.db.escapeHTML(r.concept || r.product_name || 'Comanda') : (r.concept || 'Comanda')}</em></div>`).join('')}
+                    </div>
+                `;
+                if (btnStart) btnStart.disabled = false;
+            }
+
+            if (progressContainer) progressContainer.style.display = 'none';
+            if (progressBar) progressBar.style.width = '0%';
+            if (progressLog) progressLog.innerHTML = '';
+            if (btnCancel) {
+                btnCancel.disabled = false;
+                btnCancel.textContent = "Cancel·lar";
+            }
+
+            if (typeof openModal === 'function') {
+                openModal('modal-broadcast-pickup');
+            } else {
+                modal.classList.add('active');
+            }
+        });
+
+        if (btnStart) {
+            btnStart.addEventListener('click', async () => {
+                const paidReservations = (allReservations || []).filter(r => r.status === 'paid' && r.email && r.email.trim());
+                if (paidReservations.length === 0) {
+                    alert("No hi ha cap comanda pagada a qui enviar el correu.");
+                    return;
+                }
+
+                const serviceId = localStorage.getItem('ares_emailjs_service_id') || 'service_hu53lep';
+                const publicKey = localStorage.getItem('ares_emailjs_public_key') || 'KJ16ReAN9A8vk7rQg';
+                const templateId = localStorage.getItem('ares_emailjs_pickup_template_id') || 'template_recollida';
+
+                if (!serviceId || !publicKey || !templateId) {
+                    alert("Cal configurar primer el Service ID, Public Key i Template ID d'Avís de Recollida a la secció inferior d'EmailJS.");
+                    return;
+                }
+
+                if (!confirm(`⚠️ ATENCIÓ: Estàs a punt d'enviar el correu d'avís de recollida a ${paidReservations.length} clients amb comandes pagades.\n\nVols continuar?`)) {
+                    return;
+                }
+
+                btnStart.disabled = true;
+                btnCancel.disabled = true;
+                if (progressContainer) progressContainer.style.display = 'block';
+                if (progressLog) progressLog.innerHTML = `<div style="color: #2563eb; font-weight: 700;">🚀 Iniciant enviament massiu (${paidReservations.length} destinataris)...</div>`;
+
+                let successCount = 0;
+                let failCount = 0;
+
+                for (let i = 0; i < paidReservations.length; i++) {
+                    const res = paidReservations[i];
+                    const clientName = `${res.name || ''} ${res.surname || ''}`.trim() || 'Client';
+                    const pct = Math.round(((i + 1) / paidReservations.length) * 100);
+
+                    if (progressBar) progressBar.style.width = `${pct}%`;
+                    if (progressCounter) progressCounter.textContent = `${i + 1} / ${paidReservations.length}`;
+                    if (progressLabel) progressLabel.textContent = `Enviant a ${clientName}...`;
+
+                    try {
+                        await window.db.sendPickupNotificationEmail(res, templateId);
+                        successCount++;
+                        if (progressLog) {
+                            const entry = document.createElement('div');
+                            entry.style.color = '#15803d';
+                            entry.textContent = `✓ [${i + 1}/${paidReservations.length}] ${clientName} (${res.email}) - Enviat`;
+                            progressLog.appendChild(entry);
+                            progressLog.scrollTop = progressLog.scrollHeight;
+                        }
+                    } catch(err) {
+                        failCount++;
+                        console.error(`Error enviant a ${res.email}:`, err);
+                        if (progressLog) {
+                            const entry = document.createElement('div');
+                            entry.style.color = '#dc2626';
+                            entry.textContent = `❌ [${i + 1}/${paidReservations.length}] ${clientName} (${res.email}) - Error: ${err.text || err.message || err}`;
+                            progressLog.appendChild(entry);
+                            progressLog.scrollTop = progressLog.scrollHeight;
+                        }
+                    }
+
+                    // Pausa de seguretat entre peticions per no sobrepassar límits d'EmailJS (800ms)
+                    if (i < paidReservations.length - 1) {
+                        await new Promise(r => setTimeout(r, 800));
+                    }
+                }
+
+                if (progressLabel) progressLabel.textContent = `Enviament completat`;
+                btnCancel.disabled = false;
+                btnCancel.textContent = "Tancar";
+
+                const msg = `Enviament finalitzat:\n• ${successCount} correus enviats correctament\n• ${failCount} errors`;
+                showAdminToast(`✓ Enviament massiu finalitzat! ${successCount} enviats amb èxit.`, successCount > 0 ? 'success' : 'error', 6000);
+                alert(msg);
             });
         }
     }
