@@ -2751,7 +2751,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <td style="font-weight:700;font-size:0.85rem;padding:0.65rem 0.5rem;white-space:nowrap;">${amount}</td>
                     <td style="padding:0.65rem 0.5rem;white-space:nowrap;">${statusBadge}</td>
                     <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.65rem 0.5rem;white-space:nowrap;">${dateStr}</td>
-                    <td style="white-space:nowrap;text-align:right;padding:0.65rem 0.85rem;">
+                    <td style="white-space:nowrap;text-align:right;padding:0.65rem 0.85rem;min-width:210px;width:210px;overflow:visible;">
                         ${actionsHtml}
                     </td>
                 </tr>`;

@@ -617,6 +617,7 @@ Completat i verificat:
   - `js/db.js`: Afegit mètode `buildReservationEmailParams(reservation)` i `sendPickupNotificationEmail(reservation, customTemplateId)`.
   - `admin/index.html`: Afegit botó superior "Notificar Recollida a Pagats", camp `emailjs-pickup-template-id`, botó "Prova Recollida" i modal complet `modal-broadcast-pickup`.
   - `admin/gestio.js`: Implementat l'enviament massiu amb barra de progrés, retards de seguretat (800ms) contra rate limits d'EmailJS, gestió d'errors i botó individual de recollida per fila a la taula de reserves.
+  - **Correcció d'Ample de Taula a Desktop**: Fixat `min-width: 210px` a la columna d'accions i `table-layout: auto` a la taula de reserves per evitar que `table-layout: fixed` i `overflow: hidden` retallessin el botó blau de recollida en pantalles d'escriptori. Bump a `gestio.js?v=4.1`.
 * **Aspectes de Disseny i Estil**:
   - Mateix disseny i estructura visual que `email-confirmation.html` i `email-pago-confirmado.html`: font Roboto amb fallbacks, contenidor de 580px d'amplada amb cantonades arrodonides de 20px, ombra suau, capçalera neta amb només el logotip de la Comissió (`logo-email.png`) i peu de pàgina corporatiu.
   - Taula amb el desglossament detallat de la comanda de cada usuari: suport per a miniatures de producte (`{{items_html}}`), resum de productes i talles (`{{product_summary}}`), codi de concepte/referència (`{{bank_concept}}`) i badge d'estat de pagament confirmat.
