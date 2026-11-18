@@ -592,15 +592,15 @@ CREATE TABLE photos (
 
                     <!-- Reservations Table -->
                     <div style="border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-primary); box-shadow: 0 2px 8px rgba(0,0,0,0.03); margin-bottom: 2rem; overflow-x: auto;">
-                        <table class="admin-events-table" style="width: 100%; border-collapse: collapse; min-width: 820px; table-layout: auto;">
+                        <table class="admin-events-table" style="width: 100%; border-collapse: collapse; table-layout: auto;">
                             <thead>
                                 <tr>
-                                    <th style="padding: 0.85rem 1rem; min-width: 180px;">Client</th>
-                                    <th style="padding: 0.85rem 0.5rem; text-align: center; width: 110px; min-width: 110px;">Talla & Qty</th>
-                                    <th style="padding: 0.85rem 0.5rem; width: 85px; min-width: 85px;">Import</th>
-                                    <th style="padding: 0.85rem 0.5rem; width: 115px; min-width: 115px;">Estat</th>
-                                    <th style="padding: 0.85rem 0.5rem; width: 110px; min-width: 110px;">Data</th>
-                                    <th style="padding: 0.85rem 1rem; text-align: right; width: 210px; min-width: 210px;">Accions</th>
+                                    <th style="padding: 0.75rem 0.75rem;">Client</th>
+                                    <th style="padding: 0.75rem 0.35rem; text-align: center; white-space: nowrap; width: 75px;">Talla</th>
+                                    <th style="padding: 0.75rem 0.35rem; white-space: nowrap; width: 65px;">Import</th>
+                                    <th style="padding: 0.75rem 0.35rem; text-align: center; white-space: nowrap; width: 85px;">Estat</th>
+                                    <th style="padding: 0.75rem 0.35rem; white-space: nowrap; width: 80px;">Data</th>
+                                    <th style="padding: 0.75rem 0.75rem; text-align: right; white-space: nowrap; width: 165px;">Accions</th>
                                 </tr>
                             </thead>
                             <tbody id="reservations-tbody">
@@ -1247,7 +1247,7 @@ CREATE TABLE photos (
 
     <!-- Scripts -->
     <script src="/js/db.js?v=3.5" defer></script>
-    <script src="/admin/gestio.js?v=4.1"></script>
+    <script src="/admin/gestio.js?v=4.2"></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);

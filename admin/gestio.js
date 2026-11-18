@@ -2692,66 +2692,66 @@ document.addEventListener('DOMContentLoaded', () => {
                 let actionsHtml = '';
                 if (isPaid) {
                     actionsHtml = `
-                        <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
-                            <button class="btn btn-sm btn-send-pickup-email" data-id="${escId}" data-tooltip="Enviar avís de recollida a aquest client" aria-label="Enviar avís de recollida a aquest client" title="Enviar avís de recollida a aquest client" style="width:32px;height:32px;padding:0;color:#2563eb;border-color:#bfdbfe;background:#eff6ff;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                                <i data-lucide="package" style="width:15px;height:15px;"></i>
+                        <div style="display:flex;gap:3px;align-items:center;justify-content:flex-end;">
+                            <button class="btn btn-sm btn-send-pickup-email" data-id="${escId}" data-tooltip="Enviar avís de recollida a aquest client" aria-label="Enviar avís de recollida a aquest client" title="Enviar avís de recollida a aquest client" style="width:28px;height:28px;padding:0;color:#2563eb;border-color:#bfdbfe;background:#eff6ff;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="package" style="width:14px;height:14px;"></i>
                             </button>
-                            <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" data-tooltip="Reenviar correu de pagament" aria-label="Reenviar correu de pagament" title="Reenviar correu de pagament" style="width:32px;height:32px;padding:0;color:#15803d;border-color:#86efac;background:#f0fdf4;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                                <i data-lucide="mail" style="width:15px;height:15px;"></i>
+                            <button class="btn btn-sm btn-resend-paid-email" data-id="${escId}" data-tooltip="Reenviar correu de pagament" aria-label="Reenviar correu de pagament" title="Reenviar correu de pagament" style="width:28px;height:28px;padding:0;color:#15803d;border-color:#86efac;background:#f0fdf4;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="mail" style="width:14px;height:14px;"></i>
                             </button>
-                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Canviar estat a pendent" aria-label="Canviar estat a pendent" title="Canviar estat a pendent" style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                                <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Canviar estat a pendent" aria-label="Canviar estat a pendent" title="Canviar estat a pendent" style="width:28px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="rotate-ccw" style="width:13px;height:13px;"></i>
                             </button>
-                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:32px;height:32px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                                <i data-lucide="x" style="width:15px;height:15px;"></i>
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:28px;height:28px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="x" style="width:14px;height:14px;"></i>
                             </button>
-                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:28px;height:28px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
                             </button>
                         </div>
                     `;
                 } else if (isCancelled) {
                     actionsHtml = `
-                        <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
-                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Reactivar reserva" aria-label="Reactivar reserva" title="Reactivar reserva" style="width:32px;height:32px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                                <i data-lucide="rotate-ccw" style="width:14px;height:14px;"></i>
+                        <div style="display:flex;gap:3px;align-items:center;justify-content:flex-end;">
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="pending_transfer" data-tooltip="Reactivar reserva" aria-label="Reactivar reserva" title="Reactivar reserva" style="width:28px;height:28px;padding:0;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="rotate-ccw" style="width:13px;height:13px;"></i>
                             </button>
-                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:28px;height:28px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
                             </button>
                         </div>
                     `;
                 } else {
                     actionsHtml = `
-                        <div style="display:flex;gap:0.35rem;align-items:center;justify-content:flex-end;">
-                            <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" data-tooltip="Validar pagament i enviar correu" aria-label="Validar pagament i enviar correu" title="Validar pagament i enviar correu" style="width:32px;height:32px;padding:0;background:#15803d;color:#fff;border-color:#15803d;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                                <i data-lucide="check" style="width:16px;height:16px;"></i>
+                        <div style="display:flex;gap:3px;align-items:center;justify-content:flex-end;">
+                            <button class="btn btn-sm btn-toggle-status" data-id="${escId}" data-target="paid" data-tooltip="Validar pagament i enviar correu" aria-label="Validar pagament i enviar correu" title="Validar pagament i enviar correu" style="width:28px;height:28px;padding:0;background:#15803d;color:#fff;border-color:#15803d;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="check" style="width:15px;height:15px;"></i>
                             </button>
-                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:32px;height:32px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:8px;cursor:pointer;flex-shrink:0;">
-                                <i data-lucide="x" style="width:15px;height:15px;"></i>
+                            <button class="btn btn-sm btn-secondary btn-toggle-status" data-id="${escId}" data-target="cancelled" data-tooltip="Cancel·lar reserva" aria-label="Cancel·lar reserva" title="Cancel·lar reserva" style="width:28px;height:28px;padding:0;color:#ef4444;border-color:#fca5a5;background:transparent;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;flex-shrink:0;">
+                                <i data-lucide="x" style="width:14px;height:14px;"></i>
                             </button>
-                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:32px;height:32px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:8px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                            <button class="btn-action btn-action-delete btn-delete-reservation" data-id="${escId}" data-tooltip="Eliminar del registre" aria-label="Eliminar del registre" title="Eliminar del registre" style="width:28px;height:28px;padding:0;border:1px solid #ef4444;background:transparent;color:#ef4444;border-radius:6px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                <i data-lucide="trash-2" style="width:13px;height:13px;"></i>
                             </button>
                         </div>
                     `;
                 }
 
                 return `<tr style="${isCancelled ? 'opacity: 0.6; background: rgba(0,0,0,0.02);' : ''}">
-                    <td style="padding:0.65rem 0.85rem;overflow:hidden;text-overflow:ellipsis;">
+                    <td style="padding:0.5rem 0.6rem;overflow:hidden;text-overflow:ellipsis;">
                         <div style="font-weight:700;font-size:0.85rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escName}</div>
                         <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escEmail}</div>
                         ${prodDetailsHtml}
                         ${notesBadgeHtml}
                     </td>
-                    <td style="text-align:center;padding:0.65rem 0.5rem;white-space:nowrap;">
-                        <span style="font-weight:800;font-size:0.9rem;">${escSize}</span>
+                    <td style="text-align:center;padding:0.5rem 0.35rem;white-space:nowrap;">
+                        <span style="font-weight:800;font-size:0.85rem;">${escSize}</span>
                         <span style="font-size:0.72rem;color:var(--text-secondary);">×${r.quantity || 1}</span>
                     </td>
-                    <td style="font-weight:700;font-size:0.85rem;padding:0.65rem 0.5rem;white-space:nowrap;">${amount}</td>
-                    <td style="padding:0.65rem 0.5rem;white-space:nowrap;">${statusBadge}</td>
-                    <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.65rem 0.5rem;white-space:nowrap;">${dateStr}</td>
-                    <td style="white-space:nowrap;text-align:right;padding:0.65rem 0.85rem;min-width:210px;width:210px;overflow:visible;">
+                    <td style="font-weight:700;font-size:0.85rem;padding:0.5rem 0.35rem;white-space:nowrap;">${amount}</td>
+                    <td style="padding:0.5rem 0.35rem;white-space:nowrap;text-align:center;">${statusBadge}</td>
+                    <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.5rem 0.35rem;white-space:nowrap;">${dateStr}</td>
+                    <td style="white-space:nowrap;text-align:right;padding:0.5rem 0.6rem;width:165px;">
                         ${actionsHtml}
                     </td>
                 </tr>`;
