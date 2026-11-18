@@ -63,8 +63,8 @@
                       Productos de tu pedido:
                     </div>
 
-                    <!-- Miniaturas y listado de productos (EmailJS usa {{items_html}}) -->
-                    {{items_html}}
+                    <!-- Miniaturas y listado de productos (EmailJS requiere triple llave {{{...}}} para no escapar HTML) -->
+                    {{{items_html}}}
 
                     <!-- Resumen garantizado de artículos y tallas -->
                     <div style="font-size: 13px; color: #334155; line-height: 1.5; margin-top: 8px; margin-bottom: 10px; background: #ffffff; padding: 10px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-family: 'Roboto', Arial, sans-serif;">
