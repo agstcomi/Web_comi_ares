@@ -2847,13 +2847,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const clientName = `${target.name || ''} ${target.surname || ''}`.trim() || 'el client';
-                if (!confirm(`Vols enviar el correu d'avís de recollida de comanda (Abrasa'm / Ajuntament) a ${clientName} (${target.email})?`)) return;
+                const targetEmail = prompt(`Vols enviar el correu d'avís de recollida amb les dades reals de la comanda de ${clientName}?\n\nPots deixar el seu correu (${target.email}) o escriure el teu per a rebre la prova a la teua bústia:`, target.email);
+                if (!targetEmail || !targetEmail.trim()) return;
 
+                const orderToSend = { ...target, email: targetEmail.trim() };
                 btn.disabled = true;
-                showAdminToast(`🔄 Enviant avís de recollida a ${target.email}...`, 'info', 3000);
+                showAdminToast(`🔄 Enviant avís de recollida a ${targetEmail.trim()}...`, 'info', 3000);
                 try {
-                    await window.db.sendPickupNotificationEmail(target);
-                    showAdminToast(`✉️ Avís de recollida enviat amb èxit a ${target.email}`, 'success', 5000);
+                    await window.db.sendPickupNotificationEmail(orderToSend);
+                    showAdminToast(`✉️ Avís de recollida enviat amb èxit a ${targetEmail.trim()}`, 'success', 5000);
                 } catch(err) {
                     console.error('Error enviant avís de recollida:', err);
                     showAdminToast(`⚠️ Error en enviar l'avís de recollida: ${err.text || err.message || err}`, 'error', 7000);
