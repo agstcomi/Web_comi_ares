@@ -174,7 +174,7 @@ Completado localmente y subido a producción:
 ## 12. Sincronización y Configuración Completa de Supabase (PRO/Local)
 Completado en la última sesión:
 * **Despliegue de Edge Functions**: Se instaló el CLI de Supabase globalmente en el sistema y se desplegaron con éxito las Edge Functions `aemet-weather`, `translate-text`, `trigger-deploy` y `share`.
-* **Configuración del Webhook de Base de Datos**: Se configuró y guardó la clave de seguridad `WEBHOOK_SECRET` (`417dd2322e472432b0832969f63ae234ee71706f8ccfcb30ad895930c559b75e`) en los secrets de Supabase.
+* **Configuración del Webhook de Base de Datos**: Se configuró y guardó la clave de seguridad `WEBHOOK_SECRET` en los secrets de Supabase para autenticar las llamadas del webhook.
 * **Trigger SQL de Despliegue**: Ante la falta de acceso directo al panel visual de Webhooks en la consola de Supabase, se implementó de forma nativa mediante SQL la extensión `pg_net` y el disparador de base de datos `tr_news_deploy` en la tabla `news`, el cual realiza llamadas asíncronas seguras a `trigger-deploy` para disparar automáticamente el flujo de compilación e indexación en cada cambio de noticias.
 
 ---

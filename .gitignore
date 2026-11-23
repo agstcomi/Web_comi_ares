@@ -27,3 +27,8 @@ favicon-32.png
 .env.development
 .env.production
 
+# Private config guides and secrets
+*CONFIG_GUIDE*.md
+*.secret*
+
+
