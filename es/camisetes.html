@@ -141,6 +141,60 @@
             color: var(--text-secondary);
             line-height: 1.6;
             margin-bottom: 1.5rem;
+            white-space: pre-line;
+        }
+        .size-grid.menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .size-grid.menu-grid .size-btn {
+            width: 100%;
+            text-align: left;
+            padding: 1rem 1.2rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            line-height: 1.4;
+            border-radius: 14px;
+            text-transform: none;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .size-grid.menu-grid .size-btn:hover {
+            border-color: #000;
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
+        .size-grid.menu-grid .size-btn.active {
+            background: #fffbeb !important;
+            border-color: #f59e0b !important;
+            color: #78350f !important;
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18);
+        }
+        .size-grid.menu-grid .size-btn::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background: #ffffff;
+            flex-shrink: 0;
+            margin-left: 0.75rem;
+            transition: all 0.2s ease;
+        }
+        .size-grid.menu-grid .size-btn.active::after {
+            border-color: #d97706 !important;
+            background: #d97706 !important;
+            box-shadow: inset 0 0 0 4px #ffffff !important;
         }
         .product-price {
             font-size: 2.4rem;
@@ -736,7 +790,7 @@
                     <!-- Size selector -->
                     <div id="purchase-section">
                         <div class="section-label">
-                            <span>Talla <span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;"></span></span>
+                            <span id="product-option-title">Talla <span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;"></span></span>
                             <a id="size-guide-toggle-link" style="display:none;">Guía de tallas →</a>
                         </div>
                         <div class="size-grid" id="size-grid"></div>
@@ -856,24 +910,29 @@
                     <span id="modal-product-name">Camiseta Homenaje Ares SD</span>
                 </div>
                 <div class="modal-summary-row">
-                    <span class="label">Talla</span>
+                    <span class="label" id="modal-size-label">Talla</span>
                     <span id="modal-size">—</span>
                 </div>
                 <div class="modal-summary-row">
-                    <span class="label">Cantidad</span>
+                    <span class="label" id="modal-qty-label">Cantidad</span>
                     <span id="modal-qty">1</span>
                 </div>
                 <div class="modal-summary-row total">
-                    <span class="label">Total a transferir</span>
+                    <span class="label" id="modal-total-label">Total a transferir</span>
                     <span id="modal-total">35.00€</span>
                 </div>
             </div>
 
-            <div style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:0.75rem 1rem;font-size:0.8rem;color:#92400e;margin-bottom:1.25rem;line-height:1.4;">
+            <div id="modal-payment-notice" style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:0.75rem 1rem;font-size:0.8rem;color:#92400e;margin-bottom:1.25rem;line-height:1.4;">
                 💳 <strong>Pago por transferencia:</strong> Al confirmar, te facilitaremos el IBAN y el concepto para hacer la transferencia y recibirás una copia por correo electrónico.
             </div>
 
             <form id="reservation-form" novalidate>
+                <div class="form-group" id="group-menu-select" style="display:none;margin-bottom:1rem;">
+                    <label for="res-menu-choice" style="font-weight:700;display:block;margin-bottom:0.4rem;font-size:0.85rem;">Menú a elegir *</label>
+                    <select id="res-menu-choice" style="width:100%;padding:0.75rem 0.85rem;border-radius:10px;border:1.5px solid var(--border-color);font-size:0.88rem;background:var(--bg-secondary);font-family:inherit;color:var(--text-primary);cursor:pointer;">
+                    </select>
+                </div>
                 <div class="form-row-2">
                     <div class="form-group">
                         <label for="res-name">Nombre *</label>
@@ -887,6 +946,10 @@
                 <div class="form-group">
                     <label for="res-email">Correo electrónico *</label>
                     <input type="email" id="res-email" placeholder="juan@ejemplo.com" required autocomplete="email">
+                </div>
+                <div class="form-group" id="group-allergens" style="display:none;">
+                    <label for="res-allergens">Alérgenos o intolerancias alimentarias <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
+                    <input type="text" id="res-allergens" placeholder="Indica si tienes alguna alergia (ej: celiaquía, lactosa, frutos secos...)">
                 </div>
                 <div class="form-group">
                     <label for="res-notes">Observaciones <span style="font-weight:400;text-transform:none;">(opcional)</span></label>
@@ -996,7 +1059,6 @@
                     alert('Las reservas están cerradas.');
                     return;
                 }
-            if (btnAddCart) {
                 if (!checkSizeSelection()) return;
                 const summaryBox = document.getElementById('cart-items-summary-box');
                 if (summaryBox) {
@@ -1007,12 +1069,62 @@
                 if (modalSummary) {
                     modalSummary.style.display = 'block';
                 }
+                const isFood = currentProduct && (currentProduct.is_food || currentProduct.id === 'prod-dinar-abrasam-2026' || currentProduct.slug === 'dinar-abrasam' || (currentProduct.category && currentProduct.category.toLowerCase().includes('menjar')) || (currentProduct.category_es && currentProduct.category_es.toLowerCase().includes('comida')));
                 const modalProd = document.getElementById('modal-product-name');
                 if (modalProd && currentProduct) {
                     modalProd.textContent = currentProduct.name_es || currentProduct.name || 'Camiseta Homenaje Ares SD';
                 }
+
+                // Handle menu selector in modal
+                const menuSelectGroup = document.getElementById('group-menu-select');
+                const menuSelectEl = document.getElementById('res-menu-choice');
+                if (menuSelectGroup && menuSelectEl) {
+                    if (isFood) {
+                        menuSelectGroup.style.display = 'block';
+                        let sizesList = Array.isArray(currentProduct.sizes_es || currentProduct.sizes) ? (currentProduct.sizes_es || currentProduct.sizes) : [];
+                        if (typeof sizesList === 'string') {
+                            try { sizesList = JSON.parse(sizesList); } catch(e) { sizesList = sizesList.split(',').map(s => s.trim()); }
+                        }
+                        menuSelectEl.innerHTML = sizesList.map(s => `<option value="${escapeHTML(s)}" ${s === selectedSize ? 'selected' : ''}>${escapeHTML(s)}</option>`).join('');
+                        if (!selectedSize && sizesList.length > 0) {
+                            selectedSize = sizesList[0];
+                        }
+                        menuSelectEl.value = selectedSize;
+                        menuSelectEl.onchange = () => {
+                            selectedSize = menuSelectEl.value;
+                            if (modalSize) modalSize.textContent = selectedSize;
+                            const sizeGrid = document.getElementById('size-grid');
+                            if (sizeGrid) {
+                                sizeGrid.querySelectorAll('.size-btn').forEach(b => {
+                                    b.classList.toggle('active', b.dataset.size === selectedSize);
+                                });
+                            }
+                            const selLabel = document.getElementById('selected-size-label');
+                            if (selLabel) selLabel.textContent = '— ' + selectedSize;
+                        };
+                    } else {
+                        menuSelectGroup.style.display = 'none';
+                    }
+                }
+
                 const modalSize = document.getElementById('modal-size');
-                if (modalSize) modalSize.textContent = selectedSize || 'Talla Única';
+                if (modalSize) modalSize.textContent = selectedSize || (isFood ? 'Menú seleccionado' : 'Talla Única');
+                const modalSizeLabel = document.getElementById('modal-size-label');
+                if (modalSizeLabel) modalSizeLabel.textContent = isFood ? 'Menú' : 'Talla';
+                const modalTotalLabel = document.getElementById('modal-total-label');
+                if (modalTotalLabel) modalTotalLabel.textContent = isFood ? 'Total a pagar' : 'Total a transferir';
+                const paymentNoticeEl = document.getElementById('modal-payment-notice');
+                if (paymentNoticeEl) {
+                    if (isFood || (currentProduct && currentProduct.payment_method === 'on_site')) {
+                        paymentNoticeEl.innerHTML = '🔥 <strong>Pago el mismo día (5 de diciembre):</strong> El pago se realizará el mismo día por la mañana mientras se estén preparando las brasas. Recibirás un correo de confirmación de la reserva.';
+                    } else {
+                        paymentNoticeEl.innerHTML = '💳 <strong>Pago por transferencia:</strong> Al confirmar, te facilitaremos el IBAN y el concepto para hacer la transferencia y recibirás una copia por correo electrónico.';
+                    }
+                }
+                const allergensGroup = document.getElementById('group-allergens');
+                if (allergensGroup) {
+                    allergensGroup.style.display = isFood ? 'block' : 'none';
+                }
                 updateQty(quantity);
                 const modalRes = document.getElementById('modal-reservation');
                 if (modalRes) modalRes.classList.add('open');
@@ -1052,6 +1164,14 @@
             const purchaseSec = document.getElementById('purchase-section');
             const hasVisibleSizes = purchaseSec ? purchaseSec.querySelector('.size-btn') : null;
             if (hasVisibleSizes && !selectedSize) {
+                const isFood = currentProduct && (currentProduct.is_food || currentProduct.id === 'prod-dinar-abrasam-2026' || currentProduct.slug === 'dinar-abrasam' || (currentProduct.category && currentProduct.category.toLowerCase().includes('menjar')) || (currentProduct.category_es && currentProduct.category_es.toLowerCase().includes('comida')));
+                if (isFood) {
+                    const firstBtn = purchaseSec.querySelector('.size-btn');
+                    if (firstBtn) {
+                        firstBtn.click();
+                        return true;
+                    }
+                }
                 const sizeGrid = document.getElementById('size-grid');
                 if (sizeGrid) {
                     sizeGrid.style.animation = 'none';
@@ -1164,17 +1284,28 @@
                     image_url: prodImg
                 }];
 
+                const allergensInput = document.getElementById('res-allergens');
+                const allergens = allergensInput ? allergensInput.value.trim() : '';
+                const finalNotes = allergens ? (notes ? `[Alérgenos: ${allergens}] ${notes}` : `[Alérgenos: ${allergens}]`) : notes;
+
+                const hasFoodItem = orderItems.some(i => i.is_food || i.slug === 'dinar-abrasam' || i.id === 'prod-dinar-abrasam-2026' || (i.category && i.category.toLowerCase().includes('menjar')) || (i.name && i.name.toLowerCase().includes('dinar')));
+                const hasOnSiteItem = orderItems.some(i => i.payment_method === 'on_site') || hasFoodItem;
+                const isFood = hasFoodItem || (currentProduct && (currentProduct.is_food || currentProduct.id === 'prod-dinar-abrasam-2026' || currentProduct.slug === 'dinar-abrasam' || (currentProduct.category && currentProduct.category.toLowerCase().includes('menjar')) || (currentProduct.category_es && currentProduct.category_es.toLowerCase().includes('comida'))));
+                const isOnSite = hasOnSiteItem || (currentProduct && (currentProduct.payment_method === 'on_site' || currentProduct.is_food));
+
                 const reservationData = {
                     id: 'res-' + Date.now(),
                     created_at: new Date().toISOString(),
                     name,
                     surname,
                     email,
-                    size: isCartCheckout ? 'Varias tallas' : (selectedSize || 'Talla Única'),
+                    size: isCartCheckout ? 'Varias tallas' : (selectedSize || (isFood ? 'Menú seleccionado' : 'Talla Única')),
                     quantity: isCartCheckout ? window.cart.getCartCount() : quantity,
                     amount_cents: totalCents,
-                    notes,
-                    status: 'pending_transfer',
+                    notes: finalNotes,
+                    allergens: allergens || '',
+                    payment_method: isOnSite ? 'on_site' : 'bank_transfer',
+                    status: isOnSite ? 'pending_payment' : 'pending_transfer',
                     product_id: currentProduct ? currentProduct.id : 'prod-camiseta-ares-sd-2026',
                     product_name: isCartCheckout ? 'Pedido Multi-producto' : prodName,
                     product_slug: prodSlug,
@@ -1190,6 +1321,7 @@
                     const img = item.image_url.startsWith('http') ? item.image_url : ('https://www.comiares.es' + (item.image_url.startsWith('/') ? '' : '/') + item.image_url);
                     const itemTotal = (parseFloat(item.price || 0) * parseInt(item.quantity || 1, 10)).toFixed(2).replace('.', ',');
                     const unitPrice = parseFloat(item.price || 0).toFixed(2).replace('.', ',');
+                    const optLabel = isFood ? 'Menú' : 'Talla';
                     return `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 8px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 10px;">
   <tr>
     <td width="54" valign="middle" align="center" style="padding-right: 10px;">
@@ -1198,8 +1330,10 @@
     <td valign="middle" style="font-family: 'Roboto', Arial, sans-serif; font-size: 13px; color: #0f172a;">
       <strong style="color: #0f172a;">${item.quantity}x ${escapeHTML(item.name_es || item.name)}</strong>
       <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
-        Talla: <strong style="color: #334155;">${escapeHTML(item.size || 'Talla Única')}</strong> &nbsp;·&nbsp; ${unitPrice} € / un.
+        ${optLabel}: <strong style="color: #334155;">${escapeHTML(item.size || (isFood ? 'Menú seleccionado' : 'Talla Única'))}</strong> &nbsp;·&nbsp; ${unitPrice} € / un.
       </div>
+      ${allergens ? `<div style="font-size: 12px; color: #b45309; margin-top: 3px; font-weight: 600;">⚠️ Alérgenos: ${escapeHTML(allergens)}</div>` : ''}
+      ${isOnSite ? `<div style="font-size: 11px; color: #047857; margin-top: 3px; font-weight: 600;">📍 Pago: El 5 de diciembre por la mañana en las brasas (${itemTotal} €)</div>` : ''}
     </td>
     <td valign="middle" align="right" style="font-family: 'Roboto', Arial, sans-serif; font-size: 13px; font-weight: 700; color: #0f172a; padding-left: 8px;">
       ${itemTotal} €
@@ -1259,33 +1393,53 @@
                                 <u style="font-size: 0.95rem; word-break: break-all;">${escapeHTML(email)}</u>
                             </div>
 
-                            <div style="background: #f8fafc; border: 2px solid #0f172a; border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: left;">
-                                <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #0f172a; margin-bottom: 0.85rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
-                                    💳 Datos para la transferencia bancaria:
-                                </div>
-                                <div style="margin-bottom: 0.75rem;">
-                                    <div style="font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600;">TITULAR CUENTA:</div>
-                                    <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">ASSOCIACIÓ JOVENTUT D’ARES</div>
-                                </div>
-                                <div style="margin-bottom: 0.75rem;">
-                                    <div style="font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600;">CUENTA IBAN:</div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #cbd5e1; padding: 0.5rem 0.75rem; border-radius: 8px; gap: 0.5rem;">
-                                        <span style="font-family: monospace; font-weight: 700; font-size: 0.92rem; color: #0f172a; word-break: break-all;">ES75 0081 0276 0100 0192 3098</span>
-                                        <button type="button" class="btn-copy" onclick="copyModalText('ES7500810276010001923098', this)" style="padding: 0.35rem 0.65rem; font-size: 0.72rem; cursor: pointer; border-radius: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; font-weight: 600; flex-shrink: 0;">Copiar</button>
+                            ${isOnSite ? `
+                                <div style="background: #fffbeb; border: 2px solid #f59e0b; border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: left;">
+                                    <div style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #b45309; margin-bottom: 0.85rem; border-bottom: 1px solid #fde68a; padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+                                        🔥 Información de Pago y Recogida:
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #92400e; font-weight: 600;">FECHA Y HORARIO DE PAGO:</div>
+                                        <div style="font-weight: 700; font-size: 0.95rem; color: #78350f;">5 de diciembre, durante la mañana</div>
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #92400e; font-weight: 600;">LUGAR DE PAGO:</div>
+                                        <div style="font-weight: 700; font-size: 0.92rem; color: #78350f;">En la plaza, mientras se estén preparando las brasas</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #92400e; font-weight: 600;">IMPORTE TOTAL A ABONAR:</div>
+                                        <div style="font-weight: 800; font-size: 1.2rem; color: #b45309;">${total} €</div>
                                     </div>
                                 </div>
-                                <div style="margin-bottom: 0.75rem;">
-                                    <div style="font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600;">IMPORTE TOTAL A TRANSFERIR:</div>
-                                    <div style="font-weight: 800; font-size: 1.15rem; color: #15803d;">${total} €</div>
-                                </div>
-                                <div>
-                                    <div style="font-size: 0.7rem; text-transform: uppercase; color: #b91c1c; font-weight: 800; margin-bottom: 0.25rem;">CONCEPTO OBLIGATORIO:</div>
-                                    <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #cbd5e1; padding: 0.5rem 0.75rem; border-radius: 8px; gap: 0.5rem;">
-                                        <span style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">${escapeHTML(bankConcept)}</span>
-                                        <button type="button" class="btn-copy" onclick="copyModalText('${escapeHTML(bankConcept).replace(/'/g, "\\'")}', this)" style="padding: 0.35rem 0.65rem; font-size: 0.72rem; cursor: pointer; border-radius: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; font-weight: 600; flex-shrink: 0;">Copiar</button>
+                            ` : `
+                                <div style="background: #f8fafc; border: 2px solid #0f172a; border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: left;">
+                                    <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #0f172a; margin-bottom: 0.85rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
+                                        💳 Datos para la transferencia bancaria:
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600;">TITULAR CUENTA:</div>
+                                        <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">ASSOCIACIÓ JOVENTUT D’ARES</div>
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600;">CUENTA IBAN:</div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #cbd5e1; padding: 0.5rem 0.75rem; border-radius: 8px; gap: 0.5rem;">
+                                            <span style="font-family: monospace; font-weight: 700; font-size: 0.92rem; color: #0f172a; word-break: break-all;">ES75 0081 0276 0100 0192 3098</span>
+                                            <button type="button" class="btn-copy" onclick="copyModalText('ES7500810276010001923098', this)" style="padding: 0.35rem 0.65rem; font-size: 0.72rem; cursor: pointer; border-radius: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; font-weight: 600; flex-shrink: 0;">Copiar</button>
+                                        </div>
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600;">IMPORTE TOTAL A TRANSFERIR:</div>
+                                        <div style="font-weight: 800; font-size: 1.15rem; color: #15803d;">${total} €</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #b91c1c; font-weight: 800; margin-bottom: 0.25rem;">CONCEPTO OBLIGATORIO:</div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #cbd5e1; padding: 0.5rem 0.75rem; border-radius: 8px; gap: 0.5rem;">
+                                            <span style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">${escapeHTML(bankConcept)}</span>
+                                            <button type="button" class="btn-copy" onclick="copyModalText('${escapeHTML(bankConcept).replace(/'/g, "\\'")}', this)" style="padding: 0.35rem 0.65rem; font-size: 0.72rem; cursor: pointer; border-radius: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; font-weight: 600; flex-shrink: 0;">Copiar</button>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            `}
 
                             <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; text-align: left;">
                                 <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 700; margin-bottom: 0.75rem;">Productos reservados:</div>
@@ -1294,7 +1448,7 @@
                                         <img src="${item.image_url}" alt="${escapeHTML(item.name_es || item.name)}" style="width: 46px; height: 46px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid var(--border-color); padding: 2px; flex-shrink: 0;">
                                         <div style="flex: 1; min-width: 0;">
                                             <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(item.name_es || item.name)}</div>
-                                            <div style="font-size: 0.75rem; color: var(--text-muted);">Talla: ${escapeHTML(item.size || 'Talla Única')} · Unidades: ${item.quantity}</div>
+                                            <div style="font-size: 0.75rem; color: var(--text-muted);">${isFood ? 'Menú: ' : 'Talla: '}${escapeHTML(item.size || (isFood ? 'Menú seleccionado' : 'Talla Única'))} · Unidades: ${item.quantity}</div>
                                         </div>
                                         <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary); flex-shrink: 0;">${(parseFloat(item.price)*parseInt(item.quantity)).toFixed(2).replace('.',',')} €</div>
                                     </div>
@@ -1323,7 +1477,10 @@
                             const firstItemImg = (orderItems && orderItems.length > 0 && orderItems[0].image_url) ? orderItems[0].image_url : prodImg;
                             const emailProdImg = firstItemImg.startsWith('http') ? firstItemImg : `https://www.comiares.es${firstItemImg.startsWith('/') ? '' : '/'}${firstItemImg}`;
 
-                            await emailjs.send("service_hu53lep", "template_rrdhind", {
+                            const isFoodOrder = isOnSite;
+                            const configuredFoodTemplate = localStorage.getItem('ares_emailjs_food_template_id') || 'template_abrasam';
+                            const targetTemplate = isFoodOrder ? configuredFoodTemplate : 'template_rrdhind';
+                            const emailParams = {
                                 name: name,
                                 surname: surname,
                                 to_name: name + ' ' + surname,
@@ -1333,9 +1490,12 @@
                                 user_email: email,
                                 customer_email: email,
                                 product_name: isCartCheckout ? 'Pedido Multi-producto' : (currentProduct ? (currentProduct.name_es || currentProduct.name) : prodName),
-                                concept: productSummary,
-                                bank_concept: bankConcept,
-                                concept_text: bankConcept,
+                                event_name: "Jornadas Gastronómicas a la Brasa «Abrasa'm»",
+                                event_date: "5 de diciembre de 2026",
+                                event_location: "Plaza Mayor de Ares del Maestrat",
+                                concept: isFoodOrder ? 'PAGO EL 5 DE DICIEMBRE EN LAS BRASAS' : productSummary,
+                                bank_concept: isFoodOrder ? 'PAGO EL 5 DE DICIEMBRE EN LAS BRASAS' : bankConcept,
+                                concept_text: isFoodOrder ? 'PAGO EL 5 DE DICIEMBRE EN LAS BRASAS' : bankConcept,
                                 product_summary: productSummary,
                                 products_summary: productSummary,
                                 products: productSummary,
@@ -1345,13 +1505,29 @@
                                 product_image: emailProdImg,
                                 product_image_url: emailProdImg,
                                 logo_url: 'https://www.comiares.es/img/logo-email.png',
-                                iban: 'ES75 0081 0276 0100 0192 3098',
-                                bank_holder: 'ASSOCIACIÓ JOVENTUT D’ARES',
-                                size: isCartCheckout ? 'Varias tallas' : (selectedSize || 'Talla Única'),
+                                iban: isFoodOrder ? 'No requerido (Abono presencial el 5 de diciembre por la mañana en las brasas)' : 'ES75 0081 0276 0100 0192 3098',
+                                bank_holder: isFoodOrder ? 'Pago en mano en las brasas' : 'ASSOCIACIÓ JOVENTUT D’ARES',
+                                payment_method: isFoodOrder ? 'Presencial (5 de diciembre por la mañana en las brasas)' : 'Transferencia bancaria',
+                                payment_instructions: isFoodOrder ? "El pago se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas en la plaza. No es necesario realizar ninguna transferencia previa." : "Realiza la transferencia a la cuenta IBAN indicada antes de 48 horas.",
+                                size: isCartCheckout ? 'Varias tallas' : (selectedSize || (isFood ? 'Menú seleccionado' : 'Talla Única')),
                                 qty: totalQty,
                                 total: total,
-                                notes: notes || 'Ninguna'
-                            });
+                                allergens: allergens || 'Ninguna alergia indicada',
+                                notes: finalNotes || 'Ninguna'
+                            };
+
+                            const serviceId = localStorage.getItem('ares_emailjs_service_id') || "service_hu53lep";
+                            try {
+                                await emailjs.send(serviceId, targetTemplate, emailParams);
+                                console.log(`EmailJS: Correo enviado con éxito (${targetTemplate})`);
+                            } catch (specificErr) {
+                                if (isFoodOrder && targetTemplate !== 'template_rrdhind') {
+                                    console.warn(`Template ${targetTemplate} no encontrada en EmailJS, reenviando con plantilla base:`, specificErr);
+                                    await emailjs.send(serviceId, "template_rrdhind", emailParams);
+                                } else {
+                                    throw specificErr;
+                                }
+                            }
                             console.log('EmailJS: Correo enviado con éxito');
                         } catch (emailErr) {
                             console.warn("EmailJS error:", emailErr);
@@ -1390,7 +1566,7 @@
 
             if (!slugParam && pathParts.length > 0) {
                 const lastPart = pathParts[pathParts.length - 1];
-                if (lastPart !== 'camisetes' && lastPart !== 'camisetes.html' && lastPart !== 'es') {
+                if (lastPart !== 'camisetes' && lastPart !== 'camisetes.html' && lastPart !== 'tenda' && lastPart !== 'tenda.html' && lastPart !== 'es') {
                     slugParam = lastPart;
                 }
             }
@@ -1431,20 +1607,45 @@
 
                 document.title = name + ' · Fiestas Ares 2026';
 
-                // Handle product sizes dynamically
-                let sizesList = Array.isArray(prod.sizes) ? prod.sizes : [];
-                if (typeof prod.sizes === 'string') {
-                    try { sizesList = JSON.parse(prod.sizes); } catch(e) { sizesList = prod.sizes.split(',').map(s => s.trim()); }
+                const isFood = prod.is_food || prod.id === 'prod-dinar-abrasam-2026' || prod.slug === 'dinar-abrasam' || (prod.category && prod.category.toLowerCase().includes('menjar')) || (prod.category_es && prod.category_es.toLowerCase().includes('comida'));
+
+                const optTitleEl = document.getElementById('product-option-title');
+                if (optTitleEl) {
+                    optTitleEl.innerHTML = (isFood ? 'Menú a elegir' : 'Talla') + ' <span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;"></span>';
                 }
-                if (!sizesList || sizesList.length === 0) sizesList = ["Talla Única"];
+
+                // Handle product sizes dynamically
+                let sizesList = Array.isArray(prod.sizes_es || prod.sizes) ? (prod.sizes_es || prod.sizes) : [];
+                if (typeof sizesList === 'string') {
+                    try { sizesList = JSON.parse(sizesList); } catch(e) { sizesList = sizesList.split(',').map(s => s.trim()); }
+                }
+                if (!sizesList || sizesList.length === 0) sizesList = [isFood ? "Menú Estándar" : "Talla Única"];
 
                 const sizeGrid = document.getElementById('size-grid');
                 const sizeAccordion = document.getElementById('size-accordion');
                 const sizeGuideToggle = document.getElementById('size-guide-toggle-link');
 
                 if (sizeGrid) {
-                    sizeGrid.innerHTML = sizesList.map(s => `<button type="button" class="size-btn" data-size="${s}">${s}</button>`).join('');
-                    if (sizesList.length === 1) {
+                    if (isFood) {
+                        sizeGrid.classList.add('menu-grid');
+                    } else {
+                        sizeGrid.classList.remove('menu-grid');
+                    }
+                    const prevSelected = selectedSize;
+                    sizeGrid.innerHTML = sizesList.map(s => `<button type="button" class="size-btn" data-size="${s}"><span>${s}</span></button>`).join('');
+                    if (isFood) {
+                        if (prevSelected && sizesList.includes(prevSelected)) {
+                            selectedSize = prevSelected;
+                        } else {
+                            selectedSize = sizesList[0] || '';
+                        }
+                        const activeBtn = sizeGrid.querySelector(`.size-btn[data-size="${selectedSize}"]`);
+                        if (activeBtn) activeBtn.classList.add('active');
+                        const selLabel = document.getElementById('selected-size-label');
+                        if (selLabel) selLabel.textContent = selectedSize ? ('— ' + selectedSize) : '';
+                        if (sizeAccordion) sizeAccordion.style.display = 'none';
+                        if (sizeGuideToggle) sizeGuideToggle.style.display = 'none';
+                    } else if (sizesList.length === 1) {
                         selectedSize = sizesList[0];
                         const btn = sizeGrid.querySelector('.size-btn');
                         if (btn) btn.classList.add('active');
@@ -1606,9 +1807,96 @@
                     if (purchSec) purchSec.style.display = 'block';
                 }
 
+                // Update badges & security text depending on food vs merch
+                const btnSecureEl = document.querySelector('.btn-secure');
+                const infoBadgesEl = document.querySelector('.info-badges');
+                if (isFood) {
+                    if (btnSecureEl) {
+                        btnSecureEl.innerHTML = `<i data-lucide="utensils" style="width:14px;height:14px;"></i> Pago el 5 de diciembre en las brasas · Confirmación por email`;
+                    }
+                    if (infoBadgesEl) {
+                        infoBadgesEl.innerHTML = `
+                            <div class="info-badge-item">
+                                <i data-lucide="calendar"></i>
+                                <div>
+                                    <strong>5 de diciembre de 2026</strong>
+                                    <br><span>Jornadas Gastronómicas a la brasa en Ares del Maestrat</span>
+                                </div>
+                            </div>
+                            <div class="info-badge-item">
+                                <i data-lucide="flame"></i>
+                                <div>
+                                    <strong>Pago presencial en las brasas</strong>
+                                    <br><span>Se abonará la mañana del 5 de diciembre mientras se preparan las brasas</span>
+                                </div>
+                            </div>
+                            <div class="info-badge-item">
+                                <i data-lucide="mail"></i>
+                                <div>
+                                    <strong>Confirmación por email</strong>
+                                    <br><span>Recibirás la confirmación y resumen de tu reserva por correo electrónico</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    if (btnSecureEl) {
+                        btnSecureEl.innerHTML = `<i data-lucide="receipt" style="width:14px;height:14px;"></i> Pago por transferencia bancaria · Recibirás los datos por correo`;
+                    }
+                    if (infoBadgesEl) {
+                        infoBadgesEl.innerHTML = `
+                            <div class="info-badge-item">
+                                <i data-lucide="package"></i>
+                                <div>
+                                    <strong>Envío en lote</strong>
+                                    <br><span>Una vez cerradas las reservas, enviamos a fábrica</span>
+                                </div>
+                            </div>
+                            <div class="info-badge-item">
+                                <i data-lucide="mail"></i>
+                                <div>
+                                    <strong>Instrucciones por email</strong>
+                                    <br><span>Recibirás el número de cuenta e instrucciones</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                if (window.lucide) {
+                    try { lucide.createIcons(); } catch(e){}
+                }
+
             }
 
             const HARDCODED_PRODUCTS = [
+                {
+                    id: "prod-dinar-abrasam-2026",
+                    name: "Dinar Jornades Gastronòmiques «Abrasa'm»",
+                    name_es: "Comida Jornadas Gastronómicas «Abrasa'm»",
+                    slug: "dinar-abrasam",
+                    category: "Menjars · Jornades Gastronòmiques 2026",
+                    category_es: "Comidas · Jornadas Gastronómicas 2026",
+                    price: 14.00,
+                    status: "open",
+                    description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: taronges.\n\n🍽️ Recorda dur els teus coberts, plats i gots.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+                    description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: naranjas.\n\n🍽️ Recuerda llevar tus cubiertos, platos y vasos.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
+                    image_url: "/img/dinar-abrasam-1.webp",
+                    images: ["/img/dinar-abrasam-1.webp"],
+                    sizes: [
+                        "Menú A: 1/4 conill, 2 cansalà",
+                        "Menú B: 1 llonganiça, 1 xoriç, 2 cansalà",
+                        "Menú C: Opció vegetariana (per determinar)"
+                    ],
+                    sizes_es: [
+                        "Menú A: 1/4 conejo, 2 panceta",
+                        "Menú B: 1 longaniza, 1 chorizo, 2 panceta",
+                        "Menú C: Opción vegetariana (por determinar)"
+                    ],
+                    is_food: true,
+                    payment_method: "on_site",
+                    payment_notice: "El pagament es farà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+                    payment_notice_es: "El pago se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas."
+                },
                 {
                     id: "prod-camiseta-ares-sd-2026",
                     name: "Samarreta homenatge Ares SD",

@@ -363,7 +363,7 @@
                 document.body.style.overflow = 'hidden';
             } else {
                 const isEs = isCastellano();
-                window.location.href = (isEs ? '/es/camisetes.html' : '/camisetes.html') + '?checkout=cart';
+                window.location.href = (isEs ? '/es/tenda.html' : '/tenda.html') + '?checkout=cart';
             }
         }
 
@@ -371,6 +371,10 @@
             const cart = this.getCart();
             if (cart.length === 0) return;
             const isEs = isCastellano();
+
+            const isAllFood = cart.every(i => i.is_food || i.slug === 'dinar-abrasam' || i.id === 'prod-dinar-abrasam-2026' || (i.category && i.category.toLowerCase().includes('menjar')) || (i.name && i.name.toLowerCase().includes('dinar')));
+            const hasFood = cart.some(i => i.is_food || i.slug === 'dinar-abrasam' || i.id === 'prod-dinar-abrasam-2026' || (i.category && i.category.toLowerCase().includes('menjar')) || (i.name && i.name.toLowerCase().includes('dinar')));
+            const isAllOnSite = cart.every(i => i.payment_method === 'on_site' || i.is_food || i.slug === 'dinar-abrasam' || i.id === 'prod-dinar-abrasam-2026');
 
             const conceptStr = cart.map(i => `${i.quantity}x ${isEs ? i.name_es : i.name} (${i.size})`).join(', ');
             const totalSum = this.getCartTotal();
@@ -384,17 +388,48 @@
 
             if (modalQty) modalQty.textContent = this.getCartCount();
             if (modalTotal) modalTotal.textContent = totalSum.toFixed(2).replace('.', ',') + ' €';
-            if (modalSize) modalSize.textContent = cart.length === 1 ? cart[0].size : 'Vàries talles';
+            if (modalSize) modalSize.textContent = cart.length === 1 ? cart[0].size : (isEs ? 'Varias opciones' : 'Vàries opcions');
 
             if (modalSummary) {
                 modalSummary.style.display = 'none';
             }
 
+            // Update payment notice according to product type
+            const paymentNoticeEl = document.getElementById('modal-payment-notice');
+            if (paymentNoticeEl) {
+                if (isAllOnSite || isAllFood) {
+                    paymentNoticeEl.innerHTML = isEs
+                        ? '🔥 <strong>Pago el mismo día (5 de diciembre):</strong> El pago se realizará el mismo día por la mañana mientras se estén preparando las brasas. Recibirás un correo de confirmación de la reserva.'
+                        : '🔥 <strong>Pagament el mateix dia (5 de desembre):</strong> El pagament es realitzarà el mateix dia pel matí mentre s\'estiguen preparant les brases. Rebràs un correu de confirmació de la reserva.';
+                } else {
+                    paymentNoticeEl.innerHTML = isEs
+                        ? '💳 <strong>Pago por transferencia:</strong> Al confirmar, te facilitaremos el IBAN y el concepto para hacer la transferencia y recibirás una copia por correo electrónico.'
+                        : '💳 <strong>Pagament per transferència:</strong> En confirmar, et facilitarem l\'IBAN i el concepte per a fer la transferència i rebràs la còpia per correu electrònic.';
+                }
+            }
+
+            // Show allergens field if any food item is in cart
+            const allergensGroup = document.getElementById('group-allergens');
+            if (allergensGroup) {
+                allergensGroup.style.display = hasFood ? 'block' : 'none';
+            }
+
+            // Hide individual menu dropdown in cart multi-item checkout
+            const menuSelectGroup = document.getElementById('group-menu-select');
+            if (menuSelectGroup) {
+                menuSelectGroup.style.display = 'none';
+            }
+
+            const modalTotalLabel = document.getElementById('modal-total-label');
+            if (modalTotalLabel) {
+                modalTotalLabel.textContent = (isAllOnSite || isAllFood) 
+                    ? (isEs ? 'Total a pagar' : 'Total a pagar')
+                    : (isEs ? 'Total a transferir' : 'Total a transferir');
+            }
+
             const btnConfirmLabel = document.getElementById('btn-confirm-label');
             if (btnConfirmLabel) {
-                btnConfirmLabel.textContent = isEs 
-                    ? `Confirmar Reserva (${totalSum.toFixed(2).replace('.', ',')} €)`
-                    : `Confirmar Reserva (${totalSum.toFixed(2).replace('.', ',')} €)`;
+                btnConfirmLabel.textContent = `Confirmar Reserva (${totalSum.toFixed(2).replace('.', ',')} €)`;
             }
 
             if (summaryBox) {

@@ -105,6 +105,36 @@ function getAbsoluteImageUrl(url) {
 
 const DEFAULT_PRODUCTS = [
   {
+    id: "prod-dinar-abrasam-2026",
+    name: "Dinar Jornades Gastronòmiques «Abrasa'm»",
+    name_es: "Comida Jornadas Gastronómicas «Abrasa'm»",
+    slug: "dinar-abrasam",
+    category: "Menjars · Jornades Gastronòmiques 2026",
+    category_es: "Comidas · Jornadas Gastronómicas 2026",
+    price: 14.00,
+    status: "open",
+    description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: taronges.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+    description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: naranjas.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
+    image_url: "/img/dinar-abrasam-1.webp",
+    images: ["/img/dinar-abrasam-1.webp"],
+    sizes: [
+      "Menú A: 1/4 conill, 2 cansalà",
+      "Menú B: 1 llonganiça, 1 xoriç, 2 cansalà",
+      "Menú C: Opció vegetariana (per determinar)"
+    ],
+    sizes_es: [
+      "Menú A: 1/4 conejo, 2 panceta",
+      "Menú B: 1 longaniza, 1 chorizo, 2 panceta",
+      "Menú C: Opción vegetariana (por determinar)"
+    ],
+    is_food: true,
+    payment_method: "on_site",
+    payment_notice: "El pagament es farà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+    payment_notice_es: "El pago se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
+    created_at: "2026-11-23T19:00:00.000000+00:00",
+    active: true
+  },
+  {
     id: "prod-camiseta-ares-sd-2026",
     name: "Samarreta homenatge Ares SD",
     name_es: "Camiseta homenaje Ares SD",
@@ -524,15 +554,19 @@ async function main() {
         imageUrl = getAbsoluteImageUrl(imageUrl);
 
         // --- VALENCIANO ---
-        const outDirVal = path.join(__dirname, '..', 'camisetes', product.slug);
+        const outDirVal = path.join(__dirname, '..', 'tenda', product.slug);
         if (!fs.existsSync(outDirVal)) {
           fs.mkdirSync(outDirVal, { recursive: true });
+        }
+        const outDirCamVal = path.join(__dirname, '..', 'camisetes', product.slug);
+        if (!fs.existsSync(outDirCamVal)) {
+          fs.mkdirSync(outDirCamVal, { recursive: true });
         }
 
         const titleVal = product.name || "Samarreta Homenatge Ares SD";
         const descVal = product.description || "Reserva la Samarreta Homenatge a l'Ares SD. Edició limitada de la Comissió de Festes d'Ares del Maestrat.";
-        const redirectUrlVal = `https://www.comiares.es/camisetes/${product.slug}/`;
-        const redirectUrlCast = `https://www.comiares.es/es/camisetes/${product.slug}/`;
+        const redirectUrlVal = `https://www.comiares.es/tenda/${product.slug}/`;
+        const redirectUrlCast = `https://www.comiares.es/es/tenda/${product.slug}/`;
 
         let productImages = [];
         if (Array.isArray(product.images)) productImages = product.images.filter(Boolean);
@@ -567,9 +601,18 @@ async function main() {
           galleryStripVal = `<div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:none;"></div>`;
         }
 
-        let sizeGridVal = `<div class="size-grid" id="size-grid">` +
-          sizesList.map(s => `<button type="button" class="size-btn ${sizesList.length === 1 ? 'active' : ''}" data-size="${s}">${s}</button>`).join('') +
-          `</div>`;
+        const isFoodProd = product.is_food || product.slug === 'dinar-abrasam' || (product.category && product.category.toLowerCase().includes('menjar')) || (product.category_es && product.category_es.toLowerCase().includes('comida'));
+
+        let sizeGridVal = '';
+        if (isFoodProd) {
+          sizeGridVal = `<div class="size-grid menu-grid" id="size-grid">` +
+            sizesList.map(s => `<button type="button" class="size-btn" data-size="${s}"><span>${s}</span></button>`).join('') +
+            `</div>`;
+        } else {
+          sizeGridVal = `<div class="size-grid" id="size-grid">` +
+            sizesList.map(s => `<button type="button" class="size-btn ${sizesList.length === 1 ? 'active' : ''}" data-size="${s}">${s}</button>`).join('') +
+            `</div>`;
+        }
 
         let htmlVal = templateProdVal;
         htmlVal = htmlVal.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(titleVal)} | Tenda Oficial Comissió de Festes</title>`);
@@ -603,7 +646,11 @@ async function main() {
         htmlVal = htmlVal.replace(/<div[^>]*id="size-grid"[^>]*>[\s\S]*?<\/div>/i, sizeGridVal);
 
         const isSingleSizeVal = sizesList.length === 1 && (sizesList[0] === 'Talla Única' || sizesList[0] === 'Talla única');
-        if (isSingleSizeVal) {
+        if (isFoodProd) {
+          htmlVal = htmlVal.replace(/<span id="product-option-title">[\s\S]*?<\/span>/i, `<span id="product-option-title">Menú a triar <span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;"></span></span>`);
+          htmlVal = htmlVal.replace(/<a id="size-guide-toggle-link"[^>]*>[\s\S]*?<\/a>/i, `<a id="size-guide-toggle-link" style="display:none;"></a>`);
+          htmlVal = htmlVal.replace(/<div class="size-guide-accordion" id="size-accordion"[^>]*>[\s\S]*?<\/div>\s*<\/div>\s*(?=<div class="divider">)/i, `<div class="size-guide-accordion" id="size-accordion" style="display:none;"></div>`);
+        } else if (isSingleSizeVal) {
           htmlVal = htmlVal.replace(/<a id="size-guide-toggle-link"[^>]*>[\s\S]*?<\/a>/i, `<a id="size-guide-toggle-link" style="display:none;">Guia de talles →</a>`);
           htmlVal = htmlVal.replace(/<div class="size-guide-accordion" id="size-accordion"[^>]*>[\s\S]*?<\/div>\s*<\/div>\s*(?=<div class="divider">)/i, `<div class="size-guide-accordion" id="size-accordion" style="display:none;"></div>`);
           htmlVal = htmlVal.replace(/<span id="selected-size-label"[^>]*>[\s\S]*?<\/span>/i, `<span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;">— Talla Única</span>`);
@@ -644,6 +691,43 @@ async function main() {
           htmlVal = removeElementById(htmlVal, 'modal-reservation');
         }
 
+        if (isFoodProd) {
+          htmlVal = htmlVal.replace(/<div id="modal-payment-notice"[\s\S]*?<\/div>/i, `<div id="modal-payment-notice" style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:0.75rem 1rem;font-size:0.8rem;color:#92400e;margin-bottom:1.25rem;line-height:1.4;">
+            🔥 <strong>Pagament el mateix dia (5 de desembre):</strong> El pagament es realitzarà el mateix dia pel matí mentre s'estiguen preparant les brases a la plaça. Rebràs un correu de confirmació de la teua reserva.
+          </div>`);
+          htmlVal = htmlVal.replace(/<div class="btn-secure"[\s\S]*?<\/div>/i, `<div class="btn-secure" style="display:flex;align-items:center;justify-content:center;gap:0.4rem;font-size:0.75rem;color:var(--text-muted);margin-top:0.6rem;">
+            <i data-lucide="utensils" style="width:14px;height:14px;"></i>
+            Pagament el 5 de desembre a les brases · Confirmació per correu
+          </div>`);
+          htmlVal = htmlVal.replace(/<div class="info-badges">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/main>/i, `<div class="info-badges">
+            <div class="info-badge-item">
+              <i data-lucide="calendar"></i>
+              <div>
+                <strong>5 de desembre de 2026</strong>
+                <br><span>Jornades Gastronòmiques a la brasa a Ares del Maestrat</span>
+              </div>
+            </div>
+            <div class="info-badge-item">
+              <i data-lucide="flame"></i>
+              <div>
+                <strong>Pagament presencial a les brases</strong>
+                <br><span>S'abonarà el matí del 5 de desembre mentre es preparen les brases</span>
+              </div>
+            </div>
+            <div class="info-badge-item">
+              <i data-lucide="mail"></i>
+              <div>
+                <strong>Confirmació per correu</strong>
+                <br><span>Rebràs la confirmació i resum de la teua reserva per correu electrònic</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>`);
+        }
+
         const injectionVal = `
     <!-- Inyectado por el generador JAMstack de productos -->
     <meta name="robots" content="max-image-preview:large">
@@ -654,12 +738,17 @@ async function main() {
         htmlVal = htmlVal.replace(/<\/head>/i, injectionVal);
 
         fs.writeFileSync(path.join(outDirVal, 'index.html'), htmlVal, 'utf-8');
-        console.log(`  [OK] Creado: camisetes/${product.slug}/index.html`);
+        fs.writeFileSync(path.join(outDirCamVal, 'index.html'), htmlVal, 'utf-8');
+        console.log(`  [OK] Creado: tenda/${product.slug}/index.html (y camisetes/${product.slug}/index.html)`);
 
         // --- CASTELLANO ---
-        const outDirCast = path.join(__dirname, '..', 'es', 'camisetes', product.slug);
+        const outDirCast = path.join(__dirname, '..', 'es', 'tenda', product.slug);
         if (!fs.existsSync(outDirCast)) {
           fs.mkdirSync(outDirCast, { recursive: true });
+        }
+        const outDirCamCast = path.join(__dirname, '..', 'es', 'camisetes', product.slug);
+        if (!fs.existsSync(outDirCamCast)) {
+          fs.mkdirSync(outDirCamCast, { recursive: true });
         }
 
         const titleCast = product.name_es || product.name || "Camiseta Homenaje Ares SD";
@@ -683,9 +772,22 @@ async function main() {
           galleryStripCast = `<div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:none;"></div>`;
         }
 
-        let sizeGridCast = `<div class="size-grid" id="size-grid">` +
-          sizesList.map(s => `<button type="button" class="size-btn ${sizesList.length === 1 ? 'active' : ''}" data-size="${s}">${s}</button>`).join('') +
-          `</div>`;
+        let sizesListCast = Array.isArray(product.sizes_es || product.sizes) ? (product.sizes_es || product.sizes) : [];
+        if (typeof sizesListCast === 'string') {
+          try { sizesListCast = JSON.parse(sizesListCast); } catch(e) { sizesListCast = sizesListCast.split(',').map(s => s.trim()); }
+        }
+        if (!sizesListCast || sizesListCast.length === 0) sizesListCast = ["Talla Única"];
+
+        let sizeGridCast = '';
+        if (isFoodProd) {
+          sizeGridCast = `<div class="size-grid menu-grid" id="size-grid">` +
+            sizesListCast.map(s => `<button type="button" class="size-btn" data-size="${s}"><span>${s}</span></button>`).join('') +
+            `</div>`;
+        } else {
+          sizeGridCast = `<div class="size-grid" id="size-grid">` +
+            sizesListCast.map(s => `<button type="button" class="size-btn ${sizesListCast.length === 1 ? 'active' : ''}" data-size="${s}">${s}</button>`).join('') +
+            `</div>`;
+        }
 
         let htmlCast = templateProdCast;
         htmlCast = htmlCast.replace(/<title>[^<]*<\/title>/i, `<title>${escapeHtml(titleCast)} | Tienda Oficial Comisión de Fiestas</title>`);
@@ -718,8 +820,12 @@ async function main() {
         htmlCast = htmlCast.replace(/<div[^>]*id="product-gallery-strip"[^>]*>[\s\S]*?<\/div>/i, galleryStripCast);
         htmlCast = htmlCast.replace(/<div[^>]*id="size-grid"[^>]*>[\s\S]*?<\/div>/i, sizeGridCast);
 
-        const isSingleSizeCast = sizesList.length === 1 && (sizesList[0] === 'Talla Única' || sizesList[0] === 'Talla única');
-        if (isSingleSizeCast) {
+        const isSingleSizeCast = sizesListCast.length === 1 && (sizesListCast[0] === 'Talla Única' || sizesListCast[0] === 'Talla única');
+        if (isFoodProd) {
+          htmlCast = htmlCast.replace(/<span id="product-option-title">[\s\S]*?<\/span>/i, `<span id="product-option-title">Menú a elegir <span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;"></span></span>`);
+          htmlCast = htmlCast.replace(/<a id="size-guide-toggle-link"[^>]*>[\s\S]*?<\/a>/i, `<a id="size-guide-toggle-link" style="display:none;"></a>`);
+          htmlCast = htmlCast.replace(/<div class="size-guide-accordion" id="size-accordion"[^>]*>[\s\S]*?<\/div>\s*<\/div>\s*(?=<div class="divider">)/i, `<div class="size-guide-accordion" id="size-accordion" style="display:none;"></div>`);
+        } else if (isSingleSizeCast) {
           htmlCast = htmlCast.replace(/<a id="size-guide-toggle-link"[^>]*>[\s\S]*?<\/a>/i, `<a id="size-guide-toggle-link" style="display:none;">Guía de tallas →</a>`);
           htmlCast = htmlCast.replace(/<div class="size-guide-accordion" id="size-accordion"[^>]*>[\s\S]*?<\/div>\s*<\/div>\s*(?=<div class="divider">)/i, `<div class="size-guide-accordion" id="size-accordion" style="display:none;"></div>`);
           htmlCast = htmlCast.replace(/<span id="selected-size-label"[^>]*>[\s\S]*?<\/span>/i, `<span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;">— Talla Única</span>`);
@@ -760,6 +866,43 @@ async function main() {
           htmlCast = removeElementById(htmlCast, 'modal-reservation');
         }
 
+        if (isFoodProd) {
+          htmlCast = htmlCast.replace(/<div id="modal-payment-notice"[\s\S]*?<\/div>/i, `<div id="modal-payment-notice" style="background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:0.75rem 1rem;font-size:0.8rem;color:#92400e;margin-bottom:1.25rem;line-height:1.4;">
+            🔥 <strong>Pago el mismo día (5 de diciembre):</strong> El pago se realizará el mismo día por la mañana mientras se estén preparando las brasas en la plaza. Recibirás un correo de confirmación de tu reserva.
+          </div>`);
+          htmlCast = htmlCast.replace(/<div class="btn-secure"[\s\S]*?<\/div>/i, `<div class="btn-secure" style="display:flex;align-items:center;justify-content:center;gap:0.4rem;font-size:0.75rem;color:var(--text-muted);margin-top:0.6rem;">
+            <i data-lucide="utensils" style="width:14px;height:14px;"></i>
+            Pago el 5 de diciembre en las brasas · Confirmación por email
+          </div>`);
+          htmlCast = htmlCast.replace(/<div class="info-badges">[\s\S]*?<\/div>\s*<\/div>\s*<\/div>\s*<\/div>\s*<\/main>/i, `<div class="info-badges">
+            <div class="info-badge-item">
+              <i data-lucide="calendar"></i>
+              <div>
+                <strong>5 de diciembre de 2026</strong>
+                <br><span>Jornadas Gastronómicas a la brasa en Ares del Maestrat</span>
+              </div>
+            </div>
+            <div class="info-badge-item">
+              <i data-lucide="flame"></i>
+              <div>
+                <strong>Pago presencial en las brasas</strong>
+                <br><span>Se abonará la mañana del 5 de diciembre mientras se preparan las brasas</span>
+              </div>
+            </div>
+            <div class="info-badge-item">
+              <i data-lucide="mail"></i>
+              <div>
+                <strong>Confirmación por email</strong>
+                <br><span>Recibirás la confirmación y resumen de tu reserva por correo electrónico</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>`);
+        }
+
         const injectionCast = `
     <!-- Inyectado por el generador JAMstack de productos -->
     <meta name="robots" content="max-image-preview:large">
@@ -770,8 +913,21 @@ async function main() {
         htmlCast = htmlCast.replace(/<\/head>/i, injectionCast);
 
         fs.writeFileSync(path.join(outDirCast, 'index.html'), htmlCast, 'utf-8');
-        console.log(`  [OK] Creado: es/camisetes/${product.slug}/index.html`);
+        fs.writeFileSync(path.join(outDirCamCast, 'index.html'), htmlCast, 'utf-8');
+        console.log(`  [OK] Creado: es/tenda/${product.slug}/index.html (y es/camisetes/${product.slug}/index.html)`);
       }
+    }
+
+    // Ensure /tenda/ and /es/tenda/ directories have index.html
+    const tendaDir = path.join(__dirname, '..', 'tenda');
+    if (!fs.existsSync(tendaDir)) fs.mkdirSync(tendaDir, { recursive: true });
+    if (fs.existsSync(path.join(__dirname, '..', 'tenda.html'))) {
+      fs.copyFileSync(path.join(__dirname, '..', 'tenda.html'), path.join(tendaDir, 'index.html'));
+    }
+    const esTendaDir = path.join(__dirname, '..', 'es', 'tenda');
+    if (!fs.existsSync(esTendaDir)) fs.mkdirSync(esTendaDir, { recursive: true });
+    if (fs.existsSync(path.join(__dirname, '..', 'es', 'tenda.html'))) {
+      fs.copyFileSync(path.join(__dirname, '..', 'es', 'tenda.html'), path.join(esTendaDir, 'index.html'));
     }
 
     // --- ACTUALIZAR SITEMAP.XML ---
@@ -834,8 +990,8 @@ async function main() {
       for (const product of products) {
         if (product.slug) {
           const date = product.created_at ? product.created_at.split('T')[0] : new Date().toISOString().split('T')[0];
-          const valUrl = `https://www.comiares.es/camisetes/${product.slug}/`;
-          const castUrl = `https://www.comiares.es/es/camisetes/${product.slug}/`;
+          const valUrl = `https://www.comiares.es/tenda/${product.slug}/`;
+          const castUrl = `https://www.comiares.es/es/tenda/${product.slug}/`;
           
           // Valencian product entry
           productsXml += `    <url>

@@ -628,7 +628,37 @@ Completat i verificat:
 
 ---
 
-## 44. Pròxim Pas
+## 44. Apartat de Menjars a la Tenda: Dinar Jornades «Abrasa'm» i Enrutament /tenda/ (PRO)
+Completat i verificat:
+* **Nou Producte i Secció de Menjars**:
+  - Creat el producte del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre de 2026, 14€).
+  - Logo oficial de les jornades adaptat a la portada del producte en formats d'alta qualitat (`img/dinar-abrasam-1.webp` i `.jpg`).
+  - Afegits filtres per categoria a `tenda.html` i `es/tenda.html`: "Tot", "Menjars" i "Roba i Complements".
+* **Selecció Dinàmica de Menús i Gestió d'Al·lèrgens**:
+  - Selector interactiu de 3 menús:
+    - Menú A: 1/4 conill, 2 trocets de cansalà.
+    - Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.
+    - Menú C: Opció vegetariana (per determinar).
+    - Acompanyament inclòs: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà, aigua i postre (taronges).
+  - Camp d'al·lèrgens o intoleràncies alimentàries integrat tant al formulari directe com al calaix del carret (`cart.js`).
+* **Modalitat de Pagament Presencial (Sense IBAN ni Transferència)**:
+  - Eliminades les instruccions bancàries per a productes gastronòmics / presencials (`on_site`).
+  - Avisos visuals al formulari, carret i pantalla final informant que el pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre es preparen les brases a la plaça.
+  - Indicadors inferiors de la fitxa adaptats per a informar de la data, el pagament en mà a les brases i la confirmació per correu.
+* **Migració de Rutes i Slugs a `/tenda/`**:
+  - Migrades les rutes de productes a URLs netes sota `/tenda/[slug]/` i `/es/tenda/[slug]/`.
+  - Manteniment de compatibilitat retroactiva amb les rutes antigues `/camisetes/` per a evitar enllaços trencats o errors 404.
+  - Actualitzat el generador estàtic (`generate-news.js`), el servidor local Node (`serve.js`) i el mapa del lloc (`sitemap.xml`).
+* **Plantilla de Correu Exclusiva (`template_abrasam`)**:
+  - Creada a `templates/email-dinar-abrasam.html` fidelment inspirada en la línia gràfica de les comandes de roba (tipografia Roboto, targeta de 580px, cantonades arrodonides de 20px, logo oficial a la capçalera).
+  - Desglossament detallat dels menús reservats, import total, caixa d'abonament presencial en mà a les brases i avís destacat: «Recorda dur els teus coberts, plats i gots».
+  - Doble xarxa de seguretat (*fallback*): si EmailJS no troba la plantilla específica, reenvia automàticament amb la plantilla base perquè el client mai es quede sense justificant.
+* **Priorització d'Exhibició a la Tenda**:
+  - Implementat criteri d'ordenació prioritari a `tenda.html`, `es/tenda.html` i `js/db.js`: els productes amb reserva oberta (`status === 'open'`) es mostren sempre en primer lloc, seguits dels productes amb reserves tancades o esgotats.
+
+---
+
+## 45. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

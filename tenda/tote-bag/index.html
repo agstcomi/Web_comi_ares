@@ -1,0 +1,1935 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta name="referrer" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://tracker.metricool.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.metricool.com https://api.emailjs.com; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'self'; form-action 'self';">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tote Bag El Mirador del Maestrat | Tenda Oficial Comissió de Festes</title>
+    <meta name="description" content="Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l&#039;any 2026. Bossa ideal per al dia a dia.">
+    <link rel="canonical" href="https://www.comiares.es/tenda/tote-bag/">
+    <meta property="og:type" content="product">
+    <meta property="og:url" content="https://www.comiares.es/tenda/tote-bag/">
+    <meta property="og:title" content="Tote Bag El Mirador del Maestrat">
+    <meta property="og:description" content="Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l&#039;any 2026. Bossa ideal per al dia a dia.">
+    <meta property="og:image" content="https://www.comiares.es/img/tote-bag-1.webp">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" href="/img/logo.svg" type="image/svg+xml">
+    <link rel="icon" href="/favicon.png" type="image/png">
+    <link rel="stylesheet" href="/css/styles.css?v=1.25">
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
+    <style>
+        /* ── Announcement bar ── */
+        .announce-bar {
+            background: #000;
+            color: #fff;
+            font-size: 0.72rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            text-align: center;
+            padding: 0.55rem 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .announce-bar span {
+            display: inline-flex;
+            gap: 3rem;
+            animation: marquee 22s linear infinite;
+        }
+        @keyframes marquee {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        /* ── Breadcrumb & Back button row ── */
+        .breadcrumb-row {
+            border-bottom: 1px solid var(--border-color);
+            padding: 120px 0 1.25rem 0; /* 120px clears the fixed navbar */
+            background: var(--bg-secondary);
+            width: 100%;
+            overflow: hidden;
+        }
+        .breadcrumb-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            width: 100%;
+        }
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            flex-wrap: wrap;
+            min-width: 0;
+            max-width: 100%;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+        .breadcrumb span {
+            min-width: 0;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--text-primary); }
+        .breadcrumb i { width: 12px; height: 12px; flex-shrink: 0; }
+
+        .btn-back-tenda {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-primary);
+            text-decoration: none;
+            padding: 0.5rem 1.1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 50px;
+            background: var(--bg-primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.04);
+            transition: all 0.2s;
+        }
+        .btn-back-tenda:hover {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+            transform: translateX(-3px);
+        }
+
+        /* ── Product layout ── */
+        .product-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            padding: 3rem 0 6rem;
+            align-items: start;
+            width: 100%;
+            max-width: 100%;
+        }
+        .product-layout > * {
+            min-width: 0;
+            max-width: 100%;
+        }
+        @media (max-width: 860px) {
+            .product-layout {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                padding: 2rem 0 4rem;
+            }
+        }
+
+        /* ── Gallery ── */
+        .product-gallery {}
+        .product-gallery-main {
+            border-radius: 20px;
+            overflow: hidden;
+            background: #f4f4f4;
+            aspect-ratio: 4/3;
+            position: relative;
+            cursor: zoom-in;
+        }
+        .product-gallery-main img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 2rem;
+            transition: transform 0.5s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .product-gallery-main:hover img { transform: scale(1.04); }
+
+        /* ── Gallery Zoom Badge ── */
+        .gallery-zoom-badge {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(0, 0, 0, 0.75);
+            color: #ffffff;
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            pointer-events: none;
+            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        @media (max-width: 768px) {
+            .lightbox-arrow { width: 42px; height: 42px; }
+            .lightbox-arrow-prev { left: 0.5rem; }
+            .lightbox-arrow-next { right: 0.5rem; }
+            #lightbox-image.zoomed { transform: scale(2.0); }
+        }
+
+        .gallery-thumbs, .product-gallery-strip {
+            display: flex;
+            gap: 0.6rem;
+            margin-top: 0.75rem;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+        .gallery-thumb {
+            width: 72px;
+            height: 72px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f4f4f4;
+            cursor: pointer;
+            border: 2px solid transparent;
+            flex-shrink: 0;
+            transition: border-color 0.15s;
+        }
+        .gallery-thumb.active { border-color: #000; }
+        .gallery-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 0.5rem;
+        }
+
+        /* ── Product Info ── */
+        .product-info { position: sticky; top: 100px; }
+
+        .product-breadcrumb-tag {
+            font-size: 0.68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+        }
+        .product-title {
+            font-size: clamp(1.6rem, 3vw, 2.8rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 0.5rem;
+            word-break: break-word;
+            overflow-wrap: anywhere;
+        }
+        .product-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            white-space: pre-line;
+        }
+        .size-grid.menu-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        .size-grid.menu-grid .size-btn {
+            width: 100%;
+            text-align: left;
+            padding: 1rem 1.2rem;
+            font-size: 0.92rem;
+            font-weight: 600;
+            line-height: 1.4;
+            border-radius: 14px;
+            text-transform: none;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .size-grid.menu-grid .size-btn:hover {
+            border-color: #000;
+            background: #ffffff;
+            transform: translateY(-1px);
+        }
+        .size-grid.menu-grid .size-btn.active {
+            background: #fffbeb !important;
+            border-color: #f59e0b !important;
+            color: #78350f !important;
+            font-weight: 700;
+            box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18);
+        }
+        .size-grid.menu-grid .size-btn::after {
+            content: '';
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+            background: #ffffff;
+            flex-shrink: 0;
+            margin-left: 0.75rem;
+            transition: all 0.2s ease;
+        }
+        .size-grid.menu-grid .size-btn.active::after {
+            border-color: #d97706 !important;
+            background: #d97706 !important;
+            box-shadow: inset 0 0 0 4px #ffffff !important;
+        }
+        .product-price {
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: var(--font-heading);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.25rem;
+        }
+        .product-price-note {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 1.75rem;
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 1.5rem 0;
+        }
+
+        /* ── Size selector ── */
+        .section-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .section-label a {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-decoration: underline;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 0;
+            text-transform: none;
+        }
+        .size-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .size-btn {
+            min-width: 52px;
+            padding: 0.6rem 0.75rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            font-family: var(--font-heading);
+            font-size: 0.82rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+        }
+        .size-btn:hover {
+            border-color: var(--text-primary);
+            background: var(--bg-primary);
+        }
+        .size-btn.active {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            border-color: var(--text-primary);
+        }
+
+        /* Size guide accordion */
+        .size-guide-accordion {
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        .size-guide-toggle {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 1.1rem;
+            background: var(--bg-secondary);
+            border: none;
+            cursor: pointer;
+            font-family: var(--font-heading);
+            font-size: 0.78rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+        }
+        .size-guide-toggle i { transition: transform 0.2s; width: 14px; height: 14px; }
+        .size-guide-accordion.open .size-guide-toggle i { transform: rotate(180deg); }
+        .size-guide-body {
+            display: none;
+            padding: 1rem 1.1rem;
+            border-top: 1px solid var(--border-color);
+            overflow-x: auto;
+            max-width: 100%;
+        }
+        .size-guide-accordion.open .size-guide-body { display: block; }
+        .sg-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.75rem;
+        }
+        .sg-table th {
+            background: var(--text-primary);
+            color: var(--bg-primary);
+            padding: 0.35rem 0.4rem;
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.65rem;
+        }
+        .sg-table td {
+            padding: 0.4rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+        .sg-table td:first-child { font-weight: 700; background: var(--bg-secondary); color: var(--text-primary); font-size: 0.65rem; text-transform: uppercase; }
+        .sg-table tr:last-child td { border-bottom: none; }
+        .sg-note { font-size: 0.68rem; color: var(--text-muted); text-align: center; margin-top: 0.5rem; }
+
+        /* ── Quantity ── */
+        .qty-selector {
+            display: inline-flex;
+            align-items: center;
+            gap: 0;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--bg-secondary);
+        }
+        .qty-btn {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            transition: background 0.15s;
+        }
+        .qty-btn:hover { background: var(--bg-tertiary); }
+        .qty-num {
+            min-width: 44px;
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 800;
+            font-family: var(--font-heading);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            line-height: 44px;
+        }
+
+        /* ── CTA Buttons ── */
+        .product-actions-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+            width: 100%;
+        }
+        .btn-add-to-cart-drawer,
+        .btn-add-cart {
+            flex: 1;
+            min-width: 150px;
+            height: 50px;
+            border-radius: 50px !important;
+            font-family: var(--font-heading);
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+            text-decoration: none;
+            margin: 0;
+            white-space: nowrap;
+        }
+        /* Button 1: Afegir al carret (Solid Black with White Text) */
+        .btn-add-to-cart-drawer {
+            background: #18181b !important;
+            color: #ffffff !important;
+            border: 2px solid #18181b !important;
+        }
+        .btn-add-to-cart-drawer span,
+        .btn-add-to-cart-drawer i,
+        .btn-add-to-cart-drawer svg {
+            color: #ffffff !important;
+            stroke: #ffffff !important;
+        }
+        .btn-add-to-cart-drawer:hover {
+            background: #27272a !important;
+            border-color: #27272a !important;
+            transform: translateY(-1px);
+        }
+        /* Button 2: Comprar ara / Reservar (White Pill with Black Text) */
+        .btn-add-cart {
+            background: #ffffff !important;
+            color: #000000 !important;
+            border: 2px solid #000000 !important;
+        }
+        .btn-add-cart span,
+        .btn-add-cart i,
+        .btn-add-cart svg {
+            color: #000000 !important;
+            stroke: #000000 !important;
+        }
+        .btn-add-cart:hover {
+            background: #f4f4f5 !important;
+            border-color: #000000 !important;
+            transform: translateY(-1px);
+        }
+        .btn-add-cart:disabled, .btn-add-to-cart-drawer:disabled {
+            background: #9ca3af !important;
+            border-color: #9ca3af !important;
+            color: #ffffff !important;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .btn-secure {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            margin-top: 0.75rem;
+        }
+        .btn-secure i { width: 12px; height: 12px; }
+
+        /* ── Info badges row ── */
+        .info-badges {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            margin-top: 1.5rem;
+        }
+        .info-badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 0.82rem;
+        }
+        .info-badge-item i { width: 16px; height: 16px; flex-shrink: 0; color: var(--text-secondary); }
+        .info-badge-item strong { font-weight: 700; }
+        .info-badge-item span { color: var(--text-muted); font-size: 0.75rem; }
+
+        /* ── Closed overlay ── */
+        #closed-overlay {
+            display: none;
+            background: #fef2f2;
+            border: 1px solid #fecaca;
+            border-radius: 12px;
+            padding: 1.25rem 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        #closed-overlay strong { display: block; font-size: 1rem; color: #991b1b; margin-bottom: 0.3rem; }
+        #closed-overlay p { font-size: 0.82rem; color: #b91c1c; margin: 0; }
+
+        /* ── Qty + total row ── */
+        .qty-total-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .total-display {
+            font-size: 1.4rem;
+            font-weight: 900;
+            font-family: var(--font-heading);
+        }
+        .total-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            margin-bottom: 0.1rem;
+        }
+
+        /* ── Modals ── */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal-box {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 560px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 38px !important;
+            height: 38px !important;
+            min-width: 38px !important;
+            max-width: 38px !important;
+            min-height: 38px !important;
+            max-height: 38px !important;
+            padding: 0 !important;
+            border: 2px solid #000000 !important;
+            border-radius: 50% !important;
+            background: #ffffff !important;
+            color: #000000 !important;
+            cursor: pointer;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            transition: all 0.2s ease;
+            z-index: 100 !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .modal-close svg {
+            width: 18px !important;
+            height: 18px !important;
+            stroke: #000000 !important;
+            stroke-width: 2.5 !important;
+            color: #000000 !important;
+            display: block !important;
+        }
+        .modal-close:hover {
+            background: #000000 !important;
+            color: #ffffff !important;
+            border-color: #000000 !important;
+        }
+        .modal-close:hover svg {
+            stroke: #ffffff !important;
+            color: #ffffff !important;
+        }
+        .modal-title {
+            font-size: 1.1rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form in modal */
+        .form-group { margin-bottom: 1.1rem; }
+        .form-group label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            color: var(--text-secondary);
+            margin-bottom: 0.4rem;
+        }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: border-color 0.15s;
+            box-sizing: border-box;
+        }
+        .form-group input:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: var(--text-primary);
+        }
+        .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 480px) { .form-row-2 { grid-template-columns: 1fr; } }
+
+        .modal-summary {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.82rem;
+        }
+        .modal-summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.25rem 0;
+        }
+        .modal-summary-row.total {
+            border-top: 1px solid var(--border-color);
+            margin-top: 0.5rem;
+            padding-top: 0.6rem;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+        .modal-summary-row .label { color: var(--text-muted); }
+
+        .btn-confirm {
+            width: 100%;
+            padding: 1rem;
+            background: #000;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-family: var(--font-heading);
+            font-size: 0.9rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+        }
+        .btn-confirm:hover { background: #222; }
+        .btn-confirm:disabled { background: #9ca3af; cursor: not-allowed; }
+
+        @media (max-width: 768px) {
+            html, body {
+                max-width: 100vw !important;
+                overflow-x: hidden !important;
+            }
+            .breadcrumb-row {
+                padding: 95px 0 1rem 0 !important;
+            }
+            .breadcrumb-container {
+                flex-direction: column !important;
+                align-items: flex-start !important;
+                gap: 0.75rem !important;
+                width: 100% !important;
+            }
+            .btn-back-tenda {
+                font-size: 0.75rem !important;
+                padding: 0.4rem 0.9rem !important;
+            }
+            .breadcrumb {
+                font-size: 0.72rem !important;
+                flex-wrap: wrap !important;
+                word-break: break-word !important;
+                overflow-wrap: anywhere !important;
+                width: 100% !important;
+            }
+            .product-layout {
+                grid-template-columns: 1fr !important;
+                gap: 1.5rem !important;
+                padding: 1rem 0 3rem !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            .product-layout > * {
+                min-width: 0 !important;
+                max-width: 100% !important;
+            }
+            .product-info {
+                position: static !important;
+                width: 100% !important;
+            }
+            .product-gallery {
+                width: 100% !important;
+            }
+            .product-gallery-main {
+                aspect-ratio: 1/1 !important;
+                width: 100% !important;
+            }
+            .product-title {
+                font-size: 1.45rem !important;
+                word-break: break-word !important;
+                overflow-wrap: anywhere !important;
+            }
+            .product-actions-group {
+                flex-direction: column !important;
+                width: 100% !important;
+                gap: 0.6rem !important;
+            }
+            .btn-add-to-cart-drawer,
+            .btn-add-cart {
+                width: 100% !important;
+                min-width: 0 !important;
+                height: 48px !important;
+            }
+            .modal-box {
+                padding: 1.25rem !important;
+                border-radius: 16px !important;
+                width: 92% !important;
+                max-width: 92vw !important;
+                margin: 0 auto !important;
+            }
+        }
+    </style>
+
+    <!-- Inyectado por el generador JAMstack de productos -->
+    <meta name="robots" content="max-image-preview:large">
+    <script>
+      window.staticProductSlug = "tote-bag";
+    </script>
+  </head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <!-- Breadcrumb & Back button -->
+    <div class="breadcrumb-row">
+        <div class="container breadcrumb-container">
+            <a href="/tenda" class="btn-back-tenda">
+                <i data-lucide="arrow-left" style="width:14px; height:14px;"></i>
+                Tornar a la Tenda
+            </a>
+            <nav class="breadcrumb" aria-label="Fil d'Ariadna">
+                <a href="/">Inici</a>
+                <i data-lucide="chevron-right"></i>
+                <a href="/tenda">Tenda</a>
+                <i data-lucide="chevron-right"></i>
+                <span id="breadcrumb-product-name">Tote Bag El Mirador del Maestrat</span>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Product -->
+    <main>
+        <div class="container">
+            <div class="product-layout">
+
+                <!-- LEFT: Gallery -->
+                <div class="product-gallery">
+                    <div class="product-gallery-main" id="gallery-main">
+                        <img src="/img/tote-bag-1.jpg" alt="Tote Bag El Mirador del Maestrat" id="main-img">
+                    </div>
+                    <div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:flex;">
+            <div class="gallery-thumb active" data-img="/img/tote-bag-1.jpg" data-alt="Tote Bag El Mirador del Maestrat — Imatge 1">
+              <img src="/img/tote-bag-1.jpg" alt="Tote Bag El Mirador del Maestrat — Imatge 1">
+            </div>
+          </div>
+                </div>
+
+                <!-- RIGHT: Product info -->
+                <div class="product-info">
+                    <p class="product-breadcrumb-tag" id="product-breadcrumb-tag">Tenda · Roba · Edició Limitada 2026</p>
+                    <h1 class="product-title" id="product-title">Tote Bag El Mirador del Maestrat</h1>
+                    <p class="product-subtitle" id="product-subtitle">Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l&#039;any 2026. Bossa ideal per al dia a dia.</p>
+
+                    <div class="product-price" id="product-price">6<span style="font-size:1.2rem;">€</span></div>
+                    <p class="product-price-note">Per unitat · IVA inclòs · Reserva online</p>
+
+                    <div class="divider"></div>
+
+                    <!-- Closed overlay -->
+                    <div id="closed-overlay" style="display:block;">
+                        <strong>🔒 Reserves tancades</strong>
+                        <p>El període de reserves ha finalitzat. No s'accepten noves comandes.</p>
+                    </div>
+
+                    <!-- Size selector -->
+                    
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <!-- ── MODAL: Reservation form ── -->
+    
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script>
+        (function(){
+            emailjs.init({
+                publicKey: "KJ16ReAN9A8vk7rQg",
+            });
+        })();
+    </script>
+    <script src="/js/db.js?v=3.3" defer></script>
+    <script src="/js/cart.js?v=3.0" defer></script>
+    <script src="/js/main.js?v=1.17" defer></script>
+    <script src="/js/push-notifications.js?v=1.20" defer></script>
+    <script>
+
+        let PRICE = 35.00;
+        let selectedSize = null;
+        let quantity = 1;
+        let currentProduct = null;
+
+        // ── Global Event Delegation for Product Interactions ──
+        document.addEventListener('click', (e) => {
+            // 1. Gallery thumbnail click
+            const thumb = e.target.closest('.gallery-thumb');
+            if (thumb) {
+                document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+                const mainImg = document.getElementById('main-img');
+                if (mainImg) {
+                    const newSrc = thumb.dataset.img || (thumb.querySelector('img') ? thumb.querySelector('img').src : '');
+                    if (newSrc) mainImg.src = newSrc;
+                    if (thumb.dataset.alt) mainImg.alt = thumb.dataset.alt;
+                }
+            }
+
+            // 2. Size button click
+            const sizeBtn = e.target.closest('.size-btn');
+            if (sizeBtn) {
+                const parentGrid = sizeBtn.closest('#size-grid, .sizes-grid') || document;
+                parentGrid.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                sizeBtn.classList.add('active');
+                selectedSize = sizeBtn.dataset.size || sizeBtn.textContent.trim();
+                const selLabel = document.getElementById('selected-size-label');
+                if (selLabel) selLabel.textContent = '— ' + selectedSize;
+            }
+
+            // 3. Size accordion toggle
+            const accBtn = e.target.closest('#size-accordion-btn, #size-guide-toggle-link');
+            if (accBtn) {
+                const accordion = document.getElementById('size-accordion');
+                if (accordion) {
+                    accordion.classList.toggle('open');
+                    if (accBtn.id === 'size-guide-toggle-link') {
+                        accordion.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+                }
+            }
+
+            // 4. Quantity buttons
+            const minusBtn = e.target.closest('#qty-minus');
+            if (minusBtn) {
+                updateQty(quantity - 1);
+            }
+            const plusBtn = e.target.closest('#qty-plus');
+            if (plusBtn) {
+                updateQty(quantity + 1);
+            }
+
+            // 5. Add to Cart (Drawer)
+            const btnCartDrawer = e.target.closest('#btn-add-to-cart-drawer');
+            if (btnCartDrawer) {
+                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
+                    alert('Les reserves d\'aquest producte estan tancades.');
+                    return;
+                }
+                if (!checkSizeSelection()) return;
+                if (window.cart) {
+                    window.cart.addToCart(getActiveProductItem());
+                }
+            }
+
+            // 6. Direct Purchase / Comprar Ara
+            const btnAddCart = e.target.closest('#btn-add-cart');
+            if (btnAddCart) {
+                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
+                    alert('Les reserves d\'aquest producte estan tancades.');
+                    return;
+                }
+                const modalResCheck = document.getElementById('modal-reservation');
+                if (!modalResCheck) {
+                    alert('Les reserves estan tancades.');
+                    return;
+                }
+                if (!checkSizeSelection()) return;
+                const summaryBox = document.getElementById('cart-items-summary-box');
+                if (summaryBox) {
+                    summaryBox.style.display = 'none';
+                    summaryBox.innerHTML = '';
+                }
+                const modalSummary = document.getElementById('modal-summary');
+                if (modalSummary) {
+                    modalSummary.style.display = 'block';
+                }
+                const isFood = currentProduct && (currentProduct.is_food || currentProduct.id === 'prod-dinar-abrasam-2026' || currentProduct.slug === 'dinar-abrasam' || (currentProduct.category && currentProduct.category.toLowerCase().includes('menjar')) || (currentProduct.category_es && currentProduct.category_es.toLowerCase().includes('comida')));
+                const modalProd = document.getElementById('modal-product-name');
+                if (modalProd && currentProduct) {
+                    modalProd.textContent = (window.location.pathname.includes('/es/') && currentProduct.name_es) ? currentProduct.name_es : (currentProduct.name || 'Samarreta Homenatge Ares SD');
+                }
+
+                // Handle menu selector in modal
+                const menuSelectGroup = document.getElementById('group-menu-select');
+                const menuSelectEl = document.getElementById('res-menu-choice');
+                if (menuSelectGroup && menuSelectEl) {
+                    if (isFood) {
+                        menuSelectGroup.style.display = 'block';
+                        let sizesList = Array.isArray(currentProduct.sizes) ? currentProduct.sizes : [];
+                        if (typeof currentProduct.sizes === 'string') {
+                            try { sizesList = JSON.parse(currentProduct.sizes); } catch(e) { sizesList = currentProduct.sizes.split(',').map(s => s.trim()); }
+                        }
+                        menuSelectEl.innerHTML = sizesList.map(s => `<option value="${escapeHTML(s)}" ${s === selectedSize ? 'selected' : ''}>${escapeHTML(s)}</option>`).join('');
+                        if (!selectedSize && sizesList.length > 0) {
+                            selectedSize = sizesList[0];
+                        }
+                        menuSelectEl.value = selectedSize;
+                        menuSelectEl.onchange = () => {
+                            selectedSize = menuSelectEl.value;
+                            if (modalSize) modalSize.textContent = selectedSize;
+                            const sizeGrid = document.getElementById('size-grid');
+                            if (sizeGrid) {
+                                sizeGrid.querySelectorAll('.size-btn').forEach(b => {
+                                    b.classList.toggle('active', b.dataset.size === selectedSize);
+                                });
+                            }
+                            const selLabel = document.getElementById('selected-size-label');
+                            if (selLabel) selLabel.textContent = '— ' + selectedSize;
+                        };
+                    } else {
+                        menuSelectGroup.style.display = 'none';
+                    }
+                }
+
+                const modalSize = document.getElementById('modal-size');
+                if (modalSize) modalSize.textContent = selectedSize || (isFood ? 'Menú seleccionat' : 'Talla Única');
+                const modalSizeLabel = document.getElementById('modal-size-label');
+                if (modalSizeLabel) modalSizeLabel.textContent = isFood ? 'Menú' : 'Talla';
+                const modalTotalLabel = document.getElementById('modal-total-label');
+                if (modalTotalLabel) modalTotalLabel.textContent = isFood ? 'Total a pagar' : 'Total a transferir';
+                const paymentNoticeEl = document.getElementById('modal-payment-notice');
+                if (paymentNoticeEl) {
+                    if (isFood || (currentProduct && currentProduct.payment_method === 'on_site')) {
+                        paymentNoticeEl.innerHTML = '🔥 <strong>Pagament el mateix dia (5 de desembre):</strong> El pagament es realitzarà el mateix dia pel matí mentre s\'estiguen preparant les brases. Rebràs un correu de confirmació de la reserva.';
+                    } else {
+                        paymentNoticeEl.innerHTML = '💳 <strong>Pagament per transferència:</strong> En confirmar, et facilitarem l\'IBAN i el concepte per a fer la transferència i rebràs la còpia per correu electrònic.';
+                    }
+                }
+                const allergensGroup = document.getElementById('group-allergens');
+                if (allergensGroup) {
+                    allergensGroup.style.display = isFood ? 'block' : 'none';
+                }
+                updateQty(quantity);
+                const modalRes = document.getElementById('modal-reservation');
+                if (modalRes) modalRes.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // 7. Close modal
+            const modalClose = e.target.closest('#modal-close');
+            if (modalClose) {
+                closeModal();
+            }
+            const modalRes = document.getElementById('modal-reservation');
+            if (modalRes && e.target === modalRes) {
+                closeModal();
+            }
+        });
+
+        // ── Quantity ──
+        function updateQty(val) {
+            quantity = Math.min(Math.max(val, 1), 10);
+            const qtyDisp = document.getElementById('qty-display');
+            if (qtyDisp) qtyDisp.textContent = quantity;
+            const resQty = document.getElementById('res-quantity');
+            if (resQty) resQty.value = quantity;
+            const total = (PRICE * quantity).toFixed(2);
+            const totalDisp = document.getElementById('total-display');
+            if (totalDisp) totalDisp.textContent = total + '€';
+            const btnConfLabel = document.getElementById('btn-confirm-label');
+            if (btnConfLabel) btnConfLabel.textContent = 'Confirmar Reserva (' + total + '€)';
+            const modalQty = document.getElementById('modal-qty');
+            if (modalQty) modalQty.textContent = quantity;
+            const modalTotal = document.getElementById('modal-total');
+            if (modalTotal) modalTotal.textContent = total + '€';
+        }
+
+        function checkSizeSelection() {
+            const purchaseSec = document.getElementById('purchase-section');
+            const hasVisibleSizes = purchaseSec ? purchaseSec.querySelector('.size-btn') : null;
+            if (hasVisibleSizes && !selectedSize) {
+                const isFood = currentProduct && (currentProduct.is_food || currentProduct.id === 'prod-dinar-abrasam-2026' || currentProduct.slug === 'dinar-abrasam' || (currentProduct.category && currentProduct.category.toLowerCase().includes('menjar')) || (currentProduct.category_es && currentProduct.category_es.toLowerCase().includes('comida')));
+                if (isFood) {
+                    const firstBtn = purchaseSec.querySelector('.size-btn');
+                    if (firstBtn) {
+                        firstBtn.click();
+                        return true;
+                    }
+                }
+                const sizeGrid = document.getElementById('size-grid');
+                if (sizeGrid) {
+                    sizeGrid.style.animation = 'none';
+                    setTimeout(() => {
+                        sizeGrid.style.animation = '';
+                        sizeGrid.style.outline = '2px solid #ef4444';
+                        sizeGrid.style.borderRadius = '8px';
+                        setTimeout(() => { sizeGrid.style.outline = ''; }, 1500);
+                    }, 10);
+                    sizeGrid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+                return false;
+            }
+            return true;
+        }
+
+        function getActiveProductItem() {
+            return {
+                id: currentProduct ? currentProduct.id : 'prod-camiseta-ares-sd-2026',
+                name: currentProduct ? currentProduct.name : 'Samarreta Homenatge Ares SD',
+                name_es: currentProduct ? (currentProduct.name_es || currentProduct.name) : 'Camiseta Homenaje Ares SD',
+                slug: currentProduct ? currentProduct.slug : 'samarreta-ares-sd',
+                price: PRICE,
+                size: selectedSize || 'Talla Única',
+                quantity: quantity,
+                image_url: currentProduct ? (currentProduct.image_url || '/img/camiseta-1.webp') : '/img/camiseta-1.webp'
+            };
+        }
+
+        // ── Close modal helper ──
+        function closeModal() {
+            const modal = document.getElementById('modal-reservation') || document.getElementById('reservation-modal');
+            if (modal) {
+                modal.classList.remove('open');
+                modal.classList.remove('active');
+            }
+            document.body.style.overflow = '';
+        }
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // ── Form submit ──
+        const resForm = document.getElementById('reservation-form');
+        if (resForm) {
+            resForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btn-confirm');
+
+            // SEGURETAT: Bloqueig estricte si el producte té reserves tancades
+            if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
+                alert('Aquest producte no està disponible per a reserves. No es pot processar la sol·licitud.');
+                closeModal();
+                const mEl = document.getElementById('modal-reservation');
+                if (mEl) mEl.remove();
+                return;
+            }
+
+            try {
+                const name = document.getElementById('res-name').value.trim();
+                const surname = document.getElementById('res-surname').value.trim();
+                const email = document.getElementById('res-email').value.trim();
+                const notes = document.getElementById('res-notes').value.trim();
+
+                if (!name || !surname || !email) {
+                    alert('Si us plau, omple tots els camps obligatoris (*).');
+                    return;
+                }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    alert('Si us plau, introdueix un correu electrònic vàlid.');
+                    return;
+                }
+
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<span style="display:inline-block;animation:spin 1s linear infinite;">⟳</span>&nbsp; Registrant reserva...';
+                }
+
+                const summaryBox = document.getElementById('cart-items-summary-box');
+                const isCartCheckout = summaryBox && summaryBox.style.display !== 'none' && window.cart && window.cart.getCart().length > 0;
+
+                const unitPriceVal = currentProduct ? parseFloat(currentProduct.price || 35) : (typeof PRICE !== 'undefined' ? PRICE : 35);
+                let total = (unitPriceVal * quantity).toFixed(2);
+                let totalCents = Math.round(unitPriceVal * quantity * 100);
+                const prodName = currentProduct ? currentProduct.name : 'Samarreta Homenatge Ares SD';
+                const prodSlug = currentProduct ? currentProduct.slug : 'samarreta-ares-sd';
+                const prodImg = currentProduct ? (currentProduct.image_url || '/img/camiseta-1.webp') : '/img/camiseta-1.webp';
+                const fullProdImg = prodImg.startsWith('http') ? prodImg : `https://www.comiares.es${prodImg.startsWith('/') ? '' : '/'}${prodImg}`;
+                const conceptStr = `RESERVA ${name} ${surname}`.trim();
+
+                if (isCartCheckout) {
+                    total = window.cart.getCartTotal().toFixed(2);
+                    totalCents = Math.round(window.cart.getCartTotal() * 100);
+                }
+
+                const orderItems = (isCartCheckout && window.cart) ? window.cart.getCart() : [{
+                    name: prodName,
+                    name_es: currentProduct ? (currentProduct.name_es || currentProduct.name) : 'Camiseta Homenaje Ares SD',
+                    size: selectedSize || 'Talla Única',
+                    quantity: quantity,
+                    price: unitPriceVal,
+                    image_url: prodImg
+                }];
+
+                const allergensInput = document.getElementById('res-allergens');
+                const allergens = allergensInput ? allergensInput.value.trim() : '';
+                const finalNotes = allergens ? (notes ? `[Al·lèrgens: ${allergens}] ${notes}` : `[Al·lèrgens: ${allergens}]`) : notes;
+
+                const hasFoodItem = orderItems.some(i => i.is_food || i.slug === 'dinar-abrasam' || i.id === 'prod-dinar-abrasam-2026' || (i.category && i.category.toLowerCase().includes('menjar')) || (i.name && i.name.toLowerCase().includes('dinar')));
+                const hasOnSiteItem = orderItems.some(i => i.payment_method === 'on_site') || hasFoodItem;
+                const isFood = hasFoodItem || (currentProduct && (currentProduct.is_food || currentProduct.id === 'prod-dinar-abrasam-2026' || currentProduct.slug === 'dinar-abrasam' || (currentProduct.category && currentProduct.category.toLowerCase().includes('menjar')) || (currentProduct.category_es && currentProduct.category_es.toLowerCase().includes('comida'))));
+                const isOnSite = hasOnSiteItem || (currentProduct && (currentProduct.payment_method === 'on_site' || currentProduct.is_food));
+
+                const reservationData = {
+                    id: 'res-' + Date.now(),
+                    created_at: new Date().toISOString(),
+                    name,
+                    surname,
+                    email,
+                    size: isCartCheckout ? 'Vàries talles' : (selectedSize || (isFood ? 'Menú seleccionat' : 'Talla Única')),
+                    quantity: isCartCheckout ? window.cart.getCartCount() : quantity,
+                    amount_cents: totalCents,
+                    notes: finalNotes,
+                    allergens: allergens || '',
+                    payment_method: isOnSite ? 'on_site' : 'bank_transfer',
+                    status: isOnSite ? 'pending_payment' : 'pending_transfer',
+                    product_id: currentProduct ? currentProduct.id : 'prod-camiseta-ares-sd-2026',
+                    product_name: isCartCheckout ? 'Comanda Multi-producte' : prodName,
+                    product_slug: prodSlug,
+                    product_image: prodImg,
+                    product_image_url: prodImg,
+                    concept: conceptStr,
+                    items: orderItems
+                };
+
+                const totalQty = orderItems.reduce((acc, i) => acc + parseInt(i.quantity || 1, 10), 0);
+
+                const itemsHtml = orderItems.map(item => {
+                    const img = item.image_url.startsWith('http') ? item.image_url : ('https://www.comiares.es' + (item.image_url.startsWith('/') ? '' : '/') + item.image_url);
+                    const itemTotal = (parseFloat(item.price || 0) * parseInt(item.quantity || 1, 10)).toFixed(2).replace('.', ',');
+                    const unitPrice = parseFloat(item.price || 0).toFixed(2).replace('.', ',');
+                    const optLabel = isFood ? 'Menú' : 'Talla';
+                    return `<table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom: 8px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 8px 10px;">
+  <tr>
+    <td width="54" valign="middle" align="center" style="padding-right: 10px;">
+      <img src="${img}" alt="${escapeHTML(item.name)}" width="48" height="48" style="display: block; width: 48px; height: 48px; object-fit: contain; background: #ffffff; border-radius: 6px; border: 1px solid #cbd5e1; padding: 2px;">
+    </td>
+    <td valign="middle" style="font-family: 'Roboto', Arial, sans-serif; font-size: 13px; color: #0f172a;">
+      <strong style="color: #0f172a;">${item.quantity}x ${escapeHTML(item.name)}</strong>
+      <div style="font-size: 12px; color: #64748b; margin-top: 2px;">
+        ${optLabel}: <strong style="color: #334155;">${escapeHTML(item.size || (isFood ? 'Menú seleccionat' : 'Talla Única'))}</strong> &nbsp;·&nbsp; ${unitPrice} € / un.
+      </div>
+      ${allergens ? `<div style="font-size: 12px; color: #b45309; margin-top: 3px; font-weight: 600;">⚠️ Al·lèrgens: ${escapeHTML(allergens)}</div>` : ''}
+      ${isOnSite ? `<div style="font-size: 11px; color: #047857; margin-top: 3px; font-weight: 600;">📍 Pagament: El 5 de desembre pel matí a les brases (${itemTotal} €)</div>` : ''}
+    </td>
+    <td valign="middle" align="right" style="font-family: 'Roboto', Arial, sans-serif; font-size: 13px; font-weight: 700; color: #0f172a; padding-left: 8px;">
+      ${itemTotal} €
+    </td>
+  </tr>
+</table>`;
+                }).join('');
+
+                const bankConcept = `RESERVA ${name} ${surname}`.trim();
+                const productSummary = orderItems.map(i => `${i.quantity}x ${i.name} (${i.size})`).join(', ');
+
+                // 1. Instant local persistence
+                try {
+                    localStorage.setItem('ares_last_order', JSON.stringify({
+                        name, surname, email, items: orderItems, total, concept: bankConcept
+                    }));
+                    const stored = JSON.parse(localStorage.getItem('ares_reservations') || '[]');
+                    stored.unshift(reservationData);
+                    localStorage.setItem('ares_reservations', JSON.stringify(stored));
+                } catch(e) {
+                    console.warn('LocalStorage error:', e);
+                }
+
+                // 2. Clear cart instantly
+                if (isCartCheckout && window.cart) {
+                    window.cart.clearCart();
+                }
+
+                // 3. TRANSFORM MODAL IMMEDIATELY (0ms UI response!)
+                const modalBox = document.querySelector('#modal-reservation .modal-box') || document.querySelector('.modal-box');
+                if (modalBox) {
+                    modalBox.innerHTML = `
+                        <button class="modal-close" onclick="closeModal();" aria-label="Tancar" type="button" style="top:1rem;right:1rem;width:38px;height:38px;padding:0 !important;display:flex;align-items:center;justify-content:center;border-radius:50% !important;border:2px solid #000 !important;background:#fff !important;color:#000 !important;cursor:pointer;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+
+                        <div style="text-align:center; padding: 0.5rem 0;">
+                            <div style="width: 72px; height: 72px; background: #dcfce7; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; border: 2px solid #86efac;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#15803d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                            </div>
+
+                            <h2 style="font-size: 1.6rem; font-family: var(--font-heading); text-transform: uppercase; letter-spacing: -0.02em; margin-bottom: 0.5rem; color: var(--text-primary);">
+                                Reserva Registrada!
+                            </h2>
+
+                            <p style="font-size: 0.92rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 1.25rem;">
+                                Gràcies, <strong>${escapeHTML(name)}</strong>! Hem registrat la teua sol·licitud de reserva amb èxit.
+                            </p>
+
+                            <div style="background: #dcfce7; border: 1px solid #86efac; border-radius: 12px; padding: 0.85rem 1rem; font-size: 0.88rem; color: #15803d; font-weight: 700; margin-bottom: 1.25rem; line-height: 1.5; text-align: center;">
+                                📩 T'hem enviat un correu electrònic de confirmació a:<br>
+                                <u style="font-size: 0.95rem; word-break: break-all;">${escapeHTML(email)}</u>
+                            </div>
+
+                            ${isOnSite ? `
+                                <div style="background: #fffbeb; border: 2px solid #f59e0b; border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: left;">
+                                    <div style="font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #b45309; margin-bottom: 0.85rem; border-bottom: 1px solid #fde68a; padding-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
+                                        🔥 Informació de Pagament i Recollida:
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #92400e; font-weight: 600;">DATA I HORARI DE PAGAMENT:</div>
+                                        <div style="font-weight: 700; font-size: 0.95rem; color: #78350f;">5 de desembre, durant el matí</div>
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #92400e; font-weight: 600;">LLOC DE PAGAMENT:</div>
+                                        <div style="font-weight: 700; font-size: 0.92rem; color: #78350f;">A la plaça, mentre s'estiguen preparant les brases</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #92400e; font-weight: 600;">IMPORT TOTAL A ABONAR:</div>
+                                        <div style="font-weight: 800; font-size: 1.2rem; color: #b45309;">${total} €</div>
+                                    </div>
+                                </div>
+                            ` : `
+                                <div style="background: #f8fafc; border: 2px solid #0f172a; border-radius: 14px; padding: 1.25rem; margin-bottom: 1.25rem; text-align: left;">
+                                    <div style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: #0f172a; margin-bottom: 0.85rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.5rem;">
+                                        💳 Dades per a la transferència bancària:
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600;">TITULAR COMPTE:</div>
+                                        <div style="font-weight: 700; font-size: 0.9rem; color: #0f172a;">ASSOCIACIÓ JOVENTUT D’ARES</div>
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600;">COMPTE IBAN:</div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #cbd5e1; padding: 0.5rem 0.75rem; border-radius: 8px; gap: 0.5rem;">
+                                            <span style="font-family: monospace; font-weight: 700; font-size: 0.92rem; color: #0f172a; word-break: break-all;">ES75 0081 0276 0100 0192 3098</span>
+                                            <button type="button" class="btn-copy" onclick="copyModalText('ES7500810276010001923098', this)" style="padding: 0.35rem 0.65rem; font-size: 0.72rem; cursor: pointer; border-radius: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; font-weight: 600; flex-shrink: 0;">Copiar</button>
+                                        </div>
+                                    </div>
+                                    <div style="margin-bottom: 0.75rem;">
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #64748b; font-weight: 600;">IMPORT TOTAL A TRANSFERIR:</div>
+                                        <div style="font-weight: 800; font-size: 1.15rem; color: #15803d;">${total} €</div>
+                                    </div>
+                                    <div>
+                                        <div style="font-size: 0.7rem; text-transform: uppercase; color: #b91c1c; font-weight: 800; margin-bottom: 0.25rem;">CONCEPTE OBLIGATORI:</div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; background: #fff; border: 1px solid #cbd5e1; padding: 0.5rem 0.75rem; border-radius: 8px; gap: 0.5rem;">
+                                            <span style="font-weight: 800; font-size: 0.95rem; color: #0f172a;">${escapeHTML(bankConcept)}</span>
+                                            <button type="button" class="btn-copy" onclick="copyModalText('${escapeHTML(bankConcept).replace(/'/g, "\\'")}', this)" style="padding: 0.35rem 0.65rem; font-size: 0.72rem; cursor: pointer; border-radius: 6px; border: 1px solid #cbd5e1; background: #f1f5f9; font-weight: 600; flex-shrink: 0;">Copiar</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `}
+
+                            <div style="background: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 12px; padding: 1rem; margin-bottom: 1.25rem; text-align: left;">
+                                <div style="font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 700; margin-bottom: 0.75rem;">Productes reservats:</div>
+                                ${orderItems.map(item => `
+                                    <div style="display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; border-bottom: 1px solid var(--border-color);">
+                                        <img src="${item.image_url}" alt="${escapeHTML(item.name)}" style="width: 46px; height: 46px; object-fit: contain; background: #fff; border-radius: 6px; border: 1px solid var(--border-color); padding: 2px; flex-shrink: 0;">
+                                        <div style="flex: 1; min-width: 0;">
+                                            <div style="font-weight: 700; font-size: 0.85rem; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHTML(item.name)}</div>
+                                            <div style="font-size: 0.75rem; color: var(--text-muted);">${isFood ? 'Menú: ' : 'Talla: '}${escapeHTML(item.size || (isFood ? 'Menú seleccionat' : 'Talla Única'))} · Unitats: ${item.quantity}</div>
+                                        </div>
+                                        <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary); flex-shrink: 0;">${(parseFloat(item.price)*parseInt(item.quantity)).toFixed(2).replace('.',',')} €</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+
+                            <button type="button" class="btn btn-primary" style="width: 100%; padding: 0.85rem; font-weight: 800; border-radius: 12px; font-size: 0.9rem;" onclick="closeModal();">
+                                D'acord / Tancar
+                            </button>
+                        </div>
+                    `;
+                }
+
+                // 4. Background non-blocking DB & EmailJS triggers
+                (async () => {
+                    try {
+                        if (window.db && typeof window.db.addReservation === 'function') {
+                            await window.db.addReservation(reservationData);
+                        }
+                    } catch (dbErr) {
+                        console.warn('DB save exception:', dbErr);
+                    }
+
+                    if (window.emailjs) {
+                        try {
+                            const firstItemImg = (orderItems && orderItems.length > 0 && orderItems[0].image_url) ? orderItems[0].image_url : prodImg;
+                            const emailProdImg = firstItemImg.startsWith('http') ? firstItemImg : `https://www.comiares.es${firstItemImg.startsWith('/') ? '' : '/'}${firstItemImg}`;
+
+                            const isFoodOrder = isOnSite;
+                            const configuredFoodTemplate = localStorage.getItem('ares_emailjs_food_template_id') || 'template_abrasam';
+                            const targetTemplate = isFoodOrder ? configuredFoodTemplate : 'template_rrdhind';
+                            const emailParams = {
+                                name: name,
+                                surname: surname,
+                                to_name: name + ' ' + surname,
+                                email: email,
+                                to_email: email,
+                                reply_to: email,
+                                user_email: email,
+                                customer_email: email,
+                                product_name: isCartCheckout ? 'Comanda Multi-producte' : prodName,
+                                event_name: "Jornades Gastronòmiques a la Brasa «Abrasa'm»",
+                                event_date: "5 de desembre de 2026",
+                                event_location: "Plaça Major d'Ares del Maestrat",
+                                concept: isFoodOrder ? 'PAGAMENT EL 5 DE DESEMBRE A LES BRASES' : productSummary,
+                                bank_concept: isFoodOrder ? 'PAGAMENT EL 5 DE DESEMBRE A LES BRASES' : bankConcept,
+                                concept_text: isFoodOrder ? 'PAGAMENT EL 5 DE DESEMBRE A LES BRASES' : bankConcept,
+                                product_summary: productSummary,
+                                products_summary: productSummary,
+                                products: productSummary,
+                                reserved_products: productSummary,
+                                productes_reservats: productSummary,
+                                items_html: itemsHtml,
+                                product_image: emailProdImg,
+                                product_image_url: emailProdImg,
+                                logo_url: 'https://www.comiares.es/img/logo-email.png',
+                                iban: isFoodOrder ? 'No requerit (Abonament presencial el 5 de desembre pel matí a les brases)' : 'ES75 0081 0276 0100 0192 3098',
+                                bank_holder: isFoodOrder ? 'Pagament en mà a les brases' : 'ASSOCIACIÓ JOVENTUT D’ARES',
+                                payment_method: isFoodOrder ? 'Presencial (5 de desembre pel matí a les brases)' : 'Transferència bancària',
+                                payment_instructions: isFoodOrder ? "El pagament s'abonarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases a la plaça. No cal fer cap transferència prèvia." : "Realitza la transferència al compte IBAN indicat abans de 48 hores.",
+                                size: isCartCheckout ? 'Vàries talles' : (selectedSize || (isFood ? 'Menú seleccionat' : 'Talla Única')),
+                                qty: totalQty,
+                                total: total,
+                                allergens: allergens || 'Cap al·lèrgia indicada',
+                                notes: finalNotes || 'Cap'
+                            };
+
+                            const serviceId = localStorage.getItem('ares_emailjs_service_id') || "service_hu53lep";
+                            try {
+                                await emailjs.send(serviceId, targetTemplate, emailParams);
+                                console.log(`EmailJS: Correu enviat amb èxit (${targetTemplate})`);
+                            } catch (specificErr) {
+                                if (isFoodOrder && targetTemplate !== 'template_rrdhind') {
+                                    console.warn(`Template ${targetTemplate} no trobada a EmailJS, reenviant amb plantilla base:`, specificErr);
+                                    await emailjs.send(serviceId, "template_rrdhind", emailParams);
+                                } else {
+                                    throw specificErr;
+                                }
+                            }
+                            console.log('EmailJS: Correu enviat amb èxit');
+                        } catch (emailErr) {
+                            console.warn("EmailJS error:", emailErr);
+                        }
+                    }
+                })();
+            } catch (err) {
+                console.error("Submit handler error:", err);
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML = 'Confirmar Reserva';
+                }
+                alert('S\'ha produït un error al registrar la reserva: ' + err.message);
+            }
+        });
+        }
+
+        function copyModalText(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalHtml = btn.innerHTML;
+                btn.innerHTML = '<i data-lucide="check" style="width:12px;height:12px;color:#15803d;"></i> <span style="color:#15803d;">Copiat!</span>';
+                if (window.lucide) window.lucide.createIcons();
+                setTimeout(() => {
+                    btn.innerHTML = originalHtml;
+                    if (window.lucide) window.lucide.createIcons();
+                }, 2000);
+            }).catch(() => {
+                alert(text);
+            });
+        }
+
+        async function loadProductData() {
+            const params = new URLSearchParams(window.location.search);
+            const pathParts = window.location.pathname.split('/').filter(p => p && p !== 'index.html');
+            let slugParam = window.staticProductSlug || params.get('slug') || params.get('p') || params.get('id');
+
+            if (!slugParam && pathParts.length > 0) {
+                const lastPart = pathParts[pathParts.length - 1];
+                if (lastPart !== 'camisetes' && lastPart !== 'camisetes.html' && lastPart !== 'tenda' && lastPart !== 'tenda.html' && lastPart !== 'es') {
+                    slugParam = lastPart;
+                }
+            }
+            const isEs = window.location.pathname.includes('/es/');
+
+            function applyProduct(prod) {
+                if (!prod) return;
+                currentProduct = prod;
+                PRICE = parseFloat(prod.price) || 35.00;
+
+                const name = (isEs && prod.name_es) ? prod.name_es : (prod.name || 'Samarreta Homenatge Ares SD');
+                const desc = (isEs && prod.description_es) ? prod.description_es : (prod.description || '');
+                const cat = (isEs && prod.category_es) ? prod.category_es : (prod.category || 'Roba · Edició Limitada 2026');
+
+                const titleEl = document.getElementById('product-title');
+                if (titleEl) titleEl.textContent = name;
+
+                const breadcrumbNameEl = document.getElementById('breadcrumb-product-name');
+                if (breadcrumbNameEl) breadcrumbNameEl.textContent = name;
+
+                const modalTitleEl = document.getElementById('modal-product-name');
+                if (modalTitleEl) modalTitleEl.textContent = name;
+
+                const catEl = document.getElementById('product-breadcrumb-tag');
+                if (catEl) catEl.textContent = 'Tenda · ' + cat;
+
+                const subEl = document.getElementById('product-subtitle');
+                if (subEl) subEl.textContent = desc;
+
+                const priceEl = document.getElementById('product-price');
+                const priceFormatted = (PRICE % 1 === 0) ? `${PRICE}` : PRICE.toFixed(2);
+                if (priceEl) priceEl.innerHTML = `${priceFormatted}<span style="font-size:1.2rem;">€</span>`;
+
+                const btnLabel = document.getElementById('btn-label');
+                if (btnLabel) btnLabel.textContent = 'Reserva ja';
+
+                updateQty(quantity);
+
+                document.title = name + ' · Festes Ares 2026';
+
+                const isFood = prod.is_food || prod.id === 'prod-dinar-abrasam-2026' || prod.slug === 'dinar-abrasam' || (prod.category && prod.category.toLowerCase().includes('menjar')) || (prod.category_es && prod.category_es.toLowerCase().includes('comida'));
+
+                const optTitleEl = document.getElementById('product-option-title');
+                if (optTitleEl) {
+                    optTitleEl.innerHTML = (isFood ? (isEs ? 'Menú a elegir' : 'Menú a triar') : (isEs ? 'Talla' : 'Talla')) + ' <span id="selected-size-label" style="color:var(--text-primary);text-transform:none;letter-spacing:0;font-size:0.8rem;"></span>';
+                }
+
+                // Handle product sizes dynamically
+                let sizesList = Array.isArray(prod.sizes) ? prod.sizes : [];
+                if (typeof prod.sizes === 'string') {
+                    try { sizesList = JSON.parse(prod.sizes); } catch(e) { sizesList = prod.sizes.split(',').map(s => s.trim()); }
+                }
+                if (!sizesList || sizesList.length === 0) sizesList = [isFood ? "Menú Estàndard" : "Talla Única"];
+
+                const sizeGrid = document.getElementById('size-grid');
+                const sizeAccordion = document.getElementById('size-accordion');
+                const sizeGuideToggle = document.getElementById('size-guide-toggle-link');
+
+                if (sizeGrid) {
+                    if (isFood) {
+                        sizeGrid.classList.add('menu-grid');
+                    } else {
+                        sizeGrid.classList.remove('menu-grid');
+                    }
+                    const prevSelected = selectedSize;
+                    sizeGrid.innerHTML = sizesList.map(s => `<button type="button" class="size-btn" data-size="${s}"><span>${s}</span></button>`).join('');
+                    if (isFood) {
+                        if (prevSelected && sizesList.includes(prevSelected)) {
+                            selectedSize = prevSelected;
+                        } else {
+                            selectedSize = sizesList[0] || '';
+                        }
+                        const activeBtn = sizeGrid.querySelector(`.size-btn[data-size="${selectedSize}"]`);
+                        if (activeBtn) activeBtn.classList.add('active');
+                        const selLabel = document.getElementById('selected-size-label');
+                        if (selLabel) selLabel.textContent = selectedSize ? ('— ' + selectedSize) : '';
+                        if (sizeAccordion) sizeAccordion.style.display = 'none';
+                        if (sizeGuideToggle) sizeGuideToggle.style.display = 'none';
+                    } else if (sizesList.length === 1) {
+                        selectedSize = sizesList[0];
+                        const btn = sizeGrid.querySelector('.size-btn');
+                        if (btn) btn.classList.add('active');
+                        document.getElementById('selected-size-label').textContent = '— ' + selectedSize;
+                        if (sizeAccordion) sizeAccordion.style.display = 'none';
+                        if (sizeGuideToggle) sizeGuideToggle.style.display = 'none';
+                    } else {
+                        selectedSize = '';
+                        document.getElementById('selected-size-label').textContent = '';
+                        if (sizeAccordion) {
+                            sizeAccordion.style.display = 'block';
+                            const sgBody = sizeAccordion.querySelector('.size-guide-body');
+                            if (sgBody) {
+                                if (prod.slug === 'samarreta-mirador-maestrat') {
+                                    sgBody.innerHTML = `
+                                        <table class="sg-table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th><th>XS</th><th>S</th><th>M</th><th>L</th><th>XL</th><th>2XL</th><th>3XL</th><th>4XL</th><th>5XL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td title="Llargada total">A (Llarg)</td>
+                                                    <td>68</td><td>70</td><td>72</td><td>74</td><td>76</td><td>78</td><td>82</td><td>84</td><td>84</td>
+                                                </tr>
+                                                <tr>
+                                                    <td title="Amplada total">B (Ample)</td>
+                                                    <td>48</td><td>51</td><td>53,5</td><td>56</td><td>58</td><td>61</td><td>66</td><td>68</td><td>68</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <p class="sg-note"><strong>A</strong> = Llargada (cm) · <strong>B</strong> = Amplada (cm)</p>
+                                        <div style="margin-top: 0.75rem; text-align: center;">
+                                            <a href="/img/tallatge-mirador.png" target="_blank" rel="noopener" style="font-size: 0.82rem; font-weight: 700; color: var(--color-primary); text-decoration: underline; display: inline-flex; align-items: center; gap: 0.35rem;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+                                                Veure fitxa tècnica de tallatge oficial (imatge)
+                                            </a>
+                                        </div>
+                                    `;
+                                } else {
+                                    sgBody.innerHTML = `
+                                        <table class="sg-table">
+                                            <thead>
+                                                <tr>
+                                                    <th></th><th>S</th><th>M</th><th>L</th><th>XL</th>
+                                                    <th>2XL</th><th>3XL</th><th>4XL</th><th>5XL</th><th>6XL</th><th>7XL</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td title="Llargada total">A</td>
+                                                    <td>71</td><td>73</td><td>75</td><td>77</td>
+                                                    <td>79</td><td>81</td><td>83</td><td>85</td><td>87</td><td>89</td>
+                                                </tr>
+                                                <tr>
+                                                    <td title="Amplada total">B</td>
+                                                    <td>52</td><td>54</td><td>56</td><td>58</td>
+                                                    <td>60</td><td>62</td><td>64</td><td>66</td><td>68</td><td>70</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        <p class="sg-note"><strong>A</strong> = Llargada · <strong>B</strong> = Amplada · Mesures en CM</p>
+                                    `;
+                                }
+                            }
+                        }
+                        if (sizeGuideToggle) sizeGuideToggle.style.display = 'inline-block';
+                    }
+
+                    sizeGrid.querySelectorAll('.size-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            sizeGrid.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            selectedSize = btn.dataset.size;
+                            document.getElementById('selected-size-label').textContent = '— ' + selectedSize;
+                        });
+                    });
+                }
+
+                // Extract and normalize images list
+                let productImages = [];
+                if (Array.isArray(prod.images)) {
+                    productImages = prod.images.filter(Boolean);
+                } else if (typeof prod.images === 'string' && prod.images.trim()) {
+                    try {
+                        const parsed = JSON.parse(prod.images);
+                        if (Array.isArray(parsed)) productImages = parsed.filter(Boolean);
+                        else productImages = prod.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+                    } catch(e) {
+                        productImages = prod.images.split(',').map(s => s.trim().replace(/^["'{]+|["'}]+$/g, '')).filter(Boolean);
+                    }
+                }
+                productImages = [...new Set(productImages.map(s => typeof s === 'string' ? s.trim() : s).filter(Boolean))];
+                if (productImages.length === 0 && prod.image_url) {
+                    productImages = [prod.image_url];
+                }
+
+                const primaryImg = productImages.length > 0 ? productImages[0] : (prod.image_url || '/img/camiseta-1.webp');
+                const mainImg = document.getElementById('main-img');
+                if (mainImg) mainImg.src = primaryImg;
+
+                const galleryStrip = document.querySelector('.gallery-thumbs, .product-gallery-strip, #product-gallery-strip');
+                if (galleryStrip) {
+                    if (productImages.length > 1) {
+                        galleryStrip.style.display = 'flex';
+                        galleryStrip.innerHTML = productImages.map((img, idx) => `
+                            <div class="gallery-thumb ${idx === 0 ? 'active' : ''}" data-img="${img}" data-alt="${name} — Imatge ${idx + 1}">
+                                <img src="${img}" alt="${name} — Imatge ${idx + 1}">
+                            </div>
+                        `).join('');
+                        galleryStrip.querySelectorAll('.gallery-thumb').forEach(thumb => {
+                            thumb.addEventListener('click', () => {
+                                galleryStrip.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+                                thumb.classList.add('active');
+                                if (mainImg && thumb.dataset.img) {
+                                    mainImg.src = thumb.dataset.img;
+                                }
+                            });
+                        });
+                    } else if (productImages.length === 1) {
+                        galleryStrip.style.display = 'flex';
+                        galleryStrip.innerHTML = `
+                            <div class="gallery-thumb active" data-img="${productImages[0]}" data-alt="${name} — Imatge 1">
+                                <img src="${productImages[0]}" alt="${name} — Imatge 1">
+                            </div>
+                        `;
+                    } else {
+                        galleryStrip.style.display = 'none';
+                        galleryStrip.innerHTML = '';
+                    }
+                }
+
+                const galleryMain = document.getElementById('gallery-main');
+                if (galleryMain) {
+                    galleryMain.style.cursor = 'default';
+                    galleryMain.onclick = null;
+                }
+
+                const isClosed = prod.status === 'closed' || prod.status === 'sold_out' || prod.active === false;
+                if (isClosed) {
+                    const closedOverlay = document.getElementById('closed-overlay');
+                    if (closedOverlay) {
+                        closedOverlay.style.display = 'block';
+                        if (prod.active === false) {
+                            const closedTitle = closedOverlay.querySelector('h2') || closedOverlay.querySelector('h3');
+                            if (closedTitle) closedTitle.textContent = "Producte no disponible";
+                            const closedDesc = closedOverlay.querySelector('p');
+                            if (closedDesc) closedDesc.textContent = "Aquest producte es troba actualment desactivat de la tenda.";
+                        }
+                    }
+                    const purchSec = document.getElementById('purchase-section');
+                    if (purchSec) purchSec.remove();
+                    const resModalEl = document.getElementById('modal-reservation');
+                    if (resModalEl) resModalEl.remove();
+                } else {
+                    document.getElementById('closed-overlay').style.display = 'none';
+                    const purchSec = document.getElementById('purchase-section');
+                    if (purchSec) purchSec.style.display = 'block';
+                }
+
+                // Update badges & security text depending on food vs merch
+                const btnSecureEl = document.querySelector('.btn-secure');
+                const infoBadgesEl = document.querySelector('.info-badges');
+                if (isFood) {
+                    if (btnSecureEl) {
+                        btnSecureEl.innerHTML = `<i data-lucide="utensils" style="width:14px;height:14px;"></i> Pagament el 5 de desembre a les brases · Confirmació per correu`;
+                    }
+                    if (infoBadgesEl) {
+                        infoBadgesEl.innerHTML = `
+                            <div class="info-badge-item">
+                                <i data-lucide="calendar"></i>
+                                <div>
+                                    <strong>5 de desembre de 2026</strong>
+                                    <br><span>Jornades Gastronòmiques a la brasa a Ares del Maestrat</span>
+                                </div>
+                            </div>
+                            <div class="info-badge-item">
+                                <i data-lucide="flame"></i>
+                                <div>
+                                    <strong>Pagament presencial a les brases</strong>
+                                    <br><span>S'abonarà el matí del 5 de desembre mentre es preparen les brases</span>
+                                </div>
+                            </div>
+                            <div class="info-badge-item">
+                                <i data-lucide="mail"></i>
+                                <div>
+                                    <strong>Confirmació per correu</strong>
+                                    <br><span>Rebràs la confirmació i resum de la teua reserva per correu electrònic</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                } else {
+                    if (btnSecureEl) {
+                        btnSecureEl.innerHTML = `<i data-lucide="receipt" style="width:14px;height:14px;"></i> Pagament per transferència bancària · Rebràs les dades per correu`;
+                    }
+                    if (infoBadgesEl) {
+                        infoBadgesEl.innerHTML = `
+                            <div class="info-badge-item">
+                                <i data-lucide="package"></i>
+                                <div>
+                                    <strong>Enviament en lot</strong>
+                                    <br><span>Un cop tancades les reserves, enviem a fàbrica</span>
+                                </div>
+                            </div>
+                            <div class="info-badge-item">
+                                <i data-lucide="mail"></i>
+                                <div>
+                                    <strong>Instruccions per email</strong>
+                                    <br><span>Rebràs el número de compte i instruccions</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                if (window.lucide) {
+                    try { lucide.createIcons(); } catch(e){}
+                }
+
+            }
+
+            const HARDCODED_PRODUCTS = [
+                {
+                    id: "prod-dinar-abrasam-2026",
+                    name: "Dinar Jornades Gastronòmiques «Abrasa'm»",
+                    name_es: "Comida Jornadas Gastronómicas «Abrasa'm»",
+                    slug: "dinar-abrasam",
+                    category: "Menjars · Jornades Gastronòmiques 2026",
+                    category_es: "Comidas · Jornadas Gastronómicas 2026",
+                    price: 14.00,
+                    status: "open",
+                    description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: taronges.\n\n🍽️ Recorda dur els teus coberts, plats i gots.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+                    description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: naranjas.\n\n🍽️ Recuerda llevar tus cubiertos, platos y vasos.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
+                    image_url: "/img/dinar-abrasam-1.webp",
+                    images: ["/img/dinar-abrasam-1.webp"],
+                    sizes: [
+                        "Menú A: 1/4 conill, 2 cansalà",
+                        "Menú B: 1 llonganiça, 1 xoriç, 2 cansalà",
+                        "Menú C: Opció vegetariana (per determinar)"
+                    ],
+                    sizes_es: [
+                        "Menú A: 1/4 conejo, 2 panceta",
+                        "Menú B: 1 longaniza, 1 chorizo, 2 panceta",
+                        "Menú C: Opción vegetariana (por determinar)"
+                    ],
+                    is_food: true,
+                    payment_method: "on_site",
+                    payment_notice: "El pagament es farà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+                    payment_notice_es: "El pago se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas."
+                },
+                {
+                    id: "prod-camiseta-ares-sd-2026",
+                    name: "Samarreta homenatge Ares SD",
+                    name_es: "Camiseta homenaje Ares SD",
+                    slug: "samarreta-ares-sd",
+                    category: "Roba · Edició Limitada 2026",
+                    category_es: "Ropa · Edición Limitada 2026",
+                    price: 35.00,
+                    status: "closed",
+                    description: "Commemora la història de l'Ares SD amb esta samarreta d'edició limitada. Un homenatge de la Comissió de Festes d'Ares al primer equip de futbol del poble, nascut l'any 1980 de l'entusiasme d'un grup de joves d'Ares.",
+                    description_es: "Conmemora la historia del Ares SD con esta camiseta de edición limitada. Un homenaje de la Comisión de Fiestas de Ares al primer equipo de fútbol del pueblo, nacido en 1980 gracias al entusiasmo de un grupo de jóvenes de Ares.",
+                    image_url: "/img/camiseta-1.webp",
+                    images: ["/img/camiseta-1.webp", "/img/camiseta-2.webp", "/img/camiseta-3.webp", "/img/camiseta-4.webp"],
+                    sizes: ["S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL", "6XL", "7XL"]
+                },
+                {
+                    id: "prod-tote-bag-mirador-2026",
+                    name: "Tote Bag El Mirador del Maestrat",
+                    name_es: "Tote Bag El Mirador del Maestrat",
+                    slug: "tote-bag",
+                    category: "Complements · Edició Limitada 2026",
+                    category_es: "Complementos · Edición Limitada 2026",
+                    price: 6.00,
+                    status: "closed",
+                    description: "Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l'any 2026. Bossa ideal per al dia a dia.",
+                    description_es: "Bolsa de tela de color negro con la ilustración ganadora del Concurso de Diseño para Fiestas del año 2026. Bolsa ideal para el día a día.",
+                    image_url: "/img/tote-bag-1.jpg",
+                    images: ["/img/tote-bag-1.jpg"],
+                    sizes: ["Talla Única"]
+                },
+                {
+                    id: "prod-samarreta-mirador-2026",
+                    name: "Samarreta «El mirador del Maestrat»",
+                    name_es: "Camiseta «El mirador del Maestrat»",
+                    slug: "samarreta-mirador-maestrat",
+                    category: "Roba · Edició Limitada 2026",
+                    category_es: "Ropa · Edición Limitada 2026",
+                    price: 12.00,
+                    status: "closed",
+                    description: "Samarreta de color negre amb la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
+                    description_es: "Camiseta de color negro con la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
+                    image_url: "/img/samarreta-mirador-1.jpg",
+                    images: ["/img/samarreta-mirador-1.jpg"],
+                    sizes: ["XS", "S", "M", "L", "XL", "2XL", "3XL", "4XL", "5XL"]
+                },
+                {
+                    id: "prod-rinyonera-mirador-2026",
+                    name: "Rinyonera «El mirador del Maestrat»",
+                    name_es: "Riñonera «El mirador del Maestrat»",
+                    slug: "rinyonera-mirador-maestrat",
+                    category: "Complements · Edició Limitada 2026",
+                    category_es: "Complementos · Edición Limitada 2026",
+                    price: 12.00,
+                    status: "closed",
+                    description: "Rinyonera de color negre amb cinta ajustable i la il·lustració topogràfica «El mirador del Maestrat» de la Comissió de Festes d'Ares del Maestrat.",
+                    description_es: "Riñonera de color negro con cinta ajustable y la ilustración topográfica «El mirador del Maestrat» de la Comisión de Fiestas de Ares del Maestrat.",
+                    image_url: "/img/rinyonera-mirador-1.jpg",
+                    images: ["/img/rinyonera-mirador-1.jpg"],
+                    sizes: ["Talla Única"]
+                }
+            ];
+
+            // 1. Instant sync load from HARDCODED_PRODUCTS and localStorage (0 ms)
+            try {
+                const localCfg = JSON.parse(localStorage.getItem('ares_shop_config') || '{}');
+                if (localCfg.open !== undefined) window.__shopConfigOpen = localCfg.open;
+            } catch(e) {}
+
+            try {
+                const targetSlug = slugParam || 'samarreta-ares-sd';
+                let match = HARDCODED_PRODUCTS.find(p => p.slug === targetSlug || p.id === targetSlug) || HARDCODED_PRODUCTS[0];
+                const local = JSON.parse(localStorage.getItem('ares_products') || '[]');
+                const localMatch = local.find(p => p.slug === targetSlug || p.id === targetSlug || (match && p.id === match.id));
+                if (localMatch) match = { ...match, ...localMatch };
+                if (match) applyProduct(match);
+            } catch(e) {}
+
+            // 2. Fetch fresh data from DB / Supabase
+            try {
+                if (window.db) {
+                    if (typeof window.db.getShopConfig === 'function') {
+                        window.db.getShopConfig().then(cfg => {
+                            if (cfg && cfg.open !== undefined) {
+                                window.__shopConfigOpen = cfg.open;
+                                if (currentProduct) applyProduct(currentProduct);
+                            }
+                        }).catch(() => {});
+                    }
+
+                    let prod = null;
+                    if (slugParam && typeof window.db.getProductBySlug === 'function') {
+                        prod = await window.db.getProductBySlug(slugParam);
+                    }
+                    if (typeof window.db.getProducts === 'function') {
+                        const all = await window.db.getProducts();
+                        if (all && all.length > 0) {
+                            if (slugParam) {
+                                prod = all.find(p => p.slug === slugParam || p.id === slugParam) || prod;
+                            } else {
+                                prod = all.find(p => p.slug === 'samarreta-ares-sd' || p.id === 'prod-camiseta-ares-sd-2026') || all[0];
+                            }
+                        }
+                    }
+                    if (prod) applyProduct(prod);
+                }
+            } catch (err) {
+                console.warn('Error loading fresh product data:', err);
+            }
+        }
+
+        // Run immediately and on page load
+        loadProductData();
+        document.addEventListener('DOMContentLoaded', loadProductData);
+        window.addEventListener('load', () => {
+            if (window.lucide) window.lucide.createIcons();
+            loadProductData();
+        });
+    </script>
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</body>
+</html>

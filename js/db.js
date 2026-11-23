@@ -184,6 +184,38 @@ const MOCK_PHOTOS = [
 
 const DEFAULT_PRODUCTS = [
     {
+        id: "prod-dinar-abrasam-2026",
+        name: "Dinar Jornades Gastronòmiques «Abrasa'm»",
+        name_es: "Comida Jornadas Gastronómicas «Abrasa'm»",
+        slug: "dinar-abrasam",
+        category: "Menjars · Jornades Gastronòmiques 2026",
+        category_es: "Comidas · Jornadas Gastronómicas 2026",
+        price: 14.00,
+        status: "open",
+        description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: taronges.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+        description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: naranjas.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
+        image_url: "/img/dinar-abrasam-1.webp",
+        images: [
+            "/img/dinar-abrasam-1.webp"
+        ],
+        sizes: [
+            "Menú A: 1/4 conill, 2 cansalà",
+            "Menú B: 1 llonganiça, 1 xoriç, 2 cansalà",
+            "Menú C: Opció vegetariana (per determinar)"
+        ],
+        sizes_es: [
+            "Menú A: 1/4 conejo, 2 panceta",
+            "Menú B: 1 longaniza, 1 chorizo, 2 panceta",
+            "Menú C: Opción vegetariana (por determinar)"
+        ],
+        is_food: true,
+        payment_method: "on_site",
+        payment_notice: "El pagament es farà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+        payment_notice_es: "El pago se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
+        created_at: "2026-11-23T19:00:00.000000+00:00",
+        active: true
+    },
+    {
         id: "prod-camiseta-ares-sd-2026",
         name: "Samarreta homenatge Ares SD",
         name_es: "Camiseta homenaje Ares SD",
@@ -2653,6 +2685,16 @@ class AppDatabase {
             products.forEach((p, idx) => {
                 p.order = idx;
             });
+
+            // For public store views, always prioritize open reservation products first
+            if (!isAdmin) {
+                products.sort((a, b) => {
+                    const aOpen = (a.status === 'open') ? 1 : 0;
+                    const bOpen = (b.status === 'open') ? 1 : 0;
+                    if (aOpen !== bOpen) return bOpen - aOpen;
+                    return (a.order || 0) - (b.order || 0);
+                });
+            }
         } catch (cfgErr) {
             console.warn("Could not apply shop config to products:", cfgErr);
         }

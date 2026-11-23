@@ -3047,11 +3047,13 @@ document.addEventListener('DOMContentLoaded', () => {
         const inputKey = document.getElementById('emailjs-public-key');
         const inputTemplate = document.getElementById('emailjs-paid-template-id');
         const inputPickupTemplate = document.getElementById('emailjs-pickup-template-id');
+        const inputFoodTemplate = document.getElementById('emailjs-food-template-id');
 
         if (inputService) inputService.value = localStorage.getItem('ares_emailjs_service_id') || 'service_hu53lep';
         if (inputKey) inputKey.value = localStorage.getItem('ares_emailjs_public_key') || 'KJ16ReAN9A8vk7rQg';
         if (inputTemplate) inputTemplate.value = localStorage.getItem('ares_emailjs_paid_template_id') || 'template_s9dtrrv';
         if (inputPickupTemplate) inputPickupTemplate.value = localStorage.getItem('ares_emailjs_pickup_template_id') || 'template_recollida';
+        if (inputFoodTemplate) inputFoodTemplate.value = localStorage.getItem('ares_emailjs_food_template_id') || 'template_abrasam';
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -3059,6 +3061,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (inputKey) localStorage.setItem('ares_emailjs_public_key', inputKey.value.trim());
             if (inputTemplate) localStorage.setItem('ares_emailjs_paid_template_id', inputTemplate.value.trim());
             if (inputPickupTemplate) localStorage.setItem('ares_emailjs_pickup_template_id', inputPickupTemplate.value.trim());
+            if (inputFoodTemplate) localStorage.setItem('ares_emailjs_food_template_id', inputFoodTemplate.value.trim());
             showAdminToast("✓ Configuració d'EmailJS desada correctament.", 'success', 4000);
         });
 
