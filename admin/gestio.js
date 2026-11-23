@@ -2649,6 +2649,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     .replace(/^Observacions:\s*/i, '')
                     .trim();
 
+                let shortSize = escSize;
+                let sizeSubtitle = '';
+                if (escSize.includes(':')) {
+                    const parts = escSize.split(':');
+                    shortSize = parts[0].trim();
+                    sizeSubtitle = parts.slice(1).join(':').trim();
+                } else if (escSize.length > 15) {
+                    shortSize = escSize.slice(0, 15) + '…';
+                    sizeSubtitle = escSize;
+                }
+
                 let prodDetailsHtml = '';
                 if (Array.isArray(r.items) && r.items.length > 1) {
                     const itemsList = r.items.map(it => {
@@ -2738,20 +2749,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 return `<tr style="${isCancelled ? 'opacity: 0.6; background: rgba(0,0,0,0.02);' : ''}">
-                    <td style="padding:0.5rem 0.6rem;overflow:hidden;text-overflow:ellipsis;">
+                    <td style="padding:0.5rem 0.6rem;max-width:260px;">
                         <div style="font-weight:700;font-size:0.85rem;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escName}</div>
                         <div style="font-size:0.72rem;color:var(--text-secondary);margin-top:0.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escEmail}</div>
                         ${prodDetailsHtml}
                         ${notesBadgeHtml}
                     </td>
-                    <td style="text-align:center;padding:0.5rem 0.35rem;white-space:nowrap;">
-                        <span style="font-weight:800;font-size:0.85rem;">${escSize}</span>
-                        <span style="font-size:0.72rem;color:var(--text-secondary);">×${r.quantity || 1}</span>
+                    <td style="text-align:center;padding:0.5rem 0.35rem;min-width:90px;max-width:140px;">
+                        <div style="font-weight:800;font-size:0.85rem;white-space:nowrap;">
+                            ${shortSize} <span style="font-size:0.72rem;color:var(--text-secondary);font-weight:400;">×${r.quantity || 1}</span>
+                        </div>
+                        ${sizeSubtitle ? `<div style="font-size:0.68rem;color:var(--text-muted);line-height:1.15;margin-top:2px;" title="${escSize}">${sizeSubtitle}</div>` : ''}
                     </td>
                     <td style="font-weight:700;font-size:0.85rem;padding:0.5rem 0.35rem;white-space:nowrap;">${amount}</td>
                     <td style="padding:0.5rem 0.35rem;white-space:nowrap;text-align:center;">${statusBadge}</td>
                     <td style="font-size:0.72rem;color:var(--text-secondary);padding:0.5rem 0.35rem;white-space:nowrap;">${dateStr}</td>
-                    <td style="white-space:nowrap;text-align:right;padding:0.5rem 0.6rem;width:165px;">
+                    <td style="white-space:nowrap;text-align:right;padding:0.5rem 0.6rem;width:155px;flex-shrink:0;">
                         ${actionsHtml}
                     </td>
                 </tr>`;
