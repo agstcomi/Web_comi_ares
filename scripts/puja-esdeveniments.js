@@ -69,7 +69,7 @@ async function main() {
   supabaseUrl = supabaseUrl.replace(/\/+$/, "");
 
   // 3. Llegir els actes de data/events.json
-  const eventsPath = path.join(__dirname, '..', 'data', 'events.json');
+  const eventsPath = path.join(__dirname, '..', 'public', 'data', 'events.json');
   if (!fs.existsSync(eventsPath)) {
     console.error(`ERROR: No s'ha trobat el fitxer d'actes a: ${eventsPath}`);
     process.exit(1);

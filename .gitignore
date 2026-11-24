@@ -8,14 +8,19 @@ node_modules/
 package-lock.json
 
 # Generated news subdirectories
-noticies/
-es/noticies/
+public/noticies/
+public/es/noticies/
 
-# Generated product subdirectories
-camisetes/*/
-es/camisetes/*/
+# Generated product & shop subdirectories (built automatically by deploy.yml)
+public/camisetes/index.html
+public/camisetes/*/
+public/es/camisetes/index.html
+public/es/camisetes/*/
+public/tenda/
+public/es/tenda/
 
 # Generated database data files
+public/data/
 data/
 
 # Build artifacts

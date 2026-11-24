@@ -10,7 +10,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const WEB_ROOT = path.join(__dirname, '..');
+const WEB_ROOT = path.join(__dirname, '..', 'public');
 const CSS_VERSION = '1.20';
 
 // All HTML files to process (relative to WEB_ROOT)

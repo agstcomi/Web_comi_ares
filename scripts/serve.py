@@ -54,10 +54,14 @@ if __name__ == '__main__':
             port = int(sys.argv[1])
         except ValueError:
             pass
+    # Servir desde la carpeta public/
+    public_dir = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'public'))
+    if os.path.isdir(public_dir):
+        os.chdir(public_dir)
     # Asegurar tipos MIME para XML y XSL
     http.server.SimpleHTTPRequestHandler.extensions_map.update({
         '.xml': 'application/xml',
         '.xsl': 'application/xml',
     })
-    print(f"Iniciando servidor local en http://localhost:{port} (con soporte para URLs limpias)...")
+    print(f"Iniciando servidor local en http://localhost:{port} desde {os.getcwd()} (con soporte para URLs limpias)...")
     http.server.test(HandlerClass=CleanURLHandler, port=port)

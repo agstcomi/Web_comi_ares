@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
+const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 // Les credencials es llegeixen de variables d'entorn injectades per GitHub Actions Secrets o .env local.
 if ((!process.env.SUPABASE_URL || !process.env.SUPABASE_ANON_KEY) && fs.existsSync(path.join(__dirname, '..', '.env'))) {
   const envContent = fs.readFileSync(path.join(__dirname, '..', '.env'), 'utf-8');
@@ -210,7 +211,7 @@ async function main() {
     let events = [];
     let photos = [];
     let products = [];
-    const dataDir = path.join(__dirname, '..', 'data');
+    const dataDir = path.join(PUBLIC_DIR, 'data');
 
     try {
       const newsResponse = await fetch(`${SUPABASE_URL}/rest/v1/news?status=in.(published,scheduled)&select=*&order=created_at.desc`, { headers });
@@ -339,8 +340,8 @@ async function main() {
     }
 
     // 2. Leer las plantillas base
-    const templatePathVal = path.join(__dirname, '..', 'noticies.html');
-    const templatePathCast = path.join(__dirname, '..', 'es', 'noticies.html');
+    const templatePathVal = path.join(PUBLIC_DIR, 'noticies.html');
+    const templatePathCast = path.join(PUBLIC_DIR, 'es', 'noticies.html');
 
     if (!fs.existsSync(templatePathVal)) {
       throw new Error(`No se encuentra la plantilla en Valenciano: ${templatePathVal}`);
@@ -365,7 +366,7 @@ async function main() {
       // --- GENERAR VERSIÓN EN VALENCIANO ---
       if (article.slug) {
         const slug = article.slug;
-        const outDir = path.join(__dirname, '..', 'noticies', slug);
+        const outDir = path.join(PUBLIC_DIR, 'noticies', slug);
         if (!fs.existsSync(outDir)) {
           fs.mkdirSync(outDir, { recursive: true });
         }
@@ -447,7 +448,7 @@ async function main() {
       // --- GENERAR VERSIÓN EN CASTELLANO ---
       if (article.slug_es) {
         const slugEs = article.slug_es;
-        const outDir = path.join(__dirname, '..', 'es', 'noticies', slugEs);
+        const outDir = path.join(PUBLIC_DIR, 'es', 'noticies', slugEs);
         if (!fs.existsSync(outDir)) {
           fs.mkdirSync(outDir, { recursive: true });
         }
@@ -531,7 +532,7 @@ async function main() {
     console.log("Generando archivos index.html para listados de noticias en subdirectorios...");
     
     // Valenciano: copiar noticies.html a noticies/index.html
-    const listDirVal = path.join(__dirname, '..', 'noticies');
+    const listDirVal = path.join(PUBLIC_DIR, 'noticies');
     if (!fs.existsSync(listDirVal)) {
       fs.mkdirSync(listDirVal, { recursive: true });
     }
@@ -539,7 +540,7 @@ async function main() {
     console.log("  [OK] Creado listado: noticies/index.html");
 
     // Castellano: copiar es/noticies.html a es/noticies/index.html
-    const listDirCast = path.join(__dirname, '..', 'es', 'noticies');
+    const listDirCast = path.join(PUBLIC_DIR, 'es', 'noticies');
     if (!fs.existsSync(listDirCast)) {
       fs.mkdirSync(listDirCast, { recursive: true });
     }
@@ -548,21 +549,25 @@ async function main() {
 
     // --- GENERAR PÁGINAS ESTÁTICAS DE PRODUCTOS (CAMISETES) ---
     console.log("Generando páginas estáticas de productos...");
-    const templateProdValPath = path.join(__dirname, '..', 'camisetes.html');
-    const templateProdCastPath = path.join(__dirname, '..', 'es', 'camisetes.html');
+    const templateProdValPath = path.join(PUBLIC_DIR, 'camisetes.html');
+    const templateProdCastPath = path.join(PUBLIC_DIR, 'es', 'camisetes.html');
 
     if (fs.existsSync(templateProdValPath) && fs.existsSync(templateProdCastPath)) {
       const templateProdVal = fs.readFileSync(templateProdValPath, 'utf-8');
       const templateProdCast = fs.readFileSync(templateProdCastPath, 'utf-8');
 
-      // Keep root camisetes directory indices in sync with templates
-      fs.writeFileSync(path.join(__dirname, '..', 'camisetes', 'index.html'), templateProdVal, 'utf-8');
-      fs.writeFileSync(path.join(__dirname, '..', 'es', 'camisetes', 'index.html'), templateProdCast, 'utf-8');
-      if (fs.existsSync(path.join(__dirname, '..', 'tenda.html'))) {
-        fs.writeFileSync(path.join(__dirname, '..', 'tenda', 'index.html'), fs.readFileSync(path.join(__dirname, '..', 'tenda.html'), 'utf-8'), 'utf-8');
+      // Keep root camisetes & tenda directory indices in sync with templates
+      fs.mkdirSync(path.join(PUBLIC_DIR, 'camisetes'), { recursive: true });
+      fs.mkdirSync(path.join(PUBLIC_DIR, 'es', 'camisetes'), { recursive: true });
+      fs.mkdirSync(path.join(PUBLIC_DIR, 'tenda'), { recursive: true });
+      fs.mkdirSync(path.join(PUBLIC_DIR, 'es', 'tenda'), { recursive: true });
+      fs.writeFileSync(path.join(PUBLIC_DIR, 'camisetes', 'index.html'), templateProdVal, 'utf-8');
+      fs.writeFileSync(path.join(PUBLIC_DIR, 'es', 'camisetes', 'index.html'), templateProdCast, 'utf-8');
+      if (fs.existsSync(path.join(PUBLIC_DIR, 'tenda.html'))) {
+        fs.writeFileSync(path.join(PUBLIC_DIR, 'tenda', 'index.html'), fs.readFileSync(path.join(PUBLIC_DIR, 'tenda.html'), 'utf-8'), 'utf-8');
       }
-      if (fs.existsSync(path.join(__dirname, '..', 'es', 'tenda.html'))) {
-        fs.writeFileSync(path.join(__dirname, '..', 'es', 'tenda', 'index.html'), fs.readFileSync(path.join(__dirname, '..', 'es', 'tenda.html'), 'utf-8'), 'utf-8');
+      if (fs.existsSync(path.join(PUBLIC_DIR, 'es', 'tenda.html'))) {
+        fs.writeFileSync(path.join(PUBLIC_DIR, 'es', 'tenda', 'index.html'), fs.readFileSync(path.join(PUBLIC_DIR, 'es', 'tenda.html'), 'utf-8'), 'utf-8');
       }
 
       for (const product of products) {
@@ -580,11 +585,11 @@ async function main() {
         imageUrl = getAbsoluteImageUrl(imageUrl);
 
         // --- VALENCIANO ---
-        const outDirVal = path.join(__dirname, '..', 'tenda', product.slug);
+        const outDirVal = path.join(PUBLIC_DIR, 'tenda', product.slug);
         if (!fs.existsSync(outDirVal)) {
           fs.mkdirSync(outDirVal, { recursive: true });
         }
-        const outDirCamVal = path.join(__dirname, '..', 'camisetes', product.slug);
+        const outDirCamVal = path.join(PUBLIC_DIR, 'camisetes', product.slug);
         if (!fs.existsSync(outDirCamVal)) {
           fs.mkdirSync(outDirCamVal, { recursive: true });
         }
@@ -780,11 +785,11 @@ async function main() {
         console.log(`  [OK] Creado: tenda/${product.slug}/index.html (y camisetes/${product.slug}/index.html)`);
 
         // --- CASTELLANO ---
-        const outDirCast = path.join(__dirname, '..', 'es', 'tenda', product.slug);
+        const outDirCast = path.join(PUBLIC_DIR, 'es', 'tenda', product.slug);
         if (!fs.existsSync(outDirCast)) {
           fs.mkdirSync(outDirCast, { recursive: true });
         }
-        const outDirCamCast = path.join(__dirname, '..', 'es', 'camisetes', product.slug);
+        const outDirCamCast = path.join(PUBLIC_DIR, 'es', 'camisetes', product.slug);
         if (!fs.existsSync(outDirCamCast)) {
           fs.mkdirSync(outDirCamCast, { recursive: true });
         }
@@ -969,19 +974,19 @@ async function main() {
     }
 
     // Ensure /tenda/ and /es/tenda/ directories have index.html
-    const tendaDir = path.join(__dirname, '..', 'tenda');
+    const tendaDir = path.join(PUBLIC_DIR, 'tenda');
     if (!fs.existsSync(tendaDir)) fs.mkdirSync(tendaDir, { recursive: true });
-    if (fs.existsSync(path.join(__dirname, '..', 'tenda.html'))) {
-      fs.copyFileSync(path.join(__dirname, '..', 'tenda.html'), path.join(tendaDir, 'index.html'));
+    if (fs.existsSync(path.join(PUBLIC_DIR, 'tenda.html'))) {
+      fs.copyFileSync(path.join(PUBLIC_DIR, 'tenda.html'), path.join(tendaDir, 'index.html'));
     }
-    const esTendaDir = path.join(__dirname, '..', 'es', 'tenda');
+    const esTendaDir = path.join(PUBLIC_DIR, 'es', 'tenda');
     if (!fs.existsSync(esTendaDir)) fs.mkdirSync(esTendaDir, { recursive: true });
-    if (fs.existsSync(path.join(__dirname, '..', 'es', 'tenda.html'))) {
-      fs.copyFileSync(path.join(__dirname, '..', 'es', 'tenda.html'), path.join(esTendaDir, 'index.html'));
+    if (fs.existsSync(path.join(PUBLIC_DIR, 'es', 'tenda.html'))) {
+      fs.copyFileSync(path.join(PUBLIC_DIR, 'es', 'tenda.html'), path.join(esTendaDir, 'index.html'));
     }
 
     // --- ACTUALIZAR SITEMAP.XML ---
-    const sitemapPath = path.join(__dirname, '..', 'sitemap.xml');
+    const sitemapPath = path.join(PUBLIC_DIR, 'sitemap.xml');
     if (fs.existsSync(sitemapPath)) {
       let sitemapContent = fs.readFileSync(sitemapPath, 'utf-8');
       
@@ -1225,7 +1230,7 @@ async function main() {
     };
 
     // Actualizar programacio.html (Valenciano)
-    const progPathVal = path.join(__dirname, '..', 'programacio.html');
+    const progPathVal = path.join(PUBLIC_DIR, 'programacio.html');
     if (fs.existsSync(progPathVal)) {
       let htmlContent = fs.readFileSync(progPathVal, 'utf-8');
       const startIdx = htmlContent.indexOf('<!-- DYNAMIC EVENTS SCHEMA START -->');
@@ -1243,7 +1248,7 @@ async function main() {
     }
 
     // Actualizar es/programacio.html (Castellano)
-    const progPathCast = path.join(__dirname, '..', 'es', 'programacio.html');
+    const progPathCast = path.join(PUBLIC_DIR, 'es', 'programacio.html');
     if (fs.existsSync(progPathCast)) {
       let htmlContent = fs.readFileSync(progPathCast, 'utf-8');
       const startIdx = htmlContent.indexOf('<!-- DYNAMIC EVENTS SCHEMA START -->');
@@ -1261,7 +1266,7 @@ async function main() {
     }
     // F1 - Inject Supabase credentials into js/db.js if available in environment
     if (SUPABASE_URL && SUPABASE_ANON_KEY) {
-      const dbJsPath = path.join(__dirname, '..', 'js', 'db.js');
+      const dbJsPath = path.join(PUBLIC_DIR, 'js', 'db.js');
       if (fs.existsSync(dbJsPath)) {
         let dbJsContent = fs.readFileSync(dbJsPath, 'utf-8');
         let updated = false;

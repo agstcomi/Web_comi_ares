@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const PORT = 8000;
+const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 
 const MIME_TYPES = {
   '.html': 'text/html; charset=utf-8',
@@ -33,20 +34,20 @@ const server = http.createServer((req, res) => {
   } else if (pathname.startsWith('/es/noticies/') && pathname.split('/').filter(Boolean).length >= 3) {
     targetPath = '/es/noticies.html';
   } else if (pathname.startsWith('/tenda/') && pathname.split('/').filter(Boolean).length >= 2) {
-    const directPath = path.join(__dirname, pathname, 'index.html');
+    const directPath = path.join(PUBLIC_DIR, pathname, 'index.html');
     targetPath = fs.existsSync(directPath) ? path.join(pathname, 'index.html') : '/camisetes.html';
   } else if (pathname.startsWith('/es/tenda/') && pathname.split('/').filter(Boolean).length >= 3) {
-    const directPath = path.join(__dirname, pathname, 'index.html');
+    const directPath = path.join(PUBLIC_DIR, pathname, 'index.html');
     targetPath = fs.existsSync(directPath) ? path.join(pathname, 'index.html') : '/es/camisetes.html';
   } else if (pathname.startsWith('/camisetes/') && pathname.split('/').filter(Boolean).length >= 2) {
-    const directPath = path.join(__dirname, pathname, 'index.html');
+    const directPath = path.join(PUBLIC_DIR, pathname, 'index.html');
     targetPath = fs.existsSync(directPath) ? path.join(pathname, 'index.html') : '/camisetes.html';
   } else if (pathname.startsWith('/es/camisetes/') && pathname.split('/').filter(Boolean).length >= 3) {
-    const directPath = path.join(__dirname, pathname, 'index.html');
+    const directPath = path.join(PUBLIC_DIR, pathname, 'index.html');
     targetPath = fs.existsSync(directPath) ? path.join(pathname, 'index.html') : '/es/camisetes.html';
   } else {
     // Check if path exists. If not, and it has no extension, try appending .html
-    const absolutePath = path.join(__dirname, pathname);
+    const absolutePath = path.join(PUBLIC_DIR, pathname);
     try {
       const stats = fs.statSync(absolutePath);
       if (stats.isDirectory()) {
@@ -63,7 +64,7 @@ const server = http.createServer((req, res) => {
     }
   }
 
-  const fileAbsolutePath = path.join(__dirname, targetPath);
+  const fileAbsolutePath = path.join(PUBLIC_DIR, targetPath);
 
   fs.readFile(fileAbsolutePath, (err, data) => {
     const status = err ? 404 : 200;

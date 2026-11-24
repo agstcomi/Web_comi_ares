@@ -682,7 +682,18 @@ Completat a la sessió actual:
 
 ---
 
-## 46. Pròxim Pas
+## 46. Reorganització de l'Estructura del Repositori (PRO)
+Completat a la sessió actual per a mantindre l'arrel de `main` a GitHub neta i ordenada (de ~41 elements a només 10):
+* **Carpeta `public/`**: Tots els fitxers de la web estàtica (`index.html`, `programacio.html`, `tenda.html`, `es/`, `css/`, `js/`, `img/`, `video/`, `admin/`, `CNAME`, `sitemap.xml`, `robots.txt`, `sw.js`, `manifest.json`, `.htaccess`, `camisetes/confirmacio.html`, etc.) s'han traslladat a `public/`.
+* **Carpeta `scripts/`**: Traslladats `serve.js`, `serve.py` i `desplegar.bat` dins de `scripts/` i actualitzades totes les rutes de `generate-news.js`, `serve.js`, `serve.py`, `update-html.js` i `puja-esdeveniments.js` perquè operen sobre `public/`.
+* **Carpeta `docs/`**: Traslladat `README_WEATHER_DEPLOY.md` a `docs/`.
+* **Workflow GitHub Pages (`.github/workflows/deploy.yml`)**: Actualitzat `upload-pages-artifact` a `path: 'public'`.
+* **Neteja de fitxers generats a `.gitignore`**: Ignorats `public/tenda/`, `public/es/tenda/`, `public/camisetes/index.html`, `public/camisetes/*/`, `public/es/camisetes/index.html`, `public/es/camisetes/*/`, `public/noticies/`, `public/es/noticies/` i `public/data/`, ja que `node scripts/generate-news.js` els genera automàticament en cada desplegament.
+* **Comandes `package.json`**: Afegits `npm start` (`node scripts/serve.js`) i `npm run build` (`node scripts/generate-news.js`).
+
+---
+
+## 47. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "start": "node scripts/serve.js",
+    "build": "node scripts/generate-news.js"
+  },
   "devDependencies": {
     "sharp": "^0.35.3"
   },
