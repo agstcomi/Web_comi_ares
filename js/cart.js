@@ -38,6 +38,14 @@
         addToCart(item) {
             if (!item || !item.id) return;
             // Bloqueig de seguretat: No permetre afegir productes tancats o desactivats
+            const isAbrasam = item.id === 'prod-dinar-abrasam-2026' || item.slug === 'dinar-abrasam';
+            const abrasamDeadline = new Date('2026-12-03T00:00:00+01:00').getTime();
+            if (isAbrasam && Date.now() >= abrasamDeadline) {
+                this.showToast(isCastellano()
+                    ? "El plazo para apuntarse a la comida del Abrasa'm finalizó el 2 de diciembre a las 23:59h."
+                    : "El termini per a apuntar-se al dinar de l'Abrasa'm va finalitzar el 2 de desembre a les 23:59h.");
+                return;
+            }
             if (item.status === 'closed' || item.status === 'sold_out' || item.active === false) {
                 this.showToast(isCastellano() ? 'Este producto está cerrado o agotado.' : 'Aquest producte està tancat o esgotat.');
                 return;
@@ -334,6 +342,19 @@
         async triggerCheckout() {
             const cart = this.getCart();
             if (cart.length === 0) return;
+
+            const abrasamDeadline = new Date('2026-12-03T00:00:00+01:00').getTime();
+            if (Date.now() >= abrasamDeadline) {
+                const hasAbrasam = cart.some(i => i.id === 'prod-dinar-abrasam-2026' || i.slug === 'dinar-abrasam');
+                if (hasAbrasam) {
+                    const isEs = isCastellano();
+                    alert(isEs
+                        ? "El plazo para apuntarse a la comida del Abrasa'm finalizó el 2 de diciembre a las 23:59h. Por favor, elimínalo de la cesta para continuar."
+                        : "El termini per a apuntar-se al dinar de l'Abrasa'm va finalitzar el 2 de desembre a les 23:59h. Si us plau, elimina'l del carret per a continuar.");
+                    this.openCart();
+                    return;
+                }
+            }
 
             // Bloqueig de seguretat: Validar disponibilitat dels productes abans d'obrir checkout
             if (window.db && typeof window.db.getProducts === 'function') {

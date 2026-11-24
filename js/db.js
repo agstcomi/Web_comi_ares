@@ -192,8 +192,8 @@ const DEFAULT_PRODUCTS = [
         category_es: "Comidas · Jornadas Gastronómicas 2026",
         price: 14.00,
         status: "open",
-        description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: taronges.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
-        description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: naranjas.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
+        description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: mandarines.\n\n🍽️ Recorda dur els teus coberts, plats i gots.\n\n⚠️ Inscripcions: Hi ha fins el 2 de desembre per poder apuntar-se.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+        description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: mandarinas.\n\n🍽️ Recuerda llevar tus cubiertos, platos y vasos.\n\n⚠️ Inscripciones: Hay hasta el 2 de diciembre para poder apuntarse.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
         image_url: "/img/dinar-abrasam-1.webp",
         images: [
             "/img/dinar-abrasam-1.webp"
@@ -2272,11 +2272,25 @@ class AppDatabase {
                     (prodSlug && p.slug === prodSlug)
                 );
                 if (prod) {
+                    const isAbrasamProd = (prod.id === 'prod-dinar-abrasam-2026' || prod.slug === 'dinar-abrasam');
+                    if (isAbrasamProd && Date.now() >= new Date('2026-12-03T00:00:00+01:00').getTime()) {
+                        throw new Error(window.location.pathname.includes('/es/')
+                            ? "El plazo para apuntarse a la comida del Abrasa'm finalizó el 2 de diciembre a las 23:59h."
+                            : "El termini per a apuntar-se al dinar de l'Abrasa'm va finalitzar el 2 de desembre a les 23:59h.");
+                    }
                     if (prod.active === false) {
                         throw new Error('Aquest producte no està disponible per a reserva.');
                     }
                     if (prod.status === 'closed' || prod.status === 'sold_out') {
                         throw new Error('Les reserves d\'aquest producte estan tancades.');
+                    }
+                }
+                if (Array.isArray(item.items)) {
+                    const hasAbrasamItem = item.items.some(i => i.id === 'prod-dinar-abrasam-2026' || i.slug === 'dinar-abrasam');
+                    if (hasAbrasamItem && Date.now() >= new Date('2026-12-03T00:00:00+01:00').getTime()) {
+                        throw new Error(window.location.pathname.includes('/es/')
+                            ? "El plazo para apuntarse a la comida del Abrasa'm finalizó el 2 de diciembre a las 23:59h."
+                            : "El termini per a apuntar-se al dinar de l'Abrasa'm va finalitzar el 2 de desembre a les 23:59h.");
                     }
                 }
             } catch (availErr) {
@@ -2697,6 +2711,16 @@ class AppDatabase {
             }
         } catch (cfgErr) {
             console.warn("Could not apply shop config to products:", cfgErr);
+        }
+
+        // Check deadline for Dinar Abrasa'm: bloqueig automàtic a partir de les 00:00 del 3 de desembre
+        const abrasamDeadline = new Date('2026-12-03T00:00:00+01:00').getTime();
+        if (Date.now() >= abrasamDeadline) {
+            products.forEach(p => {
+                if (p.id === 'prod-dinar-abrasam-2026' || p.slug === 'dinar-abrasam') {
+                    p.status = 'closed';
+                }
+            });
         }
 
         // Update local cache

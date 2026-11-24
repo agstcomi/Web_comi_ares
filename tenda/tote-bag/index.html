@@ -10,12 +10,12 @@
     <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=()">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://unpkg.com https://cdn.jsdelivr.net https://tracker.metricool.com 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https: blob:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.metricool.com https://api.emailjs.com; font-src 'self' https://fonts.gstatic.com; frame-ancestors 'self'; form-action 'self';">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tote Bag El Mirador del Maestrat | Tenda Oficial Comissió de Festes</title>
+    <title>Tote Bag &quot;El Mirador del Maestrat&quot; | Tenda Oficial Comissió de Festes</title>
     <meta name="description" content="Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l&#039;any 2026. Bossa ideal per al dia a dia.">
     <link rel="canonical" href="https://www.comiares.es/tenda/tote-bag/">
     <meta property="og:type" content="product">
     <meta property="og:url" content="https://www.comiares.es/tenda/tote-bag/">
-    <meta property="og:title" content="Tote Bag El Mirador del Maestrat">
+    <meta property="og:title" content="Tote Bag &quot;El Mirador del Maestrat&quot;">
     <meta property="og:description" content="Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l&#039;any 2026. Bossa ideal per al dia a dia.">
     <meta property="og:image" content="https://www.comiares.es/img/tote-bag-1.webp">
     <link rel="manifest" href="/manifest.json">
@@ -826,7 +826,7 @@
                 <i data-lucide="chevron-right"></i>
                 <a href="/tenda">Tenda</a>
                 <i data-lucide="chevron-right"></i>
-                <span id="breadcrumb-product-name">Tote Bag El Mirador del Maestrat</span>
+                <span id="breadcrumb-product-name">Tote Bag &quot;El Mirador del Maestrat&quot;</span>
             </nav>
         </div>
     </div>
@@ -839,11 +839,11 @@
                 <!-- LEFT: Gallery -->
                 <div class="product-gallery">
                     <div class="product-gallery-main" id="gallery-main">
-                        <img src="/img/tote-bag-1.jpg" alt="Tote Bag El Mirador del Maestrat" id="main-img">
+                        <img src="/img/tote-bag-1.jpg" alt="Tote Bag &quot;El Mirador del Maestrat&quot;" id="main-img">
                     </div>
                     <div class="gallery-thumbs product-gallery-strip" id="product-gallery-strip" style="display:flex;">
-            <div class="gallery-thumb active" data-img="/img/tote-bag-1.jpg" data-alt="Tote Bag El Mirador del Maestrat — Imatge 1">
-              <img src="/img/tote-bag-1.jpg" alt="Tote Bag El Mirador del Maestrat — Imatge 1">
+            <div class="gallery-thumb active" data-img="/img/tote-bag-1.jpg" data-alt="Tote Bag &quot;El Mirador del Maestrat&quot; — Imatge 1">
+              <img src="/img/tote-bag-1.jpg" alt="Tote Bag &quot;El Mirador del Maestrat&quot; — Imatge 1">
             </div>
           </div>
                 </div>
@@ -851,7 +851,7 @@
                 <!-- RIGHT: Product info -->
                 <div class="product-info">
                     <p class="product-breadcrumb-tag" id="product-breadcrumb-tag">Tenda · Roba · Edició Limitada 2026</p>
-                    <h1 class="product-title" id="product-title">Tote Bag El Mirador del Maestrat</h1>
+                    <h1 class="product-title" id="product-title">Tote Bag &quot;El Mirador del Maestrat&quot;</h1>
                     <p class="product-subtitle" id="product-subtitle">Bossa de tela de color negre amb la il·lustració guanyadora del Concurs de Disseny per a Festes de l&#039;any 2026. Bossa ideal per al dia a dia.</p>
 
                     <div class="product-price" id="product-price">6<span style="font-size:1.2rem;">€</span></div>
@@ -888,8 +888,8 @@
             });
         })();
     </script>
-    <script src="/js/db.js?v=3.3" defer></script>
-    <script src="/js/cart.js?v=3.0" defer></script>
+    <script src="/js/db.js?v=3.4" defer></script>
+    <script src="/js/cart.js?v=3.1" defer></script>
     <script src="/js/main.js?v=1.17" defer></script>
     <script src="/js/push-notifications.js?v=1.20" defer></script>
     <script>
@@ -947,11 +947,21 @@
                 updateQty(quantity + 1);
             }
 
+            function isAbrasamDeadlinePassed(prod) {
+                if (!prod) return false;
+                const isAbrasam = prod.id === 'prod-dinar-abrasam-2026' || prod.slug === 'dinar-abrasam';
+                if (!isAbrasam) return false;
+                const deadline = new Date('2026-12-03T00:00:00+01:00').getTime();
+                return Date.now() >= deadline;
+            }
+
             // 5. Add to Cart (Drawer)
             const btnCartDrawer = e.target.closest('#btn-add-to-cart-drawer');
             if (btnCartDrawer) {
-                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
-                    alert('Les reserves d\'aquest producte estan tancades.');
+                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false || isAbrasamDeadlinePassed(currentProduct))) {
+                    alert(isAbrasamDeadlinePassed(currentProduct)
+                        ? 'El termini per a apuntar-se al dinar de l\'Abrasa\'m va finalitzar el 2 de desembre a les 23:59h.'
+                        : 'Les reserves d\'aquest producte estan tancades.');
                     return;
                 }
                 if (!checkSizeSelection()) return;
@@ -963,8 +973,10 @@
             // 6. Direct Purchase / Comprar Ara
             const btnAddCart = e.target.closest('#btn-add-cart');
             if (btnAddCart) {
-                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false)) {
-                    alert('Les reserves d\'aquest producte estan tancades.');
+                if (currentProduct && (currentProduct.status === 'closed' || currentProduct.status === 'sold_out' || currentProduct.active === false || isAbrasamDeadlinePassed(currentProduct))) {
+                    alert(isAbrasamDeadlinePassed(currentProduct)
+                        ? 'El termini per a apuntar-se al dinar de l\'Abrasa\'m va finalitzar el 2 de desembre a les 23:59h.'
+                        : 'Les reserves d\'aquest producte estan tancades.');
                     return;
                 }
                 const modalResCheck = document.getElementById('modal-reservation');
@@ -1698,12 +1710,21 @@
                     galleryMain.onclick = null;
                 }
 
-                const isClosed = prod.status === 'closed' || prod.status === 'sold_out' || prod.active === false;
+                const isAbrasamExpired = isAbrasamDeadlinePassed(prod);
+                if (isAbrasamExpired) {
+                    prod.status = 'closed';
+                }
+                const isClosed = prod.status === 'closed' || prod.status === 'sold_out' || prod.active === false || isAbrasamExpired;
                 if (isClosed) {
                     const closedOverlay = document.getElementById('closed-overlay');
                     if (closedOverlay) {
                         closedOverlay.style.display = 'block';
-                        if (prod.active === false) {
+                        if (isAbrasamExpired) {
+                            const closedTitle = closedOverlay.querySelector('h2') || closedOverlay.querySelector('h3');
+                            if (closedTitle) closedTitle.textContent = "Reserves tancades";
+                            const closedDesc = closedOverlay.querySelector('p');
+                            if (closedDesc) closedDesc.textContent = "El termini per a apuntar-se al dinar de l'Abrasa'm va finalitzar el 2 de desembre a les 23:59h.";
+                        } else if (prod.active === false) {
                             const closedTitle = closedOverlay.querySelector('h2') || closedOverlay.querySelector('h3');
                             if (closedTitle) closedTitle.textContent = "Producte no disponible";
                             const closedDesc = closedOverlay.querySelector('p');
@@ -1734,6 +1755,13 @@
                                 <div>
                                     <strong>5 de desembre de 2026</strong>
                                     <br><span>Jornades Gastronòmiques a la brasa a Ares del Maestrat</span>
+                                </div>
+                            </div>
+                            <div class="info-badge-item">
+                                <i data-lucide="clock"></i>
+                                <div>
+                                    <strong>Termini d'inscripció</strong>
+                                    <br><span>Fins el 2 de desembre per poder apuntar-se</span>
                                 </div>
                             </div>
                             <div class="info-badge-item">
@@ -1791,8 +1819,8 @@
                     category_es: "Comidas · Jornadas Gastronómicas 2026",
                     price: 14.00,
                     status: "open",
-                    description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: taronges.\n\n🍽️ Recorda dur els teus coberts, plats i gots.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
-                    description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: naranjas.\n\n🍽️ Recuerda llevar tus cubiertos, platos y vasos.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
+                    description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: mandarines.\n\n🍽️ Recorda dur els teus coberts, plats i gots.\n\n⚠️ Inscripcions: Hi ha fins el 2 de desembre per poder apuntar-se.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+                    description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: mandarinas.\n\n🍽️ Recuerda llevar tus cubiertos, platos y vasos.\n\n⚠️ Inscripciones: Hay hasta el 2 de diciembre para poder apuntarse.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
                     image_url: "/img/dinar-abrasam-1.webp",
                     images: ["/img/dinar-abrasam-1.webp"],
                     sizes: [

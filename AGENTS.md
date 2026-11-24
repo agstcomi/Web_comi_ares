@@ -658,7 +658,31 @@ Completat i verificat:
 
 ---
 
-## 45. Pròxim Pas
+## 45. Actualització Dinar Abrasa'm: Postre Mandarines i Bloqueig Automàtic el 3 de Desembre (PRO)
+Completat a la sessió actual:
+* **Canvi de Postre a Mandarines**:
+  - Modificat el postre inclòs a tots els menús a "mandarines" (i "mandarinas" en castellà) a:
+    - Base de dades i productes per defecte (`js/db.js` i `data/products.json`).
+    - Generador estàtic (`scripts/generate-news.js`).
+    - Pàgines de detall de producte (`camisetes.html`, `es/camisetes.html`, `tenda/dinar-abrasam/index.html` i `es/tenda/dinar-abrasam/index.html`).
+    - Plantilla de correu electrònic de confirmació (`templates/email-dinar-abrasam.html`).
+* **Termini d'Inscripció a la Descripció**:
+  - Afegit clarament a la descripció del producte (en valencià i castellà) que hi ha fins al 2 de desembre per poder apuntar-se: `⚠️ Inscripcions: Hi ha fins el 2 de desembre per poder apuntar-se.`
+  - Afegit un badge informatiu d'inscripció a la fitxa del producte: `Termini d'inscripció: Fins el 2 de desembre per poder apuntar-se`.
+* **Bloqueig Automàtic a les 00:00 del 3 de Desembre**:
+  - Implementada lògica automàtica basada en la data límit exacta (`2026-12-03T00:00:00+01:00`, hora espanyola / CET):
+    - `js/db.js`: a `getProducts()`, si s'arriba a les 00:00 del 3 de desembre, l'estat del dinar es commuta automàticament a `'closed'`. A `addReservation()`, es llança una excepció informativa si s'intenta enviar una reserva fora de termini.
+    - `camisetes.html` i `es/camisetes.html`: en carregar la pàgina o clicar per reservar/afegir al carret, si la data ha expirat es mostra el missatge de "Reserves tancades: El termini per a apuntar-se al dinar de l'Abrasa'm va finalitzar el 2 de desembre a les 23:59h", s'elimina la secció de compra i es bloqueja l'obertura del modal.
+    - `tenda.html` i `es/tenda.html`: a partir de les 00:00 del 3 de desembre la targeta canvia el distintiu a "Reserves tancades" en roig i es reordena darrere dels productes actius.
+    - `js/cart.js`: `addToCart()` i `triggerCheckout()` impedeixen afegir o tramitar comandes del dinar si el termini ha vençut, alertant a l'usuari.
+* **Cache-Busting**:
+  - Incrementat `cart.js?v=3.1` i `db.js?v=3.4` a les plantilles de la tenda i detalls de producte.
+* **Regeneració Estàtica**:
+  - Executat `node scripts/generate-news.js` generant les pàgines físiques actualitzades a `tenda/dinar-abrasam/index.html` i `es/tenda/dinar-abrasam/index.html`.
+
+---
+
+## 46. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

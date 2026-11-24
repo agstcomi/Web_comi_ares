@@ -113,8 +113,8 @@ const DEFAULT_PRODUCTS = [
     category_es: "Comidas · Jornadas Gastronómicas 2026",
     price: 14.00,
     status: "open",
-    description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: taronges.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
-    description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: naranjas.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
+    description: "Reserva del dinar de les Jornades Gastronòmiques a la Brasa «Abrasa'm» (5 de desembre a Ares del Maestrat).\n\nMenús a triar:\n• Menú A: 1/4 conill, 2 trocets de cansalà.\n• Menú B: 1 llonganiça, 1 xoriç i 2 trocets de cansalà.\n• Menú C: Opció vegetariana (per determinar).\n\nTots els menús aniran acompanyats per: 1 carxofa, 1 creïlla, allioli, pa, vi en llimonà i aigua. Postre: mandarines.\n\n🍽️ Recorda dur els teus coberts, plats i gots.\n\n⚠️ Inscripcions: Hi ha fins el 2 de desembre per poder apuntar-se.\n\n⚠️ Pagament: El pagament de 14€ es realitzarà el mateix dia (5 de desembre) pel matí mentre s'estiguen preparant les brases.",
+    description_es: "Reserva de la comida de las Jornadas Gastronómicas a la Brasa «Abrasa'm» (5 de diciembre en Ares del Maestrat).\n\nMenús a elegir:\n• Menú A: 1/4 conejo, 2 trocitos de panceta.\n• Menú B: 1 longaniza, 1 chorizo y 2 trocitos de panceta.\n• Menú C: Opción vegetariana (por determinar).\n\nTodos los menús irán acompañados de: 1 alcachofa, 1 patata, alioli, pan, vino con limonada/gaseosa y agua. Postre: mandarinas.\n\n🍽️ Recuerda llevar tus cubiertos, platos y vasos.\n\n⚠️ Inscripciones: Hay hasta el 2 de diciembre para poder apuntarse.\n\n⚠️ Pago: El pago de 14€ se realizará el mismo día (5 de diciembre) por la mañana mientras se estén preparando las brasas.",
     image_url: "/img/dinar-abrasam-1.webp",
     images: ["/img/dinar-abrasam-1.webp"],
     sizes: [
@@ -321,8 +321,21 @@ async function main() {
       if (fs.existsSync(path.join(dataDir, 'news.json'))) news = JSON.parse(fs.readFileSync(path.join(dataDir, 'news.json'), 'utf-8'));
       if (fs.existsSync(path.join(dataDir, 'events.json'))) events = JSON.parse(fs.readFileSync(path.join(dataDir, 'events.json'), 'utf-8'));
       if (fs.existsSync(path.join(dataDir, 'photos.json'))) photos = JSON.parse(fs.readFileSync(path.join(dataDir, 'photos.json'), 'utf-8'));
-      if (fs.existsSync(path.join(dataDir, 'products.json'))) products = JSON.parse(fs.readFileSync(path.join(dataDir, 'products.json'), 'utf-8'));
-      if (!products || products.length === 0) products = [...DEFAULT_PRODUCTS];
+      if (fs.existsSync(path.join(dataDir, 'products.json'))) {
+        try {
+          const localProds = JSON.parse(fs.readFileSync(path.join(dataDir, 'products.json'), 'utf-8'));
+          const prodMap = new Map();
+          DEFAULT_PRODUCTS.forEach(p => prodMap.set(p.id || p.slug, { ...p }));
+          if (localProds && localProds.length > 0) {
+            localProds.forEach(p => prodMap.set(p.id || p.slug, { ...prodMap.get(p.id || p.slug), ...p }));
+          }
+          products = Array.from(prodMap.values());
+        } catch (e) {
+          products = [...DEFAULT_PRODUCTS];
+        }
+      } else {
+        products = [...DEFAULT_PRODUCTS];
+      }
     }
 
     // 2. Leer las plantillas base
@@ -545,10 +558,23 @@ async function main() {
       // Keep root camisetes directory indices in sync with templates
       fs.writeFileSync(path.join(__dirname, '..', 'camisetes', 'index.html'), templateProdVal, 'utf-8');
       fs.writeFileSync(path.join(__dirname, '..', 'es', 'camisetes', 'index.html'), templateProdCast, 'utf-8');
+      if (fs.existsSync(path.join(__dirname, '..', 'tenda.html'))) {
+        fs.writeFileSync(path.join(__dirname, '..', 'tenda', 'index.html'), fs.readFileSync(path.join(__dirname, '..', 'tenda.html'), 'utf-8'), 'utf-8');
+      }
+      if (fs.existsSync(path.join(__dirname, '..', 'es', 'tenda.html'))) {
+        fs.writeFileSync(path.join(__dirname, '..', 'es', 'tenda', 'index.html'), fs.readFileSync(path.join(__dirname, '..', 'es', 'tenda.html'), 'utf-8'), 'utf-8');
+      }
 
       for (const product of products) {
         if (!product.slug) continue;
         console.log(`Procesando producto: "${product.name}" (Slug: ${product.slug})`);
+
+        const isAbrasam = product.id === 'prod-dinar-abrasam-2026' || product.slug === 'dinar-abrasam';
+        const abrasamDeadline = new Date('2026-12-03T00:00:00+01:00').getTime();
+        const isAbrasamExpired = isAbrasam && (Date.now() >= abrasamDeadline);
+        if (isAbrasamExpired) {
+          product.status = 'closed';
+        }
 
         let imageUrl = product.image_url || "https://www.comiares.es/img/camiseta-product.jpg";
         imageUrl = getAbsoluteImageUrl(imageUrl);
@@ -679,7 +705,12 @@ async function main() {
 
         const isClosedVal = product.status === 'closed' || product.status === 'sold_out' || product.active === false;
         if (isClosedVal) {
-          if (product.active === false) {
+          if (isAbrasamExpired) {
+            htmlVal = htmlVal.replace(/<div id="closed-overlay">[\s\S]*?<\/div>/i, `<div id="closed-overlay" style="display:block;">
+              <strong>🔒 Reserves tancades</strong>
+              <p>El termini per a apuntar-se al dinar de l'Abrasa'm va finalitzar el 2 de desembre a les 23:59h.</p>
+            </div>`);
+          } else if (product.active === false) {
             htmlVal = htmlVal.replace(/<div id="closed-overlay">[\s\S]*?<\/div>/i, `<div id="closed-overlay" style="display:block;">
               <strong>🔒 Producte no disponible</strong>
               <p>Aquest producte es troba actualment desactivat de la tenda.</p>
@@ -705,6 +736,13 @@ async function main() {
               <div>
                 <strong>5 de desembre de 2026</strong>
                 <br><span>Jornades Gastronòmiques a la brasa a Ares del Maestrat</span>
+              </div>
+            </div>
+            <div class="info-badge-item">
+              <i data-lucide="clock"></i>
+              <div>
+                <strong>Termini d'inscripció</strong>
+                <br><span>Fins el 2 de desembre per poder apuntar-se</span>
               </div>
             </div>
             <div class="info-badge-item">
@@ -854,7 +892,12 @@ async function main() {
 
         const isClosedCast = product.status === 'closed' || product.status === 'sold_out' || product.active === false;
         if (isClosedCast) {
-          if (product.active === false) {
+          if (isAbrasamExpired) {
+            htmlCast = htmlCast.replace(/<div id="closed-overlay">[\s\S]*?<\/div>/i, `<div id="closed-overlay" style="display:block;">
+              <strong>🔒 Reservas cerradas</strong>
+              <p>El plazo para apuntarse a la comida del Abrasa'm finalizó el 2 de diciembre a las 23:59h.</p>
+            </div>`);
+          } else if (product.active === false) {
             htmlCast = htmlCast.replace(/<div id="closed-overlay">[\s\S]*?<\/div>/i, `<div id="closed-overlay" style="display:block;">
               <strong>🔒 Producto no disponible</strong>
               <p>Este producto se encuentra actualmente desactivado de la tienda.</p>
@@ -880,6 +923,13 @@ async function main() {
               <div>
                 <strong>5 de diciembre de 2026</strong>
                 <br><span>Jornadas Gastronómicas a la brasa en Ares del Maestrat</span>
+              </div>
+            </div>
+            <div class="info-badge-item">
+              <i data-lucide="clock"></i>
+              <div>
+                <strong>Plazo de inscripción</strong>
+                <br><span>Hasta el 2 de diciembre para poder apuntarse</span>
               </div>
             </div>
             <div class="info-badge-item">

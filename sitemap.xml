@@ -725,26 +725,26 @@
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/dinar-abrasam/"/>
     </url>
     <url>
-        <loc>https://www.comiares.es/tenda/samarreta-mirador-maestrat/</loc>
-        <lastmod>2026-09-04</lastmod>
+        <loc>https://www.comiares.es/tenda/samarreta-ares-sd/</loc>
+        <lastmod>2026-08-14</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
-        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
-        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
-        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/"/>
-        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/"/>
-        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/tenda/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/tenda/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
     </url>
     <url>
-        <loc>https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/</loc>
-        <lastmod>2026-09-04</lastmod>
+        <loc>https://www.comiares.es/es/tenda/samarreta-ares-sd/</loc>
+        <lastmod>2026-08-14</lastmod>
         <changefreq>weekly</changefreq>
         <priority>0.8</priority>
-        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
-        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
-        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/"/>
-        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/"/>
-        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/tenda/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/tenda/samarreta-ares-sd/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
     </url>
     <url>
         <loc>https://www.comiares.es/tenda/tote-bag/</loc>
@@ -769,6 +769,28 @@
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/tote-bag/"/>
     </url>
     <url>
+        <loc>https://www.comiares.es/tenda/samarreta-mirador-maestrat/</loc>
+        <lastmod>2026-09-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/</loc>
+        <lastmod>2026-09-04</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.8</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/tenda/samarreta-mirador-maestrat/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/samarreta-mirador-maestrat/"/>
+    </url>
+    <url>
         <loc>https://www.comiares.es/tenda/rinyonera-mirador-maestrat/</loc>
         <lastmod>2026-09-04</lastmod>
         <changefreq>weekly</changefreq>
@@ -789,28 +811,6 @@
         <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/tenda/rinyonera-mirador-maestrat/"/>
         <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/tenda/rinyonera-mirador-maestrat/"/>
         <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/rinyonera-mirador-maestrat/"/>
-    </url>
-    <url>
-        <loc>https://www.comiares.es/tenda/samarreta-ares-sd/</loc>
-        <lastmod>2026-08-14</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
-        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
-        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/tenda/samarreta-ares-sd/"/>
-        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/tenda/samarreta-ares-sd/"/>
-        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
-    </url>
-    <url>
-        <loc>https://www.comiares.es/es/tenda/samarreta-ares-sd/</loc>
-        <lastmod>2026-08-14</lastmod>
-        <changefreq>weekly</changefreq>
-        <priority>0.8</priority>
-        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
-        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
-        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/tenda/samarreta-ares-sd/"/>
-        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/tenda/samarreta-ares-sd/"/>
-        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/tenda/samarreta-ares-sd/"/>
     </url>
     <!-- DYNAMIC PRODUCTS END -->
 </urlset>
