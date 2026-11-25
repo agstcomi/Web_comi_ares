@@ -208,7 +208,10 @@ const DEFAULT_STATIC_NEWS = [
     slug: "abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves",
     slug_es: "abrasam-2026-ares-del-maestrat-jornadas-gastronomicas-brasa-programacion-reservas",
     image_url: "/img/cartell-abrasam-2026.jpg",
+    image_alt: "Cartell oficial de les Jornades Gastronòmiques a la Brasa Abrasa'm 2026 a Ares del Maestrat",
+    image_alt_es: "Cartel oficial de las Jornadas Gastronómicas a la Brasa Abrasa'm 2026 en Ares del Maestrat",
     additional_images: [],
+    tags: ["Abrasa'm", "Gastronomia", "Ares del Maestrat", "2026"],
     author: "Comissió de Festes",
     status: "published",
     created_at: "2026-11-25",
@@ -307,19 +310,36 @@ const DEFAULT_STATIC_NEWS = [
   }
 ];
 
-function mergeStaticNews(existingNews) {
+function mergeStaticNews(existingNews, deletedStaticIds = []) {
   const list = Array.isArray(existingNews) ? [...existingNews] : [];
   DEFAULT_STATIC_NEWS.forEach(staticItem => {
-    const exists = list.some(n =>
+    if (Array.isArray(deletedStaticIds) && deletedStaticIds.includes(staticItem.id)) return;
+    const existing = list.find(n =>
       n.id === staticItem.id ||
       (n.slug && n.slug === staticItem.slug) ||
       (n.slug_es && staticItem.slug_es && n.slug_es === staticItem.slug_es)
     );
-    if (!exists) {
+    if (existing) {
+      if (staticItem.event_schema && !existing.event_schema) {
+        existing.event_schema = staticItem.event_schema;
+      }
+    } else {
       list.push({ ...staticItem });
     }
   });
   return list.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+}
+
+function extractDeletedStaticNewsIds(events) {
+  if (!Array.isArray(events)) return [];
+  const cfg = events.find(e => e.id === 'event-config-deleted-news');
+  if (!cfg || !cfg.long_description) return [];
+  try {
+    const parsed = JSON.parse(cfg.long_description);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (e) {
+    return [];
+  }
 }
 
 async function main() {
@@ -339,13 +359,24 @@ async function main() {
     const dataDir = path.join(PUBLIC_DIR, 'data');
 
     try {
-      const newsResponse = await fetch(`${SUPABASE_URL}/rest/v1/news?status=in.(published,scheduled)&select=*&order=created_at.desc`, { headers });
+      const newsResponse = await fetch(`${SUPABASE_URL}/rest/v1/news?select=*&order=created_at.desc`, { headers });
       if (!newsResponse.ok) {
         throw new Error(`Error al consultar noticias en Supabase: ${newsResponse.status} ${newsResponse.statusText}`);
       }
       const allFetchedNews = await newsResponse.json();
+
+      const eventsResponse = await fetch(`${SUPABASE_URL}/rest/v1/events?select=*&order=date.asc,time.asc`, { headers });
+      if (!eventsResponse.ok) {
+        throw new Error(`Error al consultar eventos en Supabase: ${eventsResponse.status} ${eventsResponse.statusText}`);
+      }
+      events = await eventsResponse.json();
+      console.log(`Se encontraron ${events.length} eventos (incluyendo configuraciones).`);
+
+      const deletedStaticIds = extractDeletedStaticNewsIds(events);
+      const mergedAllNews = mergeStaticNews(allFetchedNews, deletedStaticIds);
+
       const now = new Date();
-      news = allFetchedNews.filter(item => {
+      news = mergedAllNews.filter(item => {
         if (item.status === 'draft') return false;
         const pubDateStr = item.published_at || item.created_at;
         if (pubDateStr) {
@@ -356,15 +387,7 @@ async function main() {
         }
         return true;
       });
-      news = mergeStaticNews(news);
       console.log(`Se encontraron ${news.length} noticias publicadas accesibles en el front.`);
-
-      const eventsResponse = await fetch(`${SUPABASE_URL}/rest/v1/events?select=*&order=date.asc,time.asc`, { headers });
-      if (!eventsResponse.ok) {
-        throw new Error(`Error al consultar eventos en Supabase: ${eventsResponse.status} ${eventsResponse.statusText}`);
-      }
-      events = await eventsResponse.json();
-      console.log(`Se encontraron ${events.length} eventos (incluyendo configuraciones).`);
 
       const photosResponse = await fetch(`${SUPABASE_URL}/rest/v1/photos?select=*&order=created_at.desc`, { headers });
       if (!photosResponse.ok) {
@@ -445,9 +468,9 @@ async function main() {
       console.log("  [OK] Archivos de datos estáticos guardados en la carpeta /data/");
     } catch (networkErr) {
       console.warn("Aviso: No se pudo conectar con Supabase (modo sin red/local). Usando archivos locales de data/:", networkErr.message || networkErr);
-      if (fs.existsSync(path.join(dataDir, 'news.json'))) news = JSON.parse(fs.readFileSync(path.join(dataDir, 'news.json'), 'utf-8'));
-      news = mergeStaticNews(news);
       if (fs.existsSync(path.join(dataDir, 'events.json'))) events = JSON.parse(fs.readFileSync(path.join(dataDir, 'events.json'), 'utf-8'));
+      if (fs.existsSync(path.join(dataDir, 'news.json'))) news = JSON.parse(fs.readFileSync(path.join(dataDir, 'news.json'), 'utf-8'));
+      news = mergeStaticNews(news, extractDeletedStaticNewsIds(events)).filter(item => item.status !== 'draft');
       if (fs.existsSync(path.join(dataDir, 'photos.json'))) photos = JSON.parse(fs.readFileSync(path.join(dataDir, 'photos.json'), 'utf-8'));
       if (fs.existsSync(path.join(dataDir, 'products.json'))) {
         try {

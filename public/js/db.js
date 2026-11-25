@@ -544,9 +544,93 @@ class AppDatabase {
     }
 
     // News Actions
+    getStaticFallbackNews() {
+        return [
+            {
+                id: "news-abrasam-2026",
+                title: "Abrasa'm 2026 a Ares del Maestrat: programació, menús i reserves de les Jornades Gastronòmiques a la Brasa",
+                title_es: "Abrasa'm 2026 en Ares del Maestrat: programación, menús y reservas de las Jornadas Gastronómicas a la Brasa",
+                subtitle: "Ares del Maestrat celebra el dissabte 5 de desembre les Jornades Gastronòmiques a la Brasa «Abrasa'm» 2026: vermutada, dinar popular per 15€, tardeo, taller infantil, sopar i Discocomi. Reserves fins al 2 de desembre.",
+                subtitle_es: "Ares del Maestrat celebra el sábado 5 de diciembre las Jornadas Gastronómicas a la Brasa «Abrasa'm» 2026: vermutada, comida popular por 15€, tardeo, taller infantil, cena y Discocomi. Reservas hasta el 2 de diciembre.",
+                slug: "abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves",
+                slug_es: "abrasam-2026-ares-del-maestrat-jornadas-gastronomicas-brasa-programacion-reservas",
+                image_url: "/img/cartell-abrasam-2026.jpg",
+                image_alt: "Cartell oficial de les Jornades Gastronòmiques a la Brasa Abrasa'm 2026 a Ares del Maestrat",
+                image_alt_es: "Cartel oficial de las Jornadas Gastronómicas a la Brasa Abrasa'm 2026 en Ares del Maestrat",
+                additional_images: [],
+                tags: ["Abrasa'm", "Gastronomia", "Ares del Maestrat", "2026"],
+                author: "Comissió de Festes",
+                status: "published",
+                created_at: "2026-11-25",
+                updated_at: "2026-11-25",
+                content: `<p>Ares del Maestrat ja escalfa les brases per a celebrar una nova edició de l'<strong>Abrasa'm, les Jornades Gastronòmiques a la Brasa</strong>, que tindran lloc el <strong>dissabte 5 de desembre de 2026</strong>. Una cita imprescindible del pont de desembre a l'Alt Maestrat organitzada per la <strong>Comissió de Festes d'Ares del Maestrat</strong>, amb una jornada completa que combina gastronomia tradicional a la brasa, música, activitats infantils i festa fins a la matinada.</p><h2>Programació completa de l'Abrasa'm 2026 (5 de desembre)</h2><p>La jornada començarà al matí a la plaça del poble i s'allargarà durant tot el dia i la nit amb propostes per a tots els públics:</p><ul><li><strong>11:30 h — Vermutada a la Plaça:</strong> Inici de la jornada festiva amb ambient de poble i vermut per a obrir gana mentre s'encenen les brases.</li><li><strong>14:00 h — Dinar de les Jornades Gastronòmiques a la brasa «Abrasa'm»:</strong> El plat fort del dia, amb carn i opcions a la brasa cuinades a foc lent.</li><li><strong>En acabar el dinar — Tardeo a la Plaça:</strong> Música i bon ambient a la plaça per a allargar la sobretaula.</li><li><strong>16:00 h — Taller infantil al Telecentre · LA LLUM:</strong> Activitat pensada per als més menuts, organitzada per l'Ajuntament d'Ares del Maestrat.</li><li><strong>21:30 h — Sopar de pa i porta al local multiús:</strong> Punt de trobada nocturn per a sopar en germanor.</li><li><strong>23:30 h — Discocomi al local multiús:</strong> Festa i música per a tancar la jornada de l'Abrasa'm.</li></ul><h2>Menús i preu del dinar a la brasa «Abrasa'm»</h2><p>El preu del dinar és de <strong>15 €</strong> i inclou tres opcions de menú a triar (amb alternativa vegetariana):</p><ul><li><strong>Menú A:</strong> 1 llonganissa, 1 xoriç i 2 panxeta.</li><li><strong>Menú B:</strong> 1/4 de conill i 2 panxeta.</li><li><strong>Menú C (vegetarià):</strong> Filet melena de lleó.</li></ul><h3>Acompanyament, begudes i postre inclosos</h3><ul><li><strong>Acompanyament:</strong> 1/2 creïlla i 1 carxofa a la brasa.</li><li><strong>S'inclou:</strong> allioli, pa, vi en llimonà, aigua i <strong>cremaet</strong>.</li><li><strong>Postre:</strong> mandarines.</li></ul><p><strong>Important:</strong> Per a assistir al dinar caldrà <strong>portar de casa plats, coberts i gots</strong>.</p><h2>Com i fins quan reservar plaça per al dinar?</h2><p>Les reserves per al dinar de l'Abrasa'm estan obertes <strong>fins al 2 de desembre de 2026</strong> (data límit d'inscripció). Pots apuntar-te de dues maneres:</p><ol><li><strong>En línia a través de la web oficial:</strong> Reservar directament a la tenda de la Comissió a <a href="https://www.comiares.es/tenda/dinar-abrasam/" title="Reservar dinar Abrasa'm 2026 a Ares del Maestrat">www.comiares.es/tenda/dinar-abrasam/</a>.</li><li><strong>Presencialment al poble:</strong> Apuntant-te als llistats disponibles a <strong>l'Hotel</strong> i a <strong>la Tenda</strong> d'Ares del Maestrat.</li></ol><p>El pagament dels <strong>15 €</strong> es realitzarà de manera presencial <strong>el mateix dissabte 5 de desembre pel matí</strong>, mentre s'estiguen preparant les brases a la plaça.</p><h2>Informació pràctica per a visitar Ares del Maestrat</h2><ul><li><strong>Data:</strong> Dissabte 5 de desembre de 2026.</li><li><strong>Lloc:</strong> Plaça, Telecentre i local multiús d'Ares del Maestrat (Castelló).</li><li><strong>Preu del dinar:</strong> 15 € (pagament presencial el mateix dia al matí).</li><li><strong>Data límit de reserva:</strong> 2 de desembre de 2026.</li><li><strong>Més actes:</strong> Consulta tota l'agenda del poble a la <a href="https://www.comiares.es/programacio" title="Programació de Festes d'Ares del Maestrat">programació oficial</a>.</li></ul><p>No et quedes sense plaça i vine a gaudir de la brasa, el bon ambient i la gastronomia d'Ares del Maestrat!</p>`,
+                content_es: `<p>Ares del Maestrat ya prepara las brasas para celebrar una nueva edición de <strong>Abrasa'm, las Jornadas Gastronómicas a la Brasa</strong>, que tendrán lugar el <strong>sábado 5 de diciembre de 2026</strong>. Una cita imprescindible del puente de diciembre en el Alt Maestrat (Castellón), organizada por la <strong>Comisión de Fiestas de Ares del Maestrat</strong>, con un día completo de gastronomía tradicional a la brasa, música, actividades infantiles y fiesta nocturna.</p><h2>Programación completa del Abrasa'm 2026 (5 de diciembre)</h2><p>Las actividades arrancarán por la mañana en la plaza del pueblo y continuarán durante toda la jornada:</p><ul><li><strong>11:30 h — Vermutada en la Plaza:</strong> Inicio de la jornada con buen ambiente y vermut para abrir apetito mientras se preparan las brasas.</li><li><strong>14:00 h — Comida de las Jornadas Gastronómicas a la brasa «Abrasa'm»:</strong> El acto central del día, con menús a la brasa recién hechos.</li><li><strong>Al finalizar la comida — Tardeo en la Plaza:</strong> Música y sobremesa festiva al aire libre.</li><li><strong>16:00 h — Taller infantil en el Telecentro · LA LLUM:</strong> Actividad dirigida a los más pequeños, organizada por el Ayuntamiento de Ares del Maestrat.</li><li><strong>21:30 h — Cena de sobaquillo (pa i porta) en el local multiusos:</strong> Encuentro nocturno para cenar en grupo.</li><li><strong>23:30 h — Discocomi en el local multiusos:</strong> Música y fiesta para despedir el día por todo lo alto.</li></ul><h2>Menús y precio de la comida a la brasa «Abrasa'm»</h2><p>El precio de la comida es de <strong>15 €</strong> e incluye tres opciones de menú a elegir (con opción vegetariana):</p><ul><li><strong>Menú A:</strong> 1 longaniza, 1 chorizo y 2 panceta.</li><li><strong>Menú B:</strong> 1/4 de conejo y 2 panceta.</li><li><strong>Menú C (vegetariano):</strong> Filete melena de león.</li></ul><h3>Acompañamiento, bebidas y postre incluidos</h3><ul><li><strong>Acompañamiento:</strong> 1/2 patata y 1 alcachofa a la brasa.</li><li><strong>Se incluye:</strong> alioli, pan, vino con limonada/gaseosa, agua y <strong>cremaet</strong>.</li><li><strong>Postre:</strong> mandarinas.</li></ul><p><strong>Importante:</strong> Cada asistente deberá <strong>llevar de casa platos, cubiertos y vasos</strong>.</p><h2>Cómo y hasta cuándo reservar plaza para la comida</h2><p>El plazo de inscripción para la comida del Abrasa'm permanece abierto <strong>hasta el 2 de diciembre de 2026</strong>. Puedes reservar tu plaza de dos formas:</p><ol><li><strong>Online en la web oficial:</strong> Reservando directamente en la tienda de la Comisión en <a href="https://www.comiares.es/es/tenda/dinar-abrasam/" title="Reservar comida Abrasa'm 2026 en Ares del Maestrat">www.comiares.es/es/tenda/dinar-abrasam/</a>.</li><li><strong>Presencialmente en Ares del Maestrat:</strong> Apuntándote en las listas habilitadas en <strong>el Hotel</strong> y en <strong>la Tienda</strong>.</li></ol><p>El pago de los <strong>15 €</strong> se efectuará <strong>el mismo sábado 5 de diciembre por la mañana</strong>, de forma presencial mientras se estén preparando las brasas en la plaza.</p><h2>Información práctica para visitar Ares del Maestrat</h2><ul><li><strong>Fecha:</strong> Sábado 5 de diciembre de 2026.</li><li><strong>Lugar:</strong> Plaza, Telecentro y local multiusos de Ares del Maestrat (Castellón).</li><li><strong>Precio de la comida:</strong> 15 € (pago presencial la mañana del evento).</li><li><strong>Fecha límite de reserva:</strong> 2 de diciembre de 2026.</li><li><strong>Más actividades:</strong> Consulta toda la agenda en la <a href="https://www.comiares.es/es/programacio" title="Programación de Fiestas de Ares del Maestrat">programación oficial</a>.</li></ul><p>¡No te quedes sin tu plaza y ven a disfrutar de la brasa, el ambiente y la gastronomía de Ares del Maestrat!</p>`
+            }
+        ];
+    }
+
+    async getDeletedStaticNewsIds(forceRemote = false) {
+        const LOCAL_KEY = 'ares_deleted_static_news';
+        if (forceRemote && this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('events')
+                    .select('long_description')
+                    .eq('id', 'event-config-deleted-news')
+                    .maybeSingle();
+                if (!error && data && data.long_description) {
+                    const parsed = JSON.parse(data.long_description);
+                    if (Array.isArray(parsed)) {
+                        localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
+                        return parsed;
+                    }
+                }
+            } catch (e) {}
+        }
+        try {
+            const raw = localStorage.getItem(LOCAL_KEY);
+            const parsed = raw ? JSON.parse(raw) : [];
+            return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+            return [];
+        }
+    }
+
+    async markStaticNewsDeleted(id) {
+        const LOCAL_KEY = 'ares_deleted_static_news';
+        const current = await this.getDeletedStaticNewsIds(true);
+        if (!current.includes(id)) {
+            current.push(id);
+        }
+        localStorage.setItem(LOCAL_KEY, JSON.stringify(current));
+        if (this.isSupabaseConfigured()) {
+            const configItem = {
+                id: 'event-config-deleted-news',
+                title: 'Deleted Static News Config',
+                title_es: 'Deleted Static News Config',
+                description: 'System Config - Do not delete',
+                description_es: 'System Config - Do not delete',
+                long_description: JSON.stringify(current),
+                long_description_es: JSON.stringify(current),
+                date: '2099-12-31',
+                time: '00:00',
+                location: 'System Config',
+                location_es: 'System Config',
+                category: 'config',
+                image_url: ''
+            };
+            try {
+                await this.supabase.from('events').upsert([configItem]);
+            } catch (e) {
+                console.warn("Could not persist deleted static news config:", e);
+            }
+        }
+    }
+
     async getNews() {
         const isAdmin = window.location.pathname.includes('/admin/');
         let allNews = [];
+        let loadedFromSupabase = false;
 
         if (this.isSupabaseConfigured() && isAdmin) {
             try {
@@ -555,7 +639,8 @@ class AppDatabase {
                     .select('*')
                     .order('created_at', { ascending: false });
                 if (error) throw error;
-                allNews = data;
+                allNews = data || [];
+                loadedFromSupabase = true;
             } catch (err) {
                 console.error("Error loading news from Supabase:", err);
                 allNews = await this.getLocalNews();
@@ -577,7 +662,8 @@ class AppDatabase {
                             .select('*')
                             .order('created_at', { ascending: false });
                         if (error) throw error;
-                        allNews = data;
+                        allNews = data || [];
+                        loadedFromSupabase = true;
                     } catch (e) {
                         allNews = await this.getLocalNews();
                     }
@@ -587,37 +673,51 @@ class AppDatabase {
             }
         }
 
+        // Assegurar notícies estàtiques integrades (tant en públic com en /admin/) si no estan eliminades
+        if (!Array.isArray(allNews)) allNews = [];
+        const deletedStaticIds = await this.getDeletedStaticNewsIds(isAdmin);
+        const staticFallbackNews = this.getStaticFallbackNews();
+        const missingInSupabase = [];
+
+        staticFallbackNews.forEach(st => {
+            if (deletedStaticIds.includes(st.id)) return;
+            const exists = allNews.some(n =>
+                n.id === st.id ||
+                (n.slug && n.slug === st.slug) ||
+                (n.slug_es && st.slug_es && n.slug_es === st.slug_es)
+            );
+            if (!exists) {
+                allNews.push({ ...st });
+                missingInSupabase.push({ ...st });
+            }
+        });
+
+        allNews.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
+
+        // Si estem al panell d'admin amb sessió activa, sincronitzar a Supabase qualsevol notícia estàtica pendent
+        if (isAdmin && loadedFromSupabase && missingInSupabase.length > 0 && this.isSupabaseConfigured()) {
+            this.supabase.auth.getSession().then(async ({ data: sessionData }) => {
+                if (!sessionData || !sessionData.session) return;
+                for (const item of missingInSupabase) {
+                    try {
+                        const { error } = await this.supabase
+                            .from('news')
+                            .upsert([item], { onConflict: 'id' });
+                        if (error) {
+                            console.warn("Could not auto-seed static news to Supabase:", error.message);
+                        } else {
+                            console.log("Static news synced to Supabase:", item.id);
+                        }
+                    } catch (e) {
+                        console.warn("Auto-seed static news error:", e);
+                    }
+                }
+            }).catch(() => {});
+        }
+
         if (isAdmin) {
             return allNews;
         }
-
-        // Assegurar notícies estàtiques integrades si no vénen ja a /data/news.json o Supabase
-        const staticFallbackNews = [
-            {
-                id: "news-abrasam-2026",
-                title: "Abrasa'm 2026 a Ares del Maestrat: programació, menús i reserves de les Jornades Gastronòmiques a la Brasa",
-                title_es: "Abrasa'm 2026 en Ares del Maestrat: programación, menús y reservas de las Jornadas Gastronómicas a la Brasa",
-                subtitle: "Ares del Maestrat celebra el dissabte 5 de desembre les Jornades Gastronòmiques a la Brasa «Abrasa'm» 2026: vermutada, dinar popular per 15€, tardeo, taller infantil, sopar i Discocomi. Reserves fins al 2 de desembre.",
-                subtitle_es: "Ares del Maestrat celebra el sábado 5 de diciembre las Jornadas Gastronómicas a la Brasa «Abrasa'm» 2026: vermutada, comida popular por 15€, tardeo, taller infantil, cena y Discocomi. Reservas hasta el 2 de diciembre.",
-                slug: "abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves",
-                slug_es: "abrasam-2026-ares-del-maestrat-jornadas-gastronomicas-brasa-programacion-reservas",
-                image_url: "/img/cartell-abrasam-2026.jpg",
-                additional_images: [],
-                author: "Comissió de Festes",
-                status: "published",
-                created_at: "2026-11-25",
-                updated_at: "2026-11-25",
-                content: `<p>Ares del Maestrat ja escalfa les brases per a celebrar una nova edició de l'<strong>Abrasa'm, les Jornades Gastronòmiques a la Brasa</strong>, que tindran lloc el <strong>dissabte 5 de desembre de 2026</strong>. Una cita imprescindible del pont de desembre a l'Alt Maestrat organitzada per la <strong>Comissió de Festes d'Ares del Maestrat</strong>, amb una jornada completa que combina gastronomia tradicional a la brasa, música, activitats infantils i festa fins a la matinada.</p><h2>Programació completa de l'Abrasa'm 2026 (5 de desembre)</h2><p>La jornada començarà al matí a la plaça del poble i s'allargarà durant tot el dia i la nit amb propostes per a tots els públics:</p><ul><li><strong>11:30 h — Vermutada a la Plaça:</strong> Inici de la jornada festiva amb ambient de poble i vermut per a obrir gana mentre s'encenen les brases.</li><li><strong>14:00 h — Dinar de les Jornades Gastronòmiques a la brasa «Abrasa'm»:</strong> El plat fort del dia, amb carn i opcions a la brasa cuinades a foc lent.</li><li><strong>En acabar el dinar — Tardeo a la Plaça:</strong> Música i bon ambient a la plaça per a allargar la sobretaula.</li><li><strong>16:00 h — Taller infantil al Telecentre · LA LLUM:</strong> Activitat pensada per als més menuts, organitzada per l'Ajuntament d'Ares del Maestrat.</li><li><strong>21:30 h — Sopar de pa i porta al local multiús:</strong> Punt de trobada nocturn per a sopar en germanor.</li><li><strong>23:30 h — Discocomi al local multiús:</strong> Festa i música per a tancar la jornada de l'Abrasa'm.</li></ul><h2>Menús i preu del dinar a la brasa «Abrasa'm»</h2><p>El preu del dinar és de <strong>15 €</strong> i inclou tres opcions de menú a triar (amb alternativa vegetariana):</p><ul><li><strong>Menú A:</strong> 1 llonganissa, 1 xoriç i 2 panxeta.</li><li><strong>Menú B:</strong> 1/4 de conill i 2 panxeta.</li><li><strong>Menú C (vegetarià):</strong> Filet melena de lleó.</li></ul><h3>Acompanyament, begudes i postre inclosos</h3><ul><li><strong>Acompanyament:</strong> 1/2 creïlla i 1 carxofa a la brasa.</li><li><strong>S'inclou:</strong> allioli, pa, vi en llimonà, aigua i <strong>cremaet</strong>.</li><li><strong>Postre:</strong> mandarines.</li></ul><p><strong>Important:</strong> Per a assistir al dinar caldrà <strong>portar de casa plats, coberts i gots</strong>.</p><h2>Com i fins quan reservar plaça per al dinar?</h2><p>Les reserves per al dinar de l'Abrasa'm estan obertes <strong>fins al 2 de desembre de 2026</strong> (data límit d'inscripció). Pots apuntar-te de dues maneres:</p><ol><li><strong>En línia a través de la web oficial:</strong> Reservar directament a la tenda de la Comissió a <a href="https://www.comiares.es/tenda/dinar-abrasam/" title="Reservar dinar Abrasa'm 2026 a Ares del Maestrat">www.comiares.es/tenda/dinar-abrasam/</a>.</li><li><strong>Presencialment al poble:</strong> Apuntant-te als llistats disponibles a <strong>l'Hotel</strong> i a <strong>la Tenda</strong> d'Ares del Maestrat.</li></ol><p>El pagament dels <strong>15 €</strong> es realitzarà de manera presencial <strong>el mateix dissabte 5 de desembre pel matí</strong>, mentre s'estiguen preparant les brases a la plaça.</p><h2>Informació pràctica per a visitar Ares del Maestrat</h2><ul><li><strong>Data:</strong> Dissabte 5 de desembre de 2026.</li><li><strong>Lloc:</strong> Plaça, Telecentre i local multiús d'Ares del Maestrat (Castelló).</li><li><strong>Preu del dinar:</strong> 15 € (pagament presencial el mateix dia al matí).</li><li><strong>Data límit de reserva:</strong> 2 de desembre de 2026.</li><li><strong>Més actes:</strong> Consulta tota l'agenda del poble a la <a href="https://www.comiares.es/programacio" title="Programació de Festes d'Ares del Maestrat">programació oficial</a>.</li></ul><p>No et quedes sense plaça i vine a gaudir de la brasa, el bon ambient i la gastronomia d'Ares del Maestrat!</p>`,
-                content_es: `<p>Ares del Maestrat ya prepara las brasas para celebrar una nueva edición de <strong>Abrasa'm, las Jornadas Gastronómicas a la Brasa</strong>, que tendrán lugar el <strong>sábado 5 de diciembre de 2026</strong>. Una cita imprescindible del puente de diciembre en el Alt Maestrat (Castellón), organizada por la <strong>Comisión de Fiestas de Ares del Maestrat</strong>, con un día completo de gastronomía tradicional a la brasa, música, actividades infantiles y fiesta nocturna.</p><h2>Programación completa del Abrasa'm 2026 (5 de diciembre)</h2><p>Las actividades arrancarán por la mañana en la plaza del pueblo y continuarán durante toda la jornada:</p><ul><li><strong>11:30 h — Vermutada en la Plaza:</strong> Inicio de la jornada con buen ambiente y vermut para abrir apetito mientras se preparan las brasas.</li><li><strong>14:00 h — Comida de las Jornadas Gastronómicas a la brasa «Abrasa'm»:</strong> El acto central del día, con menús a la brasa recién hechos.</li><li><strong>Al finalizar la comida — Tardeo en la Plaza:</strong> Música y sobremesa festiva al aire libre.</li><li><strong>16:00 h — Taller infantil en el Telecentro · LA LLUM:</strong> Actividad dirigida a los más pequeños, organizada por el Ayuntamiento de Ares del Maestrat.</li><li><strong>21:30 h — Cena de sobaquillo (pa i porta) en el local multiusos:</strong> Encuentro nocturno para cenar en grupo.</li><li><strong>23:30 h — Discocomi en el local multiusos:</strong> Música y fiesta para despedir el día por todo lo alto.</li></ul><h2>Menús y precio de la comida a la brasa «Abrasa'm»</h2><p>El precio de la comida es de <strong>15 €</strong> e incluye tres opciones de menú a elegir (con opción vegetariana):</p><ul><li><strong>Menú A:</strong> 1 longaniza, 1 chorizo y 2 panceta.</li><li><strong>Menú B:</strong> 1/4 de conejo y 2 panceta.</li><li><strong>Menú C (vegetariano):</strong> Filete melena de león.</li></ul><h3>Acompañamiento, bebidas y postre incluidos</h3><ul><li><strong>Acompañamiento:</strong> 1/2 patata y 1 alcachofa a la brasa.</li><li><strong>Se incluye:</strong> alioli, pan, vino con limonada/gaseosa, agua y <strong>cremaet</strong>.</li><li><strong>Postre:</strong> mandarinas.</li></ul><p><strong>Importante:</strong> Cada asistente deberá <strong>llevar de casa platos, cubiertos y vasos</strong>.</p><h2>Cómo y hasta cuándo reservar plaza para la comida</h2><p>El plazo de inscripción para la comida del Abrasa'm permanece abierto <strong>hasta el 2 de diciembre de 2026</strong>. Puedes reservar tu plaza de dos formas:</p><ol><li><strong>Online en la web oficial:</strong> Reservando directamente en la tienda de la Comisión en <a href="https://www.comiares.es/es/tenda/dinar-abrasam/" title="Reservar comida Abrasa'm 2026 en Ares del Maestrat">www.comiares.es/es/tenda/dinar-abrasam/</a>.</li><li><strong>Presencialmente en Ares del Maestrat:</strong> Apuntándote en las listas habilitadas en <strong>el Hotel</strong> y en <strong>la Tienda</strong>.</li></ol><p>El pago de los <strong>15 €</strong> se efectuará <strong>el mismo sábado 5 de diciembre por la mañana</strong>, de forma presencial mientras se estén preparando las brasas en la plaza.</p><h2>Información práctica para visitar Ares del Maestrat</h2><ul><li><strong>Fecha:</strong> Sábado 5 de diciembre de 2026.</li><li><strong>Lugar:</strong> Plaza, Telecentro y local multiusos de Ares del Maestrat (Castellón).</li><li><strong>Precio de la comida:</strong> 15 € (pago presencial la mañana del evento).</li><li><strong>Fecha límite de reserva:</strong> 2 de diciembre de 2026.</li><li><strong>Más actividades:</strong> Consulta toda la agenda en la <a href="https://www.comiares.es/es/programacio" title="Programación de Fiestas de Ares del Maestrat">programación oficial</a>.</li></ul><p>¡No te quedes sin tu plaza y ven a disfrutar de la brasa, el ambiente y la gastronomía de Ares del Maestrat!</p>`
-            }
-        ];
-        if (!Array.isArray(allNews)) allNews = [];
-        staticFallbackNews.forEach(st => {
-            if (!allNews.some(n => n.id === st.id || (n.slug && n.slug === st.slug))) {
-                allNews.push(st);
-            }
-        });
-        allNews.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
 
         const now = new Date();
         return allNews.filter(item => {
@@ -693,16 +793,14 @@ class AppDatabase {
             try {
                 const { data, error } = await this.supabase
                     .from('news')
-                    .update(updatedItem)
-                    .eq('id', id)
+                    .upsert([updatedItem], { onConflict: 'id' })
                     .select();
                 if (error) {
                     if (error.message && error.message.includes('published_at')) {
                         const { published_at, ...cleanItem } = updatedItem;
                         const { data: data2, error: error2 } = await this.supabase
                             .from('news')
-                            .update(cleanItem)
-                            .eq('id', id)
+                            .upsert([cleanItem], { onConflict: 'id' })
                             .select();
                         if (error2) throw error2;
                         return data2[0];
@@ -722,19 +820,21 @@ class AppDatabase {
     async editLocalNews(id, item) {
         await this.dbPromise;
         const original = await this.getIDB('news', id);
-        if (original) {
-            const updated = {
-                ...original,
-                ...item,
-                created_at: item.created_at || original.created_at
-            };
-            await this.putIDB('news', updated);
-            return updated;
-        }
-        return null;
+        const updated = {
+            ...(original || {}),
+            ...item,
+            id: id,
+            created_at: item.created_at || (original ? original.created_at : new Date().toISOString().split('T')[0])
+        };
+        await this.putIDB('news', updated);
+        return updated;
     }
 
     async deleteNews(id) {
+        const isStaticNews = this.getStaticFallbackNews().some(st => st.id === id);
+        if (isStaticNews) {
+            await this.markStaticNewsDeleted(id);
+        }
         if (this.isSupabaseConfigured()) {
             try {
                 const { error } = await this.supabase
