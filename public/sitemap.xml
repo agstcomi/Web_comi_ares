@@ -348,6 +348,28 @@
 
     <!-- DYNAMIC NEWS START -->
     <url>
+        <loc>https://www.comiares.es/noticies/abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/abrasam-2026-ares-del-maestrat-jornadas-gastronomicas-brasa-programacion-reservas/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/abrasam-2026-ares-del-maestrat-jornadas-gastronomicas-brasa-programacion-reservas/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves/"/>
+    </url>
+    <url>
+        <loc>https://www.comiares.es/es/noticies/abrasam-2026-ares-del-maestrat-jornadas-gastronomicas-brasa-programacion-reservas/</loc>
+        <lastmod>2026-11-25</lastmod>
+        <changefreq>weekly</changefreq>
+        <priority>0.7</priority>
+        <xhtml:link rel="alternate" hreflang="ca" href="https://www.comiares.es/noticies/abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves/"/>
+        <xhtml:link rel="alternate" hreflang="ca-ES" href="https://www.comiares.es/noticies/abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves/"/>
+        <xhtml:link rel="alternate" hreflang="es" href="https://www.comiares.es/es/noticies/abrasam-2026-ares-del-maestrat-jornadas-gastronomicas-brasa-programacion-reservas/"/>
+        <xhtml:link rel="alternate" hreflang="es-ES" href="https://www.comiares.es/es/noticies/abrasam-2026-ares-del-maestrat-jornadas-gastronomicas-brasa-programacion-reservas/"/>
+        <xhtml:link rel="alternate" hreflang="x-default" href="https://www.comiares.es/noticies/abrasam-2026-ares-del-maestrat-jornades-gastronomiques-brasa-programacio-reserves/"/>
+    </url>
+    <url>
         <loc>https://www.comiares.es/noticies/ares-es-prepara-per-viure-una-nit-de-tots-sants/</loc>
         <lastmod>2026-09-25</lastmod>
         <changefreq>weekly</changefreq>
