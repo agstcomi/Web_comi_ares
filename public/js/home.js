@@ -18,7 +18,107 @@
 
         // Start countdown
         initCountdown();
+
+        // Start promotional scroll popup (active until Dec 3, 2026 00:00 CET)
+        initAbrasamPopup();
     });
+
+    function initAbrasamPopup() {
+        const popup = document.getElementById('abrasam-promo-popup');
+        if (!popup) return;
+
+        // Desactivar automàticament el dia 03 de desembre de 2026 a les 00:00 (hora espanyola CET)
+        const deadlineMs = new Date('2026-12-03T00:00:00+01:00').getTime();
+        if (Date.now() >= deadlineMs) {
+            popup.remove();
+            return;
+        }
+
+        const STORAGE_KEY = 'ares_abrasam_popup_seen_2026';
+        try {
+            if (sessionStorage.getItem(STORAGE_KEY) === '1') {
+                return;
+            }
+        } catch (e) {}
+
+        let hasShown = false;
+        let expiryTimer = null;
+
+        function closePopup() {
+            popup.classList.remove('active');
+            popup.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+            if (expiryTimer) {
+                clearInterval(expiryTimer);
+                expiryTimer = null;
+            }
+            try {
+                sessionStorage.setItem(STORAGE_KEY, '1');
+            } catch (e) {}
+        }
+
+        function openPopup() {
+            if (hasShown) return;
+            if (Date.now() >= deadlineMs) {
+                popup.remove();
+                window.removeEventListener('scroll', onScrollCheck);
+                return;
+            }
+            hasShown = true;
+            window.removeEventListener('scroll', onScrollCheck);
+            popup.classList.add('active');
+            popup.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+
+            expiryTimer = setInterval(() => {
+                if (Date.now() >= deadlineMs) {
+                    closePopup();
+                    popup.remove();
+                }
+            }, 5000);
+        }
+
+        function onScrollCheck() {
+            if (hasShown) return;
+            const hero = document.getElementById('hero');
+            const threshold = hero ? (hero.offsetHeight * 0.65) : 350;
+            if (window.scrollY >= threshold) {
+                openPopup();
+            }
+        }
+
+        const closeBtn = document.getElementById('abrasam-popup-close');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                closePopup();
+            });
+        }
+
+        const linkEl = document.getElementById('abrasam-popup-link');
+        if (linkEl) {
+            linkEl.addEventListener('click', () => {
+                try { sessionStorage.setItem(STORAGE_KEY, '1'); } catch (e) {}
+                document.body.style.overflow = '';
+            });
+        }
+
+        popup.addEventListener('click', (e) => {
+            if (e.target === popup) {
+                closePopup();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && popup.classList.contains('active')) {
+                closePopup();
+            }
+        });
+
+        window.addEventListener('scroll', onScrollCheck, { passive: true });
+        onScrollCheck();
+    }
 
     async function initHomeLayout() {
         const container = document.getElementById('home-sections-container');
