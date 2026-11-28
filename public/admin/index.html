@@ -39,6 +39,14 @@
     <!-- EmailJS SDK per a confirmacions de pagament automàtiques -->
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
     <style>
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        #login-container {
+            padding-bottom: 4rem;
+        }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
@@ -1140,9 +1148,9 @@
     <div id="admin-toast-container" style="position: fixed; bottom: 24px; right: 24px; z-index: 99999; display: flex; flex-direction: column; gap: 10px; max-width: 420px; pointer-events: none;"></div>
 
     <!-- Standalone Admin Footer -->
-    <footer class="main-footer" style="padding: 2.5rem 0; background-color: #000000; border-radius: 20px 20px 0 0; text-align: center; margin-top: 5rem; border-top: none;">
+    <footer class="main-footer" style="width: 100%; padding: 2.5rem 0; background-color: #000000; border-radius: 20px 20px 0 0; text-align: center; margin-top: auto; border-top: none;">
         <div class="container" style="display: flex; justify-content: center; align-items: center; font-size: 0.8rem; color: rgba(255, 255, 255, 0.5);">
-            &copy; <span id="footer-year">2026</span> Comissió de Festes d'Ares del Maestrat. Panel d'Administració Privat.
+            <span>&copy; <span id="footer-year">2026</span> Comissió de Festes d'Ares del Maestrat. Panel d'Administració Privat.</span>
         </div>
     </footer>
     <script>
