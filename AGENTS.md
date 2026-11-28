@@ -693,7 +693,16 @@ Completat a la sessió actual per a mantindre l'arrel de `main` a GitHub neta i 
 
 ---
 
-## 47. Pròxim Pas
+## 47. Simplificació del Login `/admin` i Blindatge de Connexió a Supabase (PRO)
+Completat i pujat a `main`:
+* **Alta d'Usuari de Comissió**: Configurat `user_metadata.display_name = "Marc"` per al compte `mescobar@comiares.es` a Supabase Auth.
+* **Neteja del Login (`public/admin/index.html` i `public/admin/gestio.js`)**: Eliminat el desplegable *«Configurar Connexió»* del formulari d'accés perquè qualsevol membre de la comissió accedisca únicament amb correu i contrasenya.
+* **Pestanya «Còpies de seguretat» (`#tab-config`)**: Eliminats els camps d'URL/API Key, el codi SQL i el botó *«Desconnectar (Mode Local)»*, deixant només l'exportació/importació JSON per evitar desconnexions accidentals.
+* **Autenticació Estricta a Supabase (`public/js/db.js`)**: Eliminada la sobreescriptura per `localStorage` (`supabase_config`) i el *fallback* a sessió local (`ares_local_session`), assegurant `defer` a `gestio.js` i *cache-busting* (`db.js?v=3.7`, `gestio.js?v=4.4`).
+
+---
+
+## 48. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 

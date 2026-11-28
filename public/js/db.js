@@ -451,40 +451,14 @@ class AppDatabase {
     }
 
     init() {
-        // 1. Check if we have Supabase configuration stored in localStorage (allows override)
-        let storedConfig = localStorage.getItem('supabase_config');
-        if (storedConfig) {
-            try {
-                this.config = JSON.parse(storedConfig);
-                if (this.config.url && this.config.key) {
-                    let url = this.config.url.trim();
-                    const dashboardRegex = /supabase\.com\/dashboard\/project\/([a-z0-9]+)/i;
-                    const match = url.match(dashboardRegex);
-                    if (match && match[1]) {
-                        url = `https://${match[1]}.supabase.co`;
-                    } else if (/^[a-z0-9]{20}$/i.test(url)) {
-                        url = `https://${url}.supabase.co`;
-                    } else if (!/^https?:\/\//i.test(url)) {
-                        url = `https://${url}`;
-                    }
-                    const newUrl = url.replace(/\/+$/, "");
-                    if (newUrl !== this.config.url) {
-                        this.config.url = newUrl;
-                        localStorage.setItem('supabase_config', JSON.stringify(this.config));
-                    }
+        // Netejar possibles restes antigues de configuracions manuals o sessions locals
+        try {
+            localStorage.removeItem('supabase_config');
+            localStorage.removeItem('ares_mock_session');
+            localStorage.removeItem('ares_local_session');
+        } catch (e) {}
 
-                    if (window.supabase) {
-                        this.supabase = window.supabase.createClient(newUrl, this.config.key);
-                        console.log("Supabase client initialized successfully from localStorage (normalized).");
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.error("Error parsing stored Supabase config:", e);
-            }
-        }
-
-        // 2. Fallback to hardcoded configuration in the code
+        // Inicialitzar directament amb la configuració oficial del projecte
         if (typeof SUPABASE_URL !== 'undefined' && 
             typeof SUPABASE_ANON_KEY !== 'undefined' && 
             SUPABASE_URL && 
@@ -495,18 +469,16 @@ class AppDatabase {
                 if (window.supabase) {
                     this.supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                     this.config = { url: SUPABASE_URL, key: SUPABASE_ANON_KEY };
-                    console.log("Supabase client initialized successfully with hardcoded config.");
                 }
             } catch (e) {
-                console.error("Error initializing hardcoded Supabase config:", e);
+                console.error("Error initializing Supabase client:", e);
             }
         }
     }
 
     isSupabaseConfigured() {
-        const session = localStorage.getItem('ares_mock_session');
-        if (session) {
-            return false;
+        if (!this.supabase && typeof window !== 'undefined' && window.supabase) {
+            this.init();
         }
         return this.supabase !== null;
     }
@@ -1670,40 +1642,37 @@ class AppDatabase {
     }
 
     async login(email, password) {
-        localStorage.removeItem('ares_local_session');
+        try { localStorage.removeItem('ares_local_session'); } catch (e) {}
 
-        if (this.isSupabaseConfigured()) {
-            try {
-                const { data, error } = await this.supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                if (error) throw error;
-                return { success: true, user: data.user };
-            } catch (err) {
-                console.error("Login failed on Supabase:", err);
-                return { success: false, error: err.message };
-            }
+        if (!this.isSupabaseConfigured()) {
+            return {
+                success: false,
+                error: "No s'ha pogut connectar amb el servidor d'autenticació. Comprova la connexió a Internet i recarrega la pàgina."
+            };
         }
 
-        // Mode Local (desenvolupament local): permet accés de gestió local
-        const localUser = {
-            id: 'local-admin',
-            email: email || 'admin@ares.com',
-            user_metadata: {
-                display_name: 'Admin Local',
-                avatar_url: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100'
-            }
-        };
-        localStorage.setItem('ares_local_session', JSON.stringify(localUser));
-        return { success: true, user: localUser };
+        try {
+            const { data, error } = await this.supabase.auth.signInWithPassword({
+                email: (email || '').trim(),
+                password: password
+            });
+            if (error) throw error;
+            return { success: true, user: data.user };
+        } catch (err) {
+            console.error("Login failed on Supabase:", err);
+            const rawMsg = (err && err.message) ? err.message : '';
+            const friendlyError = /invalid login credentials/i.test(rawMsg)
+                ? 'Correu electrònic o contrasenya incorrectes.'
+                : (rawMsg || 'Error en iniciar sessió.');
+            return { success: false, error: friendlyError };
+        }
     }
 
     async logout() {
         if (this.isSupabaseConfigured()) {
             try { await this.supabase.auth.signOut(); } catch (e) {}
         }
-        localStorage.removeItem('ares_local_session');
+        try { localStorage.removeItem('ares_local_session'); } catch (e) {}
         return true;
     }
 
@@ -1713,15 +1682,7 @@ class AppDatabase {
                 const { data: { user } } = await this.supabase.auth.getUser();
                 if (user) return user;
             } catch (e) {
-                // Ignore and check local session
-            }
-        }
-        const localSession = localStorage.getItem('ares_local_session');
-        if (localSession) {
-            try {
-                return JSON.parse(localSession);
-            } catch (e) {
-                localStorage.removeItem('ares_local_session');
+                // Sessió no vàlida o expirada
             }
         }
         return null;

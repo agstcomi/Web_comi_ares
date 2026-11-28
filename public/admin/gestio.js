@@ -34,8 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const formEvent = document.getElementById('form-event');
     const formPhoto = document.getElementById('form-photo');
-    const configForm = document.getElementById('config-form');
-    const btnResetDb = document.getElementById('btn-reset-db');
     // Calendar State for Admin
     let selectedDate = null;
     let currentCalendarYear = null;
@@ -127,7 +125,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function showLogin() {
         loginContainer.style.display = 'block';
         dashboardContainer.style.display = 'none';
-        loadDbConfigFields();
         if (window.lucide) window.lucide.createIcons();
     }
 
@@ -233,9 +230,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (profilePreviewImg) {
             profilePreviewImg.src = profile.avatarUrl;
         }
-        
-        // Load configurations into input fields if present
-        loadDbConfigFields();
 
         // Load tables data
         loadNewsTable();
@@ -263,68 +257,33 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function loadDbConfigFields() {
-        const config = localStorage.getItem('supabase_config');
-        if (config) {
-            try {
-                const parsed = JSON.parse(config);
-                const url = parsed.url || '';
-                const key = parsed.key || '';
-                
-                const dashUrl = document.getElementById('config-url');
-                const dashKey = document.getElementById('config-key');
-                if (dashUrl) dashUrl.value = url;
-                if (dashKey) dashKey.value = key;
-                
-                const loginUrl = document.getElementById('login-config-url');
-                const loginKey = document.getElementById('login-config-key');
-                if (loginUrl) loginUrl.value = url;
-                if (loginKey) loginKey.value = key;
-            } catch (e) {
-                console.error("Error parsing stored Supabase config:", e);
-            }
-        }
-    }
-
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('login-email').value;
             const password = document.getElementById('login-password').value;
+            const submitBtn = loginForm.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
 
             loginError.style.display = 'none';
-            const result = await window.db.login(email, password);
-
-            if (result.success) {
-                await showDashboard(result.user);
-            } else {
-                loginError.textContent = result.error || "Error de connexió.";
-                loginError.style.display = 'block';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span>Entrant...</span>';
             }
-        });
-    }
 
-    const loginConfigForm = document.getElementById('login-config-form');
-    if (loginConfigForm) {
-        loginConfigForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const urlInput = document.getElementById('login-config-url');
-            const keyInput = document.getElementById('login-config-key');
-            const url = urlInput.value.trim();
-            const key = keyInput.value.trim();
-
-            if (url && key) {
-                const connected = window.db.setConfig(url, key);
-                if (connected) {
-                    loadDbConfigFields();
-                    alert('Base de dades Supabase configurada correctament. Ja pots iniciar sessió.');
-                    
-                    const detailsEl = document.getElementById('login-config-details');
-                    if (detailsEl) detailsEl.removeAttribute('open');
-                    
-                    if (loginError) loginError.style.display = 'none';
+            try {
+                const result = await window.db.login(email, password);
+                if (result.success) {
+                    await showDashboard(result.user);
                 } else {
-                    alert('Error en configurar la base de dades.');
+                    loginError.textContent = result.error || "Error de connexió.";
+                    loginError.style.display = 'block';
+                }
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                    if (window.lucide) window.lucide.createIcons();
                 }
             }
         });
@@ -1108,42 +1067,6 @@ document.addEventListener('DOMContentLoaded', () => {
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Pujar Imatge';
-            }
-        });
-    }
-
-    // 8. DB Connection Config Submissions
-    if (configForm) {
-        configForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            const urlInput = document.getElementById('config-url');
-            const keyInput = document.getElementById('config-key');
-            const url = urlInput.value.trim();
-            const key = keyInput.value.trim();
-
-            if (url && key) {
-                const connected = window.db.setConfig(url, key);
-                if (connected) {
-                    if (window.db.config && window.db.config.url) {
-                        urlInput.value = window.db.config.url;
-                    }
-                    alert('Base de dades Supabase configurada correctament. Intentant carregar dades del núvol...');
-                    // Reload everything in current view context
-                    checkAuthState();
-                } else {
-                    alert('Error en configurar la base de dades.');
-                }
-            }
-        });
-    }
-
-    if (btnResetDb) {
-        btnResetDb.addEventListener('click', () => {
-            if (confirm('Vols desconnectar Supabase? Es tornaran a utilitzar les dades locals de prova.')) {
-                window.db.setConfig(null, null);
-                document.getElementById('config-url').value = '';
-                document.getElementById('config-key').value = '';
-                checkAuthState();
             }
         });
     }

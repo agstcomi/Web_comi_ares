@@ -46,12 +46,6 @@
         .spin {
             animation: spin 1s linear infinite;
         }
-        details[open] #login-config-chevron {
-            transform: rotate(180deg);
-        }
-        #login-config-details summary::-webkit-details-marker {
-            display: none;
-        }
 
         /* Instant Hover Tooltips for Action Buttons */
         [data-tooltip] {
@@ -146,7 +140,7 @@
                 </div>
                 <div class="form-group">
                     <label for="login-password">Contrasenya</label>
-                    <input type="password" id="login-password" required placeholder="••••••••">
+                    <input type="password" id="login-password" required placeholder="••••••••" autocomplete="current-password">
                 </div>
                 
                 <button type="submit" class="btn" style="width: 100%; margin-top: 1rem;">
@@ -154,36 +148,6 @@
                     <i data-lucide="log-in" style="width: 14px; height: 14px;"></i>
                 </button>
             </form>
-
-            <!-- Configurar Supabase en Login -->
-            <div id="login-db-setup" style="margin-top: 1.5rem; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-                <details id="login-config-details" style="transition: var(--transition);">
-                    <summary style="cursor: pointer; font-size: 0.8rem; color: var(--text-secondary); text-align: center; list-style: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; user-select: none; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em;">
-                        <i data-lucide="database" style="width: 14px; height: 14px;"></i>
-                        <span>Configurar Connexió</span>
-                        <i data-lucide="chevron-down" style="width: 14px; height: 14px; transition: transform 0.2s;" id="login-config-chevron"></i>
-                    </summary>
-                    <div style="margin-top: 1.25rem;">
-                        <form id="login-config-form">
-                            <p style="font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 1rem; line-height: 1.4;">
-                                Si és la primera vegada que accedeixes des d'aquest dispositiu o has esborrat la memòria memòria cau, configura l'accés a la teua base de dades de Supabase:
-                            </p>
-                            <div class="form-group" style="margin-bottom: 1rem;">
-                                <label for="login-config-url" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Supabase Project URL</label>
-                                <input type="url" id="login-config-url" placeholder="https://xxxxxxxxxxxxxxxxxxxx.supabase.co" required style="font-size: 0.85rem; padding: 0.5rem;">
-                            </div>
-                            <div class="form-group" style="margin-bottom: 1.25rem;">
-                                <label for="login-config-key" style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase;">Supabase Anon API Key</label>
-                                <input type="password" id="login-config-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required style="font-size: 0.85rem; padding: 0.5rem;">
-                            </div>
-                            <button type="submit" class="btn btn-secondary" style="width: 100%; font-size: 0.8rem; padding: 0.5rem 1rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border: 1px solid var(--text-primary); background: transparent; color: var(--text-primary);">
-                                <span>Desar i Connectar</span>
-                                <i data-lucide="save" style="width: 14px; height: 14px;"></i>
-                            </button>
-                        </form>
-                    </div>
-                </details>
-            </div>
             
             <div id="login-error" style="display: none; margin-top: 1.5rem; color: #ef4444; font-size: 0.85rem; text-align: center; border: 1px solid #ef4444; padding: 0.75rem;">
                 Contrasenya incorrecta.
@@ -232,8 +196,8 @@
                     Preguntes freqüents (FAQs)
                 </button>
                 <button class="admin-tab-btn" data-tab="tab-config">
-                    <i data-lucide="database" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
-                    Configurar Supabase
+                    <i data-lucide="archive" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
+                    Còpies de seguretat
                 </button>
                 <button class="admin-tab-btn" data-tab="tab-camisetes">
                     <i data-lucide="shopping-bag" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
@@ -422,43 +386,21 @@
                     </div>
                 </div>
 
-                <!-- SUPABASE CONFIG PANEL -->
+                <!-- BACKUP & SYNC PANEL -->
                 <div class="admin-panel" id="tab-config">
-                    <h3>Configurar Base de Dades Supabase</h3>
+                    <h3>Còpies de Seguretat i Sincronització</h3>
                     <p style="margin-bottom: 2rem;">
-                        Per a sincronitzar les teues dades al núvol de manera gratuïta i allotjar la web en producció, crea un projecte en <a href="https://supabase.com" target="_blank" style="text-decoration: underline;">Supabase</a>, configura les taules corresponents i introdueix les credencials a continuació.
+                        La connexió amb la base de dades al núvol és automàtica. Des d'ací pots descarregar una còpia de seguretat en format JSON de totes les notícies, actes i galeria, o restaurar una còpia prèvia.
                     </p>
 
-                    <div class="db-config-box">
-                        <form id="config-form">
-                            <div class="form-group">
-                                <label for="config-url">Supabase Project URL</label>
-                                <input type="url" id="config-url" placeholder="https://xxxxxxxxxxxxxxxxxxxx.supabase.co" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="config-key">Supabase Anon API Key (Public)</label>
-                                <input type="password" id="config-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required>
-                            </div>
-                            
-                            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
-                                <button type="submit" class="btn btn-sm">
-                                    <i data-lucide="save" style="width: 14px; height: 14px;"></i> Guardar i Connectar
-                                </button>
-                                 <button type="button" class="btn btn-sm btn-secondary" id="btn-reset-db">
-                                     Desconnectar (Mode Local)
-                                 </button>
-                            </div>
-                        </form>
-                    </div>
-
                     <!-- BACKUP & SYNC CONTAINER -->
-                    <div style="border: 1px solid var(--border-color); padding: 2rem; margin-bottom: 2rem;">
+                    <div style="border: 1px solid var(--border-color); padding: 2rem; border-radius: 12px; background: var(--bg-primary);">
                         <h4 style="margin-bottom: 1rem; text-transform: uppercase; display: flex; align-items: center; gap: 0.5rem;">
                             <i data-lucide="archive" style="width: 18px; height: 18px;"></i>
-                            Còpies de Seguretat i Sincronització
+                            Exportar o Restaurar Dades (JSON)
                         </h4>
                         <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 1.5rem; font-weight: 300;">
-                            Descarrega una còpia de seguretat de totes les teves notícies, actes i galeria local, o restaura dades prèviament exportades des d'un arxiu JSON. Això et permetrà passar fàcilment les dades del mode local a la teva base de dades en línia de Supabase.
+                            Guarda una còpia local de seguretat dels continguts de la web o importa un fitxer JSON exportat anteriorment.
                         </p>
                         
                         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
@@ -471,48 +413,6 @@
                                 <input type="file" id="input-import-db" accept=".json" style="display: none;">
                             </label>
                         </div>
-                    </div>
-
-                    <div style="border: 1px solid var(--border-color); padding: 2rem;">
-                        <h4 style="margin-bottom: 1rem; text-transform: uppercase;">ℹ️ Estructura SQL de les Taules en Supabase</h4>
-                        <p>Si uses Supabase, has de crear aquestes 3 taules en el teu projecte (Editor SQL):</p>
-                        
-                        <pre style="background-color: var(--bg-tertiary); padding: 1.5rem; overflow-x: auto; font-size: 0.75rem; border: 1px solid var(--border-color);">
--- Taula de Notícies (news)
-CREATE TABLE news (
-  id TEXT PRIMARY KEY,
-  created_at DATE DEFAULT now(),
-  updated_at DATE,
-  title TEXT NOT NULL,
-  subtitle TEXT,
-  content TEXT NOT NULL,
-  image_url TEXT,
-  author TEXT DEFAULT 'Comissió de Festes',
-  additional_images TEXT[] DEFAULT '{}'::text[]
-);
-
--- Taula d'Esdeveniments (events)
-CREATE TABLE events (
-  id TEXT PRIMARY KEY,
-  title TEXT NOT NULL,
-  description TEXT NOT NULL,
-  date DATE NOT NULL,
-  time TEXT NOT NULL,
-  location TEXT NOT NULL,
-  category TEXT NOT NULL,
-  long_description TEXT,
-  image_url TEXT
-);
-
--- Taula de Galeria (photos)
-CREATE TABLE photos (
-  id TEXT PRIMARY KEY,
-  created_at DATE DEFAULT now(),
-  title TEXT NOT NULL,
-  image_url TEXT NOT NULL,
-  category TEXT NOT NULL
-);
-                        </pre>
                     </div>
                 </div>
 
@@ -1250,8 +1150,8 @@ CREATE TABLE photos (
     </script>
 
     <!-- Scripts -->
-    <script src="/js/db.js?v=3.6" defer></script>
-    <script src="/admin/gestio.js?v=4.3"></script>
+    <script src="/js/db.js?v=3.7" defer></script>
+    <script src="/admin/gestio.js?v=4.4" defer></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);
