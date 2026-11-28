@@ -192,13 +192,32 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem(`ares_profile_${emailKey}`, JSON.stringify({ name, avatarUrl }));
     }
 
+    function getTimeBasedGreeting(name) {
+        let hour = new Date().getHours();
+        try {
+            hour = parseInt(new Intl.DateTimeFormat('en-GB', {
+                hour: '2-digit',
+                hour12: false,
+                timeZone: 'Europe/Madrid'
+            }).format(new Date()), 10);
+        } catch (e) {}
+
+        if (hour >= 6 && hour < 14) {
+            return `Bon matí, ${name}`;
+        } else if (hour >= 14 && hour < 21) {
+            return `Bona vesprada, ${name}`;
+        } else {
+            return `Bona nit, ${name}`;
+        }
+    }
+
     async function showDashboard(user) {
         currentUser = user;
         loginContainer.style.display = 'none';
         dashboardContainer.style.display = 'block';
         
         const profile = getProfile(user);
-        userGreeting.textContent = `Hola, ${profile.name}!`;
+        userGreeting.textContent = getTimeBasedGreeting(profile.name);
         
         // Update database connection status badge
         updateDbStatusBadge();
@@ -232,6 +251,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Load tables data
+        initOverviewDashboard();
+        await loadOverviewDashboard();
         loadNewsTable();
         await loadEventsTable();
         loadPhotosTable();
@@ -331,7 +352,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const targetPanel = document.getElementById(targetTab);
             if (targetPanel) targetPanel.classList.add('active');
 
-            if (targetTab === 'tab-camisetes') {
+            if (targetTab === 'tab-overview') {
+                loadOverviewDashboard();
+            } else if (targetTab === 'tab-camisetes') {
                 loadReservationsTab();
             }
         });
@@ -942,6 +965,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 modalEvent.classList.remove('active');
                 formEvent.reset();
                 loadEventsTable();
+                loadOverviewDashboard();
             } catch (err) {
                 console.error("Error saving event:", err);
                 alert("S'ha produït un error al guardar l'acte.");
@@ -1138,7 +1162,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 await saveProfile(currentUser, name, avatarUrl);
 
-                userGreeting.textContent = `Hola, ${name}!`;
+                userGreeting.textContent = getTimeBasedGreeting(name);
                 const profileName = document.querySelector('.admin-profile-name');
                 const profileAvatar = document.querySelector('.admin-profile-avatar img');
                 if (profileName) profileName.textContent = name;
@@ -3753,6 +3777,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 await loadProductsTable();
+                await loadOverviewDashboard();
 
             } catch (err) {
                 console.error("Error saving product:", err);
@@ -3763,6 +3788,953 @@ document.addEventListener('DOMContentLoaded', () => {
                     btnSave.innerHTML = originalBtnText;
                 }
             }
+        });
+    }
+
+    // =========================================================================
+    // 12. OVERVIEW DASHBOARD (HOME DEL PANEL D'ADMIN)
+    // =========================================================================
+    let ovInitialized = false;
+    let ovCalYear = null;
+    let ovCalMonth = null; // 0-indexed
+    let ovFilterDate = null; // YYYY-MM-DD when user clicks a specific day
+    let ovEventsScope = 'upcoming'; // 'upcoming' | 'all'
+    let ovTodoFilter = 'all'; // 'all' | 'pending'
+    let ovActiveSubtaskTodoId = null;
+    let ovCachedEvents = [];
+    let ovTodos = [];
+
+    const MONTHS_CA = ['Gener', 'Febrer', 'Març', 'Abril', 'Maig', 'Juny', 'Juliol', 'Agost', 'Setembre', 'Octubre', 'Novembre', 'Desembre'];
+    const MONTHS_SHORT_CA = ['gen.', 'febr.', 'març', 'abr.', 'maig', 'juny', 'jul.', 'ag.', 'set.', 'oct.', 'nov.', 'des.'];
+    const WEEKDAYS_CA = ['DL', 'DT', 'DC', 'DJ', 'DV', 'DS', 'DG'];
+    const WEEKDAYS_SHORT_EVENT = ['DG', 'DL', 'DT', 'DC', 'DJ', 'DV', 'DS'];
+
+    function getMadridTodayStr() {
+        try {
+            return new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
+        } catch (e) {
+            return new Date().toISOString().split('T')[0];
+        }
+    }
+
+    function switchAdminTab(tabId) {
+        const targetBtn = document.querySelector(`.admin-tab-btn[data-tab="${tabId}"]`);
+        if (targetBtn) targetBtn.click();
+    }
+
+    function openEventModalForEdit(ev) {
+        if (!ev || !modalEvent || !formEvent) return;
+        formEvent.reset();
+        document.getElementById('event-id').value = ev.id || '';
+        document.getElementById('event-modal-title').textContent = 'Editar Acte';
+        document.getElementById('event-title').value = ev.title || '';
+        document.getElementById('event-date').value = ev.date || '';
+        document.getElementById('event-time').value = ev.time || '';
+        document.getElementById('event-location').value = ev.location || '';
+        document.getElementById('event-description').value = ev.description || '';
+        document.getElementById('event-long-description').value = ev.long_description || '';
+        document.getElementById('event-image').value = ev.image_url || '';
+
+        const titleEsEl = document.getElementById('event-title-es');
+        const locEsEl = document.getElementById('event-location-es');
+        const descEsEl = document.getElementById('event-description-es');
+        const longDescEsEl = document.getElementById('event-long-description-es');
+        if (titleEsEl) titleEsEl.value = ev.title_es || '';
+        if (locEsEl) locEsEl.value = ev.location_es || '';
+        if (descEsEl) descEsEl.value = ev.description_es || '';
+        if (longDescEsEl) longDescEsEl.value = ev.long_description_es || '';
+
+        const catList = (ev.category || '').split(',').map(c => c.trim().toLowerCase()).filter(Boolean);
+        document.querySelectorAll('input[name="event-category-check"]').forEach(cb => {
+            cb.checked = catList.includes(cb.value.toLowerCase());
+        });
+
+        modalEvent.classList.add('active');
+    }
+
+    function initOverviewDashboard() {
+        if (ovInitialized) return;
+        ovInitialized = true;
+
+        // Top view pill tabs (Resum | Calendari | Tasques)
+        document.querySelectorAll('.ov-pill-tab').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.ov-pill-tab').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const view = btn.getAttribute('data-ov-view');
+                const calSec = document.getElementById('ov-section-calendar');
+                const botSec = document.getElementById('ov-section-bottom');
+                const anaSec = document.getElementById('ov-section-analytics');
+                const prodCard = document.getElementById('ov-card-products');
+                const todoCard = document.getElementById('ov-card-todos');
+
+                if (view === 'analytics') {
+                    if (calSec) calSec.style.display = 'none';
+                    if (botSec) botSec.style.display = 'none';
+                    if (anaSec) anaSec.style.display = 'flex';
+                } else if (view === 'calendar') {
+                    if (calSec) calSec.style.display = 'grid';
+                    if (botSec) botSec.style.display = 'none';
+                    if (anaSec) anaSec.style.display = 'none';
+                } else if (view === 'todos') {
+                    if (calSec) calSec.style.display = 'none';
+                    if (botSec) {
+                        botSec.style.display = 'grid';
+                        botSec.style.gridTemplateColumns = '1fr';
+                    }
+                    if (prodCard) prodCard.style.display = 'none';
+                    if (todoCard) todoCard.style.display = 'flex';
+                    if (anaSec) anaSec.style.display = 'none';
+                } else {
+                    if (calSec) calSec.style.display = '';
+                    if (botSec) {
+                        botSec.style.display = '';
+                        botSec.style.gridTemplateColumns = '';
+                    }
+                    if (prodCard) prodCard.style.display = '';
+                    if (todoCard) todoCard.style.display = '';
+                    if (anaSec) anaSec.style.display = '';
+                }
+            });
+        });
+
+        // Quick action: + Notícia
+        const btnQuickNews = document.getElementById('ov-btn-quick-news');
+        if (btnQuickNews) {
+            btnQuickNews.addEventListener('click', () => {
+                window.open('editor.html', '_blank');
+            });
+        }
+
+        // Calendar navigation
+        const btnPrev = document.getElementById('ov-cal-prev');
+        const btnNext = document.getElementById('ov-cal-next');
+        const btnJumpNext = document.getElementById('ov-cal-jump-next');
+
+        if (btnPrev) {
+            btnPrev.addEventListener('click', () => {
+                if (ovCalMonth === null) return;
+                ovCalMonth--;
+                if (ovCalMonth < 0) { ovCalMonth = 11; ovCalYear--; }
+                renderOverviewCalendarAndEvents();
+            });
+        }
+        if (btnNext) {
+            btnNext.addEventListener('click', () => {
+                if (ovCalMonth === null) return;
+                ovCalMonth++;
+                if (ovCalMonth > 11) { ovCalMonth = 0; ovCalYear++; }
+                renderOverviewCalendarAndEvents();
+            });
+        }
+        if (btnJumpNext) {
+            btnJumpNext.addEventListener('click', () => {
+                ovFilterDate = null;
+                const today = getMadridTodayStr();
+                const nextEv = ovCachedEvents.find(e => e.date >= today);
+                const refDate = nextEv ? new Date(nextEv.date + 'T12:00:00') : new Date();
+                ovCalYear = refDate.getFullYear();
+                ovCalMonth = refDate.getMonth();
+                renderOverviewCalendarAndEvents();
+            });
+        }
+
+        // Events scope toggle (Pròxims | Tots)
+        const btnScope = document.getElementById('ov-events-toggle-scope');
+        if (btnScope) {
+            btnScope.addEventListener('click', () => {
+                ovFilterDate = null;
+                ovEventsScope = (ovEventsScope === 'upcoming') ? 'all' : 'upcoming';
+                const lbl = document.getElementById('ov-events-scope-label');
+                if (lbl) lbl.textContent = (ovEventsScope === 'upcoming') ? 'Pròxims' : 'Tots';
+                renderOverviewCalendarAndEvents();
+            });
+        }
+
+        // + Afegir acte button
+        const btnAddEv = document.getElementById('ov-btn-add-event');
+        if (btnAddEv && modalEvent && formEvent) {
+            btnAddEv.addEventListener('click', () => {
+                loadCategorySelects();
+                formEvent.reset();
+                document.getElementById('event-id').value = '';
+                document.getElementById('event-modal-title').textContent = 'Nou Acte';
+                document.getElementById('event-date').value = ovFilterDate || getMadridTodayStr();
+                modalEvent.classList.add('active');
+            });
+        }
+
+        // Go to Shop button
+        const btnGoShop = document.getElementById('ov-btn-go-shop');
+        if (btnGoShop) {
+            btnGoShop.addEventListener('click', () => switchAdminTab('tab-camisetes'));
+        }
+
+        // Todo composer toggle & submit
+        const btnToggleTodoForm = document.getElementById('ov-btn-toggle-todo-form');
+        const todoForm = document.getElementById('ov-todo-form');
+        if (btnToggleTodoForm && todoForm) {
+            btnToggleTodoForm.addEventListener('click', () => {
+                todoForm.classList.toggle('open');
+                if (todoForm.classList.contains('open')) {
+                    const input = document.getElementById('ov-todo-input-title');
+                    if (input) input.focus();
+                }
+            });
+        }
+
+        if (todoForm) {
+            todoForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const titleEl = document.getElementById('ov-todo-input-title');
+                const dateEl = document.getElementById('ov-todo-input-date');
+                const assigneeEl = document.getElementById('ov-todo-input-assignee');
+                const title = (titleEl.value || '').trim();
+                if (!title) return;
+
+                const newTodo = {
+                    id: 'todo-' + Date.now(),
+                    title,
+                    done: false,
+                    due_date: dateEl.value || '',
+                    assignee: (assigneeEl.value || '').trim(),
+                    subtasks: [],
+                    created_at: new Date().toISOString()
+                };
+
+                ovTodos.unshift(newTodo);
+                titleEl.value = '';
+                dateEl.value = '';
+                assigneeEl.value = '';
+                todoForm.classList.remove('open');
+                renderOverviewTodos();
+                await window.db.saveAdminTodos(ovTodos);
+            });
+        }
+
+        // Todo filter toggle (Totes | Pendents)
+        const btnTodoFilter = document.getElementById('ov-todos-filter-btn');
+        if (btnTodoFilter) {
+            btnTodoFilter.addEventListener('click', () => {
+                ovTodoFilter = (ovTodoFilter === 'all') ? 'pending' : 'all';
+                btnTodoFilter.textContent = (ovTodoFilter === 'all') ? 'Totes' : 'Pendents';
+                renderOverviewTodos();
+            });
+        }
+
+        // Live refresh of Web Analytics when another tab browses/clicks on the website
+        if (typeof BroadcastChannel !== 'undefined') {
+            try {
+                const bc = new BroadcastChannel('ares_analytics_live');
+                bc.onmessage = async () => {
+                    if (window.db && typeof window.db.getWebAnalytics === 'function') {
+                        const stats = await window.db.getWebAnalytics(7);
+                        renderOverviewAnalytics(stats);
+                    }
+                };
+            } catch (e) {}
+        }
+    }
+
+    async function loadOverviewDashboard() {
+        try {
+            const [rawEvents, products, reservations, todos, analytics] = await Promise.all([
+                window.db.getEvents().catch(() => []),
+                window.db.getProducts().catch(() => []),
+                window.db.getReservations().catch(() => []),
+                window.db.getAdminTodos().catch(() => []),
+                window.db.getWebAnalytics ? window.db.getWebAnalytics(7).catch(() => null) : Promise.resolve(null)
+            ]);
+
+            ovCachedEvents = (rawEvents || [])
+                .filter(e => e && e.id && !e.id.includes('config') && e.category !== 'config' && e.date !== '2099-12-31')
+                .sort((a, b) => (a.date + (a.time || '')).localeCompare(b.date + (b.time || '')));
+
+            ovTodos = Array.isArray(todos) ? todos : [];
+
+            const today = getMadridTodayStr();
+            const nextEv = ovCachedEvents.find(e => e.date >= today);
+
+            if (ovCalYear === null || ovCalMonth === null) {
+                const anchor = nextEv ? new Date(nextEv.date + 'T12:00:00') : new Date();
+                ovCalYear = anchor.getFullYear();
+                ovCalMonth = anchor.getMonth();
+            }
+
+            renderOverviewCalendarAndEvents();
+            renderOverviewActiveProducts(products || [], reservations || []);
+            renderOverviewTodos();
+            if (analytics) renderOverviewAnalytics(analytics);
+
+            if (window.lucide) window.lucide.createIcons();
+        } catch (err) {
+            console.error("Error loading overview dashboard:", err);
+        }
+    }
+
+    function renderOverviewAnalytics(stats) {
+        const container = document.getElementById('ov-analytics-body');
+        if (!container || !stats) return;
+
+        const ctr = stats.totalViews > 0 ? Math.round((stats.totalClicks / stats.totalViews) * 100) : 0;
+        const totalDevices = (stats.totalMobile || 0) + (stats.totalDesktop || 0);
+        const mobilePct = totalDevices > 0 ? Math.round((stats.totalMobile / totalDevices) * 100) : 0;
+        const topPage = (stats.topPages && stats.topPages[0]) ? stats.topPages[0].path : '—';
+
+        const maxBarVal = Math.max(1, ...(stats.series || []).map(s => Math.max(s.views || 0, s.clicks || 0)));
+
+        const barsHtml = (stats.series || []).map(day => {
+            const dObj = new Date(day.date + 'T12:00:00');
+            const label = !isNaN(dObj.getTime()) ? WEEKDAYS_SHORT_EVENT[dObj.getDay()] : day.date.slice(-2);
+            const vH = Math.max(4, Math.round((day.views / maxBarVal) * 106));
+            const cH = Math.max(4, Math.round((day.clicks / maxBarVal) * 106));
+            const tooltip = `${day.date}: ${day.views} impressions · ${day.clicks} clics`;
+            return `
+                <div class="ov-chart-col" title="${window.db.escapeHTML(tooltip)}">
+                    <div class="ov-chart-pair">
+                        <div class="ov-bar-views" style="height: ${vH}px;"></div>
+                        <div class="ov-bar-clicks" style="height: ${cH}px;"></div>
+                    </div>
+                    <span class="ov-chart-day">${label}</span>
+                </div>
+            `;
+        }).join('');
+
+        const topPagesHtml = (stats.topPages && stats.topPages.length > 0)
+            ? stats.topPages.slice(0, 3).map(p => `
+                <div class="ov-rank-row">
+                    <span class="ov-rank-name">${window.db.escapeHTML(p.path === '/' ? '/ (Inici)' : p.path)}</span>
+                    <span class="ov-rank-count">${p.count} vistes</span>
+                </div>
+            `).join('')
+            : `<div style="font-size: 0.78rem; color: #a1a1aa; padding: 0.4rem 0;">Navega per la web pública per registrar les primeres impressions.</div>`;
+
+        const topTargetsHtml = (stats.topTargets && stats.topTargets.length > 0)
+            ? stats.topTargets.slice(0, 3).map(t => `
+                <div class="ov-rank-row">
+                    <span class="ov-rank-name">${window.db.escapeHTML(t.target)}</span>
+                    <span class="ov-rank-count">${t.count} clics</span>
+                </div>
+            `).join('')
+            : `<div style="font-size: 0.78rem; color: #a1a1aa; padding: 0.4rem 0;">Fes clic en botons o seccions de la web per vore les interaccions.</div>`;
+
+        const syncBadge = stats.hasRemoteTable
+            ? `<span class="ov-badge ov-badge-today">● En viu (Supabase)</span>`
+            : `<span class="ov-badge ov-badge-upcoming">● Tracker actiu en PRE (prova obrint la web en una altra pestanya)</span>`;
+
+        container.innerHTML = `
+            <div class="ov-kpi-grid" style="margin-bottom: 10px;">
+                <div class="ov-kpi-card">
+                    <div class="ov-kpi-label">
+                        <span>Impressions (7d)</span>
+                        <i data-lucide="eye" style="width: 14px; height: 14px; color: #a1a1aa;"></i>
+                    </div>
+                    <div class="ov-kpi-val">${stats.totalViews}</div>
+                    <div class="ov-kpi-sub">Avui: <strong>${stats.todayViews}</strong> pàgines vistes</div>
+                </div>
+                <div class="ov-kpi-card">
+                    <div class="ov-kpi-label">
+                        <span>Visitants únics</span>
+                        <i data-lucide="users" style="width: 14px; height: 14px; color: #a1a1aa;"></i>
+                    </div>
+                    <div class="ov-kpi-val">${stats.totalUniques}</div>
+                    <div class="ov-kpi-sub">${totalDevices > 0 ? `${mobilePct}% mòbil · ${100 - mobilePct}% PC` : 'Sense galetes (RGPD)'}</div>
+                </div>
+                <div class="ov-kpi-card">
+                    <div class="ov-kpi-label">
+                        <span>Clics registrats</span>
+                        <i data-lucide="mouse-pointer-click" style="width: 14px; height: 14px; color: #a1a1aa;"></i>
+                    </div>
+                    <div class="ov-kpi-val">${stats.totalClicks}</div>
+                    <div class="ov-kpi-sub">Avui: <strong>${stats.todayClicks}</strong> · Ràtio: ${ctr}%</div>
+                </div>
+                <div class="ov-kpi-card">
+                    <div class="ov-kpi-label">
+                        <span>Pàgina més vista</span>
+                        <i data-lucide="trending-up" style="width: 14px; height: 14px; color: #a1a1aa;"></i>
+                    </div>
+                    <div class="ov-kpi-val" style="font-size: 1.05rem; padding: 0.25rem 0;" title="${window.db.escapeHTML(topPage)}">${window.db.escapeHTML(topPage === '/' ? 'Inici (/)' : topPage)}</div>
+                    <div class="ov-kpi-sub">Últims 7 dies</div>
+                </div>
+            </div>
+
+            <div class="ov-analytics-details">
+                <div class="ov-card">
+                    <div class="ov-card-header" style="margin-bottom: 0.5rem;">
+                        <h3 class="ov-card-title" style="font-size: 0.98rem;">Activitat diària (Impressions vs Clics)</h3>
+                        <div style="display: flex; align-items: center; gap: 0.65rem; font-size: 0.72rem; color: #71717a;">
+                            <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: #111111; display: inline-block;"></span> Impressions</span>
+                            <span style="display: inline-flex; align-items: center; gap: 4px;"><span style="width: 8px; height: 8px; border-radius: 2px; background: #c7d2fe; display: inline-block;"></span> Clics</span>
+                        </div>
+                    </div>
+                    <div style="margin-bottom: 0.4rem;">${syncBadge}</div>
+                    <div class="ov-chart-bars">${barsHtml}</div>
+                </div>
+
+                <div class="ov-card">
+                    <div class="ov-card-header" style="margin-bottom: 0.65rem;">
+                        <h3 class="ov-card-title" style="font-size: 0.98rem;">Contingut i clics destacats</h3>
+                    </div>
+                    <div style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: #a1a1aa; margin-bottom: 0.35rem;">Pàgines més visitades</div>
+                    <div class="ov-rank-list" style="margin-bottom: 0.85rem;">${topPagesHtml}</div>
+                    <div style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; color: #a1a1aa; margin-bottom: 0.35rem;"> Elements amb més clics</div>
+                    <div class="ov-rank-list">${topTargetsHtml}</div>
+                </div>
+            </div>
+        `;
+
+        if (window.lucide) window.lucide.createIcons();
+    }
+
+    function renderOverviewCalendarAndEvents() {
+        const calContainer = document.getElementById('ov-calendar-container');
+        const monthLabel = document.getElementById('ov-cal-month-label');
+        const eventsListEl = document.getElementById('ov-events-list');
+        const filterBadge = document.getElementById('ov-events-filter-badge');
+        if (!calContainer || !eventsListEl) return;
+
+        const today = getMadridTodayStr();
+        const nextEvent = ovCachedEvents.find(e => e.date >= today) || null;
+        const highlightedDate = ovFilterDate || (nextEvent ? nextEvent.date : today);
+
+        if (monthLabel) {
+            monthLabel.innerHTML = `${MONTHS_CA[ovCalMonth]} <span class="ov-year-muted">${ovCalYear}</span>`;
+        }
+
+        // Determine highlighted weekday column (Monday=0 .. Sunday=6)
+        let highlightWeekdayIdx = -1;
+        if (highlightedDate) {
+            const hd = new Date(highlightedDate + 'T12:00:00');
+            if (!isNaN(hd.getTime()) && hd.getFullYear() === ovCalYear && hd.getMonth() === ovCalMonth) {
+                highlightWeekdayIdx = (hd.getDay() + 6) % 7;
+            }
+        }
+
+        const eventDatesSet = new Set(ovCachedEvents.map(e => e.date));
+
+        // Build Monday-first 6-row or 5-row calendar grid
+        const firstDayOfMonth = new Date(ovCalYear, ovCalMonth, 1);
+        const startOffset = (firstDayOfMonth.getDay() + 6) % 7; // 0 = Monday
+        const daysInMonth = new Date(ovCalYear, ovCalMonth + 1, 0).getDate();
+        const prevMonthDays = new Date(ovCalYear, ovCalMonth, 0).getDate();
+
+        const totalCells = Math.ceil((startOffset + daysInMonth) / 7) * 7;
+        let cellsHtml = '';
+
+        for (let i = 0; i < totalCells; i++) {
+            let cellYear = ovCalYear;
+            let cellMonth = ovCalMonth;
+            let dayNum = 0;
+            let isOutside = false;
+
+            if (i < startOffset) {
+                dayNum = prevMonthDays - startOffset + 1 + i;
+                cellMonth = ovCalMonth - 1;
+                if (cellMonth < 0) { cellMonth = 11; cellYear--; }
+                isOutside = true;
+            } else if (i >= startOffset + daysInMonth) {
+                dayNum = i - (startOffset + daysInMonth) + 1;
+                cellMonth = ovCalMonth + 1;
+                if (cellMonth > 11) { cellMonth = 0; cellYear++; }
+                isOutside = true;
+            } else {
+                dayNum = i - startOffset + 1;
+            }
+
+            const dateStr = `${cellYear}-${String(cellMonth + 1).padStart(2, '0')}-${String(dayNum).padStart(2, '0')}`;
+            const hasEvent = eventDatesSet.has(dateStr);
+            const isSelected = (dateStr === highlightedDate);
+            const isToday = (dateStr === today);
+
+            const classes = [
+                'ov-cal-day',
+                isOutside ? 'is-outside' : '',
+                isToday ? 'is-today' : '',
+                isSelected ? 'is-selected' : ''
+            ].filter(Boolean).join(' ');
+
+            cellsHtml += `
+                <button type="button" class="${classes}" data-date="${dateStr}" title="${hasEvent ? 'Veure actes del dia ' + dateStr : dateStr}">
+                    ${hasEvent ? '<span class="ov-cal-dot"></span>' : '<span class="ov-cal-dot-spacer"></span>'}
+                    <span>${dayNum}</span>
+                </button>
+            `;
+        }
+
+        const weekdaysHtml = WEEKDAYS_CA.map((w, idx) =>
+            `<div class="ov-cal-weekday ${idx === highlightWeekdayIdx ? 'is-highlight' : ''}">${w}</div>`
+        ).join('');
+
+        calContainer.innerHTML = `
+            <div class="ov-cal-weekdays">${weekdaysHtml}</div>
+            <div class="ov-cal-days">${cellsHtml}</div>
+        `;
+
+        // Attach day click listeners
+        calContainer.querySelectorAll('.ov-cal-day').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const clicked = btn.getAttribute('data-date');
+                if (ovFilterDate === clicked) {
+                    ovFilterDate = null;
+                } else {
+                    ovFilterDate = clicked;
+                    const d = new Date(clicked + 'T12:00:00');
+                    ovCalYear = d.getFullYear();
+                    ovCalMonth = d.getMonth();
+                }
+                renderOverviewCalendarAndEvents();
+            });
+        });
+
+        // Filter badge when a specific day is clicked
+        if (filterBadge) {
+            if (ovFilterDate) {
+                const [y, m, d] = ovFilterDate.split('-');
+                filterBadge.style.display = 'inline-flex';
+                filterBadge.style.cursor = 'pointer';
+                filterBadge.title = 'Clica per treure el filtre de dia';
+                filterBadge.textContent = `${d}/${m}/${y} ×`;
+                filterBadge.onclick = () => {
+                    ovFilterDate = null;
+                    renderOverviewCalendarAndEvents();
+                };
+            } else {
+                filterBadge.style.display = 'none';
+            }
+        }
+
+        // Render right-hand events list
+        let listToShow = [];
+        if (ovFilterDate) {
+            listToShow = ovCachedEvents.filter(e => e.date === ovFilterDate);
+        } else if (ovEventsScope === 'upcoming') {
+            listToShow = ovCachedEvents.filter(e => e.date >= today);
+        } else {
+            listToShow = [...ovCachedEvents].reverse();
+        }
+
+        if (listToShow.length === 0) {
+            const emptyMsg = ovFilterDate
+                ? `No hi ha cap acte programat per al dia seleccionat.`
+                : `No hi ha pròxims actes programats en aquest moment.`;
+            eventsListEl.innerHTML = `
+                <div style="padding: 2.2rem 1rem; text-align: center; color: #71717a; background: #fafafc; border-radius: 16px; border: 1px dashed #e4e4e7;">
+                    <div style="font-weight: 700; color: #27272a; margin-bottom: 0.3rem; font-size: 0.9rem;">Cap esdeveniment</div>
+                    <div style="font-size: 0.8rem;">${window.db.escapeHTML(emptyMsg)}</div>
+                </div>
+            `;
+            return;
+        }
+
+        eventsListEl.innerHTML = listToShow.slice(0, 8).map(ev => {
+            const dObj = new Date((ev.date || today) + 'T12:00:00');
+            const dayNum = !isNaN(dObj.getTime()) ? String(dObj.getDate()).padStart(2, '0') : '--';
+            const weekShort = !isNaN(dObj.getTime()) ? WEEKDAYS_SHORT_EVENT[dObj.getDay()] : '';
+            const monthShort = !isNaN(dObj.getTime()) ? MONTHS_SHORT_CA[dObj.getMonth()] : '';
+            const isNext = nextEvent && ev.id === nextEvent.id;
+
+            let badgeClass = 'ov-badge-scheduled';
+            let badgeText = 'Programat';
+
+            if (ev.date === today) {
+                badgeClass = 'ov-badge-today';
+                badgeText = 'Avui';
+            } else if (ev.date < today) {
+                badgeClass = 'ov-badge-past';
+                badgeText = 'Realitzat';
+            } else if (isNext) {
+                const diffDays = Math.round((new Date(ev.date + 'T00:00:00') - new Date(today + 'T00:00:00')) / 86400000);
+                badgeClass = 'ov-badge-upcoming';
+                badgeText = diffDays === 1 ? 'Pròxim · Demà' : `Pròxim · En ${diffDays} dies`;
+            }
+
+            const escTitle = window.db.escapeHTML(ev.title || 'Acte');
+            const escTime = window.db.escapeHTML(ev.time || '');
+            const escLoc = window.db.escapeHTML(ev.location || 'Ares del Maestrat');
+            const dateLabel = `${parseInt(dayNum, 10)} ${monthShort}${escTime ? ` a les ${escTime} h` : ''}`;
+
+            return `
+                <div class="ov-event-item ${isNext ? 'is-next-featured' : ''}" data-event-id="${window.db.escapeHTML(ev.id)}" title="Clica per editar aquest acte">
+                    <div class="ov-event-datebox">
+                        <span class="ov-event-daynum">${dayNum}</span>
+                        <span class="ov-event-weekday">${weekShort}</span>
+                    </div>
+                    <div class="ov-event-body">
+                        <div class="ov-event-title">${escTitle}</div>
+                        <div class="ov-event-meta">
+                            <span class="ov-badge ${badgeClass}">${badgeText}</span>
+                            <span class="ov-meta-item">
+                                <i data-lucide="calendar" style="width: 12px; height: 12px;"></i>
+                                ${dateLabel}
+                            </span>
+                            <span class="ov-meta-item">
+                                <i data-lucide="map-pin" style="width: 12px; height: 12px;"></i>
+                                ${escLoc}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        eventsListEl.querySelectorAll('.ov-event-item').forEach(row => {
+            row.addEventListener('click', () => {
+                const evId = row.getAttribute('data-event-id');
+                const found = ovCachedEvents.find(x => String(x.id) === String(evId));
+                if (found) openEventModalForEdit(found);
+            });
+        });
+
+        if (window.lucide) window.lucide.createIcons();
+    }
+
+    function doesItemMatchProduct(itemOrRes, prod) {
+        if (!itemOrRes || !prod) return false;
+        const pId = String(prod.id || '').toLowerCase();
+        const pSlug = String(prod.slug || '').toLowerCase();
+        const pName = String(prod.name || '').toLowerCase();
+        const pNameEs = String(prod.name_es || '').toLowerCase();
+
+        const rId = String(itemOrRes.product_id || itemOrRes.id || '').toLowerCase();
+        const rSlug = String(itemOrRes.product_slug || itemOrRes.slug || '').toLowerCase();
+        const rName = String(itemOrRes.product_name || itemOrRes.name || '').toLowerCase();
+
+        if (pId && rId === pId) return true;
+        if (pSlug && rSlug === pSlug) return true;
+        if (pName && rName && (rName.includes(pName) || pName.includes(rName))) return true;
+        if (pNameEs && rName && (rName.includes(pNameEs) || pNameEs.includes(rName))) return true;
+        return false;
+    }
+
+    function renderOverviewActiveProducts(products, reservations) {
+        const container = document.getElementById('ov-active-products-body');
+        if (!container) return;
+
+        const validReservations = (reservations || []).filter(r => r && r.status !== 'cancelled');
+        const openProducts = (products || []).filter(p => p && p.active !== false && p.status === 'open');
+
+        if (openProducts.length === 0) {
+            container.innerHTML = `
+                <div style="padding: 2rem 1.25rem; text-align: center; background: #fafafc; border-radius: 16px; border: 1px dashed #e4e4e7;">
+                    <div style="font-weight: 700; color: #27272a; font-size: 0.9rem; margin-bottom: 0.3rem;">Cap producte obert ara mateix</div>
+                    <div style="font-size: 0.8rem; color: #71717a; margin-bottom: 0.9rem;">
+                        Actualment no hi ha cap producte amb les reserves obertes a la tenda (${validReservations.length} reserves històriques registrades).
+                    </div>
+                    <button type="button" class="ov-icon-pill" id="ov-empty-open-shop">Gestionar productes →</button>
+                </div>
+            `;
+            const btnEmpty = document.getElementById('ov-empty-open-shop');
+            if (btnEmpty) btnEmpty.onclick = () => switchAdminTab('tab-camisetes');
+            return;
+        }
+
+        const productCardsHtml = openProducts.map(prod => {
+            let matchingOrders = 0;
+            let totalUnits = 0;
+            let paidOrders = 0;
+            let pendingOrders = 0;
+            let totalEuros = 0;
+            const sizeCounts = {};
+
+            validReservations.forEach(res => {
+                const items = Array.isArray(res.items) && res.items.length > 0 ? res.items : null;
+                let matchedInRes = false;
+                let unitsInRes = 0;
+
+                if (items) {
+                    items.forEach(it => {
+                        if (doesItemMatchProduct(it, prod) || (items.length === 1 && doesItemMatchProduct(res, prod))) {
+                            matchedInRes = true;
+                            const q = parseInt(it.quantity, 10) || 1;
+                            unitsInRes += q;
+                            const sz = (it.size || 'Única').split(':')[0].trim();
+                            sizeCounts[sz] = (sizeCounts[sz] || 0) + q;
+                        }
+                    });
+                } else if (doesItemMatchProduct(res, prod)) {
+                    matchedInRes = true;
+                    const q = parseInt(res.quantity, 10) || 1;
+                    unitsInRes += q;
+                    const sz = (res.size || 'Única').split(':')[0].trim();
+                    sizeCounts[sz] = (sizeCounts[sz] || 0) + q;
+                }
+
+                if (matchedInRes) {
+                    matchingOrders++;
+                    totalUnits += unitsInRes;
+                    if (res.status === 'paid') paidOrders++;
+                    else pendingOrders++;
+                    totalEuros += unitsInRes * (parseFloat(prod.price) || 0);
+                }
+            });
+
+            const rawThumb = prod.image_url || (Array.isArray(prod.images) && prod.images[0]) || '/img/logo.svg';
+            const thumbSrc = (rawThumb.startsWith('http') || rawThumb.startsWith('/')) ? rawThumb : '../' + rawThumb;
+            const unitWord = prod.is_food ? 'menús' : 'unitats';
+
+            const sizeChips = Object.entries(sizeCounts)
+                .map(([sz, count]) => `<span class="ov-chip">${window.db.escapeHTML(sz)}: <strong>${count}</strong></span>`)
+                .join('');
+
+            return `
+                <div class="ov-prod-highlight">
+                    <div class="ov-prod-top">
+                        <img class="ov-prod-thumb" src="${window.db.escapeHTML(thumbSrc)}" alt="">
+                        <div class="ov-prod-info">
+                            <div class="ov-prod-name">${window.db.escapeHTML(prod.name || 'Producte Actiu')}</div>
+                            <div class="ov-prod-sub">
+                                <span style="display: inline-flex; align-items: center; gap: 4px; color: #15803d; font-weight: 700;">
+                                    <span style="width: 7px; height: 7px; border-radius: 50%; background: #16a34a; display: inline-block;"></span>
+                                    Actiu
+                                </span>
+                                <span>·</span>
+                                <span>${matchingOrders} ${matchingOrders === 1 ? 'comanda' : 'comandes'}</span>
+                                <span>·</span>
+                                <span>${totalEuros.toFixed(0)} €</span>
+                            </div>
+                        </div>
+                        <div class="ov-prod-counter">
+                            <div class="ov-prod-counter-num">${totalUnits}</div>
+                            <div class="ov-prod-counter-label">${unitWord} reservats</div>
+                        </div>
+                    </div>
+                    <div class="ov-prod-chips">
+                        <span class="ov-chip" style="background: #dcfce7; border-color: #bbf7d0; color: #166534;">Pagades: ${paidOrders}</span>
+                        <span class="ov-chip" style="background: #fef3c7; border-color: #fde68a; color: #92400e;">Pendents: ${pendingOrders}</span>
+                        ${sizeChips}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Recent reservations feed for active open products
+        const activeRecentRes = validReservations.filter(res =>
+            openProducts.some(prod =>
+                doesItemMatchProduct(res, prod) ||
+                (Array.isArray(res.items) && res.items.some(it => doesItemMatchProduct(it, prod)))
+            )
+        ).slice(0, 4);
+
+        let recentHtml = '';
+        if (activeRecentRes.length > 0) {
+            recentHtml = `
+                <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #a1a1aa; margin: 0.2rem 0 0.45rem 0.25rem;">Últimes reserves rebudes</div>
+                <div class="ov-res-feed">
+                    ${activeRecentRes.map(r => {
+                        const fullName = `${r.name || ''} ${r.surname || ''}`.trim() || 'Client';
+                        const initials = fullName.split(/\s+/).slice(0, 2).map(p => p.charAt(0).toUpperCase()).join('') || 'C';
+                        let timeStr = '';
+                        if (r.created_at) {
+                            const d = new Date(r.created_at);
+                            if (!isNaN(d.getTime())) {
+                                timeStr = d.toLocaleDateString('ca-ES', { day: '2-digit', month: 'short' });
+                            }
+                        }
+                        const summary = Array.isArray(r.items) && r.items.length > 0
+                            ? r.items.map(i => `${i.quantity || 1}x ${(i.size || i.name || '').split(':')[0]}`).join(', ')
+                            : `${r.quantity || 1}x ${(r.size || r.product_name || '').split(':')[0]}`;
+                        const statusText = r.status === 'paid' ? '✓ Pagat' : 'Pendent';
+
+                        return `
+                            <div class="ov-res-row">
+                                <div class="ov-avatar-initials">${window.db.escapeHTML(initials)}</div>
+                                <div class="ov-res-info">
+                                    <div class="ov-res-top">
+                                        <span class="ov-res-name">${window.db.escapeHTML(fullName)}</span>
+                                        <span class="ov-res-time">${window.db.escapeHTML(timeStr)}</span>
+                                    </div>
+                                    <div class="ov-res-detail">${window.db.escapeHTML(summary)} · ${statusText}</div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            `;
+        }
+
+        container.innerHTML = productCardsHtml + recentHtml;
+    }
+
+    function formatTodoShortDate(dateStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr + 'T12:00:00');
+        if (isNaN(d.getTime())) return '';
+        const day = String(d.getDate()).padStart(2, '0');
+        const mon = MONTHS_SHORT_CA[d.getMonth()].replace('.', '').toUpperCase();
+        return `${day} ${mon}`;
+    }
+
+    function renderOverviewTodos() {
+        const listEl = document.getElementById('ov-todos-list');
+        const countBadge = document.getElementById('ov-todos-count-badge');
+        if (!listEl) return;
+
+        const pendingCount = ovTodos.filter(t => !t.done).length;
+        if (countBadge) {
+            countBadge.textContent = `${pendingCount} ${pendingCount === 1 ? 'pendent' : 'pendents'}`;
+        }
+
+        const visibleTodos = ovTodoFilter === 'pending'
+            ? ovTodos.filter(t => !t.done)
+            : ovTodos;
+
+        if (visibleTodos.length === 0) {
+            listEl.innerHTML = `
+                <div style="padding: 2rem 1rem; text-align: center; color: #71717a; background: #fafafc; border-radius: 16px; border: 1px dashed #e4e4e7;">
+                    <div style="font-weight: 700; color: #27272a; font-size: 0.9rem; margin-bottom: 0.25rem;">Tot al dia!</div>
+                    <div style="font-size: 0.8rem;">No hi ha tasques pendents en aquesta vista.</div>
+                </div>
+            `;
+            return;
+        }
+
+        const checkSvg = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+        listEl.innerHTML = visibleTodos.map(todo => {
+            const subtasks = Array.isArray(todo.subtasks) ? todo.subtasks : [];
+            const dueFormatted = formatTodoShortDate(todo.due_date);
+            const isAddingSub = (ovActiveSubtaskTodoId === todo.id);
+
+            const subtasksHtml = subtasks.length > 0 ? `
+                <div class="ov-subtodo-list">
+                    ${subtasks.map(sub => `
+                        <div class="ov-subtodo-row">
+                            <button type="button" class="ov-check-btn btn-toggle-subtodo ${sub.done ? 'is-done' : ''}" data-todo-id="${window.db.escapeHTML(todo.id)}" data-sub-id="${window.db.escapeHTML(sub.id)}" aria-label="Marcar subtasca">
+                                ${checkSvg}
+                            </button>
+                            <span class="ov-subtodo-text ${sub.done ? 'is-done' : ''}">${window.db.escapeHTML(sub.title)}</span>
+                            <button type="button" class="ov-todo-del btn-del-subtodo" data-todo-id="${window.db.escapeHTML(todo.id)}" data-sub-id="${window.db.escapeHTML(sub.id)}" title="Eliminar subtasca">&times;</button>
+                        </div>
+                    `).join('')}
+                </div>
+            ` : '';
+
+            const subComposerHtml = isAddingSub ? `
+                <div style="margin-top: 0.55rem; padding-left: 1.75rem; display: flex; gap: 0.4rem;">
+                    <input type="text" class="ov-subtodo-input" data-todo-id="${window.db.escapeHTML(todo.id)}" placeholder="Nova subtasca..." style="flex: 1; padding: 0.35rem 0.6rem; font-size: 0.78rem; border: 1px solid #d4d4d8; border-radius: 8px; background: #ffffff;">
+                    <button type="button" class="ov-btn-black btn-save-subtodo" data-todo-id="${window.db.escapeHTML(todo.id)}" style="padding: 0.32rem 0.7rem; font-size: 0.72rem;">Afegir</button>
+                </div>
+            ` : '';
+
+            return `
+                <div class="ov-todo-card ${subtasks.length > 0 ? 'has-subtasks' : ''}">
+                    <div class="ov-todo-main">
+                        <button type="button" class="ov-check-btn btn-toggle-todo ${todo.done ? 'is-done' : ''}" data-todo-id="${window.db.escapeHTML(todo.id)}" aria-label="Marcar tasca com a feta">
+                            ${checkSvg}
+                        </button>
+                        <span class="ov-todo-title ${todo.done ? 'is-done' : ''}">${window.db.escapeHTML(todo.title)}</span>
+                        ${todo.assignee ? `<span class="ov-todo-assignee">${window.db.escapeHTML(todo.assignee)}</span>` : ''}
+                        ${dueFormatted ? `<span class="ov-todo-due">${window.db.escapeHTML(dueFormatted)}</span>` : ''}
+                        <button type="button" class="ov-todo-del btn-del-todo" data-todo-id="${window.db.escapeHTML(todo.id)}" title="Eliminar tasca">&times;</button>
+                    </div>
+                    ${subtasksHtml}
+                    ${subComposerHtml}
+                    <div class="ov-todo-footer">
+                        <button type="button" class="ov-subtodo-trigger btn-open-subtodo" data-todo-id="${window.db.escapeHTML(todo.id)}">
+                            <span style="width: 8px; height: 8px; border: 1.5px solid currentColor; border-radius: 50%; display: inline-block;"></span>
+                            <span>Subtasca</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        // Main todo toggle
+        listEl.querySelectorAll('.btn-toggle-todo').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-todo-id');
+                const target = ovTodos.find(t => t.id === id);
+                if (target) {
+                    target.done = !target.done;
+                    renderOverviewTodos();
+                    await window.db.saveAdminTodos(ovTodos);
+                }
+            });
+        });
+
+        // Delete main todo
+        listEl.querySelectorAll('.btn-del-todo').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const id = btn.getAttribute('data-todo-id');
+                ovTodos = ovTodos.filter(t => t.id !== id);
+                renderOverviewTodos();
+                await window.db.saveAdminTodos(ovTodos);
+            });
+        });
+
+        // Subtask toggle
+        listEl.querySelectorAll('.btn-toggle-subtodo').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const todoId = btn.getAttribute('data-todo-id');
+                const subId = btn.getAttribute('data-sub-id');
+                const parent = ovTodos.find(t => t.id === todoId);
+                if (parent && Array.isArray(parent.subtasks)) {
+                    const sub = parent.subtasks.find(s => s.id === subId);
+                    if (sub) {
+                        sub.done = !sub.done;
+                        renderOverviewTodos();
+                        await window.db.saveAdminTodos(ovTodos);
+                    }
+                }
+            });
+        });
+
+        // Delete subtask
+        listEl.querySelectorAll('.btn-del-subtodo').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const todoId = btn.getAttribute('data-todo-id');
+                const subId = btn.getAttribute('data-sub-id');
+                const parent = ovTodos.find(t => t.id === todoId);
+                if (parent && Array.isArray(parent.subtasks)) {
+                    parent.subtasks = parent.subtasks.filter(s => s.id !== subId);
+                    renderOverviewTodos();
+                    await window.db.saveAdminTodos(ovTodos);
+                }
+            });
+        });
+
+        // Open inline subtask input
+        listEl.querySelectorAll('.btn-open-subtodo').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const todoId = btn.getAttribute('data-todo-id');
+                ovActiveSubtaskTodoId = (ovActiveSubtaskTodoId === todoId) ? null : todoId;
+                renderOverviewTodos();
+                if (ovActiveSubtaskTodoId) {
+                    const inp = listEl.querySelector(`.ov-subtodo-input[data-todo-id="${todoId}"]`);
+                    if (inp) inp.focus();
+                }
+            });
+        });
+
+        // Save subtask (button click or Enter key)
+        const saveSubtaskFor = async (todoId) => {
+            const inp = listEl.querySelector(`.ov-subtodo-input[data-todo-id="${todoId}"]`);
+            const val = inp ? inp.value.trim() : '';
+            if (!val) return;
+            const parent = ovTodos.find(t => t.id === todoId);
+            if (parent) {
+                if (!Array.isArray(parent.subtasks)) parent.subtasks = [];
+                parent.subtasks.push({ id: 'sub-' + Date.now(), title: val, done: false });
+                ovActiveSubtaskTodoId = null;
+                renderOverviewTodos();
+                await window.db.saveAdminTodos(ovTodos);
+            }
+        };
+
+        listEl.querySelectorAll('.btn-save-subtodo').forEach(btn => {
+            btn.addEventListener('click', () => saveSubtaskFor(btn.getAttribute('data-todo-id')));
+        });
+
+        listEl.querySelectorAll('.ov-subtodo-input').forEach(inp => {
+            inp.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    saveSubtaskFor(inp.getAttribute('data-todo-id'));
+                } else if (e.key === 'Escape') {
+                    ovActiveSubtaskTodoId = null;
+                    renderOverviewTodos();
+                }
+            });
         });
     }
 

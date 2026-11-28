@@ -1277,6 +1277,294 @@ class AppDatabase {
         return true;
     }
 
+    // Admin Dashboard Todo List Actions (Synced via Supabase events config record)
+    getDefaultAdminTodos() {
+        return [
+            {
+                id: 'todo-abrasam-llistes',
+                title: "Revisar llistes d'inscrits al dinar de l'Abrasa'm",
+                done: false,
+                due_date: '2026-12-02',
+                assignee: 'Comissió',
+                subtasks: [
+                    { id: 'sub-1', title: "Recollir fulls presencials de l'Hotel i la Tenda", done: false },
+                    { id: 'sub-2', title: "Comprovar recompte de menús i al·lèrgens", done: false }
+                ],
+                created_at: '2026-11-28T10:00:00.000Z'
+            },
+            {
+                id: 'todo-abrasam-brases',
+                title: "Preparar llenya, graelles i beguda a la plaça",
+                done: false,
+                due_date: '2026-12-05',
+                assignee: 'Tots',
+                subtasks: [],
+                created_at: '2026-11-28T10:05:00.000Z'
+            },
+            {
+                id: 'todo-abrasam-xarxes',
+                title: "Publicar galeria de fotos i resum de la jornada",
+                done: false,
+                due_date: '2026-12-06',
+                assignee: 'Marc',
+                subtasks: [],
+                created_at: '2026-11-28T10:10:00.000Z'
+            }
+        ];
+    }
+
+    async getAdminTodos() {
+        const LOCAL_KEY = 'ares_admin_todos';
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('events')
+                    .select('long_description')
+                    .eq('id', 'event-config-admin-todos')
+                    .maybeSingle();
+                if (!error && data && data.long_description) {
+                    const parsed = JSON.parse(data.long_description);
+                    if (Array.isArray(parsed)) {
+                        localStorage.setItem(LOCAL_KEY, JSON.stringify(parsed));
+                        return parsed;
+                    }
+                }
+            } catch (err) {
+                console.warn("Could not load admin todos from Supabase:", err);
+            }
+        }
+
+        try {
+            const stored = localStorage.getItem(LOCAL_KEY);
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed)) return parsed;
+            }
+        } catch (e) {}
+
+        const defaults = this.getDefaultAdminTodos();
+        try { localStorage.setItem(LOCAL_KEY, JSON.stringify(defaults)); } catch (e) {}
+        return defaults;
+    }
+
+    async saveAdminTodos(todos) {
+        const LOCAL_KEY = 'ares_admin_todos';
+        const cleanList = Array.isArray(todos) ? todos : [];
+        try { localStorage.setItem(LOCAL_KEY, JSON.stringify(cleanList)); } catch (e) {}
+
+        const configItem = {
+            id: 'event-config-admin-todos',
+            title: 'Admin Todo List Configuration',
+            title_es: 'Admin Todo List Configuration',
+            description: 'System Configuration - Do not delete',
+            description_es: 'Configuración del Sistema - No borrar',
+            long_description: JSON.stringify(cleanList),
+            long_description_es: JSON.stringify(cleanList),
+            date: '2099-12-31',
+            time: '00:00',
+            location: 'System Config',
+            location_es: 'System Config',
+            category: 'config',
+            image_url: ''
+        };
+
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { error } = await this.supabase
+                    .from('events')
+                    .upsert([configItem]);
+                if (error) throw error;
+            } catch (err) {
+                console.warn("Could not sync admin todos to Supabase:", err);
+                await this.putIDB('events', configItem).catch(() => {});
+            }
+        } else {
+            await this.putIDB('events', configItem).catch(() => {});
+        }
+        return cleanList;
+    }
+
+    // =========================================================================
+    // First-Party Privacy-Friendly Web Analytics Tracker (0 Cookies, Low Egress)
+    // =========================================================================
+    getAnalyticsDateKey(offsetDays = 0) {
+        const d = new Date();
+        if (offsetDays !== 0) d.setDate(d.getDate() + offsetDays);
+        try {
+            return d.toLocaleDateString('sv-SE', { timeZone: 'Europe/Madrid' });
+        } catch (e) {
+            return d.toISOString().split('T')[0];
+        }
+    }
+
+    async trackWebEvent(payload = {}) {
+        try {
+            const dateKey = this.getAnalyticsDateKey(0);
+            const type = payload.type === 'click' ? 'click' : 'pageview';
+            const cleanPath = String(payload.path || '/').slice(0, 120);
+            const target = String(payload.target || '').slice(0, 100);
+            const device = payload.device === 'mobile' ? 'mobile' : 'desktop';
+            const isUnique = Boolean(payload.isUnique);
+
+            // 1. Save immediately in local daily bucket (enables real-time PRE testing & fallback)
+            const STORAGE_KEY = 'ares_web_analytics_v1';
+            let store = {};
+            try {
+                store = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') || {};
+            } catch (e) {
+                store = {};
+            }
+
+            if (!store[dateKey]) {
+                store[dateKey] = { views: 0, uniques: 0, clicks: 0, mobile: 0, desktop: 0, pages: {}, targets: {} };
+            }
+            const bucket = store[dateKey];
+
+            if (type === 'pageview') {
+                bucket.views = (bucket.views || 0) + 1;
+                if (isUnique) bucket.uniques = (bucket.uniques || 0) + 1;
+                if (device === 'mobile') bucket.mobile = (bucket.mobile || 0) + 1;
+                else bucket.desktop = (bucket.desktop || 0) + 1;
+                bucket.pages = bucket.pages || {};
+                bucket.pages[cleanPath] = (bucket.pages[cleanPath] || 0) + 1;
+            } else {
+                bucket.clicks = (bucket.clicks || 0) + 1;
+                if (target) {
+                    bucket.targets = bucket.targets || {};
+                    bucket.targets[target] = (bucket.targets[target] || 0) + 1;
+                }
+            }
+
+            // Keep only last 35 days locally to keep localStorage tiny
+            const sortedDates = Object.keys(store).sort();
+            while (sortedDates.length > 35) {
+                delete store[sortedDates.shift()];
+            }
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+
+            // Notify open /admin tabs immediately via BroadcastChannel
+            if (typeof BroadcastChannel !== 'undefined') {
+                try {
+                    const bc = new BroadcastChannel('ares_analytics_live');
+                    bc.postMessage({ updated: dateKey });
+                    bc.close();
+                } catch (e) {}
+            }
+
+            // 2. Fire-and-forget atomic increment to Supabase RPC if deployed
+            if (this.isSupabaseConfigured()) {
+                this.supabase.rpc('track_web_event', {
+                    p_date: dateKey,
+                    p_type: type,
+                    p_path: cleanPath,
+                    p_target: target,
+                    p_device: device,
+                    p_is_unique: isUnique
+                }).then(() => {}).catch(() => {});
+            }
+        } catch (err) {
+            // Silent fail so public navigation is never affected
+        }
+    }
+
+    async getWebAnalytics(days = 7) {
+        const STORAGE_KEY = 'ares_web_analytics_v1';
+        let localStore = {};
+        try {
+            localStore = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}') || {};
+        } catch (e) {
+            localStore = {};
+        }
+
+        let remoteMap = {};
+        let hasRemoteTable = false;
+
+        const startDate = this.getAnalyticsDateKey(-(days - 1));
+
+        if (this.isSupabaseConfigured()) {
+            try {
+                const { data, error } = await this.supabase
+                    .from('site_analytics_daily')
+                    .select('*')
+                    .gte('date', startDate)
+                    .order('date', { ascending: true });
+                if (!error && Array.isArray(data)) {
+                    hasRemoteTable = true;
+                    data.forEach(row => {
+                        if (row && row.date) remoteMap[row.date] = row;
+                    });
+                }
+            } catch (e) {}
+        }
+
+        const series = [];
+        let totalViews = 0;
+        let totalUniques = 0;
+        let totalClicks = 0;
+        let totalMobile = 0;
+        let totalDesktop = 0;
+        const pagesAgg = {};
+        const targetsAgg = {};
+
+        for (let i = days - 1; i >= 0; i--) {
+            const dKey = this.getAnalyticsDateKey(-i);
+            const rem = remoteMap[dKey];
+            const loc = localStore[dKey];
+
+            // Prefer remote cloud counts when table exists, otherwise local bucket
+            const src = (hasRemoteTable && rem) ? rem : (loc || { views: 0, uniques: 0, clicks: 0, mobile: 0, desktop: 0, pages: {}, targets: {} });
+
+            const views = Number(src.views || 0);
+            const uniques = Number(src.uniques || 0);
+            const clicks = Number(src.clicks || 0);
+            const mobile = Number(src.mobile || 0);
+            const desktop = Number(src.desktop || 0);
+
+            totalViews += views;
+            totalUniques += uniques;
+            totalClicks += clicks;
+            totalMobile += mobile;
+            totalDesktop += desktop;
+
+            const pObj = (src.pages && typeof src.pages === 'object') ? src.pages : {};
+            Object.entries(pObj).forEach(([k, v]) => {
+                pagesAgg[k] = (pagesAgg[k] || 0) + Number(v || 0);
+            });
+
+            const tObj = (src.targets && typeof src.targets === 'object') ? src.targets : {};
+            Object.entries(tObj).forEach(([k, v]) => {
+                targetsAgg[k] = (targetsAgg[k] || 0) + Number(v || 0);
+            });
+
+            series.push({ date: dKey, views, uniques, clicks });
+        }
+
+        const topPages = Object.entries(pagesAgg)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([path, count]) => ({ path, count }));
+
+        const topTargets = Object.entries(targetsAgg)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 5)
+            .map(([target, count]) => ({ target, count }));
+
+        return {
+            days,
+            hasRemoteTable,
+            totalViews,
+            totalUniques,
+            totalClicks,
+            totalMobile,
+            totalDesktop,
+            todayViews: series.length ? series[series.length - 1].views : 0,
+            todayClicks: series.length ? series[series.length - 1].clicks : 0,
+            series,
+            topPages,
+            topTargets
+        };
+    }
+
     // Events Actions
     async getEvents() {
         let events = [];

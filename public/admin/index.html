@@ -28,7 +28,7 @@
     ">
 
     <!-- Stylesheets -->
-    <link rel="stylesheet" href="../css/styles.css?v=1.27">
+    <link rel="stylesheet" href="../css/styles.css?v=1.29">
     
     <!-- Lucide Icons CDN (F10: versió anclada) -->
     <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js" defer></script>
@@ -167,23 +167,43 @@
     <!-- Dashboard Content Area (Hidden by default) -->
     <div class="container" id="dashboard-container" style="display: none; padding-bottom: 6rem;">
         
-        <!-- Status & Greeting Row -->
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <!-- Top Greeting & User Profile Pill Row -->
+        <div class="admin-top-bar">
             <div>
-                <span style="font-size: 0.8rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700;">Administració</span>
-                <h2 style="margin-bottom: 0; font-size: 2rem; text-transform: uppercase;" id="user-greeting">Hola, Admin!</h2>
+                <div style="display: flex; align-items: center; gap: 0.6rem; margin-bottom: 0.25rem;">
+                    <span style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.05em;">Administració</span>
+                    <span id="db-status-badge" class="db-status-badge" style="margin-top: 0; padding: 0.12rem 0.55rem; font-size: 0.65rem; border-radius: 999px;">local</span>
+                </div>
+                <h2 style="margin-bottom: 0; font-size: clamp(1.45rem, 2.6vw, 2rem); text-transform: none; letter-spacing: -0.02em;" id="user-greeting">Bon dia, Admin</h2>
             </div>
             
-            <div>
-                <span style="font-size: 0.75rem; font-family: var(--font-heading); font-weight: 700;">ESTAT BD:</span>
-                <span id="db-status-badge" class="db-status-badge">local</span>
+            <!-- Profile Card moved to top-right (Reference UI style) -->
+            <div class="admin-profile-card">
+                <div class="admin-profile-clickable" title="Editar el meu perfil">
+                    <div class="admin-profile-avatar">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Avatar">
+                    </div>
+                    <div class="admin-profile-info">
+                        <h4 class="admin-profile-name">Admin</h4>
+                        <span class="admin-profile-role">admin@ares.com</span>
+                    </div>
+                    <i data-lucide="chevrons-up-down" style="width: 14px; height: 14px; color: #a1a1aa; flex-shrink: 0; margin-left: 0.15rem;"></i>
+                </div>
+                <div style="width: 1px; height: 22px; background: #e4e4e7;"></div>
+                <button id="logout-btn" title="Tancar Sessió" aria-label="Tancar Sessió" style="padding: 0.35rem;">
+                    <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+                </button>
             </div>
         </div>
 
         <div class="admin-layout">
             <!-- Sidebar Navigation tabs -->
             <aside class="admin-sidebar">
-                <button class="admin-tab-btn active" data-tab="tab-home">
+                <button class="admin-tab-btn active" data-tab="tab-overview">
+                    <i data-lucide="layout-dashboard" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
+                    Inici (Dashboard)
+                </button>
+                <button class="admin-tab-btn" data-tab="tab-home">
                     <i data-lucide="layout" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
                     Gestió de la Home
                 </button>
@@ -211,29 +231,136 @@
                     <i data-lucide="shopping-bag" style="width: 18px; height: 18px; margin-right: 0.75rem;"></i>
                     Tenda i Productes
                 </button>
-                
-                <!-- Profile Card with Integrated Logout -->
-                <div class="admin-profile-card">
-                    <div class="admin-profile-clickable">
-                        <div class="admin-profile-avatar">
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=100" alt="Avatar">
-                        </div>
-                        <div class="admin-profile-info">
-                            <h4 class="admin-profile-name">Admin</h4>
-                            <span class="admin-profile-role">admin@ares.com</span>
-                        </div>
-                    </div>
-                    <button id="logout-btn" title="Tancar Sessió" aria-label="Tancar Sessió">
-                        <i data-lucide="log-out"></i>
-                    </button>
-                </div>
             </aside>
 
             <!-- Main Work Panels -->
             <main style="min-width: 0;"> <!-- prevent grid overflow -->
+
+                <!-- OVERVIEW DASHBOARD PANEL (HOME DEL ADMIN) -->
+                <div class="admin-panel active" id="tab-overview">
+                    <!-- Sub-bar inspirada en la referència: Pestanyes píndola + Accions ràpides -->
+                    <div class="ov-topbar">
+                        <div class="ov-pill-tabs" role="tablist" aria-label="Vista del resum">
+                            <button type="button" class="ov-pill-tab active" data-ov-view="all">Resum</button>
+                            <button type="button" class="ov-pill-tab" data-ov-view="analytics">Analítica</button>
+                            <button type="button" class="ov-pill-tab" data-ov-view="calendar">Calendari</button>
+                            <button type="button" class="ov-pill-tab" data-ov-view="todos">Tasques</button>
+                        </div>
+                        <div class="ov-quick-actions">
+                            <button type="button" class="ov-icon-pill" id="ov-btn-quick-news">
+                                <i data-lucide="newspaper" style="width: 14px; height: 14px;"></i>
+                                <span>+ Notícia</span>
+                            </button>
+                            <a href="../index.html" target="_blank" class="ov-icon-pill" style="text-decoration: none;">
+                                <i data-lucide="external-link" style="width: 14px; height: 14px;"></i>
+                                <span>Veure Web</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- BLOC SUPERIOR: Calendari + Pròxims Esdeveniments -->
+                    <div class="ov-top-frame" id="ov-section-calendar">
+                        <!-- Calendari Mensual -->
+                        <div class="ov-card">
+                            <div class="ov-card-header">
+                                <h3 class="ov-card-title" id="ov-cal-month-label">Novembre <span class="ov-year-muted">2026</span></h3>
+                                <div class="ov-cal-nav">
+                                    <button type="button" class="ov-icon-pill" id="ov-cal-jump-next" style="padding: 0.25rem 0.65rem; font-size: 0.72rem;" title="Anar al pròxim esdeveniment">Pròxim</button>
+                                    <button type="button" class="ov-cal-nav-btn" id="ov-cal-prev" aria-label="Mes anterior">
+                                        <i data-lucide="chevron-left" style="width: 14px; height: 14px;"></i>
+                                    </button>
+                                    <button type="button" class="ov-cal-nav-btn" id="ov-cal-next" aria-label="Mes següent">
+                                        <i data-lucide="chevron-right" style="width: 14px; height: 14px;"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="ov-calendar-container"></div>
+                        </div>
+
+                        <!-- Pròxims Esdeveniments -->
+                        <div class="ov-card">
+                            <div class="ov-card-header">
+                                <h3 class="ov-card-title">
+                                    Pròxims actes
+                                    <span id="ov-events-filter-badge" style="display: none; font-size: 0.7rem; background: #f4f4f6; color: #52525b; padding: 2px 8px; border-radius: 999px; font-weight: 600;"></span>
+                                </h3>
+                                <div style="display: flex; align-items: center; gap: 0.45rem;">
+                                    <button type="button" class="ov-icon-pill" id="ov-events-toggle-scope" data-scope="upcoming">
+                                        <span id="ov-events-scope-label">Pròxims</span>
+                                        <i data-lucide="chevron-down" style="width: 13px; height: 13px;"></i>
+                                    </button>
+                                    <button type="button" class="ov-btn-black" id="ov-btn-add-event">
+                                        <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                                        <span>Afegir acte</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="ov-events-list" id="ov-events-list">
+                                <div style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Carregant actes...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOC INFERIOR: Productes Actius / Reserves + Llistat de Tasques -->
+                    <div class="ov-bottom-grid" id="ov-section-bottom">
+                        <!-- Esquerra: Productes Actius i Reserves -->
+                        <div class="ov-card" id="ov-card-products">
+                            <div class="ov-card-header">
+                                <h3 class="ov-card-title">Reserves de productes actius</h3>
+                                <button type="button" class="ov-icon-pill" id="ov-btn-go-shop">
+                                    <span>Tenda</span>
+                                    <i data-lucide="arrow-up-right" style="width: 13px; height: 13px;"></i>
+                                </button>
+                            </div>
+                            <div id="ov-active-products-body">
+                                <div style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Carregant reserves...</div>
+                            </div>
+                        </div>
+
+                        <!-- Dreta: Llistat de Tasques (Todo list) -->
+                        <div class="ov-card" id="ov-card-todos">
+                            <div class="ov-card-header">
+                                <h3 class="ov-card-title">
+                                    Tasques pendents
+                                    <span id="ov-todos-count-badge" style="font-size: 0.72rem; background: #f4f4f6; color: #3f3f46; padding: 2px 8px; border-radius: 999px; font-weight: 700;">0</span>
+                                </h3>
+                                <div style="display: flex; align-items: center; gap: 0.45rem;">
+                                    <button type="button" class="ov-icon-pill" id="ov-todos-filter-btn" data-filter="all">Totes</button>
+                                    <button type="button" class="ov-btn-black" id="ov-btn-toggle-todo-form">
+                                        <i data-lucide="plus" style="width: 14px; height: 14px;"></i>
+                                        <span>Afegir</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Formulari ràpid desplegable per a nova tasca -->
+                            <form class="ov-todo-composer" id="ov-todo-form">
+                                <div style="margin-bottom: 0.6rem;">
+                                    <input type="text" id="ov-todo-input-title" placeholder="Quina tasca cal fer? (Ex: Confirmar equip de so)" required style="width: 100%; padding: 0.55rem 0.75rem; border: 1px solid #d4d4d8; border-radius: 10px; font-size: 0.85rem; background: #ffffff;">
+                                </div>
+                                <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; align-items: center;">
+                                    <input type="date" id="ov-todo-input-date" title="Data límit (opcional)" style="flex: 1; min-width: 130px; padding: 0.45rem 0.65rem; border: 1px solid #d4d4d8; border-radius: 10px; font-size: 0.78rem; background: #ffffff;">
+                                    <input type="text" id="ov-todo-input-assignee" placeholder="Responsable (Ex: Marc)" style="flex: 1; min-width: 120px; padding: 0.45rem 0.65rem; border: 1px solid #d4d4d8; border-radius: 10px; font-size: 0.78rem; background: #ffffff;">
+                                    <button type="submit" class="ov-btn-black" style="padding: 0.48rem 0.9rem;">Guardar</button>
+                                </div>
+                            </form>
+
+                            <div class="ov-todo-list" id="ov-todos-list">
+                                <div style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Carregant tasques...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- BLOC D'ANALÍTICA PROPIA: Impressions, Visitants Únics i Clics -->
+                    <div class="ov-analytics-section" id="ov-section-analytics">
+                        <div id="ov-analytics-body">
+                            <div style="padding: 2rem; text-align: center; color: var(--text-muted); font-size: 0.85rem;">Carregant analítica web...</div>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- HOME MANAGEMENT PANEL -->
-                <div class="admin-panel active" id="tab-home">
+                <div class="admin-panel" id="tab-home">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
                         <div>
                             <h3>Gestió de la Pàgina Principal (Home)</h3>
@@ -1158,8 +1285,8 @@
     </script>
 
     <!-- Scripts -->
-    <script src="/js/db.js?v=3.7" defer></script>
-    <script src="/admin/gestio.js?v=4.4" defer></script>
+    <script src="/js/db.js?v=3.9" defer></script>
+    <script src="/admin/gestio.js?v=4.6" defer></script>
     <script>
         function openModal(id) {
             const el = document.getElementById(id);

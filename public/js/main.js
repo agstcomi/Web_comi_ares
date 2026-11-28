@@ -520,6 +520,106 @@ window.getNewsImageHTML = function(src, alt, style = '', className = '') {
     return `<img src="${escSrc}" alt="${escAlt}"${classAttr}${styleAttr}>`;
 };
 
+// =========================================================================
+// First-Party Privacy-Safe Web Tracker (Impressions & Clicks, 0 Cookies)
+// =========================================================================
+(function initAresWebTracker() {
+    if (window.location.pathname.includes('/admin')) return;
+    if (navigator.webdriver) return;
+
+    function normalizeTrackedPath(rawPath) {
+        let p = (rawPath || '/').replace(/\/index\.html$/i, '/').replace(/\.html$/i, '');
+        if (p.length > 1 && p.endsWith('/')) p = p.slice(0, -1);
+        return p || '/';
+    }
+
+    function classifyClickTarget(el) {
+        if (!el) return '';
+        if (el.dataset && el.dataset.track) return el.dataset.track;
+
+        const id = (el.id || '').toLowerCase();
+        const href = (el.getAttribute && el.getAttribute('href')) ? el.getAttribute('href').toLowerCase() : '';
+        const text = (el.textContent || '').replace(/\s+/g, ' ').trim().slice(0, 42);
+
+        if (id.includes('add-cart') || id.includes('add-to-cart') || id.includes('confirm-res') || id.includes('checkout')) {
+            return 'Botó Reserva / Carret';
+        }
+        if (href.includes('/tenda') || href.includes('/camisetes')) {
+            return 'Tenda i Productes';
+        }
+        if (href.includes('/programacio') || id.includes('ics') || id.includes('calendar')) {
+            return 'Programació / Calendari';
+        }
+        if (href.includes('/noticies')) {
+            return 'Notícies';
+        }
+        if (href.includes('/temps')) {
+            return 'El Temps';
+        }
+        if (href.includes('/galeria')) {
+            return 'Galeria de Fotos';
+        }
+        if (href.includes('instagram.com') || href.includes('whatsapp') || href.includes('wa.me') || id.includes('share')) {
+            return 'Xarxes Socials / Compartir';
+        }
+        if (href.includes('/contacte') || href.includes('/quisom') || href.startsWith('mailto:')) {
+            return 'Qui Som / Contacte';
+        }
+        return text ? `Clic: ${text}` : '';
+    }
+
+    function bootTracker() {
+        if (!window.db || typeof window.db.trackWebEvent !== 'function') return;
+
+        const path = normalizeTrackedPath(window.location.pathname);
+        const device = window.innerWidth <= 768 ? 'mobile' : 'desktop';
+        const todayKey = window.db.getAnalyticsDateKey ? window.db.getAnalyticsDateKey(0) : new Date().toISOString().split('T')[0];
+        const uvStorageKey = `ares_uv_${todayKey}`;
+        let isUnique = false;
+
+        try {
+            if (!localStorage.getItem(uvStorageKey)) {
+                isUnique = true;
+                localStorage.setItem(uvStorageKey, '1');
+            }
+        } catch (e) {}
+
+        // 1. Track Page Impression (avoid double-counting rapid reload in same tab URL)
+        const sessionPageKey = `ares_pv_${todayKey}_${path}`;
+        let shouldCountView = true;
+        try {
+            const lastTs = Number(sessionStorage.getItem(sessionPageKey) || 0);
+            if (Date.now() - lastTs < 4000) shouldCountView = false;
+            else sessionStorage.setItem(sessionPageKey, String(Date.now()));
+        } catch (e) {}
+
+        if (shouldCountView) {
+            window.db.trackWebEvent({ type: 'pageview', path, device, isUnique });
+        }
+
+        // 2. Track Meaningful Clicks
+        document.addEventListener('click', (e) => {
+            const clickable = e.target && e.target.closest ? e.target.closest('a, button, .btn, [data-track]') : null;
+            if (!clickable) return;
+            const label = classifyClickTarget(clickable);
+            if (!label) return;
+            window.db.trackWebEvent({
+                type: 'click',
+                path,
+                target: label,
+                device: window.innerWidth <= 768 ? 'mobile' : 'desktop',
+                isUnique: false
+            });
+        }, { passive: true });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => setTimeout(bootTracker, 150));
+    } else {
+        setTimeout(bootTracker, 150);
+    }
+})();
+
 // Reusable Skeleton HTML Loaders
 window.getNewsSkeletonHTML = function(count = 6) {
     let html = '';

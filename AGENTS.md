@@ -702,7 +702,22 @@ Completat i pujat a `main`:
 
 ---
 
-## 48. Pròxim Pas
+## 48. Dashboard Overview («Inici») d'Estil Bento, Salutació Horària, Perfil Superior i Tracker d'Analítica Web (PRO)
+Completat en PRE i pujat a `main` (PRO):
+* **Nova Home del Panell d'Administració (`#tab-overview` a `public/admin/index.html`, `public/admin/gestio.js` i `public/css/styles.css`)**:
+  - Disseny *Bento* net i minimalista inspirat en la referència visual aportada per l'usuari, amb barra superior de pestanyes píndola (`Resum`, `Analítica`, `Calendari`, `Tasques`) i accessos ràpids (`+ Notícia`, `Veure Web`).
+  - **Calendari mensual + Pròxims actes**: s'obri automàticament al mes del pròxim esdeveniment programat, marca el dia en negre sòlid amb punts indicadors d'actes, permet filtrar per dia i editar o crear actes directament.
+  - **Reserves de productes actius**: detecta automàticament productes amb `status === 'open'`, mostrant el total de menús/unitats reservades, comandes pagades vs. pendents, import total, desglossament per talla/menú i les últimes reserves amb avatar d'inicials.
+  - **Llistat de tasques compartit (*Todo list*)**: sincronitzat al núvol a Supabase (`event-config-admin-todos`) amb caselles de verificació negres arrodonides, data límit en pastís àmbar, responsable i subtasques desplegables.
+* **Salutació Horària i Perfil d'Usuari Superior**:
+  - Salutació automàtica segons la franja horària d'`Europe/Madrid` (`Bon matí, <Nom>`, `Bona vesprada, <Nom>`, `Bona nit, <Nom>`).
+  - Targeta d'usuari (avatar, nom, correu i botó de tancar sessió) reubicada a la cantonada superior dreta en format càpsula arrodonida.
+* **Tracker Propi d'Analítica Web Sense Galetes (`public/js/main.js`, `public/js/db.js`, Supabase `site_analytics_daily` + RPC `track_web_event`)**:
+  - Seguiment lleuger i respectuós amb el RGPD (0 cookies) d'impressions de pàgina, visitants únics diaris (% mòbil vs. PC) i clics classificats, agregats en 1 fila diària a Supabase per minimitzar l'egress.
+
+---
+
+## 49. Pròxim Pas
 * Esperar noves instruccions de l'usuari.
 
 
